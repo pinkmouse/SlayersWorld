@@ -2,23 +2,26 @@
 <ui version="4.0">
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1000</width>
+    <width>1200</width>
     <height>600</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>1000</width>
+    <width>1200</width>
     <height>600</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>1000</width>
+    <width>1200</width>
     <height>600</height>
    </size>
   </property>
@@ -29,9 +32,9 @@
    <widget class="QGraphicsView" name="m_GraphicsViewMap">
     <property name="geometry">
      <rect>
-      <x>300</x>
+      <x>410</x>
       <y>0</y>
-      <width>701</width>
+      <width>791</width>
       <height>551</height>
      </rect>
     </property>
@@ -41,9 +44,35 @@
      <rect>
       <x>0</x>
       <y>201</y>
-      <width>256</width>
+      <width>341</width>
       <height>351</height>
      </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="m_TileSetButtonAdd">
+    <property name="geometry">
+     <rect>
+      <x>340</x>
+      <y>200</y>
+      <width>31</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>+</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="m_TileSetButtonSub">
+    <property name="geometry">
+     <rect>
+      <x>340</x>
+      <y>230</y>
+      <width>31</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>-</string>
     </property>
    </widget>
   </widget>
@@ -52,7 +81,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1000</width>
+     <width>1200</width>
      <height>21</height>
     </rect>
    </property>

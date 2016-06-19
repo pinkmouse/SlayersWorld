@@ -3,8 +3,7 @@
 
 #include <QMainWindow>
 #include <QGraphicsScene>
-#include <QGraphicsPixmapItem>
-#include <QPixmap>
+#include "tileset.h"
 
 namespace Ui {
 class MainWindow;
@@ -18,9 +17,15 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+private slots:
+    void handleTileSetButtonAdd();
+    void handleTileSetButtonSub();
+
 private:
-    Ui::MainWindow *ui;
-    QGraphicsScene *m_Scene;
+    Ui::MainWindow  *ui;
+    QGraphicsScene  *m_Scene;
+    TileSet         *m_TileSet;
+    float           m_TilesViewScale;
 };
 
 #endif // MAINWINDOW_H
