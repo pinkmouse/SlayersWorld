@@ -1,16 +1,20 @@
 #ifndef TILESET_H
 #define TILESET_H
 
+#include <vector>
 #include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
+#include <QGraphicsSceneMouseEvent>
 #include <QString>
 #include <QPixmap>
 #include <QSize>
 
-class TileSet
+class TileSet : public QGraphicsScene
 {
+    Q_OBJECT
+
 public:
-    TileSet(QGraphicsScene *);
+    TileSet(QObject * p_Parent = 0);
     bool SetTileSetImg(const char*);
     bool LoadTileToScene();
 
@@ -18,11 +22,16 @@ public:
     QSize GetSceneSize();
 
     int GetTotalTiles() const;
+    void SetClickedTile(const QPointF &);
+
+protected:
+    void mousePressEvent(QGraphicsSceneMouseEvent *);
 
 private:
-    QGraphicsScene *m_Scene;
-    QPixmap        *m_TileSetImg;
-    QSize           m_SizeTileSetImg;
+    QPixmap                             *m_TileSetImg;
+    QSize                               m_SizeTileSetImg;
+    int                                 m_SelectedTile;
+    std::vector<QGraphicsPixmapItem*>   m_TileList;
 };
 
 #endif // TILESET_H

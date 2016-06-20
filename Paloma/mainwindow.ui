@@ -96,7 +96,7 @@
   <widget class="QStatusBar" name="statusBar">
    <property name="minimumSize">
     <size>
-     <width>1000</width>
+     <width>1200</width>
      <height>20</height>
     </size>
    </property>

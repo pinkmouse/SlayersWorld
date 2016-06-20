@@ -10,22 +10,21 @@ MainWindow::MainWindow(QWidget *parent) :
     m_TilesViewScale(TILESVIEWSCALE)
 {
     ui->setupUi(this);
-    m_Scene = new QGraphicsScene(this);
-    m_TileSet = new TileSet(m_Scene);
-    if (m_TileSet->SetTileSetImg("tiles.png"))
-        ui->statusBar->messageChanged("Error: Loading TileSet Img");
-    else
-        ui->statusBar->messageChanged("Loading TileSet Img done");
-    ui->m_GraphicsViewTiles->setScene(m_Scene);
-    ui->m_GraphicsViewTiles->scale(m_TilesViewScale, m_TilesViewScale);
+    m_TileSet = new TileSet(this);
+    if (!m_TileSet->SetTileSetImg("tiles.png"))
+        ui->statusBar->showMessage("Error: Loading TileSet Img");
 
-    QSize l_SceneSize = m_TileSet->GetSceneSize();
-    m_Scene->setSceneRect(0, 0, l_SceneSize.width(), l_SceneSize.height());
-    m_TileSet->LoadTileToScene();
+
+    ui->m_GraphicsViewTiles->setScene(m_TileSet);
+    ui->m_GraphicsViewTiles->scale(m_TilesViewScale, m_TilesViewScale);
+    if (!m_TileSet->LoadTileToScene())
+        ui->statusBar->showMessage("Error: Loading Tiles to scene");
 
     // Connect button signal to appropriate slot
     connect(ui->m_TileSetButtonAdd, SIGNAL (clicked()), this, SLOT (handleTileSetButtonAdd()));
     connect(ui->m_TileSetButtonSub, SIGNAL (clicked()), this, SLOT (handleTileSetButtonSub()));
+
+    ui->statusBar->showMessage("Loading Success");
 }
 
 
