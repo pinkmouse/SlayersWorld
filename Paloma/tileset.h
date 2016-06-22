@@ -8,13 +8,14 @@
 #include <QString>
 #include <QPixmap>
 #include <QSize>
+#include "tile.h"
 
 class TileSet : public QGraphicsScene
 {
     Q_OBJECT
 
 public:
-    TileSet(QObject * p_Parent = 0);
+    TileSet(Tile*, QObject * p_Parent = 0);
     bool SetTileSetImg(const char*);
     bool LoadTileToScene();
 
@@ -22,16 +23,19 @@ public:
     QSize GetSceneSize();
 
     int GetTotalTiles() const;
+    int GetTileNB() const;
+    Tile* GetTile(int) const;
     void SetClickedTile(const QPointF &);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *);
 
 private:
-    QPixmap                             *m_TileSetImg;
-    QSize                               m_SizeTileSetImg;
-    int                                 m_SelectedTile;
-    std::vector<QGraphicsPixmapItem*>   m_TileList;
+    Tile*               m_SelectedTile;
+    QPixmap*            m_TileSetImg;
+    QSize               m_SizeTileSetImg;
+    int                 m_NbSelectedTile;
+    std::vector<Tile*>  m_TileList;
 };
 
 #endif // TILESET_H

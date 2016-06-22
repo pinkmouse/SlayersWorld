@@ -1,13 +1,14 @@
 #include <iostream>
 #include "tileset.h"
+#include "define.h"
 
-#define TILESIZE 16
-
-TileSet::TileSet(QObject *p_Parent) :
+TileSet::TileSet(Tile *p_SelectedTile, QObject *p_Parent) :
     QGraphicsScene(p_Parent),
-    m_SelectedTile(0)
+    m_SelectedTile(p_SelectedTile),
+    m_NbSelectedTile(0)
 {
     m_TileList.clear();
+    setBackgroundBrush(Qt::black);
 }
 
 bool TileSet::SetTileSetImg(const char* p_Str)
@@ -35,7 +36,8 @@ bool TileSet::LoadTileToScene()
         int l_YCrop = i / (m_SizeTileSetImg.width() / TILESIZE);
         QRect l_Rect(l_XCrop * TILESIZE, l_YCrop * TILESIZE, TILESIZE, TILESIZE);
 
-        QGraphicsPixmapItem* l_Tile = addPixmap(m_TileSetImg->copy(l_Rect));
+        Tile* l_Tile = (Tile*)addPixmap(m_TileSetImg->copy(l_Rect));
+        l_Tile->SetID(i);
         if (l_Tile == nullptr)
             return false;
 
@@ -54,6 +56,16 @@ QSize TileSet::GetSceneSize()
     return QSize(m_SizeTileSetImg.width(), m_SizeTileSetImg.height());
 }
 
+int TileSet::GetTileNB() const
+{
+    return m_NbSelectedTile;
+}
+
+Tile* TileSet::GetTile(int p_Nb) const
+{
+    return m_TileList[p_Nb];
+}
+
 int TileSet::GetTotalTiles() const
 {
     return (m_SizeTileSetImg.height() / TILESIZE * m_SizeTileSetImg.width() / TILESIZE);
@@ -63,19 +75,22 @@ void TileSet::SetClickedTile(const QPointF & p_Point)
 {
     if (p_Point.x() < 0 || p_Point.y() < 0)
     {
-        m_SelectedTile = 0;
+        m_NbSelectedTile = 0;
         return;
     }
 
     int l_PosXTile = p_Point.x() / TILESIZE;
     int l_PosYTile = p_Point.y() / TILESIZE;
 
-    m_SelectedTile = ((m_SizeTileSetImg.width() / TILESIZE) * l_PosYTile) + l_PosXTile;
-    if (m_SelectedTile > (GetTotalTiles() - 1) || m_SelectedTile < 0)
-        m_SelectedTile = 0;
+    m_NbSelectedTile = ((m_SizeTileSetImg.width() / TILESIZE) * l_PosYTile) + l_PosXTile;
+    m_SelectedTile = GetTile(m_NbSelectedTile);
+    std::cout << "NEW SELECTION " << m_SelectedTile->GetID() << std::endl;
+    if (m_NbSelectedTile > (GetTotalTiles() - 1) || m_NbSelectedTile < 0)
+        m_NbSelectedTile = 0;
 }
 
 void TileSet::mousePressEvent(QGraphicsSceneMouseEvent *p_MouseEvent)
 {
+    std::cout << "NEW SELECTION " << std::endl;
     SetClickedTile(p_MouseEvent->scenePos());
 }

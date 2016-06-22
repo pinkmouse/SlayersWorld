@@ -1,16 +1,18 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "define.h"
 #include <iostream>
-
-#define TILESVIEWSCALE 1
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    m_TilesViewScale(TILESVIEWSCALE)
+    m_TilesViewScale(TILESVIEWSCALE),
+    m_MapViewScale(MAPVIEWSCALE),
+    m_SelectedTile(nullptr)
 {
     ui->setupUi(this);
-    m_TileSet = new TileSet(this);
+    m_TileSet = new TileSet(m_SelectedTile);
+    m_Map = new Map(m_TileSet);
     if (!m_TileSet->SetTileSetImg("tiles.png"))
         ui->statusBar->showMessage("Error: Loading TileSet Img");
 
@@ -20,11 +22,28 @@ MainWindow::MainWindow(QWidget *parent) :
     if (!m_TileSet->LoadTileToScene())
         ui->statusBar->showMessage("Error: Loading Tiles to scene");
 
+    ui->m_GraphicsViewMap->setScene(m_Map);
+    ui->m_GraphicsViewMap->scale(m_MapViewScale, m_MapViewScale);
+    m_Map->SetXMap(ui->m_XSizeField->value());
+    m_Map->SetYMap(ui->m_YSizeField->value());
+
     // Connect button signal to appropriate slot
     connect(ui->m_TileSetButtonAdd, SIGNAL (clicked()), this, SLOT (handleTileSetButtonAdd()));
     connect(ui->m_TileSetButtonSub, SIGNAL (clicked()), this, SLOT (handleTileSetButtonSub()));
+    connect(ui->m_XSizeField,SIGNAL(valueChanged(int)),this,SLOT(setXMap(int)));
+    connect(ui->m_YSizeField,SIGNAL(valueChanged(int)),this,SLOT(setYMap(int)));
 
     ui->statusBar->showMessage("Loading Success");
+}
+
+void MainWindow::setXMap(int p_X)
+{
+
+}
+
+void MainWindow::setYMap(int p_Y)
+{
+
 }
 
 

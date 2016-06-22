@@ -14,9 +14,16 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    tileset.cpp
+    tileset.cpp \
+    map.cpp \
+    tile.cpp \
+    case.cpp
 
 HEADERS  += mainwindow.h \
-    tileset.h
+    tileset.h \
+    map.h \
+    define.h \
+    tile.h \
+    case.h
 
 FORMS    += mainwindow.ui
