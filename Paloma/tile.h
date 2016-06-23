@@ -6,7 +6,7 @@
 class Tile : public QGraphicsPixmapItem
 {
 public:
-    Tile();
+    Tile(const QPixmap &);
     void SetID(int);
     int GetID() const;
 

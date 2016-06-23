@@ -9,6 +9,7 @@ class Case
 {
 public:
     Case(int);
+    void    AddTile(Tile*, int);
 
 private:
     std::array<Tile*, TILENUMBERONCASE> m_TileList;

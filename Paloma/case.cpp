@@ -4,6 +4,9 @@ Case::Case(int p_ID) :
     m_ID(p_ID),
     m_Block(false)
 {
-    for (int i = 0; i < m_TileList.size(); ++i)
-        m_TileList[i] = nullptr;
+}
+
+void    Case::AddTile(Tile* l_Tile, int l_level)
+{
+    m_TileList[l_level] = l_Tile;
 }

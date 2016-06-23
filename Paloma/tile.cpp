@@ -1,6 +1,7 @@
 #include "tile.h"
 
-Tile::Tile() :
+Tile::Tile(const QPixmap &p_Pixmap) :
+    QGraphicsPixmapItem(p_Pixmap),
     m_ID(0)
 {
 

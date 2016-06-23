@@ -25,6 +25,31 @@ bool TileSet::SetTileSetImg(const char* p_Str)
     return true;
 }
 
+void TileSet::DrawGrid()
+{
+    QPen l_Pen(QColor(255, 255, 255, 200));
+    l_Pen.setWidth(1);
+
+
+    int l_X = m_SizeTileSetImg.width() / TILESIZE;
+    int l_Y = m_SizeTileSetImg.height() / TILESIZE;
+
+    /// Vertical
+    std::cout << m_SizeTileSetImg.width() << " " << m_SizeTileSetImg.height() << std::endl;
+    for (int i = 0; i <= l_X; ++i)
+    {
+        QGraphicsLineItem* l_Line = addLine(i * TILESIZE, 0, i * TILESIZE, l_Y * TILESIZE, l_Pen);
+        l_Line->setZValue(2);
+    }
+
+    /// Horizontal
+    for (int i = 0; i <= l_Y; ++i)
+    {
+        QGraphicsLineItem* l_Line = addLine(0, i * TILESIZE, l_X * TILESIZE, i * TILESIZE, l_Pen);
+        l_Line->setZValue(2);
+    }
+}
+
 bool TileSet::LoadTileToScene()
 {
     m_TileList.clear();
@@ -36,8 +61,9 @@ bool TileSet::LoadTileToScene()
         int l_YCrop = i / (m_SizeTileSetImg.width() / TILESIZE);
         QRect l_Rect(l_XCrop * TILESIZE, l_YCrop * TILESIZE, TILESIZE, TILESIZE);
 
-        Tile* l_Tile = (Tile*)addPixmap(m_TileSetImg->copy(l_Rect));
+        Tile* l_Tile = new Tile(m_TileSetImg->copy(l_Rect));
         l_Tile->SetID(i);
+        addItem(l_Tile);
         if (l_Tile == nullptr)
             return false;
 

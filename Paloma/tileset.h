@@ -18,6 +18,7 @@ public:
     TileSet(Tile*, QObject * p_Parent = 0);
     bool SetTileSetImg(const char*);
     bool LoadTileToScene();
+    void DrawGrid();
 
     QSize GetTileSetImgSize();
     QSize GetSceneSize();
@@ -34,6 +35,8 @@ private:
     Tile*               m_SelectedTile;
     QPixmap*            m_TileSetImg;
     QSize               m_SizeTileSetImg;
+    int                 m_X;
+    int                 m_Y;
     int                 m_NbSelectedTile;
     std::vector<Tile*>  m_TileList;
 };

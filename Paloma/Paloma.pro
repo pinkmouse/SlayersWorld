@@ -17,13 +17,15 @@ SOURCES += main.cpp\
     tileset.cpp \
     map.cpp \
     tile.cpp \
-    case.cpp
+    case.cpp \
+    config.cpp
 
 HEADERS  += mainwindow.h \
     tileset.h \
     map.h \
     define.h \
     tile.h \
-    case.h
+    case.h \
+    config.h
 
 FORMS    += mainwindow.ui
