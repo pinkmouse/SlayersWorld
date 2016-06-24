@@ -26,12 +26,15 @@ private slots:
     void handleButtonSubTileSet();
     void handleButtonAddMap();
     void handleButtonSubMap();
+    void handleButtonAddOpMap();
+    void handleButtonSubOpMap();
     void handleLevel1();
     void handleLevel2();
     void handleLevel3();
     void handleLevel4();
     void setXMap(int);
     void setYMap(int);
+    void exportMap();
 
 private:
     Ui::MainWindow  *ui;
@@ -42,6 +45,12 @@ private:
     Config          *m_Config;
     float           m_TilesViewScale;
     float           m_MapViewScale;
+
+    struct          t_Case
+    {
+        int l_TabTileNb[4];
+        bool l_Block;
+    };
 };
 
 #endif // MAINWINDOW_H

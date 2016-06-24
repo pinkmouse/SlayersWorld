@@ -167,30 +167,7 @@ void MainWindow::handleLevel4()
 
 void MainWindow::exportMap()
 {
-     const char* l_FileName = QFileDialog::getSaveFileName(this, tr("Save Map"), "/map.map", tr("Map (*.map)")).toStdString().c_str();
-
-     FILE * pFile;
-     pFile = fopen (l_FileName, "wb");
-
-     for (int i = 0; i < m_Map->GetMapSize(); ++i)
-     {
-         Case* l_Case = m_Map->GetCase(i);
-         int l_TabTileNb[l_Case->GetMaxTileLevel()];
-
-         t_Case l_FluxCase;
-         for (int j = 0; j < l_Case->GetMaxTileLevel(); ++j)
-         {
-            Tile* l_Tile = l_Case->GetTile(j);
-            if (l_Tile == nullptr)
-                l_FluxCase.l_TabTileNb[j] = -1;
-            else
-                l_FluxCase.l_TabTileNb[j] = l_Tile->GetID();
-         }
-         l_FluxCase.l_Block = false;
-        fwrite(&l_FluxCase, sizeof(l_FluxCase), 1, pFile);
-     }
-
-     fclose (pFile);
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"), "/map.map", tr("Map (*.map)"));
 }
 
 MainWindow::~MainWindow()

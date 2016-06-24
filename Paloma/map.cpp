@@ -7,9 +7,18 @@ Map::Map(TileSet *p_TileSet, Config *p_Config) :
     m_TileSet(p_TileSet),
     m_Config(p_Config),
     m_X(0),
-    m_Y(0)
+    m_Y(0),
+    m_GridOpacity(0.8)
 {
     setBackgroundBrush(Qt::black);
+}
+
+void Map::ClearGrid()
+{
+    for (int i = 0; i < m_ListLine.size(); ++i)
+        removeItem(m_ListLine[i]);
+
+    m_ListLine.clear();
 }
 
 void Map::DrawGrid()
@@ -17,16 +26,14 @@ void Map::DrawGrid()
     QPen l_Pen(QColor(255, 255, 255, 200));
     l_Pen.setWidth(1);
 
-    for (int i = 0; i < m_ListLine.size(); ++i)
-        removeItem(m_ListLine[i]);
-
-    m_ListLine.clear();
+    ClearGrid();
 
     /// Vertical
     for (int i = 0; i <= m_X; ++i)
     {
         QGraphicsLineItem* l_Line = addLine(i * TILESIZE, 0, i * TILESIZE, m_Y * TILESIZE, l_Pen);
         l_Line->setZValue(2);
+        l_Line->setOpacity(m_GridOpacity);
         m_ListLine.push_back(l_Line);
     }
 
@@ -35,8 +42,96 @@ void Map::DrawGrid()
     {
         QGraphicsLineItem* l_Line = addLine(0, i * TILESIZE, m_X *TILESIZE , i * TILESIZE, l_Pen);
         l_Line->setZValue(2);
+        l_Line->setOpacity(m_GridOpacity);
         m_ListLine.push_back(l_Line);
     }
+}
+
+void Map::SetOpacityGrid(float m_Opacity)
+{
+    m_GridOpacity = m_Opacity;
+    for (int i = 0; i < m_ListLine.size(); ++i)
+    {
+        QGraphicsItem* l_Item = m_ListLine[i];
+        l_Item->setOpacity(m_GridOpacity);
+    }
+}
+
+float Map::GetOpacityGrid() const
+{
+    return m_GridOpacity;
+}
+
+Case* Map::GetCase(std::vector<Case *> l_CaseList, int p_X, int p_Y)
+{
+    for (int i = 0; i < l_CaseList.size(); ++i)
+    {
+        if (l_CaseList[i]->GetX() == p_X && l_CaseList[i]->GetY() == p_Y)
+            return l_CaseList[i];
+    }
+    return nullptr;
+}
+
+Case* Map::GetCase(int p_Nb)
+{
+    if (p_Nb > m_CaseList.size())
+        return nullptr;
+
+    return m_CaseList[p_Nb];
+}
+
+int Map::GetMapSize() const
+{
+    return m_CaseList.size();
+}
+
+void Map::ShowCase(Case *l_Case)
+{
+    for (int i = 0; i < l_Case->GetMaxTileLevel(); ++i)
+    {
+        Tile* l_Tile = l_Case->GetTile(i);
+        if (l_Tile != nullptr)
+        {
+            addItem(l_Tile);
+            l_Tile->setZValue(i);
+            l_Tile->setPos(l_Case->GetX() * TILESIZE, l_Case->GetY() * TILESIZE);
+        }
+    }
+}
+
+void Map::ShowMap()
+{
+    for (int i = 0; i < m_CaseList.size(); ++i)
+    {
+        Case* l_Case = m_CaseList[i];
+        if (l_Case != nullptr)
+        {
+            for (int j = 0; j < l_Case->GetMaxTileLevel(); ++j)
+            {
+                Tile* l_Tile = l_Case->GetTile(j);
+                if (l_Tile != nullptr)
+                    addItem(l_Tile);
+            }
+        }
+    }
+}
+
+void Map::ClearMap()
+{
+    for (int i = 0; i < m_CaseList.size(); ++i)
+    {
+        Case* l_Case = m_CaseList[i];
+        if (l_Case != nullptr)
+        {
+            for (int j = 0; j < l_Case->GetMaxTileLevel(); ++j)
+            {
+                Tile* l_Tile = l_Case->GetTile(j);
+                if (l_Tile != nullptr)
+                    removeItem(l_Tile);
+            }
+        }
+    }
+    m_CaseList.clear();
 }
 
 void Map::ResizeMap(int p_X, int p_Y)
@@ -44,12 +139,28 @@ void Map::ResizeMap(int p_X, int p_Y)
     m_X = p_X;
     m_Y = p_Y;
 
-    m_CaseList.clear();
+    std::vector<Case*>  l_OldCaseList;
+    if (!m_CaseList.empty())
+    {
+        for (int i = 0; i < m_CaseList.size(); ++i)
+            l_OldCaseList.push_back(m_CaseList[i]);
+    }
+
+    ClearMap();
     int nbCase = m_X * m_Y;
     for (int i = 0; i < nbCase; ++i)
-        m_CaseList.push_back(new Case(i));
+    {
+        int l_X = i % m_X;
+        int l_Y = i / m_X;
+
+        if (Case* l_Case = GetCase(l_OldCaseList, l_X, l_Y))
+            m_CaseList.push_back(l_Case);
+        else
+            m_CaseList.push_back(new Case(i, l_X, l_Y));
+    }
     QRectF l_Rect(0, 0, m_X * TILESIZE, m_Y * TILESIZE);
     setSceneRect(l_Rect);
+    ShowMap();
 }
 
 void Map::SetXMap(int p_X)

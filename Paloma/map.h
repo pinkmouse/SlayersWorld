@@ -22,7 +22,17 @@ public:
     void SetYMap(int);
     void ClickedOnMap(const QPointF &);
     void ResizeMap(int, int);
+
     void DrawGrid();
+    void ClearGrid();
+    void SetOpacityGrid(float);
+    float GetOpacityGrid() const;
+    void ShowCase(Case *);
+    void ClearMap();
+    void ShowMap();
+    int GetMapSize() const;
+    Case *GetCase(int);
+    Case *GetCase(std::vector<Case*>, int, int);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *);
@@ -31,6 +41,7 @@ private:
     TileSet*            m_TileSet;
     std::vector<Case*>  m_CaseList;
     Config*             m_Config;
+    float m_GridOpacity;
     int m_X;
     int m_Y;
 
