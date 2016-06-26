@@ -5,6 +5,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
 #include <QGraphicsSceneMouseEvent>
+#include <QGraphicsTextItem>
 #include <QString>
 #include <QPixmap>
 #include <QSize>
@@ -20,6 +21,9 @@ public:
     Map(TileSet*, Config*);
     void SetXMap(int);
     void SetYMap(int);
+    int GetXMap() const;
+    int GetYMap() const;
+
     void ClickedOnMap(const QPointF &);
     void ResizeMap(int, int);
 
@@ -32,6 +36,7 @@ public:
     void ShowMap();
     int GetMapSize() const;
     Case *GetCase(int);
+    void SetCase(Case*);
     Case *GetCase(std::vector<Case*>, int, int);
 
 protected:

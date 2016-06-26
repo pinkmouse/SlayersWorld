@@ -46,10 +46,12 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->m_Level2, SIGNAL (clicked()), this, SLOT (handleLevel2()));
     connect(ui->m_Level3, SIGNAL (clicked()), this, SLOT (handleLevel3()));
     connect(ui->m_Level4, SIGNAL (clicked()), this, SLOT (handleLevel4()));
+    connect(ui->m_Block, SIGNAL (clicked()), this, SLOT (handleBlock()));
     connect(ui->m_YSizeField,SIGNAL(valueChanged(int)),this,SLOT(setYMap(int)));
     connect(ui->m_XSizeField,SIGNAL(valueChanged(int)),this,SLOT(setXMap(int)));
     connect(ui->m_YSizeField,SIGNAL(valueChanged(int)),this,SLOT(setYMap(int)));
     connect(ui->actionExporterMap, SIGNAL(triggered()), this, SLOT(exportMap()));
+    connect(ui->actionOuvrirMap, SIGNAL(triggered()), this, SLOT(openMap()));
 
     ui->statusBar->showMessage("Loading Success");
 }
@@ -134,6 +136,7 @@ void MainWindow::CleanButtons()
     ui->m_Level2->setStyleSheet("background-color: #FFF");
     ui->m_Level3->setStyleSheet("background-color: #FFF");
     ui->m_Level4->setStyleSheet("background-color: #FFF");
+    ui->m_Block->setStyleSheet("background-color: #FFF");
 }
 
 void MainWindow::handleLevel1()
@@ -165,17 +168,83 @@ void MainWindow::handleLevel4()
     ui->m_Level4->setStyleSheet("background-color: #00ff00;");
 }
 
+void MainWindow::handleBlock()
+{
+    m_Config->SetTileLevel(0);
+    CleanButtons();
+    ui->m_Block->setStyleSheet("background-color: #00ff00;");
+}
+
+void MainWindow::openMap()
+{
+    const char* l_FileName = QFileDialog::getOpenFileName(this, tr("Open Map"), "/", tr("Map (*.map)")).toStdString().c_str();
+
+    FILE * pFile;
+    pFile = fopen(l_FileName , "r");
+    if (pFile == nullptr)
+    {
+        ui->statusBar->showMessage("Error: Open Map");
+        return;
+    }
+    t_Param l_Param;
+
+    /// Read Params
+    fread(&l_Param, sizeof(l_Param), 1, pFile);
+    int l_X = l_Param.l_Size[0];
+    int l_Y = l_Param.l_Size[1];
+
+    /// Clear and Resize
+    m_Map->ClearMap();
+    ui->m_XSizeField->setValue(l_X);
+    ui->m_YSizeField->setValue(l_Y);
+    m_Map->SetXMap(l_X);
+    m_Map->SetYMap(l_Y);
+
+    /// Draw Map
+    for (int i = 0; i < (l_X * l_Y); ++i)
+    {
+        t_Case l_FluxCase;
+        fread(&l_FluxCase, sizeof(l_FluxCase), 1, pFile);
+        bool l_Block = l_FluxCase.l_Block;
+        Case* l_Case = new Case(i, i % l_X, i / l_X);
+        for (int j = 0; j < l_Case->GetMaxTileLevel(); ++j)
+        {
+            if (l_FluxCase.l_TabTileNb[j] == -1)
+                continue;
+
+            Tile* l_Tile = m_TileSet->GetTile(l_FluxCase.l_TabTileNb[j]);
+            Tile* l_NewTile = new Tile(l_Tile->pixmap());
+            l_Case->AddTile(l_NewTile, j);
+        }
+        if (l_Block)
+        {
+            std::cout << "----> " << i << std::endl;
+            l_Case->SetBlock(true);
+            QGraphicsTextItem *l_Txt = new QGraphicsTextItem("B");
+            l_Case->AddTxt(l_Txt);
+        }
+        m_Map->SetCase(l_Case);
+    }
+}
+
 void MainWindow::exportMap()
 {
      const char* l_FileName = QFileDialog::getSaveFileName(this, tr("Save Map"), "/map.map", tr("Map (*.map)")).toStdString().c_str();
 
      FILE * pFile;
-     pFile = fopen (l_FileName, "wb");
+     pFile = fopen(l_FileName, "wb");
 
+     /// Write Params
+     t_Param l_Param;
+     l_Param.l_Size[0] = m_Map->GetXMap();
+     l_Param.l_Size[1] = m_Map->GetYMap();
+     std::cout << l_Param.l_Size[0] << " " << l_Param.l_Size[1] << std::endl;
+     fwrite(&l_Param, sizeof(l_Param), 1, pFile);
+
+     /// Write Cases
      for (int i = 0; i < m_Map->GetMapSize(); ++i)
      {
          Case* l_Case = m_Map->GetCase(i);
-         int l_TabTileNb[l_Case->GetMaxTileLevel()];
 
          t_Case l_FluxCase;
          for (int j = 0; j < l_Case->GetMaxTileLevel(); ++j)
@@ -186,7 +255,7 @@ void MainWindow::exportMap()
             else
                 l_FluxCase.l_TabTileNb[j] = l_Tile->GetID();
          }
-         l_FluxCase.l_Block = false;
+        l_FluxCase.l_Block = l_Case->GetBlock();
         fwrite(&l_FluxCase, sizeof(l_FluxCase), 1, pFile);
      }
 

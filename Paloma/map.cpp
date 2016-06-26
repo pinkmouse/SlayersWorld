@@ -32,7 +32,7 @@ void Map::DrawGrid()
     for (int i = 0; i <= m_X; ++i)
     {
         QGraphicsLineItem* l_Line = addLine(i * TILESIZE, 0, i * TILESIZE, m_Y * TILESIZE, l_Pen);
-        l_Line->setZValue(2);
+        l_Line->setZValue(100);
         l_Line->setOpacity(m_GridOpacity);
         m_ListLine.push_back(l_Line);
     }
@@ -41,10 +41,20 @@ void Map::DrawGrid()
     for (int i = 0; i <= m_Y; ++i)
     {
         QGraphicsLineItem* l_Line = addLine(0, i * TILESIZE, m_X *TILESIZE , i * TILESIZE, l_Pen);
-        l_Line->setZValue(2);
+        l_Line->setZValue(100);
         l_Line->setOpacity(m_GridOpacity);
         m_ListLine.push_back(l_Line);
     }
+}
+
+int Map::GetXMap() const
+{
+    return m_X;
+}
+
+int Map::GetYMap() const
+{
+    return m_Y;
 }
 
 void Map::SetOpacityGrid(float m_Opacity)
@@ -97,6 +107,13 @@ void Map::ShowCase(Case *l_Case)
             l_Tile->setPos(l_Case->GetX() * TILESIZE, l_Case->GetY() * TILESIZE);
         }
     }
+    QGraphicsTextItem* l_Txt = l_Case->GetTxt();
+    if (l_Txt != nullptr)
+    {
+        addItem(l_Txt);
+        l_Txt->setZValue(l_Case->GetMaxTileLevel() + 1);
+        l_Txt->setPos(l_Case->GetX() * TILESIZE, l_Case->GetY() * TILESIZE);
+    }
 }
 
 void Map::ShowMap()
@@ -110,8 +127,13 @@ void Map::ShowMap()
             {
                 Tile* l_Tile = l_Case->GetTile(j);
                 if (l_Tile != nullptr)
+                {
                     addItem(l_Tile);
+                }
             }
+            QGraphicsTextItem* l_Txt = l_Case->GetTxt();
+            if (l_Txt != nullptr)
+                addItem(l_Txt);
         }
     }
 }
@@ -129,6 +151,9 @@ void Map::ClearMap()
                 if (l_Tile != nullptr)
                     removeItem(l_Tile);
             }
+            QGraphicsTextItem* l_Txt = l_Case->GetTxt();
+            if (l_Txt != nullptr)
+                removeItem(l_Txt);
         }
     }
     m_CaseList.clear();
@@ -163,6 +188,44 @@ void Map::ResizeMap(int p_X, int p_Y)
     ShowMap();
 }
 
+void Map::SetCase(Case* p_Case)
+{
+    int l_Pos = p_Case->GetPos();
+    Case* l_Case = m_CaseList[l_Pos];
+
+    if (l_Case == nullptr)
+        return;
+
+    for (int j = 0; j < l_Case->GetMaxTileLevel(); ++j)
+    {
+        Tile* l_Tile = l_Case->GetTile(j);
+        if (l_Tile != nullptr)
+            removeItem(l_Tile);
+    }
+    if (l_Case->GetTxt() != nullptr)
+        removeItem(l_Case->GetTxt());
+
+    l_Case = p_Case;
+    for (int j = 0; j < l_Case->GetMaxTileLevel(); ++j)
+    {
+       Tile* l_Tile = l_Case->GetTile(j);
+       if (l_Tile == nullptr)
+           continue;
+
+       addItem(l_Tile);
+       l_Tile->setZValue(j);
+       l_Tile->setPos(l_Case->GetX() * TILESIZE, l_Case->GetY() * TILESIZE);
+    }
+    QGraphicsTextItem* l_Txt = l_Case->GetTxt();
+    if (l_Txt != nullptr)
+    {
+        addItem(l_Txt);
+        l_Txt->setZValue(l_Case->GetMaxTileLevel() + 1);
+        l_Txt->setPos(l_Case->GetX() * TILESIZE, l_Case->GetY() * TILESIZE);
+    }
+    m_CaseList[l_Pos] = l_Case;
+}
+
 void Map::SetXMap(int p_X)
 {
     ResizeMap(p_X, m_Y);
@@ -190,16 +253,34 @@ void Map::ClickedOnMap(const QPointF & p_Point)
     int l_NbSelectedTile = (m_X * l_YClicked) + l_XClicked;
 
     Case* l_Case = m_CaseList[l_NbSelectedTile];
-    Tile* l_Tile = m_TileSet->GetTile(m_TileSet->GetTileNB());
 
-    Tile* l_NewTile = new Tile(l_Tile->pixmap());
-    l_NewTile->SetID(l_Tile->GetID());
-    l_Case->AddTile(l_NewTile, m_Config->GetTileLevel());
-    addItem(l_NewTile);
-    l_NewTile->setZValue(m_Config->GetTileLevel());
-    l_NewTile->setPos(l_XClicked * TILESIZE, l_YClicked * TILESIZE);
+    if (m_Config->GetTileLevel())
+    {
+        Tile* l_Tile = m_TileSet->GetTile(m_TileSet->GetTileNB());
 
-    std::cout << "Plop " << l_Tile->GetID() << " " << p_Point.x() << " " << p_Point.y() << " " << m_Config->GetTileLevel() << std::endl;
+        Tile* l_NewTile = new Tile(l_Tile->pixmap());
+        l_NewTile->SetID(l_Tile->GetID());
+        l_Case->AddTile(l_NewTile, m_Config->GetTileLevel());
+        addItem(l_NewTile);
+        l_NewTile->setZValue(m_Config->GetTileLevel());
+        l_NewTile->setPos(l_XClicked * TILESIZE, l_YClicked * TILESIZE);
+    }
+    else
+    {
+        l_Case->SetBlock(!l_Case->GetBlock());
+        if (l_Case->GetBlock())
+        {
+            QGraphicsTextItem *l_Txt = addText("B");
+            l_Txt->setPos(l_XClicked * TILESIZE, l_YClicked * TILESIZE);
+            l_Txt->setDefaultTextColor(QColor(255, 255, 255));
+            l_Txt->setZValue(l_Case->GetMaxTileLevel() + 1);
+            l_Case->AddTxt(l_Txt);
+        }
+        else
+        {
+           removeItem(l_Case->GetTxt());
+        }
+    }
 }
 
 void Map::mousePressEvent(QGraphicsSceneMouseEvent *p_MouseEvent)

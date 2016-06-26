@@ -32,9 +32,11 @@ private slots:
     void handleLevel2();
     void handleLevel3();
     void handleLevel4();
+    void handleBlock();
     void setXMap(int);
     void setYMap(int);
     void exportMap();
+    void openMap();
 
 private:
     Ui::MainWindow  *ui;
@@ -50,6 +52,11 @@ private:
     {
         int l_TabTileNb[4];
         bool l_Block;
+    };
+
+    struct          t_Param
+    {
+        int l_Size[2];
     };
 };
 
