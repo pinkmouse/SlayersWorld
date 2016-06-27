@@ -8,6 +8,7 @@ Map::Map(TileSet *p_TileSet, Config *p_Config) :
     m_Config(p_Config),
     m_X(0),
     m_Y(0),
+    m_ID(0),
     m_GridOpacity(0.8)
 {
     setBackgroundBrush(Qt::black);
@@ -45,6 +46,11 @@ void Map::DrawGrid()
         l_Line->setOpacity(m_GridOpacity);
         m_ListLine.push_back(l_Line);
     }
+}
+
+int Map::GetIDMap() const
+{
+    return m_ID;
 }
 
 int Map::GetXMap() const
@@ -236,7 +242,12 @@ void Map::SetYMap(int p_Y)
     ResizeMap(m_X, p_Y);
 }
 
-void Map::ClickedOnMap(const QPointF & p_Point)
+void Map::SetIDMap(int p_ID)
+{
+    m_ID = p_ID;
+}
+
+void Map::ClickedLeftOnMap(const QPointF & p_Point)
 {
     if (m_TileSet == nullptr)
         return;
@@ -244,7 +255,7 @@ void Map::ClickedOnMap(const QPointF & p_Point)
     if (p_Point.x() < 0 || p_Point.y() < 0)
         return;
 
-    if (p_Point.x() > m_X * TILESIZE || p_Point.y() > m_Y * TILESIZE)
+    if (p_Point.x() >= m_X * TILESIZE || p_Point.y() >= m_Y * TILESIZE)
         return;
 
     int l_XClicked = p_Point.x() / TILESIZE;
@@ -253,16 +264,22 @@ void Map::ClickedOnMap(const QPointF & p_Point)
     int l_NbSelectedTile = (m_X * l_YClicked) + l_XClicked;
 
     Case* l_Case = m_CaseList[l_NbSelectedTile];
-
-    if (m_Config->GetTileLevel())
+    int l_TileLevel = m_Config->GetTileLevel();
+    if (l_TileLevel >= 0)
     {
         Tile* l_Tile = m_TileSet->GetTile(m_TileSet->GetTileNB());
 
         Tile* l_NewTile = new Tile(l_Tile->pixmap());
+        Tile* l_OldTIle = l_Case->GetTile(l_TileLevel);
+        if (l_OldTIle != nullptr)
+        {
+            removeItem(l_OldTIle);
+            l_Case->RemoveTile(l_TileLevel);
+        }
         l_NewTile->SetID(l_Tile->GetID());
-        l_Case->AddTile(l_NewTile, m_Config->GetTileLevel());
+        l_Case->AddTile(l_NewTile, l_TileLevel);
         addItem(l_NewTile);
-        l_NewTile->setZValue(m_Config->GetTileLevel());
+        l_NewTile->setZValue(l_TileLevel);
         l_NewTile->setPos(l_XClicked * TILESIZE, l_YClicked * TILESIZE);
     }
     else
@@ -283,7 +300,54 @@ void Map::ClickedOnMap(const QPointF & p_Point)
     }
 }
 
+void Map::ClickedRightOnMap(const QPointF & p_Point)
+{
+    if (m_TileSet == nullptr)
+        return;
+
+    if (p_Point.x() < 0 || p_Point.y() < 0)
+        return;
+
+    if (p_Point.x() > m_X * TILESIZE || p_Point.y() > m_Y * TILESIZE)
+        return;
+
+    int l_XClicked = p_Point.x() / TILESIZE;
+    int l_YClicked = p_Point.y() / TILESIZE;
+
+    int l_NbSelectedTile = (m_X * l_YClicked) + l_XClicked;
+
+    Case* l_Case = m_CaseList[l_NbSelectedTile];
+    int l_TileLevel = m_Config->GetTileLevel();
+
+    if (l_TileLevel >= 0)
+    {
+        Tile* l_Tile = l_Case->GetTile(l_TileLevel);
+
+        removeItem(l_Tile);
+        l_Case->RemoveTile(l_TileLevel);
+    }
+    else
+    {
+        if (!l_Case->GetBlock())
+            return;
+
+        l_Case->SetBlock(!l_Case->GetBlock());
+        removeItem(l_Case->GetTxt());
+    }
+}
 void Map::mousePressEvent(QGraphicsSceneMouseEvent *p_MouseEvent)
 {
-    ClickedOnMap(p_MouseEvent->scenePos());
+    Qt::MouseButtons l_Button = p_MouseEvent->button();
+
+    switch (l_Button)
+    {
+        case Qt::LeftButton:
+            ClickedLeftOnMap(p_MouseEvent->scenePos());
+        break;
+        case Qt::RightButton:
+            ClickedRightOnMap(p_MouseEvent->scenePos());
+        break;
+        default:
+        break;
+    }
 }

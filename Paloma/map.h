@@ -21,10 +21,13 @@ public:
     Map(TileSet*, Config*);
     void SetXMap(int);
     void SetYMap(int);
+    void SetIDMap(int);
     int GetXMap() const;
     int GetYMap() const;
+    int GetIDMap() const;
 
-    void ClickedOnMap(const QPointF &);
+    void ClickedLeftOnMap(const QPointF &);
+    void ClickedRightOnMap(const QPointF &);
     void ResizeMap(int, int);
 
     void DrawGrid();
@@ -49,6 +52,7 @@ private:
     float m_GridOpacity;
     int m_X;
     int m_Y;
+    int m_ID;
 
     /// GRID
     std::vector<QGraphicsLineItem*> m_ListLine;

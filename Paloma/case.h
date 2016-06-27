@@ -11,6 +11,7 @@ class Case
 public:
     Case(int, int ,int);
     void    AddTile(Tile*, int);
+    void    RemoveTile(int);
     void    AddTxt(QGraphicsTextItem*);
     int     GetX() const;
     int     GetY() const;

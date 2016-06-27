@@ -47,11 +47,13 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->m_Level3, SIGNAL (clicked()), this, SLOT (handleLevel3()));
     connect(ui->m_Level4, SIGNAL (clicked()), this, SLOT (handleLevel4()));
     connect(ui->m_Block, SIGNAL (clicked()), this, SLOT (handleBlock()));
+    connect(ui->m_IDField,SIGNAL(valueChanged(int)),this,SLOT(setIDMap(int)));
     connect(ui->m_YSizeField,SIGNAL(valueChanged(int)),this,SLOT(setYMap(int)));
     connect(ui->m_XSizeField,SIGNAL(valueChanged(int)),this,SLOT(setXMap(int)));
     connect(ui->m_YSizeField,SIGNAL(valueChanged(int)),this,SLOT(setYMap(int)));
     connect(ui->actionExporterMap, SIGNAL(triggered()), this, SLOT(exportMap()));
     connect(ui->actionOuvrirMap, SIGNAL(triggered()), this, SLOT(openMap()));
+    connect(ui->actionNewMap, SIGNAL(triggered()), this, SLOT(newMap()));
 
     ui->statusBar->showMessage("Loading Success");
 }
@@ -66,6 +68,11 @@ void MainWindow::setYMap(int p_Y)
 {
     m_Map->SetYMap(p_Y);
     m_Map->DrawGrid();
+}
+
+void MainWindow::setIDMap(int p_ID)
+{
+    m_Map->SetIDMap(p_ID);
 }
 
 
@@ -141,7 +148,7 @@ void MainWindow::CleanButtons()
 
 void MainWindow::handleLevel1()
 {
-    m_Config->SetTileLevel(1);
+    m_Config->SetTileLevel(0);
     CleanButtons();
     ui->m_Level1->setStyleSheet("background-color: #00ff00");
 }
@@ -149,30 +156,39 @@ void MainWindow::handleLevel1()
 
 void MainWindow::handleLevel2()
 {
-    m_Config->SetTileLevel(2);
+    m_Config->SetTileLevel(1);
     CleanButtons();
     ui->m_Level2->setStyleSheet("background-color: #00ff00;");
 }
 
 void MainWindow::handleLevel3()
 {
-    m_Config->SetTileLevel(3);
+    m_Config->SetTileLevel(2);
     CleanButtons();
     ui->m_Level3->setStyleSheet("background-color: #00ff00;");
 }
 
 void MainWindow::handleLevel4()
 {
-    m_Config->SetTileLevel(4);
+    m_Config->SetTileLevel(3);
     CleanButtons();
     ui->m_Level4->setStyleSheet("background-color: #00ff00;");
 }
 
 void MainWindow::handleBlock()
 {
-    m_Config->SetTileLevel(0);
+    m_Config->SetTileLevel(-1);
     CleanButtons();
     ui->m_Block->setStyleSheet("background-color: #00ff00;");
+}
+
+void MainWindow::newMap()
+{
+    ui->m_IDField->setValue(0);
+    m_Map->ClearMap();
+    ui->m_XSizeField->setValue(5);
+    ui->m_YSizeField->setValue(5);
+    m_Map->DrawGrid();
 }
 
 void MainWindow::openMap()
@@ -190,15 +206,18 @@ void MainWindow::openMap()
 
     /// Read Params
     fread(&l_Param, sizeof(l_Param), 1, pFile);
+    int l_ID = l_Param.l_ID;
     int l_X = l_Param.l_Size[0];
     int l_Y = l_Param.l_Size[1];
 
     /// Clear and Resize
     m_Map->ClearMap();
+    ui->m_IDField->setValue(l_ID);
     ui->m_XSizeField->setValue(l_X);
     ui->m_YSizeField->setValue(l_Y);
     m_Map->SetXMap(l_X);
     m_Map->SetYMap(l_Y);
+    m_Map->SetIDMap(l_ID);
 
     /// Draw Map
     for (int i = 0; i < (l_X * l_Y); ++i)
@@ -218,13 +237,13 @@ void MainWindow::openMap()
         }
         if (l_Block)
         {
-            std::cout << "----> " << i << std::endl;
             l_Case->SetBlock(true);
             QGraphicsTextItem *l_Txt = new QGraphicsTextItem("B");
             l_Case->AddTxt(l_Txt);
         }
         m_Map->SetCase(l_Case);
     }
+    ui->statusBar->showMessage("Open Done");
 }
 
 void MainWindow::exportMap()
@@ -236,6 +255,7 @@ void MainWindow::exportMap()
 
      /// Write Params
      t_Param l_Param;
+     l_Param.l_ID = m_Map->GetIDMap();
      l_Param.l_Size[0] = m_Map->GetXMap();
      l_Param.l_Size[1] = m_Map->GetYMap();
      std::cout << l_Param.l_Size[0] << " " << l_Param.l_Size[1] << std::endl;
@@ -260,6 +280,7 @@ void MainWindow::exportMap()
      }
 
      fclose (pFile);
+     ui->statusBar->showMessage("Export Done");
 }
 
 MainWindow::~MainWindow()

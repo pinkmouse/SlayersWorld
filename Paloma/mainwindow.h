@@ -35,8 +35,10 @@ private slots:
     void handleBlock();
     void setXMap(int);
     void setYMap(int);
+    void setIDMap(int);
     void exportMap();
     void openMap();
+    void newMap();
 
 private:
     Ui::MainWindow  *ui;
@@ -56,6 +58,7 @@ private:
 
     struct          t_Param
     {
+        int l_ID;
         int l_Size[2];
     };
 };

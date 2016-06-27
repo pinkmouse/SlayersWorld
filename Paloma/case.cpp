@@ -23,6 +23,11 @@ void   Case::AddTxt(QGraphicsTextItem* l_Txt)
     m_Txt->setDefaultTextColor(QColor(255, 255, 255));
 }
 
+void    Case::RemoveTile(int l_Level)
+{
+    m_TileList[l_Level] = nullptr;
+}
+
 QGraphicsTextItem* Case::GetTxt() const
 {
     return m_Txt;
