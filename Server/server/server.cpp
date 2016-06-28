@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "Map.hpp"
+#include "Map/Map.hpp"
 #include <SFML/Network.hpp>
 #include <SFML/Graphics.hpp>
 
