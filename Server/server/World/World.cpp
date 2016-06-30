@@ -4,8 +4,10 @@
 
 
 World::World()
-	: m_Thread(&World::NetworkLoop, this)
+	: m_Thread(&World::NetworkLoop, this),
+	m_Run(true)
 {
+	
 }
 
 
@@ -17,7 +19,23 @@ void World::Run()
 {
 	if (!this->NetworkInitialize())
 		printf("Network error");
-	this->NetworkLoop();
+	m_Thread.launch();
+
+	while (m_Run)
+	{
+		this->UpdatePacketQueue();
+	}
+}
+
+void World::UpdatePacketQueue()
+{
+	for (std::vector<std::pair<WorldSocket*, WorldPacket>>::iterator l_It = m_PaquetQueue.begin(); l_It != m_PaquetQueue.end();)
+	{
+
+		printf("Lecture Paquet");
+		l_It = m_PaquetQueue.erase(l_It);
+		printf("Fin lecture");
+	}
 }
 
 bool World::NetworkInitialize()
@@ -68,7 +86,8 @@ void World::NetworkLoop()
 				WorldSocket* l_NewWorldSocket = new WorldSocket();
 				if (m_Listener.accept(*l_NewWorldSocket) == sf::Socket::Done)
 				{
-					printf("New Co\n");
+					printf("New connection\n");
+					l_NewWorldSocket->setBlocking(false);
 					m_Sessions.push_back(l_NewWorldSocket);
 					m_Selector.add(*l_NewWorldSocket);
 				}
@@ -79,16 +98,35 @@ void World::NetworkLoop()
 			}
 			else
 			{
-				for (std::list<WorldSocket*>::iterator l_It = m_Sessions.begin(); l_It != m_Sessions.end(); ++l_It)
+				/// Check if receive data
+				for (std::vector<WorldSocket*>::iterator l_It = m_Sessions.begin(); l_It != m_Sessions.end(); ++l_It)
 				{
-					WorldSocket& l_Session = **l_It;
-					if (m_Selector.isReady(l_Session))
+					WorldSocket* l_Session = (*l_It);
+					if (m_Selector.isReady(*l_Session))
 					{
-						// The client has sent some data, we can receive it
 						WorldPacket l_Packet;
-						if (l_Session.receive(l_Packet) == sf::Socket::Done)
+						sf::Socket::Status l_SocketStatus;
+						l_SocketStatus = l_Session->receive(l_Packet);
+						printf("Code Errror Socket : %d\n", l_SocketStatus);
+						if (l_SocketStatus == sf::Socket::Status::Done) ///< Reception OK
 						{
-							printf("New Msg\n");
+							std::pair<WorldSocket*, WorldPacket> l_PaquetElement;
+
+							l_PaquetElement.first = l_Session;
+							l_PaquetElement.second = l_Packet;
+
+							m_Mutex.lock();
+							m_PaquetQueue.push_back(l_PaquetElement);
+							m_Mutex.unlock();
+						}
+						else if (l_SocketStatus == sf::Socket::Status::Disconnected) ///< Disconnecetd
+						{
+							std::vector<WorldSocket*>::iterator l_It = std::find(m_Sessions.begin(), m_Sessions.end(), l_Session);
+							
+							/*if (l_It != m_Sessions.end())
+								m_Sessions.erase(l_It);*/
+
+							m_Selector.remove(*l_Session);
 						}
 					}
 				}

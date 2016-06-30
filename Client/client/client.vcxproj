@@ -157,14 +157,21 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Define.hpp" />
+    <ClInclude Include="Graphics\Graphics.hpp" />
     <ClInclude Include="Socket\Socket.hpp" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="Graphics\Window.hpp" />
+    <ClInclude Include="World\World.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="client.cpp" />
+    <ClCompile Include="Graphics\Graphics.cpp" />
     <ClCompile Include="Socket\Socket.cpp" />
     <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="Graphics\Window.cpp" />
+    <ClCompile Include="World\World.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -7,4 +7,5 @@ class Socket : public sf::TcpSocket
 public:
 	Socket();
 	~Socket();
+	bool Connection();
 };
