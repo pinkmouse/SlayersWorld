@@ -28,6 +28,6 @@ void PacketHandler::OperatePacket(WorldPacket &p_Packet, WorldSocket* p_WorldSoc
     p_Packet >> l_PacketID;
     printf("Operate Packet %d", l_PacketID);
     m_Func l_Fun = m_PacketHandleMap[l_PacketID];
-    *(l_Fun)(p_Packet, p_WorldSocket);
+    (this->*(l_Fun))(p_Packet, p_WorldSocket);
 }
 

@@ -16,7 +16,8 @@ public:
     void HandleConnexion(WorldPacket &, WorldSocket*);
 
 private:
-    typedef void(PacketHandler::*m_Func)(WorldPacket &, WorldSocket*);
+    using m_Func = void(PacketHandler::*)(WorldPacket &, WorldSocket*);
+
     std::map<uint8, m_Func> m_PacketHandleMap;
 };
 
