@@ -42,15 +42,15 @@
     <ClInclude Include="Define.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="World\PacketHandler.hpp">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="server.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Map\Map.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="World\World.cpp">
@@ -60,6 +60,12 @@
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="World\WorldPacket.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Map\Map.cpp">
+      <Filter>Fichiers sources\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="World\PacketHandler.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>

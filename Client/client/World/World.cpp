@@ -18,7 +18,8 @@ void World::Run()
 	l_Graphics->CreateWindow(500, 500);
 	printf("Passe");
 	sf::Packet packet;
-	packet << "coucou" << 12;
+    uint8 l_ID = 1;
+	packet << l_ID << "coucou" << 12;
 	if (!l_Socket->Connection())
 		printf("Not Connected");
 	if (l_Socket->send(packet) != sf::Socket::Done)
