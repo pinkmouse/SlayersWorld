@@ -17,17 +17,23 @@ void PacketHandler::LoadPacketHandlerMap()
 
 void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
 {
-    printf("Ask Connection");
+	std::string l_Login;
+	std::string l_Password;
+	p_Packet >> l_Login;
+	p_Packet >> l_Password;
+	printf("Login: %s:%s\n", l_Login.c_str(), l_Password.c_str());
 }
-
-
 
 void PacketHandler::OperatePacket(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
 {
     uint8 l_PacketID;
     p_Packet >> l_PacketID;
-    printf("Operate Packet %d", l_PacketID);
+    printf("Receive Packet %d\n", l_PacketID);
     m_Func l_Fun = m_PacketHandleMap[l_PacketID];
-    (this->*(l_Fun))(p_Packet, p_WorldSocket);
+	if (l_Fun != nullptr)
+		(this->*(l_Fun))(p_Packet, p_WorldSocket);
+	else
+		printf("Packet %d Unknow\n", l_PacketID);
+
 }
 

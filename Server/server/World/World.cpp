@@ -2,13 +2,14 @@
 #include "World.hpp"
 #include "WorldPacket.hpp"
 
+ConfigHandler* g_Config = new ConfigHandler();
 
 World::World()
     : m_Thread(&World::NetworkLoop, this),
     m_Run(true),
-    m_PacketHandler(new PacketHandler)
+    m_PacketHandler(new PacketHandler),
+	m_SqlManager(new SqlManager)
 {
-	
 }
 
 
@@ -16,13 +17,34 @@ World::~World()
 {
 }
 
+bool World::Initialize()
+{
+	printf("Load Config...\n");
+	if (!g_Config->Initialize())
+	{
+		printf("Config error");
+		return false;
+	}
+	printf("Connection SQL...\n");
+	std::vector<std::string> l_ConfigSQL = g_Config->GetValueList(g_Config->GetValue("charactersDB"));
+	if (!m_SqlManager->Initialize(l_ConfigSQL[0], l_ConfigSQL[1], l_ConfigSQL[2], l_ConfigSQL[3], l_ConfigSQL[4]))
+		printf("Error connection SQL...\n");
+
+	printf("Launch Network...\n");
+	if (!this->NetworkInitialize())
+	{
+		printf("Network error");
+		return false;
+	}
+
+	printf("Load Packet Handler...\n");
+	m_PacketHandler->LoadPacketHandlerMap();
+	return true;
+}
+
 void World::Run()
 {
-	if (!this->NetworkInitialize())
-		printf("Network error");
-    
-    m_PacketHandler->LoadPacketHandlerMap();
-    printf("Load Packet Handler...\n");
+	Initialize();
 	m_Thread.launch();
 
 	while (m_Run)
@@ -46,7 +68,7 @@ void World::UpdatePacketQueue()
 
 bool World::NetworkInitialize()
 {
-	int l_Port = 1234;
+	int l_Port = std::stoi(g_Config->GetValue("Port"));
 	printf("Port: %d -> ", l_Port);
 	sf::Socket::Status l_ErrorListen = m_Listener.listen(l_Port);
 	switch (l_ErrorListen)

@@ -3,10 +3,11 @@
 #include "stdafx.h"
 #include "World/World.hpp"
 
-int main()
+int main(int argc, char** argv)
 {
 	World* l_World = new World();
-	l_World->Run();
+	if (argc == 3)
+		l_World->Initialize(argv);
 
     return 0;
 }

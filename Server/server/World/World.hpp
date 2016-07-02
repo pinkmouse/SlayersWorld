@@ -7,20 +7,26 @@
 #include <vector>
 #include "WorldSocket.hpp"
 #include "PacketHandler.hpp"
+#include "ConfigHandler.hpp"
+#include "SqlManager.hpp"
 
 class World
 {
 public:
 	World();
 	~World();
+	bool Initialize();
 	void Run();
 
 private:
 	bool m_Run;
 
+	/// SQL
+	SqlManager* m_SqlManager;
+
     /// PACKET
     std::vector<std::pair<WorldSocket*, WorldPacket>> m_PaquetQueue;
-    PacketHandler *m_PacketHandler;
+    PacketHandler* m_PacketHandler;
 
 	/// NETWORK
 	void NetworkLoop();
