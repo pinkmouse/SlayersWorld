@@ -4,6 +4,7 @@
 #include "../Define.hpp"
 #include "WorldPacket.hpp"
 #include "WorldSocket.hpp"
+#include "../Global.hpp"
 
 class PacketHandler
 {

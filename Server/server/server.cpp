@@ -4,6 +4,8 @@
 #include <SFML/Network.hpp>
 #include <SFML/Graphics.hpp>
 
+ConfigHandler *g_Config;
+
 int main()
 {
 	printf("Starting Slayers World...\n");

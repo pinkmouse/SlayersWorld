@@ -16,6 +16,11 @@ ConfigHandler::~ConfigHandler()
 void ConfigHandler::ParseLine(const std::string & p_String)
 {
 	std::string l_Delimiter = " = ";
+	size_t l_Find = p_String.find(l_Delimiter);
+
+	if (l_Find == -1)
+		return;
+
 	std::string l_Key = p_String.substr(0, p_String.find(l_Delimiter));
 	std::string l_Value = p_String.substr(p_String.find(l_Delimiter) + l_Delimiter.length(), p_String.length());
 	m_StockConfig[l_Key] = l_Value;
@@ -42,6 +47,14 @@ std::vector<std::string> ConfigHandler::GetValueList(const std::string & p_Strin
 		l_Idex = l_Rest.find(l_Delimiter);
 	}
 	return l_ListValue;
+}
+
+bool ConfigHandler::IsPositiveValue(const std::string & p_Key)
+{
+	std::string l_Value = m_StockConfig[p_Key];
+	if (l_Value == "1")
+		return true;
+	return false;
 }
 
 bool ConfigHandler::Initialize()

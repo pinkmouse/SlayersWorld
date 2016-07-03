@@ -2,14 +2,14 @@
 #include "World.hpp"
 #include "WorldPacket.hpp"
 
-ConfigHandler* g_Config = new ConfigHandler();
-
 World::World()
     : m_Thread(&World::NetworkLoop, this),
     m_Run(true),
     m_PacketHandler(new PacketHandler),
-	m_SqlManager(new SqlManager)
+	m_SqlManager(new SqlManager),
+	m_MapManager(new MapManager)
 {
+	g_Config = new ConfigHandler();
 }
 
 
@@ -23,6 +23,12 @@ bool World::Initialize()
 	if (!g_Config->Initialize())
 	{
 		printf("Config error");
+		return false;
+	}
+	printf("Load Maps...\n");
+	if (!m_MapManager->InitializeMaps())
+	{
+		printf("Load Maps Error");
 		return false;
 	}
 	printf("Connection SQL...\n");

@@ -10,11 +10,11 @@ public:
 	~PacketHandler();
 	void LoadPacketHandlerMap();
 
-	void OperatePacket(WorldPacket &, Socket*);
-	void HandleConnexion(WorldPacket &, Socket*);
+	void OperatePacket(WorldPacket &);
+	void HandleConnexion(WorldPacket &);
 
 private:
-	using m_Func = void(PacketHandler::*)(WorldPacket &, Socket*);
+	using m_Func = void(PacketHandler::*)(WorldPacket &);
 
 	std::map<uint8, m_Func> m_PacketHandleMap;
 };

@@ -1,6 +1,5 @@
 #include "PacketHandler.hpp"
 
-
 PacketHandler::PacketHandler()
 {
 }
@@ -21,7 +20,14 @@ void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldS
 	std::string l_Password;
 	p_Packet >> l_Login;
 	p_Packet >> l_Password;
-	printf("Login: %s:%s\n", l_Login.c_str(), l_Password.c_str());
+
+	if (g_Config->IsPositiveValue("LoginDebug"))
+	{
+		p_WorldSocket->SendAuthResponse(0);
+		return;
+	}
+	/// TO-DO
+	/// Check Auth
 }
 
 void PacketHandler::OperatePacket(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)

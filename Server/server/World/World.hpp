@@ -7,8 +7,8 @@
 #include <vector>
 #include "WorldSocket.hpp"
 #include "PacketHandler.hpp"
-#include "ConfigHandler.hpp"
 #include "SqlManager.hpp"
+#include "../Map/MapManager.hpp"
 
 class World
 {
@@ -20,6 +20,9 @@ public:
 
 private:
 	bool m_Run;
+
+	/// MAP
+	MapManager* m_MapManager;
 
 	/// SQL
 	SqlManager* m_SqlManager;

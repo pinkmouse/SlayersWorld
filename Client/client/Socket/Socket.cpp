@@ -1,6 +1,7 @@
 #include "Socket.hpp"
 
 #include <SFML/Network/IpAddress.hpp>
+#include "../World/WorldPacket.hpp"
 
 
 Socket::Socket()
@@ -20,4 +21,14 @@ bool Socket::Connection()
 		return true;
 
 	return false;
+}
+
+void Socket::SendAuth(const std::string & l_Login, const std::string & l_Password)
+{
+	WorldPacket packet;
+	uint8 l_ID = 1;
+
+	packet << l_ID << l_Login << l_Password;
+
+	send(packet);
 }

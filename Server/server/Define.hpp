@@ -1,6 +1,5 @@
 #pragma once
 
-#include "World/ConfigHandler.hpp"
 #define CONF_FILE "server.conf"
 
 typedef char int8;

@@ -34,8 +34,29 @@ bool Graphics::WindowIsOpen() const
 	return m_Window.isOpen();
 }
 
+void Graphics::UpdateWindow()
+{
+	Clear();
+	/*sf::Text text;
+	sf::Font font;
+	font.loadFromFile("font/arial.ttf");
+	text.setFont(font);
+	text.setString("Hello world");
+	// choix de la taille des caractères
+	text.setCharacterSize(24); // exprimée en pixels, pas en points !
+
+							   // choix de la couleur du texte
+	text.setColor(sf::Color::Red);
+	m_Window.draw(text);*/
+	Display();
+}
+
+void Graphics::Clear()
+{
+	m_Window.clear();
+}
+
 void Graphics::Display()
 {
-	m_Window.setActive();
 	m_Window.display();
 }

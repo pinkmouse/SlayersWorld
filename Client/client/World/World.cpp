@@ -4,8 +4,9 @@
 
 World::World()
 {
-	l_Socket = new Socket();
-	l_Graphics = new Graphics();
+	m_Socket = new Socket();
+	m_Graphics = new Graphics();
+	m_PacketHandler = new PacketHandler();
 	m_Run = true;
 }
 
@@ -15,27 +16,29 @@ World::~World()
 
 bool World::InitializeConnection()
 {
-	if (!l_Socket->Connection())
+	if (!m_Socket->Connection())
 	{
 		printf("Error Connection...");
 		return false;
 	}
+	m_Socket->setBlocking(false);
 	return true;
 }
 
 bool World::InitializeWindow()
 {
-	l_Graphics->CreateWindow(500, 500);
+	m_Graphics->CreateWindow(500, 500);
 	return true;
 }
 
 void World::Initialize(char** p_Argv)
 {
-
 	InitializeWindow();
 
 	if (!InitializeConnection())
 		return;
+
+	m_PacketHandler->LoadPacketHandlerMap();
 
 	Login(p_Argv);
 	Run();
@@ -49,24 +52,38 @@ void World::Login(char** p_Argv)
 	std::string l_Login(p_Argv[1]);
 	std::string l_Password(p_Argv[2]);
 
-	packet << l_ID << l_Login << l_Password;
-
-	l_Socket->send(packet);
+	m_Socket->SendAuth(l_Login, l_Password);
 }
 
 void World::Run()
 {
 	while (m_Run)
 	{
-		l_Graphics->CheckEvent();
-		if (!l_Graphics->WindowIsOpen())
+		UpdateSocket();
+		m_Graphics->CheckEvent();
+		if (!m_Graphics->WindowIsOpen())
 			End();
-		l_Graphics->Display();
+		m_Graphics->UpdateWindow();
 	}
+}
+
+bool World::UpdateSocket()
+{
+	WorldPacket l_Packet;
+	sf::Socket::Status l_SocketStatus;
+	l_SocketStatus = m_Socket->receive(l_Packet);
+	if (l_SocketStatus == sf::Socket::Status::Done) ///< Reception OK
+		m_PacketHandler->OperatePacket(l_Packet);
+	if (l_SocketStatus == sf::Socket::Status::Disconnected) ///< Disconnecetd
+	{
+		printf("Disco\n");
+		return false;
+	}
+	return true;
 }
 
 void World::End()
 {
 	m_Run = false;
-	l_Socket->disconnect();
+	m_Socket->disconnect();
 }
