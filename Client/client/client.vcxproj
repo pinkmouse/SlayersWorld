@@ -89,7 +89,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>D:\DevTools\SFML-2.3.2\include</AdditionalIncludeDirectories>
     </ClCompile>
@@ -125,7 +125,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>D:\DevTools\SFML-2.3.2\include</AdditionalIncludeDirectories>
     </ClCompile>
@@ -160,8 +160,11 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Map\Case.hpp" />
     <ClInclude Include="Define.hpp" />
     <ClInclude Include="Graphics\Graphics.hpp" />
+    <ClInclude Include="Map\MapManager.hpp" />
+    <ClInclude Include="Map\Map.hpp" />
     <ClInclude Include="World\WorldPacket.hpp" />
     <ClInclude Include="World\PacketHandler.hpp" />
     <ClInclude Include="Socket\Socket.hpp" />
@@ -171,8 +174,11 @@
     <ClInclude Include="World\World.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Map\Case.cpp" />
     <ClCompile Include="client.cpp" />
     <ClCompile Include="Graphics\Graphics.cpp" />
+    <ClCompile Include="Map\MapManager.cpp" />
+    <ClCompile Include="Map\Map.cpp" />
     <ClCompile Include="World\WorldPacket.cpp" />
     <ClCompile Include="World\PacketHandler.cpp" />
     <ClCompile Include="Socket\Socket.cpp" />

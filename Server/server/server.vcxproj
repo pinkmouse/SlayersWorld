@@ -156,6 +156,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Map\Case.hpp" />
     <ClInclude Include="Global.hpp" />
     <ClInclude Include="Map\MapManager.hpp" />
     <ClInclude Include="World\SqlManager.hpp" />
@@ -170,6 +171,7 @@
     <ClInclude Include="World\World.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Map\Case.cpp" />
     <ClCompile Include="Map\MapManager.cpp" />
     <ClCompile Include="World\SqlManager.cpp" />
     <ClCompile Include="World\ConfigHandler.cpp" />

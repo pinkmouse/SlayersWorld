@@ -1,10 +1,10 @@
 #include "PacketHandler.hpp"
 
 
-PacketHandler::PacketHandler()
+PacketHandler::PacketHandler(MapManager *p_MapManager) :
+	m_MapManager(p_MapManager)
 {
 }
-
 
 PacketHandler::~PacketHandler()
 {
@@ -21,6 +21,7 @@ void PacketHandler::HandleConnexion(WorldPacket &p_Packet)
 
 	p_Packet >> l_Status;
 	printf("Auth Status: %d\n", l_Status);
+	m_MapManager->LoadMap(0);
 }
 
 

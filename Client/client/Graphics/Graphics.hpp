@@ -3,11 +3,12 @@
 #include "SFML/Graphics/Text.hpp"
 #include "../Define.hpp"
 #include "Window.hpp"
+#include "../Map/MapManager.hpp"
 
 class Graphics
 {
 public:
-	Graphics();
+	Graphics(MapManager*);
 	~Graphics();
 	void CreateWindow(uint32, uint32);
 	void UpdateWindow();
@@ -18,5 +19,6 @@ public:
 
 private:
 	Window m_Window;
+	MapManager* m_MapManager;
 };
 

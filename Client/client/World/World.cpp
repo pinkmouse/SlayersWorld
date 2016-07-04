@@ -5,8 +5,9 @@
 World::World()
 {
 	m_Socket = new Socket();
-	m_Graphics = new Graphics();
-	m_PacketHandler = new PacketHandler();
+	m_MapManager = new MapManager();
+	m_Graphics = new Graphics(m_MapManager);
+	m_PacketHandler = new PacketHandler(m_MapManager);
 	m_Run = true;
 }
 
@@ -34,10 +35,10 @@ bool World::InitializeWindow()
 void World::Initialize(char** p_Argv)
 {
 	InitializeWindow();
-
 	if (!InitializeConnection())
 		return;
 
+	m_MapManager->InitializeMaps();
 	m_PacketHandler->LoadPacketHandlerMap();
 
 	Login(p_Argv);

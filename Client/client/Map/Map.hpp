@@ -1,6 +1,7 @@
 #pragma once
-#include "../Define.hpp"
+
 #include "Case.hpp"
+#include "../Define.hpp"
 #include <string>
 #include <vector>
 
@@ -29,5 +30,6 @@ private:
 		int l_TabTileNb[4];
 		bool l_Block;
 	};
+
 };
 

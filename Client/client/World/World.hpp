@@ -2,6 +2,7 @@
 
 #include "../Socket/Socket.hpp"
 #include "../Graphics/Graphics.hpp"
+#include "../Map/MapManager.hpp"
 #include "PacketHandler.hpp"
 
 class World
@@ -21,6 +22,7 @@ public:
 private:
 	Socket* m_Socket;
 	Graphics* m_Graphics;
+	MapManager* m_MapManager;
 	bool m_Run;
 
 	PacketHandler* m_PacketHandler;

@@ -13,9 +13,8 @@ MapManager::~MapManager()
 
 bool MapManager::InitializeMaps()
 {
-	FILE * l_File;
-	l_File = fopen("map/map00.map", "r");
-	if (l_File == nullptr)
-		printf("File not open");
+	Map* l_Map = new Map();
+	if (!l_Map->InitializeMap("map00.map"))
+		return false;
 	return true;
 }

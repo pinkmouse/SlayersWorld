@@ -1,7 +1,6 @@
 #include <cstdio>
 #include "Map.hpp"
 
-
 Map::Map()
 {
 }
@@ -19,7 +18,7 @@ bool Map::InitializeMap(const std::string & p_FileName)
 	l_File = fopen(l_MapPath.c_str(), "r");
 	if (l_File == nullptr)
 	{
-		printf("Map File %s dnot open", l_MapPath.c_str());
+		printf("Map File %s not open", l_MapPath.c_str());
 		return false;
 	}
 
@@ -36,11 +35,11 @@ bool Map::InitializeMap(const std::string & p_FileName)
 		fread(&l_FluxCase, sizeof(l_FluxCase), 1, l_File);
 		Case* l_Case = new Case(i, i % m_SizeX, i / m_SizeX);
 
+		/// TODO - ADD TILES GRAPHICS
 		bool l_Block = l_FluxCase.l_Block;
 		if (l_Block)
 			l_Case->SetBlock(true);
 		m_ListCase.push_back(l_Case);
 	}
-
 	return true;
 }

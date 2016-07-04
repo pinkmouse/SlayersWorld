@@ -1,5 +1,6 @@
 #pragma once
 
+#define MAP_PATH "map/"
 #define CONF_FILE "server.conf"
 
 typedef char int8;

@@ -2,7 +2,8 @@
 
 
 
-Graphics::Graphics()
+Graphics::Graphics(MapManager* p_MapManager) :
+	m_MapManager(p_MapManager)
 {
 }
 
