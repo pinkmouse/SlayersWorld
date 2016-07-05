@@ -1,9 +1,11 @@
 #pragma once
 
-#include "SFML/Graphics/Text.hpp"
+#include <SFML/Graphics/Text.hpp>
 #include "../Define.hpp"
 #include "Window.hpp"
+#include <SFML/Graphics/View.hpp>
 #include "../Map/MapManager.hpp"
+#include "TileSet.hpp"
 
 class Graphics
 {
@@ -12,6 +14,7 @@ public:
 	~Graphics();
 	void CreateWindow(uint32, uint32);
 	void UpdateWindow();
+	void DrawMap();
 	void Display();
 	void Clear();
 	void CheckEvent();
@@ -19,6 +22,8 @@ public:
 
 private:
 	Window m_Window;
+	sf::View m_View;
 	MapManager* m_MapManager;
+	TileSet* m_TileSet;
 };
 

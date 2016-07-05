@@ -35,8 +35,7 @@ bool World::InitializeWindow()
 void World::Initialize(char** p_Argv)
 {
 	InitializeWindow();
-	if (!InitializeConnection())
-		return;
+	InitializeConnection();
 
 	m_MapManager->InitializeMaps();
 	m_PacketHandler->LoadPacketHandlerMap();

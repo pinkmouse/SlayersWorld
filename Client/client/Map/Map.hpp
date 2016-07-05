@@ -11,6 +11,7 @@ public:
 	Map();
 	~Map();
 	bool InitializeMap(const std::string &);
+	Case* GetCase(uint16);
 
 private:
 	uint16 m_ID;

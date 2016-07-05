@@ -2,7 +2,12 @@
 
 #include <cstdio>
 
-#define MAP_PATH "map/"
+#define MAX_TILE_LEVEL 4
+#define TILE_SIZE 16
+#define TILE_FOLDER "tiles/"
+#define SIZE_DRAWING_SQUARE 10
+
+#define MAP_FOLDER "map/"
 #define NAME_WINDOW "Slayers World"
 typedef char int8;
 typedef short int16;

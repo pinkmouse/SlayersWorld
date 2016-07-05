@@ -165,6 +165,8 @@
     <ClInclude Include="Graphics\Graphics.hpp" />
     <ClInclude Include="Map\MapManager.hpp" />
     <ClInclude Include="Map\Map.hpp" />
+    <ClInclude Include="Graphics\TileSet.hpp" />
+    <ClInclude Include="Graphics\TileSprite.hpp" />
     <ClInclude Include="World\WorldPacket.hpp" />
     <ClInclude Include="World\PacketHandler.hpp" />
     <ClInclude Include="Socket\Socket.hpp" />
@@ -179,6 +181,8 @@
     <ClCompile Include="Graphics\Graphics.cpp" />
     <ClCompile Include="Map\MapManager.cpp" />
     <ClCompile Include="Map\Map.cpp" />
+    <ClCompile Include="Graphics\TileSet.cpp" />
+    <ClCompile Include="Graphics\TileSprite.cpp" />
     <ClCompile Include="World\WorldPacket.cpp" />
     <ClCompile Include="World\PacketHandler.cpp" />
     <ClCompile Include="Socket\Socket.cpp" />
