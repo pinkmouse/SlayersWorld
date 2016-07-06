@@ -8,10 +8,7 @@
 TileSet::TileSet()
 {
 	std::string l_FileName = "tileset.png";
-	sf::Image image;
-	if (!image.loadFromFile("tiles/tileset.png"))
-		printf("Load Image Failed\n");
-	if (!m_Texture.loadFromFile("tiles/tileset.png" , sf::IntRect(0, 0, 500, 8000)))
+	if (!m_Texture.loadFromFile(TILE_FOLDER + l_FileName, sf::IntRect(0, 0, 480, 8000)))
 		printf("Load TileSet Failed\n");
 	else
 	{
@@ -27,23 +24,20 @@ TileSet::~TileSet()
 {
 }
 
-void TileSet::FillSpriteList()
+void TileSet::BuildSprites()
 {
 	int32 l_TileSizeNumber = m_XCase * m_YCase;
-	std::vector<TileSprite*> m_AllTileSprite;
 
 	for (int32 i = 0; i < l_TileSizeNumber; ++i)
-	{
-		printf("Sprite %d", i);
 		m_AllTileSprite.push_back(GetNewTileSprite(i));
-	}
+
 }
 
 TileSprite* TileSet::GetNewTileSprite(uint16 p_ID)
 {
 	TileSprite* l_TileSprite = new TileSprite();
 	l_TileSprite->setTexture(m_Texture);
-	l_TileSprite->setTextureRect(sf::IntRect(p_ID % m_XCase, p_ID / m_XCase, TILE_SIZE, TILE_SIZE));
+	l_TileSprite->setTextureRect(sf::IntRect((p_ID % m_XCase) * TILE_SIZE, (p_ID / m_XCase) * TILE_SIZE, TILE_SIZE, TILE_SIZE));
 
 	return l_TileSprite;
 }

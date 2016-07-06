@@ -9,7 +9,7 @@ class TileSet
 public:
 	TileSet();
 	~TileSet();
-	void FillSpriteList();
+	void BuildSprites();
 	TileSprite* GetTileSprite(uint16);
 	TileSprite* GetNewTileSprite(uint16);
 	size_t GetTileListSize() const;

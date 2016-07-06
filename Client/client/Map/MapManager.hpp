@@ -14,6 +14,7 @@ public:
 	void InitializeMaps();
 	void LoadMap(uint8);
 	Map* GetActualMap() const;
+	bool HasMap();
 
 private:
 	Map* m_ActualMap;

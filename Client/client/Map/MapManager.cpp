@@ -27,3 +27,14 @@ void MapManager::InitializeMaps()
 {
 	m_MapsPath[0] = "map00.map";
 }
+
+bool  MapManager::HasMap()
+{
+	if (m_ActualMap == nullptr)
+		return false;
+
+	if (!m_ActualMap->IsValidMap())
+		return false;
+
+	return true;
+}

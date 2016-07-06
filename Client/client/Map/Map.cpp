@@ -13,9 +13,48 @@ Map::~Map()
 {
 }
 
-Case* Map::GetCase(uint16 p_ID)
+std::vector<Case*> Map::GetSquare(uint16 p_ID)
+{
+	return m_MapListCase[p_ID];
+}
+
+Case* Map::GetCase(uint16 p_ID) const
 {
 	return m_ListCase[p_ID];
+}
+
+uint16 Map::GetSizeX() const
+{
+	return m_SizeX;
+}
+
+uint16 Map::GetSizeY() const
+{
+	return m_SizeY;
+}
+
+bool Map::IsValidMap()
+{
+	if (m_SizeX <= 0 || m_SizeY <= 0)
+		return false;
+
+	if (m_MapListCase.size() <= 0)
+		return false;
+
+	return true;
+}
+
+uint16 Map::GetSquareID(uint16 p_X, uint16 p_Y) const
+{
+	uint16 l_DrawingSquareID = 0;
+
+	/// Total square width
+	uint16 l_TotalSquareWidth = m_SizeX / SIZE_DRAWING_SQUARE;
+
+	uint16 l_XSquare = p_X / SIZE_DRAWING_SQUARE;
+	uint16 l_YSquare = p_Y / SIZE_DRAWING_SQUARE;
+
+	return (l_TotalSquareWidth * l_YSquare) + l_XSquare;
 }
 
 bool Map::InitializeMap(const std::string & p_FileName)
@@ -45,9 +84,10 @@ bool Map::InitializeMap(const std::string & p_FileName)
 		for (int j = 0; j < l_Case->GetMaxTileLevel(); ++j)
 			l_Case->SetTile(j, l_FluxCase.l_TabTileNb[j]);
 		l_Case->SetBlock(l_FluxCase.l_Block);
-		printf("PCharge map %d\n", m_ListCase.size());
 
+		uint16 l_DrawingSquareID = GetSquareID(l_Case->GetPosX(), l_Case->GetPosY());
 		m_ListCase.push_back(l_Case);
+		m_MapListCase[l_DrawingSquareID].push_back(l_Case);
 	}
 	return true;
 }

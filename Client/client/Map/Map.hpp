@@ -3,6 +3,7 @@
 #include "Case.hpp"
 #include "../Define.hpp"
 #include <string>
+#include <map>
 #include <vector>
 
 class Map
@@ -11,14 +12,21 @@ public:
 	Map();
 	~Map();
 	bool InitializeMap(const std::string &);
-	Case* GetCase(uint16);
+	bool IsValidMap();
+	
+	uint16 GetSquareID(uint16, uint16) const;
+	std::vector<Case*> Map::GetSquare(uint16);
+	Case* GetCase(uint16) const;
+	uint16 GetSizeX() const;
+	uint16 GetSizeY() const;
 
 private:
 	uint16 m_ID;
 	uint16 m_SizeX;
 	uint16 m_SizeY;
 
-	std::vector<Case*>	m_ListCase;
+	std::vector<Case*> m_ListCase;
+	std::map<uint16, std::vector<Case*>>	m_MapListCase;
 
 	struct          t_MapParam
 	{

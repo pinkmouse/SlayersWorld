@@ -1,7 +1,5 @@
 #include "Graphics.hpp"
 
-
-
 Graphics::Graphics(MapManager* p_MapManager) :
 	m_MapManager(p_MapManager)
 {
@@ -18,8 +16,9 @@ void Graphics::CreateWindow(uint32 p_X, uint32 p_Y)
 	m_Window.create(sf::VideoMode(p_X, p_Y), NAME_WINDOW);
 	m_View = m_Window.getDefaultView();
 	m_Window.setView(m_View);
+
 	m_TileSet = new TileSet();
-	m_TileSet->FillSpriteList();
+	m_TileSet->BuildSprites();
 }
 
 void Graphics::CheckEvent()
@@ -42,23 +41,25 @@ bool Graphics::WindowIsOpen() const
 
 void Graphics::DrawMap()
 {
-	if (m_TileSet == nullptr || m_MapManager->GetActualMap() == nullptr)
+	if (!m_Window.isOpen() || !m_MapManager->HasMap())
+		return;
+
+	Map* l_Map = m_MapManager->GetActualMap();
+	std::vector<Case*> l_Square = l_Map->GetSquare(l_Map->GetSquareID(0, 0));
+	if (l_Square.empty())
 		return;
 
 	/// First Level
-	int16 l_TileID = m_MapManager->GetActualMap()->GetCase(0)->GetTile(0);
-	if (l_TileID < 0)
-		return;
-
-	if (l_TileID >= m_TileSet->GetTileListSize())
+	for (std::vector<Case*>::iterator l_It = l_Square.begin(); l_It != l_Square.end(); ++l_It)
 	{
-		printf("PASSE %d, %d", l_TileID, m_TileSet->GetTileListSize());
-		return;
-	}
+		int16 l_TileID = (*l_It)->GetTile(0);
+		if (l_TileID < 0)
+			continue;
 
-	TileSprite* l_TileSprite = m_TileSet->GetTileSprite(l_TileID);
-	l_TileSprite->setPosition(0, 0);
-	m_Window.draw(*l_TileSprite);
+		TileSprite* l_TileSprite = m_TileSet->GetTileSprite(l_TileID);
+		l_TileSprite->setPosition((float)(*l_It)->GetPosX() * TILE_SIZE, (float)(*l_It)->GetPosY() * TILE_SIZE);
+		m_Window.draw(*l_TileSprite);
+	}
 }
 
 void Graphics::UpdateWindow()
