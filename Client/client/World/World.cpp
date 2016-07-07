@@ -28,13 +28,14 @@ bool World::InitializeConnection()
 
 bool World::InitializeWindow()
 {
-	m_Graphics->CreateWindow(500, 500);
+	m_Graphics->CreateWindow(640, 480, 2.0f);
 	return true;
 }
 
 void World::Initialize(char** p_Argv)
 {
 	InitializeWindow();
+    m_Graphics->Run();
 	InitializeConnection();
 
 	m_MapManager->InitializeMaps();
@@ -63,7 +64,6 @@ void World::Run()
 		m_Graphics->CheckEvent();
 		if (!m_Graphics->WindowIsOpen())
 			End();
-		m_Graphics->UpdateWindow();
 	}
 }
 
@@ -85,5 +85,6 @@ bool World::UpdateSocket()
 void World::End()
 {
 	m_Run = false;
+	m_Graphics->End();
 	m_Socket->disconnect();
 }

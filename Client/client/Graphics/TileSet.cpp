@@ -47,7 +47,7 @@ size_t TileSet::GetTileListSize() const
 	return m_AllTileSprite.size();
 }
 
-TileSprite* TileSet::GetTileSprite(uint16 p_ID)
+TileSprite* TileSet::GetTileSprite(int16 p_ID) const
 {
 	return m_AllTileSprite[p_ID];
 }

@@ -10,7 +10,7 @@ public:
 	TileSet();
 	~TileSet();
 	void BuildSprites();
-	TileSprite* GetTileSprite(uint16);
+	TileSprite* GetTileSprite(int16) const;
 	TileSprite* GetNewTileSprite(uint16);
 	size_t GetTileListSize() const;
 

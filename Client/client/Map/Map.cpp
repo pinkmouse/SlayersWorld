@@ -18,6 +18,61 @@ std::vector<Case*> Map::GetSquare(uint16 p_ID)
 	return m_MapListCase[p_ID];
 }
 
+std::vector<std::vector<Case*>> Map::GetSquareZone(uint16 p_ID)
+{
+	std::vector<std::vector<Case*>> l_SquareZone;
+	uint16 l_TotalSquareWidth = m_SizeX / SIZE_DRAWING_SQUARE;
+	uint16 l_TotalSquareHeight = m_SizeY / SIZE_DRAWING_SQUARE;
+	uint16 l_TotalSquare = l_TotalSquareWidth * l_TotalSquareHeight;
+
+	l_SquareZone.push_back(GetSquare(p_ID));
+	if (p_ID - l_TotalSquareWidth >= 0)
+	{
+		printf("1\n");
+		l_SquareZone.push_back(GetSquare(p_ID - l_TotalSquareWidth)); ///< Top Center
+	}
+	if (p_ID + l_TotalSquareWidth <= l_TotalSquare)
+	{
+		printf("2\n");
+		l_SquareZone.push_back(GetSquare(p_ID + l_TotalSquareWidth)); ///< Bottom Center
+	}
+
+	if (p_ID % l_TotalSquareWidth > 1)
+	{
+		printf("3\n");
+		l_SquareZone.push_back(GetSquare(p_ID - 1)); ///< Left Center
+	}
+	if (p_ID % l_TotalSquareWidth < l_TotalSquareHeight)
+	{
+		printf("4\n");
+		l_SquareZone.push_back(GetSquare(p_ID + 1)); ///< right Center
+	}
+
+	if (p_ID % l_TotalSquareWidth > 1 && (p_ID - l_TotalSquareWidth - 1 >= 0))
+	{
+		printf("5\n");
+		l_SquareZone.push_back(GetSquare(p_ID - l_TotalSquareWidth - 1)); ///< Left Top
+	}
+	if (p_ID % l_TotalSquareWidth < l_TotalSquareHeight)
+	{
+		printf("6\n");
+		l_SquareZone.push_back(GetSquare(p_ID - l_TotalSquareWidth + 1)); ///< Right Top
+	}
+
+	if (p_ID + l_TotalSquareWidth <= l_TotalSquare && p_ID % l_TotalSquareWidth > 1)
+	{
+		printf("7\n");
+		l_SquareZone.push_back(GetSquare(p_ID + l_TotalSquareWidth - 1)); ///< Left Bottom
+	}
+	if (p_ID + 1 + l_TotalSquareWidth <= l_TotalSquare)
+	{
+		printf("8\n");
+		l_SquareZone.push_back(GetSquare(p_ID + l_TotalSquareWidth + 1)); ///< Right Bottom
+	}
+
+	return l_SquareZone;
+}
+
 Case* Map::GetCase(uint16 p_ID) const
 {
 	return m_ListCase[p_ID];
@@ -89,5 +144,7 @@ bool Map::InitializeMap(const std::string & p_FileName)
 		m_ListCase.push_back(l_Case);
 		m_MapListCase[l_DrawingSquareID].push_back(l_Case);
 	}
+	fclose(l_File);
+
 	return true;
 }
