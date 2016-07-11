@@ -1,4 +1,5 @@
 #include <cstdio>
+#include <cmath>
 #include "Map.hpp"
 
 Map::Map()
@@ -21,50 +22,52 @@ std::vector<Case*> Map::GetSquare(uint16 p_ID)
 std::vector<std::vector<Case*>> Map::GetSquareZone(uint16 p_ID)
 {
 	std::vector<std::vector<Case*>> l_SquareZone;
-	uint16 l_TotalSquareWidth = m_SizeX / SIZE_DRAWING_SQUARE;
-	uint16 l_TotalSquareHeight = m_SizeY / SIZE_DRAWING_SQUARE;
+	uint16 l_TotalSquareWidth = ceil((float)m_SizeX / SIZE_DRAWING_SQUARE);
+	uint16 l_TotalSquareHeight = ceil((float)m_SizeY / SIZE_DRAWING_SQUARE);
 	uint16 l_TotalSquare = l_TotalSquareWidth * l_TotalSquareHeight;
 
 	l_SquareZone.push_back(GetSquare(p_ID));
-	if (p_ID - l_TotalSquareWidth >= 0)
+	uint16 l_IDReal = p_ID + 1;
+	printf("--> ID = %d, %d, %d, %d\n", p_ID, l_TotalSquareWidth, l_TotalSquareHeight, m_SizeY);
+	if (l_IDReal - l_TotalSquareWidth > 0)
 	{
 		printf("1\n");
 		l_SquareZone.push_back(GetSquare(p_ID - l_TotalSquareWidth)); ///< Top Center
 	}
-	if (p_ID + l_TotalSquareWidth <= l_TotalSquare)
+	if (l_IDReal + l_TotalSquareWidth <= l_TotalSquare)
 	{
 		printf("2\n");
 		l_SquareZone.push_back(GetSquare(p_ID + l_TotalSquareWidth)); ///< Bottom Center
 	}
 
-	if (p_ID % l_TotalSquareWidth > 1)
+	if ((l_IDReal - 1) % l_TotalSquareWidth > 0)
 	{
 		printf("3\n");
 		l_SquareZone.push_back(GetSquare(p_ID - 1)); ///< Left Center
 	}
-	if (p_ID % l_TotalSquareWidth < l_TotalSquareHeight)
+	if (l_IDReal % l_TotalSquareWidth > 0)
 	{
 		printf("4\n");
 		l_SquareZone.push_back(GetSquare(p_ID + 1)); ///< right Center
 	}
 
-	if (p_ID % l_TotalSquareWidth > 1 && (p_ID - l_TotalSquareWidth - 1 >= 0))
+	if ((l_IDReal - 1) % l_TotalSquareWidth > 0 && (l_IDReal - l_TotalSquareWidth - 1 >= 0))
 	{
 		printf("5\n");
 		l_SquareZone.push_back(GetSquare(p_ID - l_TotalSquareWidth - 1)); ///< Left Top
 	}
-	if (p_ID % l_TotalSquareWidth < l_TotalSquareHeight)
+	if (l_IDReal % l_TotalSquareWidth > 0 && (l_IDReal - l_TotalSquareWidth - 1 >= 0))
 	{
 		printf("6\n");
 		l_SquareZone.push_back(GetSquare(p_ID - l_TotalSquareWidth + 1)); ///< Right Top
 	}
 
-	if (p_ID + l_TotalSquareWidth <= l_TotalSquare && p_ID % l_TotalSquareWidth > 1)
+	if (l_IDReal + l_TotalSquareWidth <= l_TotalSquare && (l_IDReal - 1) % l_TotalSquareWidth > 0)
 	{
 		printf("7\n");
 		l_SquareZone.push_back(GetSquare(p_ID + l_TotalSquareWidth - 1)); ///< Left Bottom
 	}
-	if (p_ID + 1 + l_TotalSquareWidth <= l_TotalSquare)
+	if (l_IDReal % l_TotalSquareWidth > 0 && l_IDReal + l_TotalSquareWidth <= l_TotalSquare)
 	{
 		printf("8\n");
 		l_SquareZone.push_back(GetSquare(p_ID + l_TotalSquareWidth + 1)); ///< Right Bottom
@@ -104,11 +107,12 @@ uint16 Map::GetSquareID(uint16 p_X, uint16 p_Y) const
 	uint16 l_DrawingSquareID = 0;
 
 	/// Total square width
-	uint16 l_TotalSquareWidth = m_SizeX / SIZE_DRAWING_SQUARE;
+	uint16 l_TotalSquareWidth = ceil((float)m_SizeX / SIZE_DRAWING_SQUARE);
 
-	uint16 l_XSquare = p_X / SIZE_DRAWING_SQUARE;
-	uint16 l_YSquare = p_Y / SIZE_DRAWING_SQUARE;
+	uint16 l_XSquare = ceil(p_X / SIZE_DRAWING_SQUARE);
+	uint16 l_YSquare = ceil(p_Y / SIZE_DRAWING_SQUARE);
 
+	printf("Calc %d %d %d", l_TotalSquareWidth, l_YSquare, l_XSquare);
 	return (l_TotalSquareWidth * l_YSquare) + l_XSquare;
 }
 

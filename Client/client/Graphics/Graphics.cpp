@@ -53,8 +53,8 @@ void Graphics::DrawMap()
 		return;
 
 	Map* l_Map = m_MapManager->GetActualMap();
-	std::vector<std::vector<Case*>> l_SquareZone = l_Map->GetSquareZone(l_Map->GetSquareID(10, 10));
-	printf("Square Acutal = %d\n", l_Map->GetSquareID(4, 9));
+	std::vector<std::vector<Case*>> l_SquareZone = l_Map->GetSquareZone(l_Map->GetSquareID(0, 3));
+	printf("Square Acutal = %d\n", l_Map->GetSquareID(0, 3));
 	if (l_SquareZone.empty())
 		return;
 	/// First Level
