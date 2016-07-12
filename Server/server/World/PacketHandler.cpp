@@ -1,9 +1,9 @@
 #include "PacketHandler.hpp"
 
-PacketHandler::PacketHandler()
+PacketHandler::PacketHandler(SqlManager *p_SqlManager) :
+    m_SqlManager(p_SqlManager)
 {
 }
-
 
 PacketHandler::~PacketHandler()
 {
@@ -16,6 +16,9 @@ void PacketHandler::LoadPacketHandlerMap()
 
 void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
 {
+    if (m_SqlManager == nullptr)
+        return;
+
 	std::string l_Login;
 	std::string l_Password;
 	p_Packet >> l_Login;
@@ -23,11 +26,21 @@ void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldS
 
 	if (g_Config->IsPositiveValue("LoginDebug"))
 	{
-		p_WorldSocket->SendAuthResponse(0);
+		p_WorldSocket->SendAuthResponse(1);
 		return;
 	}
-	/// TO-DO
-	/// Check Auth
+
+    uint32 l_Id = m_SqlManager->GetIDLogin(l_Login, l_Password);
+    if (!l_Id)
+    {
+        p_WorldSocket->SendAuthResponse(0); ///< Auth Failed
+        return;
+    }
+    /// Auth Success
+    p_WorldSocket->SendAuthResponse(1); ///< Auth Success
+
+    /// Creation Player
+
 }
 
 void PacketHandler::OperatePacket(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
