@@ -21,6 +21,10 @@ void PacketHandler::HandleConnexion(WorldPacket &p_Packet)
 
 	p_Packet >> l_Status;
 	printf("Auth Status: %d\n", l_Status);
+    if (!l_Status)
+        printf("Auth Failed\n");
+    else
+        printf("Auth Success\n");
 	m_MapManager->LoadMap(0);
 }
 

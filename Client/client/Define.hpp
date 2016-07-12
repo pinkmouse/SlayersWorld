@@ -5,7 +5,7 @@
 #define MAX_TILE_LEVEL 4
 #define TILE_SIZE 16
 #define TILE_FOLDER "tiles/"
-#define SIZE_DRAWING_SQUARE 3
+#define SIZE_DRAWING_SQUARE 6
 
 #define MAP_FOLDER "map/"
 #define NAME_WINDOW "Slayers World"
