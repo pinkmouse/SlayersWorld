@@ -159,6 +159,8 @@
     <ClInclude Include="Map\Case.hpp" />
     <ClInclude Include="Global.hpp" />
     <ClInclude Include="Map\MapManager.hpp" />
+    <ClInclude Include="Entities\Unit.hpp" />
+    <ClInclude Include="Entities\Player.hpp" />
     <ClInclude Include="World\SqlManager.hpp" />
     <ClInclude Include="World\ConfigHandler.hpp" />
     <ClInclude Include="Define.hpp" />
@@ -173,13 +175,15 @@
   <ItemGroup>
     <ClCompile Include="Map\Case.cpp" />
     <ClCompile Include="Map\MapManager.cpp" />
+    <ClCompile Include="Entities\Unit.cpp" />
+    <ClCompile Include="Entities\Player.cpp" />
+    <ClCompile Include="World\PacketHandler.cpp" />
     <ClCompile Include="World\SqlManager.cpp" />
     <ClCompile Include="World\ConfigHandler.cpp" />
     <ClCompile Include="Map\Map.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">../stdafx.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">../stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="World\PacketHandler.cpp" />
     <ClCompile Include="server.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

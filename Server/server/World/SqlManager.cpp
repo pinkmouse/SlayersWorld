@@ -36,3 +36,36 @@ int32 SqlManager::GetIDLogin(std::string p_Login, std::string p_Password)
     mysql_free_result(l_Result);
     return l_ID;
 }
+
+Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
+{
+    std::string l_Query = "SELECT characterID, name, level, skinID, mapID, posX, posY FROM characters WHERE accountID = '" + std::to_string(p_AccountID) + "'";
+    mysql_query(&m_Mysql, l_Query.c_str());
+
+    uint32 l_ID = 0;
+    std::string l_Name = "";
+    uint8 l_Lvl = 0;
+    uint8 l_SkinID = 0;
+    uint16 l_MapID = 0;
+    uint32 l_PosX = 0;
+    uint32 l_PosY = 0;
+
+    MYSQL_RES *l_Result = NULL;
+    MYSQL_ROW l_Row;
+
+    l_Result = mysql_use_result(&m_Mysql);
+    while ((l_Row = mysql_fetch_row(l_Result)))
+    {
+        l_ID = atoi(l_Row[0]);
+        l_Name = std::string(l_Row[1]);
+        l_Lvl = atoi(l_Row[2]);
+        l_SkinID = atoi(l_Row[3]);
+        l_MapID = atoi(l_Row[4]);
+        l_PosX = atoi(l_Row[5]);
+        l_PosY = atoi(l_Row[6]);
+    }
+    mysql_free_result(l_Result);
+
+    Player* l_Player = new Player(l_ID, l_Name, l_Lvl, l_SkinID, l_MapID, l_PosX, l_PosY);
+    return l_Player;
+}
