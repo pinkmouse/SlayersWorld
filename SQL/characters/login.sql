@@ -1,0 +1,10 @@
+CREATE TABLE `login` (
+	`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`login` VARCHAR(50) NOT NULL,
+	`password` VARCHAR(50) NOT NULL,
+	PRIMARY KEY (`id`)
+)
+COLLATE='utf8_general_ci'
+ENGINE=InnoDB
+AUTO_INCREMENT=2
+;
