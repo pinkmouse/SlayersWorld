@@ -1,7 +1,8 @@
 #include "PacketHandler.hpp"
 
-PacketHandler::PacketHandler(SqlManager *p_SqlManager) :
-    m_SqlManager(p_SqlManager)
+PacketHandler::PacketHandler(SqlManager* p_SqlManager, MapManager* p_MapManager) :
+    m_SqlManager(p_SqlManager),
+    m_MapManager(p_MapManager)
 {
 }
 
@@ -41,6 +42,22 @@ void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldS
 
     /// Creation Player
     Player* l_Player = m_SqlManager->GetNewPlayer(l_Id);
+    Map* l_Map = m_MapManager->GetMap(l_Player->GetMapID());
+
+    if (l_Player == nullptr || l_Map == nullptr)
+    {
+        printf("Failed load player");
+        if (l_Player != nullptr)
+            printf(": Map = %d", l_Player->GetMapID());
+        printf("\n");
+        return;
+    }
+    l_Player->SetSession(p_WorldSocket);
+    l_Player->SetMap(l_Map);
+    printf("Load Player success\n");
+
+    /// Send to Player
+    p_WorldSocket->SendPlayerCreate(l_Player->GetID(), l_Player->GetSkinID(), l_Player->GetMapID(), l_Player->GetPosX(), l_Player->GetPosY());
 }
 
 void PacketHandler::OperatePacket(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)

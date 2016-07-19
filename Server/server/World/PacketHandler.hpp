@@ -6,11 +6,12 @@
 #include "WorldSocket.hpp"
 #include "SqlManager.hpp"
 #include "../Global.hpp"
+#include "../Map/MapManager.hpp"
 
 class PacketHandler
 {
 public:
-    PacketHandler(SqlManager*);
+    PacketHandler(SqlManager*, MapManager*);
     ~PacketHandler();
     void LoadPacketHandlerMap();
 
@@ -21,6 +22,7 @@ private:
     using m_Func = void(PacketHandler::*)(WorldPacket &, WorldSocket*);
 
     std::map<uint8, m_Func> m_PacketHandleMap;
-    SqlManager *m_SqlManager;
+    SqlManager* m_SqlManager;
+    MapManager* m_MapManager;
 };
 

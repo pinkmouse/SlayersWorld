@@ -44,6 +44,11 @@ uint8 Unit::GetSkinID() const
     return m_SkinID;
 }
 
+Map* Unit::GetMap() const
+{
+    return m_Map;
+}
+
 void Unit::SetName(const std::string & p_Name)
 {
     m_Name = p_Name;
@@ -72,4 +77,9 @@ void Unit::SetPosX(const uint32 & p_PosX)
 void Unit::SetPoxY(const uint32 & p_PosY)
 {
     m_PosY = p_PosY;
+}
+
+void Unit::SetMap(Map* p_Map)
+{
+    m_Map = p_Map;
 }

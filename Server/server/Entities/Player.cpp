@@ -10,8 +10,18 @@ Player::Player(int32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_SkinID, ui
     m_MapID = p_MapID;
     m_PosX = p_PosX;
     m_PosY = p_PosY;
+    m_Session = nullptr;
 }
 
+WorldSocket* Player::GetSession() const
+{
+    return m_Session;
+}
+
+void Player::SetSession(WorldSocket* p_Session)
+{
+    m_Session = p_Session;
+}
 
 Player::~Player()
 {

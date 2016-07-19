@@ -6,8 +6,8 @@ World::World()
     : m_Thread(&World::NetworkLoop, this),
     m_Run(true),
     m_SqlManager(new SqlManager),
-    m_PacketHandler(new PacketHandler(m_SqlManager)),
-	m_MapManager(new MapManager)
+	m_MapManager(new MapManager),
+    m_PacketHandler(new PacketHandler(m_SqlManager, m_MapManager))
 {
 	g_Config = new ConfigHandler();
 }
