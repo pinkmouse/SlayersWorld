@@ -53,10 +53,11 @@ void Graphics::DrawMap()
 		return;
 
 	Map* l_Map = m_MapManager->GetActualMap();
-	std::vector<std::vector<Case*>> l_SquareZone = l_Map->GetSquareZone(l_Map->GetSquareID(0, 3));
-	printf("Square Acutal = %d\n", l_Map->GetSquareID(0, 3));
+	std::vector<std::vector<Case*>> l_SquareZone = l_Map->GetSquareZone(l_Map->GetSquareID(m_MapManager->GetPosX() / TILE_SIZE, m_MapManager->GetPosY() / TILE_SIZE));
+	printf("Square Acutal = %d\n", l_Map->GetSquareID(m_MapManager->GetPosX() / TILE_SIZE, m_MapManager->GetPosY() / TILE_SIZE));
 	if (l_SquareZone.empty())
 		return;
+    printf("Draw level 1\n");
 	/// First Level
 	for (std::vector<std::vector<Case*>>::iterator l_It = l_SquareZone.begin(); l_It != l_SquareZone.end(); ++l_It)
 	{
@@ -77,10 +78,10 @@ void Graphics::DrawMap()
 
 void Graphics::UpdateWindow()
 {
-	m_View.setCenter(0.0f, 0.0f);
-	m_Window.setView(m_View);
     while (m_Run)
     {
+        m_View.setCenter((float)m_MapManager->GetPosX(), (float)m_MapManager->GetPosY());
+        m_Window.setView(m_View);
         Clear();
         DrawMap();
         Display();

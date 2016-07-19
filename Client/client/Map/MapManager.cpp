@@ -5,6 +5,8 @@
 MapManager::MapManager() :
 	m_ActualMap(nullptr)
 {
+    m_PosX = 0;
+    m_PosY = 0;
 }
 
 
@@ -12,10 +14,12 @@ MapManager::~MapManager()
 {
 }
 
-void MapManager::LoadMap(uint8 m_MapID)
+bool MapManager::LoadMap(uint16 m_MapID)
 {
 	m_ActualMap = new Map();
-	m_ActualMap->InitializeMap(m_MapsPath[0]);
+    if (!m_ActualMap->InitializeMap(m_MapsPath[0]))
+        return false;
+    return true;
 }
 
 Map* MapManager::GetActualMap() const
@@ -37,4 +41,25 @@ bool  MapManager::HasMap()
 		return false;
 
 	return true;
+}
+
+void MapManager::SetPosX(uint32 p_PosX)
+{
+    m_PosX = p_PosX;
+}
+
+void MapManager::SetPosY(uint32 p_PosY)
+{
+    m_PosY = p_PosY;
+}
+
+uint32 MapManager::GetPosX() const
+{
+    return m_PosX;
+}
+
+uint32 MapManager::GetPosY() const
+{
+    return m_PosY;
+
 }
