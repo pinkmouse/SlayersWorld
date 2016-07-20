@@ -7,6 +7,7 @@
 #include <SFML/Graphics/View.hpp>
 #include "../Map/MapManager.hpp"
 #include "TileSet.hpp"
+#include "SkinsManager.hpp"
 
 class Graphics
 {
@@ -29,6 +30,7 @@ private:
 	sf::Thread m_ThreadDraw;
 	MapManager* m_MapManager;
 	TileSet* m_TileSet;
+    SkinsManager* m_SkinsManager;
     bool m_Run;
 };
 

@@ -5,6 +5,7 @@
 #include <string>
 #include <map>
 #include <vector>
+#include "../Entities/Player.hpp"
 
 class Map
 {
@@ -15,11 +16,14 @@ public:
 	bool IsValidMap();
 	
 	uint16 GetSquareID(uint16, uint16) const;
-	std::vector<Case*> Map::GetSquare(uint16);
+	std::vector<Case*> GetSquare(uint16);
 	std::vector<std::vector<Case*>> Map::GetSquareZone(uint16);
 	Case* GetCase(uint16) const;
 	uint16 GetSizeX() const;
 	uint16 GetSizeY() const;
+
+    void AddPlayer(Player*);
+    std::vector<Player*> GetPlayersInRay(uint32, uint32);
 
 private:
 	uint16 m_ID;
@@ -28,6 +32,8 @@ private:
 
 	std::vector<Case*> m_ListCase;
 	std::map<uint16, std::vector<Case*>>	m_MapListCase;
+
+    std::vector<Player*> m_ListPlayerZone;
 
 	struct          t_MapParam
 	{

@@ -14,9 +14,32 @@ Map::~Map()
 {
 }
 
+void Map::AddPlayer(Player* p_Player)
+{
+    /// Check if already exist in list
+    std::vector<Player*>::iterator l_It = std::find(m_ListPlayerZone.begin(), m_ListPlayerZone.end(), p_Player);
+
+    if (l_It == m_ListPlayerZone.end())
+        m_ListPlayerZone.push_back(p_Player);
+}
+
 std::vector<Case*> Map::GetSquare(uint16 p_ID)
 {
 	return m_MapListCase[p_ID];
+}
+
+std::vector<Player*> Map::GetPlayersInRay(uint32 p_PosX, uint32 p_PosY)
+{
+    for (std::vector<Player*>::iterator l_It = m_ListPlayerZone.begin(); l_It != m_ListPlayerZone.end();)
+    {
+        if ((*l_It)->GetPosX() > p_PosX + (PLAYER_RAY * TILE_SIZE) || (*l_It)->GetPosX() < p_PosX - (PLAYER_RAY * TILE_SIZE))
+            m_ListPlayerZone.erase(l_It);
+        else if ((*l_It)->GetPosY() > p_PosY + (PLAYER_RAY * TILE_SIZE) || (*l_It)->GetPosY() < p_PosY - (PLAYER_RAY * TILE_SIZE))
+            m_ListPlayerZone.erase(l_It);
+        else
+            ++l_It;
+    }
+    return m_ListPlayerZone;
 }
 
 std::vector<std::vector<Case*>> Map::GetSquareZone(uint16 p_ID)

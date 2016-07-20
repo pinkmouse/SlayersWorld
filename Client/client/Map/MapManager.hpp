@@ -5,6 +5,7 @@
 #include <vector>
 #include "../Define.hpp"
 #include "../Graphics/TileSprite.hpp"
+#include "../Entities/Player.hpp"
 
 class MapManager
 {
@@ -21,10 +22,14 @@ public:
     uint32 GetPosX() const;
     uint32 GetPosY() const;
 
+    void SetMainPlayer(Player*);
+    Player* GetMainPlayer();
+
 private:
 	Map* m_ActualMap;
+    Player* m_MainPlayer;
     uint32 m_PosX;
     uint32 m_PosY;
-	std::map <uint16, std::string> m_MapsPath;
+	std::map<uint16, std::string> m_MapsPath;
 };
 

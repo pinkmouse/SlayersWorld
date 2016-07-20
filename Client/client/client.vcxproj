@@ -160,6 +160,8 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Entities\Player.hpp" />
+    <ClInclude Include="Entities\Unit.hpp" />
     <ClInclude Include="Map\Case.hpp" />
     <ClInclude Include="Define.hpp" />
     <ClInclude Include="Graphics\Graphics.hpp" />
@@ -167,6 +169,8 @@
     <ClInclude Include="Map\Map.hpp" />
     <ClInclude Include="Graphics\TileSet.hpp" />
     <ClInclude Include="Graphics\TileSprite.hpp" />
+    <ClInclude Include="Graphics\SkinsManager.hpp" />
+    <ClInclude Include="Graphics\SkinSprite.hpp" />
     <ClInclude Include="World\WorldPacket.hpp" />
     <ClInclude Include="World\PacketHandler.hpp" />
     <ClInclude Include="Socket\Socket.hpp" />
@@ -176,6 +180,8 @@
     <ClInclude Include="World\World.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Entities\Player.cpp" />
+    <ClCompile Include="Entities\Unit.cpp" />
     <ClCompile Include="Map\Case.cpp" />
     <ClCompile Include="client.cpp" />
     <ClCompile Include="Graphics\Graphics.cpp" />
@@ -183,6 +189,8 @@
     <ClCompile Include="Map\Map.cpp" />
     <ClCompile Include="Graphics\TileSet.cpp" />
     <ClCompile Include="Graphics\TileSprite.cpp" />
+    <ClCompile Include="Graphics\SkinsManager.cpp" />
+    <ClCompile Include="Graphics\SkinSprite.cpp" />
     <ClCompile Include="World\WorldPacket.cpp" />
     <ClCompile Include="World\PacketHandler.cpp" />
     <ClCompile Include="Socket\Socket.cpp" />

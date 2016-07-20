@@ -28,7 +28,7 @@ bool World::InitializeConnection()
 
 bool World::InitializeWindow()
 {
-	m_Graphics->CreateWindow(640, 480, 0.5f);
+	m_Graphics->CreateWindow(X_WINDOW, Y_WINDOW, 0.5f);
 	return true;
 }
 

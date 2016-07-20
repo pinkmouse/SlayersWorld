@@ -7,11 +7,22 @@ MapManager::MapManager() :
 {
     m_PosX = 0;
     m_PosY = 0;
+    m_MainPlayer = nullptr;
 }
 
 
 MapManager::~MapManager()
 {
+}
+
+void MapManager::SetMainPlayer(Player* p_Player)
+{
+    m_MainPlayer = p_Player;
+}
+
+Player* MapManager::GetMainPlayer()
+{
+    return m_MainPlayer;
 }
 
 bool MapManager::LoadMap(uint16 m_MapID)

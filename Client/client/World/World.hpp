@@ -23,6 +23,7 @@ private:
 	Socket* m_Socket;
 	Graphics* m_Graphics;
 	MapManager* m_MapManager;
+
 	bool m_Run;
 
 	PacketHandler* m_PacketHandler;
