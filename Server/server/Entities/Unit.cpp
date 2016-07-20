@@ -44,6 +44,11 @@ uint8 Unit::GetSkinID() const
     return m_SkinID;
 }
 
+uint8 Unit::GetOrientation() const
+{
+    return m_Orientation;
+}
+
 Map* Unit::GetMap() const
 {
     return m_Map;
@@ -78,6 +83,12 @@ void Unit::SetPoxY(const uint32 & p_PosY)
 {
     m_PosY = p_PosY;
 }
+
+void Unit::SetOrientation(const uint8 & p_Orientation)
+{
+    m_Orientation = p_Orientation;
+}
+
 
 void Unit::SetMap(Map* p_Map)
 {

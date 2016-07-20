@@ -13,3 +13,17 @@ typedef unsigned char uint8;
 typedef unsigned short uint16;
 typedef unsigned int uint32;
 typedef unsigned long long uint64;
+
+enum Orientation
+{
+    Top = 0,
+    Right = 1,
+    Left = 2,
+    Bottom = 3
+};
+
+enum Action
+{
+    Neutral = 0,
+    Attack = 1
+};

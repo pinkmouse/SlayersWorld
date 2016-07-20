@@ -15,6 +15,7 @@ public:
     uint32 GetPosY() const;
     uint8 GetLevel() const;
     uint8 GetSkinID() const;
+    uint8 GetOrientation() const;
     Map* GetMap() const;
 
     void SetName(const std::string &);
@@ -23,6 +24,7 @@ public:
     void SetPosX(const uint32 &);
     void SetPoxY(const uint32 &);
     void SetSkinID(const uint8 &);
+    void SetOrientation(const uint8 &);
     void SetMap(Map*);
 
 protected:
@@ -32,6 +34,7 @@ protected:
     uint32 m_PosX;
     uint32 m_PosY;
     uint8 m_SkinID;
+    uint8 m_Orientation;
 
     Map* m_Map;
 };
