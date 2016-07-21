@@ -51,48 +51,48 @@ std::vector<std::vector<Case*>> Map::GetSquareZone(uint16 p_ID)
 
 	l_SquareZone.push_back(GetSquare(p_ID));
 	uint16 l_IDReal = p_ID + 1;
-	printf("--> ID = %d, %d, %d, %d\n", p_ID, l_TotalSquareWidth, l_TotalSquareHeight, m_SizeY);
+	//printf("--> ID = %d, %d, %d, %d\n", p_ID, l_TotalSquareWidth, l_TotalSquareHeight, m_SizeY);
 	if (l_IDReal - l_TotalSquareWidth > 0)
 	{
-		printf("1\n");
+		//printf("1\n");
 		l_SquareZone.push_back(GetSquare(p_ID - l_TotalSquareWidth)); ///< Top Center
 	}
 	if (l_IDReal + l_TotalSquareWidth <= l_TotalSquare)
 	{
-		printf("2\n");
+		//printf("2\n");
 		l_SquareZone.push_back(GetSquare(p_ID + l_TotalSquareWidth)); ///< Bottom Center
 	}
 
 	if ((l_IDReal - 1) % l_TotalSquareWidth > 0)
 	{
-		printf("3\n");
+		//printf("3\n");
 		l_SquareZone.push_back(GetSquare(p_ID - 1)); ///< Left Center
 	}
 	if (l_IDReal % l_TotalSquareWidth > 0)
 	{
-		printf("4\n");
+		//printf("4\n");
 		l_SquareZone.push_back(GetSquare(p_ID + 1)); ///< right Center
 	}
 
 	if ((l_IDReal - 1) % l_TotalSquareWidth > 0 && (l_IDReal - l_TotalSquareWidth - 1 >= 0))
 	{
-		printf("5\n");
+		//printf("5\n");
 		l_SquareZone.push_back(GetSquare(p_ID - l_TotalSquareWidth - 1)); ///< Left Top
 	}
 	if (l_IDReal % l_TotalSquareWidth > 0 && (l_IDReal - l_TotalSquareWidth - 1 >= 0))
 	{
-		printf("6\n");
+		//printf("6\n");
 		l_SquareZone.push_back(GetSquare(p_ID - l_TotalSquareWidth + 1)); ///< Right Top
 	}
 
 	if (l_IDReal + l_TotalSquareWidth <= l_TotalSquare && (l_IDReal - 1) % l_TotalSquareWidth > 0)
 	{
-		printf("7\n");
+		//printf("7\n");
 		l_SquareZone.push_back(GetSquare(p_ID + l_TotalSquareWidth - 1)); ///< Left Bottom
 	}
 	if (l_IDReal % l_TotalSquareWidth > 0 && l_IDReal + l_TotalSquareWidth <= l_TotalSquare)
 	{
-		printf("8\n");
+		//printf("8\n");
 		l_SquareZone.push_back(GetSquare(p_ID + l_TotalSquareWidth + 1)); ///< Right Bottom
 	}
 
@@ -135,7 +135,7 @@ uint16 Map::GetSquareID(uint16 p_X, uint16 p_Y) const
 	uint16 l_XSquare = ceil(p_X / SIZE_DRAWING_SQUARE);
 	uint16 l_YSquare = ceil(p_Y / SIZE_DRAWING_SQUARE);
 
-	printf("Calc %d %d %d", l_TotalSquareWidth, l_YSquare, l_XSquare);
+	//printf("Calc %d %d %d", l_TotalSquareWidth, l_YSquare, l_XSquare);
 	return (l_TotalSquareWidth * l_YSquare) + l_XSquare;
 }
 

@@ -2,7 +2,8 @@
 
 
 
-MapManager::MapManager() :
+MapManager::MapManager(Events* p_Events) :
+    m_Events(p_Events),
 	m_ActualMap(nullptr)
 {
     m_PosX = 0;
@@ -18,6 +19,9 @@ MapManager::~MapManager()
 void MapManager::SetMainPlayer(Player* p_Player)
 {
     m_MainPlayer = p_Player;
+
+    /// When game is launch, set orientation display
+    m_Events->SetActualOrientation((Orientation)p_Player->GetOrientation());
 }
 
 Player* MapManager::GetMainPlayer()

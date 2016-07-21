@@ -5,8 +5,9 @@
 World::World()
 {
 	m_Socket = new Socket();
-	m_MapManager = new MapManager();
-	m_Graphics = new Graphics(m_MapManager);
+    m_Events = new Events();
+	m_MapManager = new MapManager(m_Events);
+	m_Graphics = new Graphics(m_MapManager, m_Events);
 	m_PacketHandler = new PacketHandler(m_MapManager);
 	m_Run = true;
 }

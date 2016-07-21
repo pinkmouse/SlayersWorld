@@ -8,11 +8,12 @@
 #include "../Map/MapManager.hpp"
 #include "TileSet.hpp"
 #include "SkinsManager.hpp"
+#include "../World/Events/Events.hpp"
 
 class Graphics
 {
 public:
-	Graphics(MapManager*);
+	Graphics(MapManager*, Events*);
 	~Graphics();
 	void CreateWindow(uint32, uint32, float);
 	void UpdateWindow();
@@ -25,12 +26,13 @@ public:
 	bool WindowIsOpen() const;
 
 private:
-	Window m_Window;
-	sf::View m_View;
-	sf::Thread m_ThreadDraw;
-	MapManager* m_MapManager;
-	TileSet* m_TileSet;
-    SkinsManager* m_SkinsManager;
-    bool m_Run;
+	Window          m_Window;
+	sf::View        m_View;
+	sf::Thread      m_ThreadDraw;
+	MapManager*     m_MapManager;
+	TileSet*        m_TileSet;
+    SkinsManager*   m_SkinsManager;
+    Events*         m_Events;
+    bool            m_Run;
 };
 

@@ -1,7 +1,8 @@
 #include "Graphics.hpp"
 
-Graphics::Graphics(MapManager* p_MapManager) :
+Graphics::Graphics(MapManager* p_MapManager, Events* p_Events) :
 	m_MapManager(p_MapManager),
+    m_Events(p_Events),
 	m_ThreadDraw(&Graphics::UpdateWindow, this),
     m_Run(true)
 {
@@ -35,14 +36,29 @@ void Graphics::Run()
 
 void Graphics::CheckEvent()
 {
-	sf::Event event;
-	while (m_Window.pollEvent(event))
+	sf::Event l_Event;
+	while (m_Window.pollEvent(l_Event))
 	{
-		// Request for closing the window
-		if (event.type == sf::Event::Closed)
-		{
-			m_Window.close();
-		}
+        switch(l_Event.type)
+        {
+            case sf::Event::Closed: ///< Request for closing the window
+                m_Window.close();
+                break;
+            case sf::Event::KeyPressed: ///< Key Press
+                m_Events->NewKeyPressed(l_Event.key.code);
+                break;
+            case sf::Event::KeyReleased: ///< Key Release
+                m_Events->KeyRelease(l_Event.key.code);
+                break;
+            case sf::Event::Resized: ///< Resize Window
+                /*
+                std::cout << "new width: " << event.size.width << std::endl;
+                std::cout << "new height: " << event.size.height << std::endl;
+                */
+                break;
+            default:
+                break;
+        }
 	}
 }
 
@@ -60,10 +76,9 @@ void Graphics::DrawMap()
     Player* l_MainPlayer = m_MapManager->GetMainPlayer();
 
 	std::vector<std::vector<Case*>> l_SquareZone = l_Map->GetSquareZone(l_Map->GetSquareID(m_MapManager->GetPosX() / TILE_SIZE, m_MapManager->GetPosY() / TILE_SIZE));
-	printf("Square Acutal = %d\n", l_Map->GetSquareID(m_MapManager->GetPosX() / TILE_SIZE, m_MapManager->GetPosY() / TILE_SIZE));
+	//printf("Square Acutal = %d\n", l_Map->GetSquareID(m_MapManager->GetPosX() / TILE_SIZE, m_MapManager->GetPosY() / TILE_SIZE));
 	if (l_SquareZone.empty())
 		return;
-    printf("Draw level 1\n");
 
     /// First two Level
 	for (std::vector<std::vector<Case*>>::iterator l_It = l_SquareZone.begin(); l_It != l_SquareZone.end(); ++l_It)
@@ -87,7 +102,8 @@ void Graphics::DrawMap()
         /// Draw Entities
         if (l_MainPlayer != nullptr)
         {
-            SkinSprite* l_SkinSprite = m_SkinsManager->GetSkinSprite(l_MainPlayer->GetSkinID(), 0);
+            uint8 l_SpriteNb = (m_Events->GetMovementHandler()->GetActualOrientation() * MAX_MOVEMENT_POSITION) + m_Events->GetMovementHandler()->GetMovementPosition();
+            SkinSprite* l_SkinSprite = m_SkinsManager->GetSkinSprite(l_MainPlayer->GetSkinID(), l_SpriteNb);
             l_SkinSprite->setPosition((float)m_MapManager->GetPosX(), (float)m_MapManager->GetPosY());
             m_Window.draw(*l_SkinSprite);
         }

@@ -6,11 +6,12 @@
 #include "../Define.hpp"
 #include "../Graphics/TileSprite.hpp"
 #include "../Entities/Player.hpp"
+#include "../World/Events/Events.hpp"
 
 class MapManager
 {
 public:
-	MapManager();
+	MapManager(Events*);
 	~MapManager();
 	void InitializeMaps();
     bool LoadMap(uint16);
@@ -31,5 +32,7 @@ private:
     uint32 m_PosX;
     uint32 m_PosY;
 	std::map<uint16, std::string> m_MapsPath;
+
+    Events* m_Events;
 };
 
