@@ -9,5 +9,6 @@ public:
 	Socket();
 	~Socket();
 	bool Connection();
-	void SendAuth(const std::string & l_Login, const std::string & l_Password);
+	void SendAuth(const std::string &, const std::string &);
+    void SendGoDirection(const uint8&);
 };

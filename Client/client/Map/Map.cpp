@@ -14,6 +14,14 @@ Map::~Map()
 {
 }
 
+void Map::Update(sf::Time p_Diff)
+{
+    for (Player* l_Player : m_ListPlayerZone)
+    {
+        l_Player->Update(p_Diff);
+    }
+}
+
 void Map::AddPlayer(Player* p_Player)
 {
     /// Check if already exist in list
@@ -21,6 +29,13 @@ void Map::AddPlayer(Player* p_Player)
 
     if (l_It == m_ListPlayerZone.end())
         m_ListPlayerZone.push_back(p_Player);
+}
+
+void Map::RemovePlayer(Player* p_Player)
+{
+    std::vector<Player*>::iterator l_It = std::find(m_ListPlayerZone.begin(), m_ListPlayerZone.end(), p_Player);
+    if (l_It != m_ListPlayerZone.end())
+        m_ListPlayerZone.erase(l_It);
 }
 
 std::vector<Case*> Map::GetSquare(uint16 p_ID)

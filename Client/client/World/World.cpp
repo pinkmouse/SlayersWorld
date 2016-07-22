@@ -1,10 +1,11 @@
 #include "World.hpp"
+#include "../Global.hpp"
 #include "WorldPacket.hpp"
 #include <vector>
 
 World::World()
 {
-	m_Socket = new Socket();
+	g_Socket = new Socket();
     m_Events = new Events();
 	m_MapManager = new MapManager(m_Events);
 	m_Graphics = new Graphics(m_MapManager, m_Events);
@@ -18,12 +19,12 @@ World::~World()
 
 bool World::InitializeConnection()
 {
-	if (!m_Socket->Connection())
+	if (!g_Socket->Connection())
 	{
 		printf("Error Connection...");
 		return false;
 	}
-	m_Socket->setBlocking(false);
+    g_Socket->setBlocking(false);
 	return true;
 }
 
@@ -54,7 +55,7 @@ void World::Login(char** p_Argv)
 	std::string l_Login(p_Argv[1]);
 	std::string l_Password(p_Argv[2]);
 
-	m_Socket->SendAuth(l_Login, l_Password);
+    g_Socket->SendAuth(l_Login, l_Password);
 }
 
 void World::Run()
@@ -62,6 +63,8 @@ void World::Run()
 	while (m_Run)
 	{
 		UpdateSocket();
+        m_MapManager->Update(m_Clock.GetDiffPinTime());
+        m_Clock.PinTime();
 		m_Graphics->CheckEvent();
 		if (!m_Graphics->WindowIsOpen())
 			End();
@@ -72,7 +75,7 @@ bool World::UpdateSocket()
 {
 	WorldPacket l_Packet;
 	sf::Socket::Status l_SocketStatus;
-	l_SocketStatus = m_Socket->receive(l_Packet);
+	l_SocketStatus = g_Socket->receive(l_Packet);
 	if (l_SocketStatus == sf::Socket::Status::Done) ///< Reception OK
 		m_PacketHandler->OperatePacket(l_Packet);
 	if (l_SocketStatus == sf::Socket::Status::Disconnected) ///< Disconnecetd
@@ -87,5 +90,5 @@ void World::End()
 {
 	m_Run = false;
 	m_Graphics->End();
-	m_Socket->disconnect();
+    g_Socket->disconnect();
 }

@@ -160,9 +160,11 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Global.hpp" />
+    <ClInclude Include="World\ClockHandler.hpp" />
     <ClInclude Include="Entities\Player.hpp" />
     <ClInclude Include="Entities\Unit.hpp" />
-    <ClInclude Include="World\Events\Movement.hpp" />
+    <ClInclude Include="Entities\MovementHandler.hpp" />
     <ClInclude Include="World\Events\Events.hpp" />
     <ClInclude Include="Map\Case.hpp" />
     <ClInclude Include="Define.hpp" />
@@ -182,9 +184,10 @@
     <ClInclude Include="World\World.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="World\ClockHandler.cpp" />
     <ClCompile Include="Entities\Player.cpp" />
     <ClCompile Include="Entities\Unit.cpp" />
-    <ClCompile Include="World\Events\Movement.cpp" />
+    <ClCompile Include="Entities\MovementHandler.cpp" />
     <ClCompile Include="World\Events\Events.cpp" />
     <ClCompile Include="Map\Case.cpp" />
     <ClCompile Include="client.cpp" />

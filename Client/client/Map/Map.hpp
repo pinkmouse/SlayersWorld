@@ -23,7 +23,11 @@ public:
 	uint16 GetSizeY() const;
 
     void AddPlayer(Player*);
+    void RemovePlayer(Player*);
+
     std::vector<Player*> GetPlayersInRay(uint32, uint32);
+
+    void Update(sf::Time);
 
 private:
 	uint16 m_ID;

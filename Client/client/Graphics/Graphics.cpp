@@ -1,4 +1,5 @@
 #include "Graphics.hpp"
+#include "../Global.hpp"
 
 Graphics::Graphics(MapManager* p_MapManager, Events* p_Events) :
 	m_MapManager(p_MapManager),
@@ -73,7 +74,6 @@ void Graphics::DrawMap()
 		return;
 
 	Map* l_Map = m_MapManager->GetActualMap();
-    Player* l_MainPlayer = m_MapManager->GetMainPlayer();
 
 	std::vector<std::vector<Case*>> l_SquareZone = l_Map->GetSquareZone(l_Map->GetSquareID(m_MapManager->GetPosX() / TILE_SIZE, m_MapManager->GetPosY() / TILE_SIZE));
 	//printf("Square Acutal = %d\n", l_Map->GetSquareID(m_MapManager->GetPosX() / TILE_SIZE, m_MapManager->GetPosY() / TILE_SIZE));
@@ -100,10 +100,10 @@ void Graphics::DrawMap()
 		}
 
         /// Draw Entities
-        if (l_MainPlayer != nullptr)
+        if (g_Player != nullptr)
         {
-            uint8 l_SpriteNb = (m_Events->GetMovementHandler()->GetActualOrientation() * MAX_MOVEMENT_POSITION) + m_Events->GetMovementHandler()->GetMovementPosition();
-            SkinSprite* l_SkinSprite = m_SkinsManager->GetSkinSprite(l_MainPlayer->GetSkinID(), l_SpriteNb);
+            uint8 l_SpriteNb = (g_Player->GetOrientation() * MAX_MOVEMENT_POSITION) + g_Player->GetMovementHandler()->GetMovementPosition();
+            SkinSprite* l_SkinSprite = m_SkinsManager->GetSkinSprite(g_Player->GetSkinID(), l_SpriteNb);
             l_SkinSprite->setPosition((float)m_MapManager->GetPosX(), (float)m_MapManager->GetPosY());
             m_Window.draw(*l_SkinSprite);
         }

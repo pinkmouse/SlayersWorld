@@ -1,5 +1,6 @@
 #include "PacketHandler.hpp"
 #include "../Entities/Player.hpp"
+#include "../Global.hpp"
 
 
 PacketHandler::PacketHandler(MapManager *p_MapManager) :
@@ -53,11 +54,10 @@ void PacketHandler::HandleCreatePlayer(WorldPacket &p_Packet)
     if (!m_MapManager->LoadMap(l_MapID))
         return;
 
-    Player* l_NewPlayer = new Player(l_ID, l_Name, l_Level, l_SkinID, l_MapID, l_PosX, l_PosY, l_Orientation);
+    g_Player = new Player(l_ID, l_Name, l_Level, l_SkinID, l_MapID, l_PosX, l_PosY, l_Orientation);
     m_MapManager->SetPosX(l_PosX);
     m_MapManager->SetPosY(l_PosY);
-    m_MapManager->SetMainPlayer(l_NewPlayer);
-    m_MapManager->GetActualMap()->AddPlayer(l_NewPlayer);
+    m_MapManager->GetActualMap()->AddPlayer(g_Player);
 }
 
 

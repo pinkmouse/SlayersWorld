@@ -7,11 +7,22 @@ Unit::Unit()
     m_MapID = 0;
     m_PosX = 0;
     m_PosY = 0;
+    m_MovementHandler = new MovementHandler();
 }
 
 
 Unit::~Unit()
 {
+}
+
+MovementHandler* Unit::GetMovementHandler()
+{
+    return m_MovementHandler;
+}
+
+void Unit::Update(sf::Time p_Diff)
+{
+    m_MovementHandler->Update(p_Diff);
 }
 
 std::string Unit::GetName() const

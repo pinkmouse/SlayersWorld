@@ -1,5 +1,6 @@
 #include "Socket.hpp"
 
+#include "../Define.hpp"
 #include <SFML/Network/IpAddress.hpp>
 #include "../World/WorldPacket.hpp"
 
@@ -31,4 +32,14 @@ void Socket::SendAuth(const std::string & l_Login, const std::string & l_Passwor
 	packet << l_ID << l_Login << l_Password;
 
 	send(packet);
+}
+
+void Socket::SendGoDirection(const uint8& p_Orientation)
+{
+    WorldPacket packet;
+    uint8 l_ID = 20;
+
+    packet << l_ID << p_Orientation;
+
+    send(packet);
 }

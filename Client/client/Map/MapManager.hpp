@@ -23,8 +23,7 @@ public:
     uint32 GetPosX() const;
     uint32 GetPosY() const;
 
-    void SetMainPlayer(Player*);
-    Player* GetMainPlayer();
+    void Update(sf::Time);
 
 private:
 	Map* m_ActualMap;
@@ -33,6 +32,7 @@ private:
     uint32 m_PosY;
 	std::map<uint16, std::string> m_MapsPath;
 
+    std::vector<Player*> m_ListPlayer;
     Events* m_Events;
 };
 

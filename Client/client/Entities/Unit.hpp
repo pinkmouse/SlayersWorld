@@ -1,5 +1,6 @@
 #pragma once
 #include "../Define.hpp"
+#include "MovementHandler.hpp"
 #include <string>
 
 class Unit
@@ -24,6 +25,10 @@ public:
     void SetSkinID(const uint8 &);
     void SetOrientation(const uint8 &);
 
+    MovementHandler* GetMovementHandler();
+
+    void Update(sf::Time);
+
 protected:
     std::string m_Name;
     uint8 m_Level;
@@ -32,5 +37,6 @@ protected:
     uint32 m_PosY;
     uint8 m_SkinID;
     uint8 m_Orientation;
+    MovementHandler* m_MovementHandler;
 };
 

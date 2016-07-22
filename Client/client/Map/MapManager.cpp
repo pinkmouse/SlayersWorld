@@ -16,17 +16,10 @@ MapManager::~MapManager()
 {
 }
 
-void MapManager::SetMainPlayer(Player* p_Player)
+void MapManager::Update(sf::Time p_Diff)
 {
-    m_MainPlayer = p_Player;
-
-    /// When game is launch, set orientation display
-    m_Events->SetActualOrientation((Orientation)p_Player->GetOrientation());
-}
-
-Player* MapManager::GetMainPlayer()
-{
-    return m_MainPlayer;
+    if (m_ActualMap != nullptr)
+        m_ActualMap->Update(p_Diff);
 }
 
 bool MapManager::LoadMap(uint16 m_MapID)

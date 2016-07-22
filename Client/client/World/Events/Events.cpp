@@ -1,10 +1,8 @@
 #include "Events.hpp"
-
-
+#include "../../Global.hpp"
 
 Events::Events()
 {
-    m_Movement = new Movement();
     m_DirectionMap[sf::Keyboard::Key::Up] = Orientation::Up;
     m_DirectionMap[sf::Keyboard::Key::Down] = Orientation::Down;
     m_DirectionMap[sf::Keyboard::Key::Left] = Orientation::Left;
@@ -16,16 +14,6 @@ Events::~Events()
 {
 }
 
-void Events::SetActualOrientation(Orientation p_Orientation)
-{
-    m_Movement->SetActualOrientation(p_Orientation);
-}
-
-Movement* Events::GetMovementHandler() const
-{
-    return m_Movement;
-}
-
 void Events::KeyRelease(sf::Keyboard::Key p_KeyRealease)
 {
     std::vector<sf::Keyboard::Key>::iterator l_It = std::find(m_KeyPressed.begin(), m_KeyPressed.end(), p_KeyRealease);
@@ -35,11 +23,11 @@ void Events::KeyRelease(sf::Keyboard::Key p_KeyRealease)
 
     if (m_KeyPressed.size() > 0)
     {
-        m_Movement->SetActualOrientation((Orientation)m_DirectionMap[m_KeyPressed.back()]);
+        g_Player->SetOrientation((Orientation)m_DirectionMap[m_KeyPressed.back()]);
     }
     else
     {
-        m_Movement->StopMovement();
+        g_Player->GetMovementHandler()->StopMovement();
     }
 }
 
@@ -62,8 +50,9 @@ void Events::NewKeyPressed(sf::Keyboard::Key p_NewKey)
             if (m_KeyPressed.size() > MAX_KEY_SAVE)
                 m_KeyPressed.erase(m_KeyPressed.begin());
             m_KeyPressed.push_back(p_NewKey);
-            SetActualOrientation((Orientation)m_DirectionMap[p_NewKey]);
-            m_Movement->StartMovement();
+            g_Player->GetMovementHandler()->StartMovement((Orientation)m_DirectionMap[p_NewKey]);
+            g_Player->SetOrientation((Orientation)m_DirectionMap[p_NewKey]);
+            g_Socket->SendGoDirection((Orientation)m_DirectionMap[p_NewKey]);
             break;
         }
         default:
