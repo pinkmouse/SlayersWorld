@@ -29,6 +29,8 @@
 #define NAME_WINDOW "Slayers World"
 
 /// GENERAL
+#define STEP_SIZE 4 /// In pixel
+
 typedef char int8;
 typedef short int16;
 typedef int int32;

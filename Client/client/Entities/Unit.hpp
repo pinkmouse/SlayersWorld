@@ -15,7 +15,7 @@ public:
     uint32 GetPosY() const;
     uint8 GetLevel() const;
     uint8 GetSkinID() const;
-    uint8 GetOrientation() const;
+    Orientation GetOrientation() const;
 
     void SetName(const std::string &);
     void SetLevel(const uint8 &);
@@ -23,7 +23,7 @@ public:
     void SetPosX(const uint32 &);
     void SetPoxY(const uint32 &);
     void SetSkinID(const uint8 &);
-    void SetOrientation(const uint8 &);
+    void SetOrientation(const Orientation &);
 
     MovementHandler* GetMovementHandler();
 
@@ -36,7 +36,7 @@ protected:
     uint32 m_PosX;
     uint32 m_PosY;
     uint8 m_SkinID;
-    uint8 m_Orientation;
+    Orientation m_Orientation;
     MovementHandler* m_MovementHandler;
 };
 

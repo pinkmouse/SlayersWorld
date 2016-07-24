@@ -54,7 +54,7 @@ void PacketHandler::HandleCreatePlayer(WorldPacket &p_Packet)
     if (!m_MapManager->LoadMap(l_MapID))
         return;
 
-    g_Player = new Player(l_ID, l_Name, l_Level, l_SkinID, l_MapID, l_PosX, l_PosY, l_Orientation);
+    g_Player = new Player(l_ID, l_Name, l_Level, l_SkinID, l_MapID, l_PosX, l_PosY, (Orientation)l_Orientation);
     m_MapManager->SetPosX(l_PosX);
     m_MapManager->SetPosY(l_PosY);
     m_MapManager->GetActualMap()->AddPlayer(g_Player);

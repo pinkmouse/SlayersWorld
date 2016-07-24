@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SFML/System/Thread.hpp>
+#include <SFML/System/Mutex.hpp>
 #include <SFML/Graphics/Text.hpp>
 #include "../Define.hpp"
 #include "Window.hpp"
@@ -9,6 +10,7 @@
 #include "TileSet.hpp"
 #include "SkinsManager.hpp"
 #include "../World/Events/Events.hpp"
+#include "../World/ClockHandler.hpp"
 
 class Graphics
 {
@@ -29,10 +31,13 @@ private:
 	Window          m_Window;
 	sf::View        m_View;
 	sf::Thread      m_ThreadDraw;
+    sf::Mutex       m_MutexDraw;
+
 	MapManager*     m_MapManager;
 	TileSet*        m_TileSet;
     SkinsManager*   m_SkinsManager;
     Events*         m_Events;
     bool            m_Run;
+    ClockHandler*   m_Clock;
 };
 

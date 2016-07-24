@@ -4,7 +4,7 @@
 class Player : public Unit
 {
 public:
-    Player(int32, std::string, uint8, uint8, uint16, uint32, uint32, uint8);
+    Player(int32, std::string, uint8, uint8, uint16, uint32, uint32, Orientation);
     ~Player();
     uint32 GetID() const;
 

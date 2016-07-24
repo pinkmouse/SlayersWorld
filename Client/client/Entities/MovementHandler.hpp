@@ -13,8 +13,8 @@ public:
     uint8 GetMovementPosition();
     bool IsInMovement() const;
 
-    Orientation GetActualOrientation() const;
-    void SetActualOrientation(Orientation);
+    Orientation GetOrientation() const;
+    void SetOrientation(Orientation);
 
     void SetPosX(uint32);
     void SetPosY(uint32);
@@ -23,15 +23,17 @@ public:
     uint32 GetPosY() const;
 
     void Update(sf::Time);
+    void UpdateAnimationWalk(sf::Time);
 
 private:
     bool m_InMovement;
     float m_Speed;
     uint8 m_MovementPosition;
-    Orientation m_ActualOrientation;
+    Orientation m_Orientation;
 
     uint32 m_PosX;
     uint32 m_PosY;
-    uint32 m_DiffTimeUpdate;
+    uint32 m_DiffTime;
+    uint32 m_DiffTimeUpdateAnimation;
 };
 

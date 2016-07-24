@@ -9,6 +9,7 @@ Graphics::Graphics(MapManager* p_MapManager, Events* p_Events) :
 {
 	m_TileSet = nullptr;
     m_SkinsManager = nullptr;
+    m_Clock = new ClockHandler();
 }
 
 
@@ -22,6 +23,7 @@ void Graphics::CreateWindow(uint32 p_X, uint32 p_Y, float p_Zoom)
 	m_View = m_Window.getDefaultView();
 	m_View.zoom(p_Zoom);
 	m_Window.setView(m_View);
+    m_Window.setFramerateLimit(120);
 
 	m_TileSet = new TileSet();
 	m_TileSet->BuildSprites();
@@ -75,7 +77,7 @@ void Graphics::DrawMap()
 
 	Map* l_Map = m_MapManager->GetActualMap();
 
-	std::vector<std::vector<Case*>> l_SquareZone = l_Map->GetSquareZone(l_Map->GetSquareID(m_MapManager->GetPosX() / TILE_SIZE, m_MapManager->GetPosY() / TILE_SIZE));
+	std::vector<std::vector<Case*>> l_SquareZone = l_Map->GetSquareZone(l_Map->GetSquareID(g_Player->GetPosX() / TILE_SIZE, g_Player->GetPosY() / TILE_SIZE));
 	//printf("Square Acutal = %d\n", l_Map->GetSquareID(m_MapManager->GetPosX() / TILE_SIZE, m_MapManager->GetPosY() / TILE_SIZE));
 	if (l_SquareZone.empty())
 		return;
@@ -104,7 +106,7 @@ void Graphics::DrawMap()
         {
             uint8 l_SpriteNb = (g_Player->GetOrientation() * MAX_MOVEMENT_POSITION) + g_Player->GetMovementHandler()->GetMovementPosition();
             SkinSprite* l_SkinSprite = m_SkinsManager->GetSkinSprite(g_Player->GetSkinID(), l_SpriteNb);
-            l_SkinSprite->setPosition((float)m_MapManager->GetPosX(), (float)m_MapManager->GetPosY());
+            l_SkinSprite->setPosition((float)g_Player->GetPosX(), (float)g_Player->GetPosY());
             m_Window.draw(*l_SkinSprite);
         }
 	}
@@ -114,10 +116,13 @@ void Graphics::UpdateWindow()
 {
     while (m_Run)
     {
-        m_View.setCenter((float)m_MapManager->GetPosX(), (float)m_MapManager->GetPosY());
+        m_MutexDraw.lock();
+        if (g_Player != nullptr)
+            m_View.setCenter((float)g_Player->GetPosX(), (float)g_Player->GetPosY());
         m_Window.setView(m_View);
         Clear();
         DrawMap();
+        m_MutexDraw.unlock();
         Display();
     }
 }
