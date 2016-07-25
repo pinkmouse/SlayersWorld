@@ -56,6 +56,8 @@ void World::Run()
 	while (m_Run)
 	{
 		this->UpdatePacketQueue();
+        m_MapManager->Update(m_Clock.GetDiffPinTime());
+        m_Clock.PinTime();
 	}
 }
 

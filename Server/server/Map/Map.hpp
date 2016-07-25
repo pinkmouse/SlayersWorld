@@ -1,8 +1,11 @@
 #pragma once
 #include "../Define.hpp"
 #include "Case.hpp"
+#include <SFML/System/Time.hpp>
 #include <string>
 #include <vector>
+#include "../Entities/Unit.hpp"
+#include "../Entities/Player.hpp"
 
 class Map
 {
@@ -10,6 +13,9 @@ public:
 	Map();
 	~Map();
 	bool InitializeMap(const std::string &);
+    void Update(sf::Time);
+    void AddPlayer(Player*);
+    void RemovePlayer(Player*);
 
 private:
 	uint16 m_ID;
@@ -17,6 +23,8 @@ private:
 	uint16 m_SizeY;
 
 	std::vector<Case*>	m_ListCase;
+    std::vector<Unit*>  m_ListUnit;
+    std::vector<Player*>  m_ListPlayer;
 
 	struct          t_MapParam
 	{

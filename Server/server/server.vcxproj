@@ -156,11 +156,13 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="World\ClockHandler.hpp" />
     <ClInclude Include="Map\Case.hpp" />
     <ClInclude Include="Global.hpp" />
     <ClInclude Include="Map\MapManager.hpp" />
     <ClInclude Include="Entities\Unit.hpp" />
     <ClInclude Include="Entities\Player.hpp" />
+    <ClInclude Include="Entities\MovementHandler.hpp" />
     <ClInclude Include="World\SqlManager.hpp" />
     <ClInclude Include="World\ConfigHandler.hpp" />
     <ClInclude Include="Define.hpp" />
@@ -173,10 +175,12 @@
     <ClInclude Include="World\World.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="World\ClockHandler.cpp" />
     <ClCompile Include="Map\Case.cpp" />
     <ClCompile Include="Map\MapManager.cpp" />
     <ClCompile Include="Entities\Unit.cpp" />
     <ClCompile Include="Entities\Player.cpp" />
+    <ClCompile Include="Entities\MovementHandler.cpp" />
     <ClCompile Include="World\PacketHandler.cpp" />
     <ClCompile Include="World\SqlManager.cpp" />
     <ClCompile Include="World\ConfigHandler.cpp" />

@@ -3,6 +3,9 @@
 #define MAP_PATH "map/"
 #define CONF_FILE "server.conf"
 
+#define UPDATE_TIME_MOVEMENT 250
+#define STEP_SIZE 10 /// In pixel
+
 typedef char int8;
 typedef short int16;
 typedef int int32;
@@ -16,10 +19,10 @@ typedef unsigned long long uint64;
 
 enum Orientation
 {
-    Top = 0,
+    Up = 0,
     Right = 1,
-    Left = 2,
-    Bottom = 3
+    Down = 2,
+    Left = 3
 };
 
 enum Action

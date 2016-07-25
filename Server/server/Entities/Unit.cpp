@@ -7,11 +7,25 @@ Unit::Unit()
     m_MapID = 0;
     m_PosX = 0;
     m_PosY = 0;
+    m_MovementHandler = new MovementHandler();
+    m_Orientation = Orientation::Down;
 }
 
 
 Unit::~Unit()
 {
+}
+
+void Unit::Update(sf::Time p_Diff)
+{
+    m_MovementHandler->Update(p_Diff);
+    m_PosX = m_MovementHandler->GetPosX();
+    m_PosY = m_MovementHandler->GetPosY();
+}
+
+MovementHandler* Unit::GetMovementHandler()
+{
+    return m_MovementHandler;
 }
 
 std::string Unit::GetName() const
@@ -77,18 +91,20 @@ void Unit::SetMapID(const uint16 & p_MapID)
 void Unit::SetPosX(const uint32 & p_PosX)
 {
     m_PosX = p_PosX;
+    m_MovementHandler->SetPosX(p_PosX);
 }
 
 void Unit::SetPoxY(const uint32 & p_PosY)
 {
     m_PosY = p_PosY;
+    m_MovementHandler->SetPosY(p_PosY);
 }
 
-void Unit::SetOrientation(const uint8 & p_Orientation)
+void Unit::SetOrientation(const Orientation & p_Orientation)
 {
     m_Orientation = p_Orientation;
+    m_MovementHandler->SetOrientation(p_Orientation);
 }
-
 
 void Unit::SetMap(Map* p_Map)
 {

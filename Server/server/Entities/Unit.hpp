@@ -1,7 +1,9 @@
 #pragma once
+#include "MovementHandler.hpp"
 #include "../Define.hpp"
-#include "../Map/Map.hpp"
 #include <string>
+
+class Map;
 
 class Unit
 {
@@ -24,8 +26,12 @@ public:
     void SetPosX(const uint32 &);
     void SetPoxY(const uint32 &);
     void SetSkinID(const uint8 &);
-    void SetOrientation(const uint8 &);
+    void SetOrientation(const Orientation &);
     void SetMap(Map*);
+
+    MovementHandler* GetMovementHandler();
+
+    void Update(sf::Time);
 
 protected:
     std::string m_Name;
@@ -34,8 +40,8 @@ protected:
     uint32 m_PosX;
     uint32 m_PosY;
     uint8 m_SkinID;
-    uint8 m_Orientation;
+    Orientation m_Orientation;
+    MovementHandler* m_MovementHandler;
 
     Map* m_Map;
 };
-

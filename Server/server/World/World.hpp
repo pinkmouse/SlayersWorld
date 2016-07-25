@@ -8,6 +8,7 @@
 #include "WorldSocket.hpp"
 #include "PacketHandler.hpp"
 #include "SqlManager.hpp"
+#include "ClockHandler.hpp"
 #include "../Map/MapManager.hpp"
 
 class World
@@ -44,5 +45,7 @@ private:
 	sf::SocketSelector m_Selector;
 	sf::TcpListener m_Listener;
 	std::vector<WorldSocket*> m_Sessions;
+
+    ClockHandler m_Clock;
 };
 

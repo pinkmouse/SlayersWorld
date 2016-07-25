@@ -17,6 +17,8 @@ public:
 
     void OperatePacket(WorldPacket &, WorldSocket*);
     void HandleConnexion(WorldPacket &, WorldSocket*);
+    void HandleGoDirection(WorldPacket &, WorldSocket*);
+    void HandleStopMovement(WorldPacket &, WorldSocket*);
 
 private:
     using m_Func = void(PacketHandler::*)(WorldPacket &, WorldSocket*);

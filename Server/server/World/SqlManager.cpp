@@ -68,6 +68,6 @@ Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
     }
     mysql_free_result(l_Result);
 
-    Player* l_Player = new Player(l_ID, l_Name, l_Lvl, l_SkinID, l_MapID, l_PosX, l_PosY, l_Orientation);
+    Player* l_Player = new Player(l_ID, l_Name, l_Lvl, l_SkinID, l_MapID, l_PosX, l_PosY, (Orientation)l_Orientation);
     return l_Player;
 }

@@ -32,6 +32,16 @@ void WorldSocket::SendPlayerCreate(uint32 p_ID, std::string p_Name, uint8 p_Leve
     printf("Send create\n");
 }
 
+void WorldSocket::SendPlayerStopMovement(uint32 p_ID, uint32 p_PosX, uint32 p_PosY, uint8 p_Orientation)
+{
+    WorldPacket l_Packet;
+    uint8 l_ID = 21;
+
+    l_Packet << l_ID << p_ID << p_PosX << p_PosY << p_Orientation;
+    send(l_Packet);
+    printf("Send Stop Movement\n");
+}
+
 Player* WorldSocket::GetPlayer()
 {
     return m_Player;

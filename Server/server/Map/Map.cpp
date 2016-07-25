@@ -11,6 +11,30 @@ Map::~Map()
 {
 }
 
+void Map::Update(sf::Time p_Diff)
+{
+    for (std::vector<Player*>::iterator l_It = m_ListPlayer.begin(); l_It != m_ListPlayer.end(); ++l_It)
+    {
+        (*l_It)->Update(p_Diff);
+    }
+}
+
+void Map::AddPlayer(Player* p_Player)
+{
+    std::vector<Player*>::iterator l_It = std::find(m_ListPlayer.begin(), m_ListPlayer.end(), p_Player);
+    if (l_It != m_ListPlayer.end())
+        return;
+
+    m_ListPlayer.push_back(p_Player);
+}
+
+void Map::RemovePlayer(Player* p_Player)
+{
+    std::vector<Player*>::iterator l_It = std::find(m_ListPlayer.begin(), m_ListPlayer.end(), p_Player);
+    if (l_It != m_ListPlayer.end())
+        m_ListPlayer.erase(l_It);
+}
+
 bool Map::InitializeMap(const std::string & p_FileName)
 {
 	FILE * l_File;
