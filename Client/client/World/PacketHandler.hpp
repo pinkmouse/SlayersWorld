@@ -14,6 +14,7 @@ public:
 	void OperatePacket(WorldPacket &);
 	void HandleConnexion(WorldPacket &);
     void HandleCreatePlayer(WorldPacket &);
+    void HandleStopMovement(WorldPacket &);
 
 private:
 	MapManager* m_MapManager;

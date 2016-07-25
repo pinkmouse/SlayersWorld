@@ -16,6 +16,24 @@ void PacketHandler::LoadPacketHandlerMap()
 {
 	m_PacketHandleMap[1] = &PacketHandler::HandleConnexion;
     m_PacketHandleMap[10] = &PacketHandler::HandleCreatePlayer;
+    m_PacketHandleMap[21] = &PacketHandler::HandleStopMovement;
+}
+
+void PacketHandler::HandleStopMovement(WorldPacket &p_Packet)
+{
+    uint32 l_ID;
+    uint32 l_PosX;
+    uint32 l_PosY;
+    uint8 l_Orientation;
+
+    p_Packet >> l_ID;
+    p_Packet >> l_PosX;
+    p_Packet >> l_PosY;
+    p_Packet >> l_Orientation;
+
+    g_Player->SetPosX(l_PosX);
+    g_Player->SetPoxY(l_PosY);
+    g_Player->SetOrientation((Orientation)l_Orientation);
 }
 
 void PacketHandler::HandleConnexion(WorldPacket &p_Packet)

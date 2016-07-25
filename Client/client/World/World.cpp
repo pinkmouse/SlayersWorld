@@ -21,7 +21,7 @@ bool World::InitializeConnection()
 {
 	if (!g_Socket->Connection())
 	{
-		printf("Error Connection...");
+		printf("Error Connection...\n");
 		return false;
 	}
     g_Socket->setBlocking(false);
@@ -38,7 +38,8 @@ void World::Initialize(char** p_Argv)
 {
 	InitializeWindow();
     m_Graphics->Run();
-	InitializeConnection();
+    while (!InitializeConnection()) ///< While not connected, wait for connection
+        ;
 
 	m_MapManager->InitializeMaps();
 	m_PacketHandler->LoadPacketHandlerMap();

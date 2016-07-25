@@ -23,10 +23,12 @@ void Events::KeyRelease(sf::Keyboard::Key p_KeyRealease)
 
     if (m_KeyPressed.size() > 0)
     {
+        g_Socket->SendGoDirection((Orientation)m_DirectionMap[m_KeyPressed.back()]);
         g_Player->SetOrientation((Orientation)m_DirectionMap[m_KeyPressed.back()]);
     }
     else
     {
+        g_Socket->SendStopMovement();
         g_Player->GetMovementHandler()->StopMovement();
     }
 }
@@ -53,6 +55,13 @@ void Events::NewKeyPressed(sf::Keyboard::Key p_NewKey)
             g_Player->GetMovementHandler()->StartMovement((Orientation)m_DirectionMap[p_NewKey]);
             g_Player->SetOrientation((Orientation)m_DirectionMap[p_NewKey]);
             g_Socket->SendGoDirection((Orientation)m_DirectionMap[p_NewKey]);
+            break;
+        }
+        /// Reset KeyPress queue when lost focus
+        case sf::Event::LostFocus:
+        {
+            m_KeyPressed.clear();
+            g_Player->GetMovementHandler()->StopMovement();
             break;
         }
         default:

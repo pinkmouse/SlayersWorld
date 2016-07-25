@@ -23,7 +23,7 @@ void Graphics::CreateWindow(uint32 p_X, uint32 p_Y, float p_Zoom)
 	m_View = m_Window.getDefaultView();
 	m_View.zoom(p_Zoom);
 	m_Window.setView(m_View);
-    m_Window.setFramerateLimit(120);
+    m_Window.setFramerateLimit(60);
 
 	m_TileSet = new TileSet();
 	m_TileSet->BuildSprites();

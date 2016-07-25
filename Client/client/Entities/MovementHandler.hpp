@@ -33,7 +33,6 @@ private:
 
     uint32 m_PosX;
     uint32 m_PosY;
-    uint32 m_DiffTime;
-    uint32 m_DiffTimeUpdateAnimation;
+    uint64 m_DiffTime;
+    uint64 m_DiffTimeUpdateAnimation;
 };
-

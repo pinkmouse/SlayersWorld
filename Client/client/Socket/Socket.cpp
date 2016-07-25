@@ -43,3 +43,13 @@ void Socket::SendGoDirection(const uint8& p_Orientation)
 
     send(packet);
 }
+
+void Socket::SendStopMovement()
+{
+    WorldPacket packet;
+    uint8 l_ID = 21;
+
+    packet << l_ID;
+
+    send(packet);
+}

@@ -19,7 +19,7 @@
 #define SKIN_SIZE_X 24
 #define SKIN_SIZE_Y 32
 #define MAX_MOVEMENT_POSITION 3
-#define UPDATE_TIME_MOVEMENT 200
+#define UPDATE_TIME_MOVEMENT 250
 
 /// EVENT
 #define MAX_KEY_SAVE 4
@@ -29,7 +29,7 @@
 #define NAME_WINDOW "Slayers World"
 
 /// GENERAL
-#define STEP_SIZE 4 /// In pixel
+#define STEP_SIZE 10 /// In pixel
 
 typedef char int8;
 typedef short int16;
