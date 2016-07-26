@@ -22,7 +22,7 @@ void MovementHandler::Update(sf::Time p_Diff)
 
     m_DiffTime += p_Diff.asMicroseconds();
 
-    while (m_DiffTime > ((UPDATE_TIME_MOVEMENT / STEP_SIZE) * 1000)) ///< 1000 because microsecond
+    while (m_DiffTime > (uint64)((UPDATE_TIME_MOVEMENT / STEP_SIZE) * 1000)) ///< 1000 because microsecond
     {
         /// UPDATE POSITION
         switch (m_Orientation)
@@ -42,7 +42,6 @@ void MovementHandler::Update(sf::Time p_Diff)
         default:
             break;
         }
-
         m_DiffTime -= (uint64)((UPDATE_TIME_MOVEMENT / STEP_SIZE) * 1000);
     }
 }
@@ -55,13 +54,12 @@ bool MovementHandler::IsInMovement() const
 void MovementHandler::StartMovement(Orientation p_Orientation)
 {
     m_InMovement = true;
-    m_MovementPosition = 2;
+    m_Orientation = p_Orientation;
 }
 
 void MovementHandler::StopMovement()
 {
     m_InMovement = false;
-    m_MovementPosition = 1;
     m_DiffTime = 0;
 }
 

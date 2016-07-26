@@ -31,4 +31,6 @@ private:
     uint32 m_PosX;
     uint32 m_PosY;
     uint64 m_DiffTime;
+
+    ClockHandler m_Clock;
 };
