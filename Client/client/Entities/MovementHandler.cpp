@@ -105,6 +105,7 @@ void MovementHandler::StartMovement(Orientation p_Orientation)
 {
     m_InMovement = true;
     m_MovementPosition = 2;
+    m_Orientation = p_Orientation;
 }
 
 void MovementHandler::StopMovement()

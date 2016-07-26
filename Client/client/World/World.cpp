@@ -64,8 +64,8 @@ void World::Run()
 	while (m_Run)
 	{
 		UpdateSocket();
-        m_MapManager->Update(m_Clock.GetDiffPinTime());
-        m_Clock.PinTime();
+        sf::Time l_Diff = m_Clock.restart();
+        m_MapManager->Update(l_Diff);
 		m_Graphics->CheckEvent();
 		if (!m_Graphics->WindowIsOpen())
 			End();
