@@ -162,6 +162,7 @@ void World::NetworkLoop()
                         if (l_SocketStatus == sf::Socket::Status::Disconnected) ///< Disconnecetd
                         {
                             m_Selector.remove(*l_Session);
+                            delete l_Session;
                             l_It = m_Sessions.erase(l_It);
                             l_IncIt = false;
                             printf("Disco\n");

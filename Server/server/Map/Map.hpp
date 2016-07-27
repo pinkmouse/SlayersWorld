@@ -4,6 +4,7 @@
 #include <SFML/System/Time.hpp>
 #include <string>
 #include <vector>
+#include <map>
 #include "../Entities/Unit.hpp"
 #include "../Entities/Player.hpp"
 
@@ -14,8 +15,13 @@ public:
 	~Map();
 	bool InitializeMap(const std::string &);
     void Update(sf::Time);
-    void AddPlayer(Player*);
-    void RemovePlayer(Player*);
+    void AddUnit(Unit*);
+    void RemoveUnit(Unit*);
+    uint16  GetSquareID(uint16 , uint16) const;
+    uint16 ChangeSquare(Unit*);
+    void RemoveFromSquare(Unit*);
+    void AddToSquare(Unit*, uint16);
+    std::vector<std::vector<Unit*>*> GetSquareSet(uint16) const;
 
 private:
 	uint16 m_ID;
@@ -25,6 +31,8 @@ private:
 	std::vector<Case*>	m_ListCase;
     std::vector<Unit*>  m_ListUnit;
     std::vector<Player*>  m_ListPlayer;
+
+    std::map<uint16, std::vector<Unit*>*> m_ListSquare;
 
 	struct          t_MapParam
 	{

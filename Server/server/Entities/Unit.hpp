@@ -4,11 +4,13 @@
 #include <string>
 
 class Map;
+class Player;
 
 class Unit
 {
 public:
     Unit();
+    Unit(TypeUnit);
     ~Unit();
 
     std::string GetName() const;
@@ -19,6 +21,7 @@ public:
     uint8 GetSkinID() const;
     uint8 GetOrientation() const;
     Map* GetMap() const;
+    uint16 GetSquareID() const;
 
     void SetName(const std::string &);
     void SetLevel(const uint8 &);
@@ -28,7 +31,10 @@ public:
     void SetSkinID(const uint8 &);
     void SetOrientation(const Orientation &);
     void SetMap(Map*);
+    void SetSquareID(uint16);
+    TypeUnit GetType() const;
 
+    Player* ToPlayer();
     MovementHandler* GetMovementHandler();
 
     void Update(sf::Time);
@@ -42,6 +48,7 @@ protected:
     uint8 m_SkinID;
     Orientation m_Orientation;
     MovementHandler* m_MovementHandler;
-
+    TypeUnit m_Type;
     Map* m_Map;
+    uint16 m_SquareID;
 };

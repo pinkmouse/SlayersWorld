@@ -12,9 +12,11 @@ public:
 	~WorldSocket();
 
     void SendPlayerCreate(uint32, std::string, uint8, uint8, uint16, uint32, uint32, uint8);
+    void SendPlayerCreateToSet(uint32, std::string, uint8, uint8, uint16, uint32, uint32, uint8);
     void SendPlayerStopMovement(uint32, uint32, uint32, uint8);
 	void SendAuthResponse(uint8);
     void SendMsg(WorldPacket);
+    void SendToSet(WorldPacket, bool p_ExcludePlayer = false);
 
     Player* GetPlayer();
     void SetPlayer(Player*);
