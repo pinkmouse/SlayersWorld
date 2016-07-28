@@ -101,13 +101,19 @@ void Graphics::DrawMap()
             }
 		}
 
+        std::map<TypeUnit, std::map<uint16, Unit*>>* l_ListUnitZone = l_Map->GetListUnitZone();
+
         /// Draw Entities
-        if (g_Player != nullptr)
+        for (std::pair<TypeUnit, std::map<uint16, Unit*>> l_MapListUnit : (*l_ListUnitZone))
         {
-            uint8 l_SpriteNb = (g_Player->GetOrientation() * MAX_MOVEMENT_POSITION) + g_Player->GetMovementHandler()->GetMovementPosition();
-            SkinSprite* l_SkinSprite = m_SkinsManager->GetSkinSprite(g_Player->GetSkinID(), l_SpriteNb);
-            l_SkinSprite->setPosition((float)g_Player->GetPosX(), (float)g_Player->GetPosY());
-            m_Window.draw(*l_SkinSprite);
+            for (std::pair<uint16, Unit*> l_UnitPair : l_MapListUnit.second)
+            {
+                Unit* l_Unit = l_UnitPair.second;
+                uint8 l_SpriteNb = (l_Unit->GetOrientation() * MAX_MOVEMENT_POSITION) + l_Unit->GetMovementHandler()->GetMovementPosition();
+                SkinSprite* l_SkinSprite = m_SkinsManager->GetSkinSprite(l_Unit->GetSkinID(), l_SpriteNb);
+                l_SkinSprite->setPosition((float)l_Unit->GetPosX(), (float)l_Unit->GetPosY());
+                m_Window.draw(*l_SkinSprite);
+            }
         }
 	}
 }

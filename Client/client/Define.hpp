@@ -55,3 +55,9 @@ enum Action
     Neutral = 0,
     Attack  = 1
 };
+
+enum TypeUnit
+{
+    CREATURE = 0,
+    PLAYER = 1
+};

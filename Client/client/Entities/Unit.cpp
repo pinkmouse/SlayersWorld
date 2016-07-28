@@ -1,7 +1,7 @@
 #include "Unit.hpp"
 
 
-Unit::Unit()
+Unit::Unit(uint16 p_ID)
 {
     m_Name = "";
     m_MapID = 0;
@@ -9,6 +9,20 @@ Unit::Unit()
     m_PosY = 0;
     m_MovementHandler = new MovementHandler();
     m_Orientation = Orientation::Down;
+    m_Type = TypeUnit::CREATURE;
+    m_ID = p_ID;
+}
+
+Unit::Unit(uint16 p_ID, TypeUnit p_Type)
+{
+    m_Name = "";
+    m_MapID = 0;
+    m_PosX = 0;
+    m_PosY = 0;
+    m_MovementHandler = new MovementHandler();
+    m_Orientation = Orientation::Down;
+    m_Type = p_Type;
+    m_ID = p_ID;
 }
 
 
@@ -63,6 +77,24 @@ Orientation Unit::GetOrientation() const
     return m_Orientation;
 }
 
+TypeUnit Unit::GetType() const
+{
+    return m_Type;
+}
+
+Player* Unit::ToPlayer()
+{
+    if (m_Type == TypeUnit::PLAYER)
+        return  reinterpret_cast<Player*>(this);
+    else
+        return nullptr;
+}
+
+uint16 Unit::GetID() const
+{
+    return m_ID;
+}
+
 void Unit::SetName(const std::string & p_Name)
 {
     m_Name = p_Name;
@@ -89,7 +121,7 @@ void Unit::SetPosX(const uint32 & p_PosX)
     m_MovementHandler->SetPosX(p_PosX);
 }
 
-void Unit::SetPoxY(const uint32 & p_PosY)
+void Unit::SetPosY(const uint32 & p_PosY)
 {
     m_PosY = p_PosY;
     m_MovementHandler->SetPosY(p_PosY);

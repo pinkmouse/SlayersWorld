@@ -24,7 +24,7 @@ void MapManager::Update(sf::Time p_Diff)
 
 bool MapManager::LoadMap(uint16 m_MapID)
 {
-	m_ActualMap = new Map();
+	m_ActualMap = new Map(m_MapID);
     if (!m_ActualMap->InitializeMap(m_MapsPath[0]))
         return false;
     return true;

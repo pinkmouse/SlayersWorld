@@ -10,7 +10,7 @@
 class Map
 {
 public:
-	Map();
+	Map(uint16);
 	~Map();
 	bool InitializeMap(const std::string &);
 	bool IsValidMap();
@@ -21,11 +21,15 @@ public:
 	Case* GetCase(uint16) const;
 	uint16 GetSizeX() const;
 	uint16 GetSizeY() const;
+    uint16 GetID() const;
+    Unit* GetUnit(TypeUnit, uint16);
+    void MoveUnitToDirection(TypeUnit, uint16, uint8);
+    std::map<TypeUnit, std::map<uint16, Unit*>>* GetListUnitZone();
 
-    void AddPlayer(Player*);
-    void RemovePlayer(Player*);
+    void AddUnit(Unit*);
+    void RemoveUnit(Unit*);
 
-    std::vector<Player*> GetPlayersInRay(uint32, uint32);
+    std::vector<Unit*> GetPlayersInRay(uint32, uint32);
 
     void Update(sf::Time);
 
@@ -37,7 +41,7 @@ private:
 	std::vector<Case*> m_ListCase;
 	std::map<uint16, std::vector<Case*>>	m_MapListCase;
 
-    std::vector<Player*> m_ListPlayerZone;
+    std::map<TypeUnit, std::map<uint16, Unit*>> m_ListUnitZone;
 
 	struct          t_MapParam
 	{
