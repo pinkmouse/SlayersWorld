@@ -2,7 +2,7 @@
 #include "../Map/Map.hpp"
 
 
-Unit::Unit()
+Unit::Unit(uint16 p_ID)
 {
     m_Name = "";
     m_MapID = 0;
@@ -11,9 +11,10 @@ Unit::Unit()
     m_MovementHandler = new MovementHandler();
     m_Orientation = Orientation::Down;
     m_Type = TypeUnit::CREATURE;
+    m_ID = p_ID;
 }
 
-Unit::Unit(TypeUnit p_Type)
+Unit::Unit(uint16 p_ID, TypeUnit p_Type)
 {
     m_Type = p_Type;
     m_Name = "";
@@ -22,11 +23,15 @@ Unit::Unit(TypeUnit p_Type)
     m_PosY = 0;
     m_MovementHandler = new MovementHandler();
     m_Orientation = Orientation::Down;
+    m_ID = p_ID;
 }
 
 Player* Unit::ToPlayer()
 {
-    return (Player*)this;
+    if (m_Type == TypeUnit::PLAYER)
+        return  reinterpret_cast<Player*>(this);
+    else
+        return nullptr;
 }
 
 Unit::~Unit()
@@ -94,6 +99,11 @@ uint8 Unit::GetOrientation() const
 Map* Unit::GetMap() const
 {
     return m_Map;
+}
+
+uint16 Unit::GetID() const
+{
+    return m_ID;
 }
 
 void Unit::SetName(const std::string & p_Name)

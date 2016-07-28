@@ -9,8 +9,8 @@ class Player;
 class Unit
 {
 public:
-    Unit();
-    Unit(TypeUnit);
+    Unit(uint16);
+    Unit(uint16, TypeUnit);
     ~Unit();
 
     std::string GetName() const;
@@ -22,6 +22,7 @@ public:
     uint8 GetOrientation() const;
     Map* GetMap() const;
     uint16 GetSquareID() const;
+    uint16 GetID() const;
 
     void SetName(const std::string &);
     void SetLevel(const uint8 &);
@@ -51,4 +52,5 @@ protected:
     TypeUnit m_Type;
     Map* m_Map;
     uint16 m_SquareID;
+    uint16 m_ID;
 };

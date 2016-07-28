@@ -33,7 +33,7 @@ void WorldSocket::SendPlayerCreate(uint32 p_ID, std::string p_Name, uint8 p_Leve
     printf("Send create\n");
 }
 
-void WorldSocket::SendPlayerCreateToSet(uint32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_SkinID, uint16 p_MapID, uint32 p_PosX, uint32 p_PosY, uint8 p_Orientation)
+void WorldSocket::SendUnitCreateToSet(uint32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_SkinID, uint16 p_MapID, uint32 p_PosX, uint32 p_PosY, uint8 p_Orientation)
 {
     WorldPacket l_Packet;
     uint8 l_ID = 11;
@@ -43,13 +43,22 @@ void WorldSocket::SendPlayerCreateToSet(uint32 p_ID, std::string p_Name, uint8 p
     printf("Send create to square\n");
 }
 
-void WorldSocket::SendPlayerStopMovement(uint32 p_ID, uint32 p_PosX, uint32 p_PosY, uint8 p_Orientation)
+void WorldSocket::SendUnitGoDirationToSet(uint8 p_Type, uint16 p_UnitID, uint8 p_Direction)
+{
+    WorldPacket l_Packet;
+    uint8 l_ID = 20;
+
+    l_Packet << l_ID << p_Type << p_UnitID << p_Direction;
+    SendToSet(l_Packet, true);
+}
+
+void WorldSocket::SendUnitStopMovement(uint8 p_TypeID, uint16 p_ID, uint32 p_PosX, uint32 p_PosY, uint8 p_Orientation)
 {
     WorldPacket l_Packet;
     uint8 l_ID = 21;
 
-    l_Packet << l_ID << p_ID << p_PosX << p_PosY << p_Orientation;
-    send(l_Packet);
+    l_Packet << l_ID << p_TypeID << p_ID << p_PosX << p_PosY << p_Orientation;
+    SendToSet(l_Packet);
     printf("Send Stop Movement\n");
 }
 
@@ -75,10 +84,15 @@ void WorldSocket::SendToSet(WorldPacket l_Packet, bool p_ExcludePlayer /*= false
     if (l_Map == nullptr)
         return;
 
-    std::vector<std::vector<Unit*>*> l_SquareSet = l_Map->GetSquareSet(GetPlayer()->GetSquareID());
-    for (std::vector<std::vector<Unit*>*>::iterator l_It = l_SquareSet.begin(); l_It != l_SquareSet.end(); ++l_It)
+    std::vector<Square*> l_SquareSet = l_Map->GetSquareSet(GetPlayer()->GetSquareID());
+    for (std::vector<Square*>::iterator l_It = l_SquareSet.begin(); l_It != l_SquareSet.end(); ++l_It)
     {
-        for (std::vector<Unit*>::iterator l_It2 = (*l_It)->begin(); l_It2 != (*l_It)->end(); ++l_It2)
+        std::vector<Unit*>* l_Square = (*l_It)->GetList();
+        if (l_Square == nullptr)
+            continue;
+
+        printf("Send to %d\n", l_Square->size());
+        for (std::vector<Unit*>::iterator l_It2 = l_Square->begin(); l_It2 != l_Square->end(); ++l_It2)
         {
             Unit* l_Unit = (*l_It2);
 
@@ -93,6 +107,7 @@ void WorldSocket::SendToSet(WorldPacket l_Packet, bool p_ExcludePlayer /*= false
                 if (p_ExcludePlayer && l_Player == GetPlayer())
                     continue;
 
+                printf("Send to %s\n", l_Player->GetName().c_str());
                 l_Player->GetSession()->send(l_Packet);
             }
         }

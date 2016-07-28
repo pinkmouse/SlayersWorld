@@ -7,6 +7,7 @@
 #include <map>
 #include "../Entities/Unit.hpp"
 #include "../Entities/Player.hpp"
+#include "Square.hpp"
 
 class Map
 {
@@ -21,7 +22,7 @@ public:
     uint16 ChangeSquare(Unit*);
     void RemoveFromSquare(Unit*);
     void AddToSquare(Unit*, uint16);
-    std::vector<std::vector<Unit*>*> GetSquareSet(uint16) const;
+    std::vector<Square*> GetSquareSet(uint16);
 
 private:
 	uint16 m_ID;
@@ -32,7 +33,7 @@ private:
     std::vector<Unit*>  m_ListUnit;
     std::vector<Player*>  m_ListPlayer;
 
-    std::map<uint16, std::vector<Unit*>*> m_ListSquare;
+    std::map<uint16, Square> m_ListSquare;
 
 	struct          t_MapParam
 	{

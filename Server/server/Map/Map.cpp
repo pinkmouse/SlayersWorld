@@ -42,12 +42,15 @@ void Map::Update(sf::Time p_Diff)
 
 uint16 Map::ChangeSquare(Unit* p_Unit)
 {
-    std::vector<Unit*>* l_Square = m_ListSquare[p_Unit->GetSquareID()];
+    Square* l_OldSquare = &m_ListSquare[p_Unit->GetSquareID()];
+    l_OldSquare->RemoveUnit(p_Unit);
 
-    RemoveFromSquare(p_Unit);
     uint16 l_SquareId = GetSquareID(p_Unit->GetPosX(), p_Unit->GetPosY());
-    AddToSquare(p_Unit, l_SquareId);
-    printf("Pass to squre %d\n", l_SquareId);
+    Square* l_NewSquare = &m_ListSquare[l_SquareId];
+    l_NewSquare->AddUnit(p_Unit);
+    p_Unit->SetSquareID(l_SquareId);
+
+    printf("Pass from square %d to square %d\n", p_Unit->GetSquareID(), l_SquareId);
     return l_SquareId;
 }
 
@@ -101,36 +104,20 @@ void Map::RemoveUnit(Unit* p_Unit)
 
 void Map::AddToSquare(Unit* p_Unit, uint16 p_SquareID)
 {
-    std::vector<Unit*>* l_Square = m_ListSquare[p_SquareID];
+    Square* l_Square = &m_ListSquare[p_SquareID];
     p_Unit->SetSquareID(p_SquareID);
 
-    if (l_Square == nullptr)
-    {
-        l_Square = new std::vector<Unit*>();
-        l_Square->push_back(p_Unit);
-        m_ListSquare[p_SquareID] = l_Square;
-    }
-    else
-        l_Square->push_back(p_Unit);
+    if (l_Square != nullptr)
+        l_Square->AddUnit(p_Unit);
 }
 
 void Map::RemoveFromSquare(Unit* p_Unit)
 {
     uint16 l_SquareId = p_Unit->GetSquareID();
-    std::vector<Unit*>* l_Square = m_ListSquare[l_SquareId];
+    Square* l_Square = &m_ListSquare[l_SquareId];
 
     if (l_Square != nullptr)
-    {
-        for (std::vector<Unit*>::iterator l_It = (*l_Square).begin(); l_It != (*l_Square).end();)
-        {
-            if ((*l_It)->GetType() == TypeUnit::PLAYER && (*l_It)->ToPlayer()->GetID())
-            {
-                l_It = l_Square->erase(l_It);
-            }
-            else
-                ++l_It;
-        }
-    }
+        l_Square->RemoveUnit(p_Unit);
 }
 
 bool Map::InitializeMap(const std::string & p_FileName)
@@ -165,7 +152,7 @@ bool Map::InitializeMap(const std::string & p_FileName)
 	}
 
     /// Initialize Squares
-    uint16 l_TotalSquareWidth = (uint16)ceil(m_SizeX / SIZE_SENDING_SQUARE);
+   /* uint16 l_TotalSquareWidth = (uint16)ceil(m_SizeX / SIZE_SENDING_SQUARE);
     uint16 l_TotalSquareHeight = (uint16)ceil(m_SizeY / SIZE_SENDING_SQUARE);
 
     if (!l_TotalSquareWidth || !l_TotalSquareHeight)
@@ -178,18 +165,18 @@ bool Map::InitializeMap(const std::string & p_FileName)
         std::vector<Unit*>* l_Square = new std::vector<Unit*>();
         m_ListSquare[i] = l_Square;
         printf("--> %d\n", i);
-    }
+    }*/
 
 	return true;
 }
 
-std::vector<std::vector<Unit*>*> Map::GetSquareSet(uint16 p_SquareID) const
+std::vector<Square*> Map::GetSquareSet(uint16 p_SquareID)
 {
-    std::vector<std::vector<Unit*>*> l_SquareSet;
-    l_SquareSet.push_back(m_ListSquare.at(p_SquareID));
+    std::vector<Square*> l_SquareSet;
+    l_SquareSet.push_back(&m_ListSquare[p_SquareID]);
 
-    uint16 l_TotalSquareWidth = (uint16)ceil(m_SizeX  / SIZE_SENDING_SQUARE);
-    uint16 l_TotalSquareHeight = (uint16)ceil(m_SizeY / SIZE_SENDING_SQUARE);
+    uint16 l_TotalSquareWidth = (uint16)ceil((float)m_SizeX / SIZE_SENDING_SQUARE);
+    uint16 l_TotalSquareHeight = (uint16)ceil((float)m_SizeY / SIZE_SENDING_SQUARE);
 
     if (!l_TotalSquareWidth || !l_TotalSquareHeight)
         return l_SquareSet;
@@ -198,56 +185,48 @@ std::vector<std::vector<Unit*>*> Map::GetSquareSet(uint16 p_SquareID) const
 
     uint16 l_IDReal = p_SquareID + 1;
     //printf("--> ID = %d, %d, %d, %d\n", p_ID, l_TotalSquareWidth, l_TotalSquareHeight, m_SizeY);
-    if (l_IDReal - l_TotalSquareWidth > 0)
+    if (l_IDReal - l_TotalSquareWidth > 0) ///< Top Center
     {
         //printf("1\n");
-        if (std::vector<Unit*>* l_Square = m_ListSquare.at(p_SquareID - l_TotalSquareWidth))
-            l_SquareSet.push_back(l_Square); ///< Top Center
+        l_SquareSet.push_back(&m_ListSquare[p_SquareID - l_TotalSquareWidth]);
     }
-    if (l_IDReal + l_TotalSquareWidth <= l_TotalSquare)
+    if (l_IDReal + l_TotalSquareWidth <= l_TotalSquare) ///< Bottom Center
     {
         //printf("2\n");
-        if (std::vector<Unit*>* l_Square = m_ListSquare.at(p_SquareID + l_TotalSquareWidth))
-            l_SquareSet.push_back(l_Square); ///< Bottom Center
+        l_SquareSet.push_back(&m_ListSquare[p_SquareID + l_TotalSquareWidth]);
     }
 
-    if ((l_IDReal - 1) % l_TotalSquareWidth > 0)
+    if ((l_IDReal - 1) % l_TotalSquareWidth > 0) ///< Left Center
     {
         //printf("3\n");
-        if (std::vector<Unit*>* l_Square = m_ListSquare.at(p_SquareID - 1))
-        l_SquareSet.push_back(l_Square); ///< Left Center
+        l_SquareSet.push_back(&m_ListSquare[p_SquareID - 1]);
     }
-    if (l_IDReal % l_TotalSquareWidth > 0)
+    if (l_IDReal % l_TotalSquareWidth > 0) ///< right Center
     {
         //printf("4\n");
-        if (std::vector<Unit*>* l_Square = m_ListSquare.at(p_SquareID + 1))
-            l_SquareSet.push_back(l_Square); ///< right Center
+        l_SquareSet.push_back(&m_ListSquare[p_SquareID + 1]);
     }
 
-    if ((l_IDReal - 1) % l_TotalSquareWidth > 0 && (l_IDReal - l_TotalSquareWidth - 1 >= 0))
+    if ((l_IDReal - 1) % l_TotalSquareWidth > 0 && (l_IDReal - l_TotalSquareWidth - 1 >= 0)) ///< Left Top
     {
         //printf("5\n");
-        if (std::vector<Unit*>* l_Square = m_ListSquare.at(p_SquareID - l_TotalSquareWidth - 1))
-            l_SquareSet.push_back(l_Square); ///< Left Top
+        l_SquareSet.push_back(&m_ListSquare[p_SquareID - l_TotalSquareWidth - 1]);
     }
-    if (l_IDReal % l_TotalSquareWidth > 0 && (l_IDReal - l_TotalSquareWidth - 1 >= 0))
+    if (l_IDReal % l_TotalSquareWidth > 0 && (l_IDReal - l_TotalSquareWidth - 1 >= 0)) ///< Right Top
     {
         //printf("6\n");
-        if (std::vector<Unit*>* l_Square = m_ListSquare.at(p_SquareID - l_TotalSquareWidth + 1))
-            l_SquareSet.push_back(l_Square); ///< Right Top
+        l_SquareSet.push_back(&m_ListSquare[p_SquareID - l_TotalSquareWidth + 1]);
     }
 
-    if (l_IDReal + l_TotalSquareWidth <= l_TotalSquare && (l_IDReal - 1) % l_TotalSquareWidth > 0)
+    if (l_IDReal + l_TotalSquareWidth <= l_TotalSquare && (l_IDReal - 1) % l_TotalSquareWidth > 0) ///< Left Bottom
     {
         //printf("7\n");
-        if (std::vector<Unit*>* l_Square = m_ListSquare.at(p_SquareID + l_TotalSquareWidth - 1))
-            l_SquareSet.push_back(l_Square); ///< Left Bottom
+        l_SquareSet.push_back(&m_ListSquare[p_SquareID + l_TotalSquareWidth - 1]);
     }
-    if (l_IDReal % l_TotalSquareWidth > 0 && l_IDReal + l_TotalSquareWidth <= l_TotalSquare)
+    if (l_IDReal % l_TotalSquareWidth > 0 && l_IDReal + l_TotalSquareWidth <= l_TotalSquare) ///< Right Bottom
     {
         //printf("8\n");
-        if (std::vector<Unit*>* l_Square = m_ListSquare.at(p_SquareID + l_TotalSquareWidth + 1))
-            l_SquareSet.push_back(l_Square); ///< Right Bottom
+        l_SquareSet.push_back(&m_ListSquare[p_SquareID + l_TotalSquareWidth + 1]);
     }
 
     return l_SquareSet;

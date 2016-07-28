@@ -31,6 +31,7 @@ void PacketHandler::HandleGoDirection(WorldPacket &p_Packet, WorldSocket* p_Worl
     if (!l_Player->GetMovementHandler()->IsInMovement())
         l_Player->GetMovementHandler()->StartMovement((Orientation)l_Orientation);
     l_Player->SetOrientation((Orientation)l_Orientation);
+    p_WorldSocket->SendUnitGoDirationToSet((uint8)TypeUnit::PLAYER, l_Player->GetID(), l_Orientation);
 }
 
 void PacketHandler::HandleStopMovement(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
@@ -41,7 +42,7 @@ void PacketHandler::HandleStopMovement(WorldPacket &p_Packet, WorldSocket* p_Wor
         return;
 
     l_Player->GetMovementHandler()->StopMovement();
-    l_Player->GetSession()->SendPlayerStopMovement(l_Player->GetID(), l_Player->GetPosX(), l_Player->GetPosY(), l_Player->GetOrientation());
+    l_Player->GetSession()->SendUnitStopMovement((uint8)TypeUnit::PLAYER, l_Player->GetID(), l_Player->GetPosX(), l_Player->GetPosY(), l_Player->GetOrientation());
 }
 
 void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
@@ -91,7 +92,7 @@ void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldS
 
     l_Player->GetMap()->AddUnit(l_Player);
 
-    p_WorldSocket->SendPlayerCreateToSet(l_Player->GetID(), l_Player->GetName(), l_Player->GetLevel(), l_Player->GetSkinID(), l_Player->GetMapID(), l_Player->GetPosX(), l_Player->GetPosY(), l_Player->GetOrientation());
+    p_WorldSocket->SendUnitCreateToSet(l_Player->GetID(), l_Player->GetName(), l_Player->GetLevel(), l_Player->GetSkinID(), l_Player->GetMapID(), l_Player->GetPosX(), l_Player->GetPosY(), l_Player->GetOrientation());
 }
 
 void PacketHandler::OperatePacket(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
