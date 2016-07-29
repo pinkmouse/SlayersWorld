@@ -13,8 +13,27 @@ PacketHandler::~PacketHandler()
 void PacketHandler::LoadPacketHandlerMap()
 {
     m_PacketHandleMap[1] = &PacketHandler::HandleConnexion;
+    m_PacketHandleMap[10] = &PacketHandler::HandleUnitUnknow;
     m_PacketHandleMap[20] = &PacketHandler::HandleGoDirection;
     m_PacketHandleMap[21] = &PacketHandler::HandleStopMovement;
+}
+
+void PacketHandler::HandleUnitUnknow(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
+{
+    uint8 l_Type = 0;
+    uint16 l_ID = 0;
+
+    p_Packet >> l_Type;
+    p_Packet >> l_ID;
+
+
+    Player* l_Player = p_WorldSocket->GetPlayer();
+
+    if (l_Player == nullptr)
+        return;
+
+    /// TODO - GetPlayer
+    ///l_Player->GetMap()->
 }
 
 void PacketHandler::HandleGoDirection(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)

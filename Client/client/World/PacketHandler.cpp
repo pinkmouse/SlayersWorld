@@ -39,8 +39,12 @@ void PacketHandler::HandleStopMovement(WorldPacket &p_Packet)
     if (Map* l_Map = m_MapManager->GetActualMap())
     {
         Unit* l_Unit = l_Map->GetUnit((TypeUnit)l_TypeID, l_ID);
+
         if (l_Unit == nullptr)
+        {
+            g_Socket->SendUnitUnknow(l_TypeID, l_ID); ///< Ask for unknow unit to server
             return;
+        }
 
         l_Unit->GetMovementHandler()->StopMovement();
         l_Unit->SetPosX(l_PosX);

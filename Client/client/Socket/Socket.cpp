@@ -53,3 +53,14 @@ void Socket::SendStopMovement()
 
     send(packet);
 }
+
+void Socket::SendUnitUnknow(const uint8& p_TypeID, const uint16& p_ID)
+{
+    WorldPacket packet;
+    uint8 l_ID = 10;
+
+    packet << p_TypeID;
+    packet << p_ID;
+
+    send(packet);
+}

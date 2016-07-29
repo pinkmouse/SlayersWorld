@@ -12,4 +12,5 @@ public:
 	void SendAuth(const std::string &, const std::string &);
     void SendGoDirection(const uint8&);
     void SendStopMovement();
+    void SendUnitUnknow(const uint8&, const uint16&);
 };
