@@ -109,6 +109,10 @@ void Graphics::DrawMap()
             for (std::pair<uint16, Unit*> l_UnitPair : l_MapListUnit.second)
             {
                 Unit* l_Unit = l_UnitPair.second;
+
+                if (l_Unit == nullptr)
+                    continue;
+
                 uint8 l_SpriteNb = (l_Unit->GetOrientation() * MAX_MOVEMENT_POSITION) + l_Unit->GetMovementHandler()->GetMovementPosition();
                 SkinSprite* l_SkinSprite = m_SkinsManager->GetSkinSprite(l_Unit->GetSkinID(), l_SpriteNb);
                 l_SkinSprite->setPosition((float)l_Unit->GetPosX(), (float)l_Unit->GetPosY());

@@ -35,6 +35,7 @@ void PacketHandler::HandleStopMovement(WorldPacket &p_Packet)
     p_Packet >> l_PosY;
     p_Packet >> l_Orientation;
 
+    printf("Stop movement for Type :%d, ID:%d, posX:%d, posY:%d, orientation:%d\n", l_TypeID, l_ID, l_PosX, l_PosY, l_Orientation);
     if (Map* l_Map = m_MapManager->GetActualMap())
     {
         Unit* l_Unit = l_Map->GetUnit((TypeUnit)l_TypeID, l_ID);
@@ -132,8 +133,6 @@ void PacketHandler::HandleCreatePlayer(WorldPacket &p_Packet)
     printf("Create new Player: %d %s %d %d %d %d\n", l_ID, l_Name.c_str(), l_SkinID, l_MapID, l_PosX, l_PosY);
 
     Player* l_NewPlayer = new Player(l_ID, l_Name, l_Level, l_SkinID, l_MapID, l_PosX, l_PosY, (Orientation)l_Orientation);
-    m_MapManager->SetPosX(l_PosX);
-    m_MapManager->SetPosY(l_PosY);
     if (Map* l_ActualMap = m_MapManager->GetActualMap())
     {
         if (l_ActualMap->GetID() != l_MapID)

@@ -20,7 +20,12 @@ void Map::Update(sf::Time p_Diff)
     {
         for (std::pair<uint16, Unit*> l_UnitPair : l_MapListUnit.second)
         {
-            (l_UnitPair.second)->Update(p_Diff);
+            Unit* l_Unit = l_UnitPair.second;
+
+            if (l_Unit == nullptr)
+                continue;
+
+            l_Unit->Update(p_Diff);
         }
     }
 }
