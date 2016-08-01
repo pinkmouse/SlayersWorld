@@ -17,6 +17,7 @@ public:
     void HandleCreateUnit(WorldPacket &);
     void HandleStopMovement(WorldPacket &);
     void HandleRemoveUnit(WorldPacket &);
+    void HandleUpdatePosition(WorldPacket &);
 
     void HandleUnitGoDirection(WorldPacket &);
 

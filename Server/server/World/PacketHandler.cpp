@@ -65,6 +65,7 @@ void PacketHandler::HandleStopMovement(WorldPacket &p_Packet, WorldSocket* p_Wor
 
     l_Player->GetMovementHandler()->StopMovement();
     l_Player->GetSession()->SendUnitStopMovement((uint8)TypeUnit::PLAYER, l_Player->GetID(), l_Player->GetPosX(), l_Player->GetPosY(), l_Player->GetOrientation());
+    l_Player->GetSession()->SendUpdatePosition((uint8)TypeUnit::PLAYER, l_Player->GetID(), l_Player->GetPosX(), l_Player->GetPosY());
 }
 
 void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)

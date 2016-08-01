@@ -20,6 +20,7 @@ void PacketHandler::LoadPacketHandlerMap()
     m_PacketHandleMap[12] = &PacketHandler::HandleRemoveUnit;
     m_PacketHandleMap[20] = &PacketHandler::HandleUnitGoDirection;
     m_PacketHandleMap[21] = &PacketHandler::HandleStopMovement;
+    m_PacketHandleMap[22] = &PacketHandler::HandleUpdatePosition;
 }
 
 void PacketHandler::HandleRemoveUnit(WorldPacket &p_Packet)
@@ -63,12 +64,37 @@ void PacketHandler::HandleStopMovement(WorldPacket &p_Packet)
 
         if (l_Unit == nullptr)
         {
-            printf("! UNIT UNKNOW !\n");
             g_Socket->SendUnitUnknow(l_TypeID, l_ID); ///< Ask for unknow unit to server
             return;
         }
 
         l_Unit->GetMovementHandler()->StopMovement();
+        l_Unit->SetPosX(l_PosX);
+        l_Unit->SetPosY(l_PosY);
+    }
+}
+
+void PacketHandler::HandleUpdatePosition(WorldPacket &p_Packet)
+{
+    uint8 l_TypeID;
+    uint16 l_UnitID;
+    uint32 l_PosX;
+    uint32 l_PosY;
+
+    p_Packet >> l_TypeID;
+    p_Packet >> l_UnitID;
+    p_Packet >> l_PosX;
+    p_Packet >> l_PosY;
+
+    if (Map* l_Map = m_MapManager->GetActualMap())
+    {
+        Unit* l_Unit = l_Map->GetUnit((TypeUnit)l_TypeID, l_UnitID);
+
+        if (l_Unit == nullptr)
+        {
+            g_Socket->SendUnitUnknow(l_TypeID, l_UnitID); ///< Ask for unknow unit to server
+            return;
+        }
         l_Unit->SetPosX(l_PosX);
         l_Unit->SetPosY(l_PosY);
     }
