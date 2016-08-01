@@ -21,6 +21,7 @@ public:
     uint16 GetID() const;
     Orientation GetOrientation() const;
     TypeUnit GetType() const;
+    uint8 GetOpacity() const;
 
     void SetName(const std::string &);
     void SetLevel(const uint8 &);
@@ -46,5 +47,7 @@ protected:
     Orientation m_Orientation;
     MovementHandler* m_MovementHandler;
     TypeUnit m_Type;
+    uint8 m_Opacity;
+    uint64 m_DiffTimeOpactiy;
 };
 

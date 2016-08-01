@@ -11,6 +11,8 @@ Unit::Unit(uint16 p_ID)
     m_Orientation = Orientation::Down;
     m_Type = TypeUnit::CREATURE;
     m_ID = p_ID;
+    m_Opacity = 0;
+    m_DiffTimeOpactiy = 0;
 }
 
 Unit::Unit(uint16 p_ID, TypeUnit p_Type)
@@ -23,6 +25,8 @@ Unit::Unit(uint16 p_ID, TypeUnit p_Type)
     m_Orientation = Orientation::Down;
     m_Type = p_Type;
     m_ID = p_ID;
+    m_Opacity = 0;
+    m_DiffTimeOpactiy = 0;
 }
 
 
@@ -40,6 +44,25 @@ void Unit::Update(sf::Time p_Diff)
     m_MovementHandler->Update(p_Diff);
     m_PosX = m_MovementHandler->GetPosX();
     m_PosY = m_MovementHandler->GetPosY();
+
+    m_DiffTimeOpactiy += p_Diff.asMicroseconds();
+
+    if (m_Opacity < 255)
+    {
+        while (m_DiffTimeOpactiy > (uint64)(UPDATE_OPACITY_TIME * 1000)) ///< 1000 because microsecond
+        {
+            /// UPDATE OPACITY
+            m_Opacity += 15;
+            if (m_Opacity > 255)
+                m_Opacity = 255;
+            m_DiffTimeOpactiy -= (uint64)(UPDATE_TIME_MOVEMENT * 1000);
+        }
+    }
+}
+
+uint8 Unit::GetOpacity() const
+{
+    return m_Opacity;
 }
 
 std::string Unit::GetName() const

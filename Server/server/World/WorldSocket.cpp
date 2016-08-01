@@ -10,6 +10,12 @@ WorldSocket::WorldSocket()
 
 WorldSocket::~WorldSocket()
 {
+    WorldPacket l_Packet;
+    uint8 l_ID = 12;
+    uint8 l_Type = (uint8)TypeUnit::PLAYER;
+
+    l_Packet << l_ID << l_Type << m_Player->GetID();
+    SendToSet(l_Packet, true);
     delete m_Player;
 }
 
@@ -33,14 +39,24 @@ void WorldSocket::SendPlayerCreate(uint32 p_ID, std::string p_Name, uint8 p_Leve
     printf("Send create\n");
 }
 
-void WorldSocket::SendUnitCreateToSet(uint32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_SkinID, uint16 p_MapID, uint32 p_PosX, uint32 p_PosY, uint8 p_Orientation)
+void WorldSocket::SendUnitCreateToSet(uint8 p_Type, uint32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_SkinID, uint16 p_MapID, uint32 p_PosX, uint32 p_PosY, uint8 p_Orientation)
 {
     WorldPacket l_Packet;
     uint8 l_ID = 11;
 
-    l_Packet << l_ID << p_ID << p_Name << p_Level << p_SkinID << p_MapID << p_PosX << p_PosY << p_Orientation;
+    l_Packet << l_ID << p_Type << p_ID << p_Name << p_Level << p_SkinID << p_MapID << p_PosX << p_PosY << p_Orientation;
     SendToSet(l_Packet, true);
     printf("Send create to square\n");
+}
+
+void WorldSocket::SendUnitCreate(uint8 p_Type, uint32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_SkinID, uint16 p_MapID, uint32 p_PosX, uint32 p_PosY, uint8 p_Orientation)
+{
+    WorldPacket l_Packet;
+    uint8 l_ID = 11;
+
+    l_Packet << l_ID << p_Type << p_ID << p_Name << p_Level << p_SkinID << p_MapID << p_PosX << p_PosY << p_Orientation;
+    send(l_Packet);
+    printf("Send create to unit\n");
 }
 
 void WorldSocket::SendUnitGoDirationToSet(uint8 p_Type, uint16 p_UnitID, uint8 p_Direction)
@@ -58,7 +74,7 @@ void WorldSocket::SendUnitStopMovement(uint8 p_TypeID, uint16 p_ID, uint32 p_Pos
     uint8 l_ID = 21;
 
     l_Packet << l_ID << p_TypeID << p_ID << p_PosX << p_PosY << p_Orientation;
-    SendToSet(l_Packet);
+    SendToSet(l_Packet, true);
     printf("Send Stop Movement\n");
 }
 

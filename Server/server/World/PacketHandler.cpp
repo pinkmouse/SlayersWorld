@@ -32,8 +32,11 @@ void PacketHandler::HandleUnitUnknow(WorldPacket &p_Packet, WorldSocket* p_World
     if (l_Player == nullptr)
         return;
 
-    /// TODO - GetPlayer
-    ///l_Player->GetMap()->
+    Unit* l_UniknowUnit = l_Player->GetMap()->GetUnit((TypeUnit)l_Type, l_ID);
+    if (l_UniknowUnit == nullptr)
+        return;
+
+    p_WorldSocket->SendUnitCreate(l_UniknowUnit->GetType(), l_UniknowUnit->GetID(), l_UniknowUnit->GetName(), l_UniknowUnit->GetLevel(), l_UniknowUnit->GetSkinID(), l_UniknowUnit->GetMapID(), l_UniknowUnit->GetPosX(), l_UniknowUnit->GetPosY(), l_UniknowUnit->GetOrientation());
 }
 
 void PacketHandler::HandleGoDirection(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
@@ -81,7 +84,7 @@ void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldS
     }
 
     uint32 l_Id = m_SqlManager->GetIDLogin(l_Login, l_Password);
-    if (!l_Id)
+    if (!l_Id || m_MapManager->IsOnline(TypeUnit::PLAYER, l_Id))
     {
         p_WorldSocket->SendAuthResponse(0); ///< Auth Failed
         return;
@@ -111,7 +114,7 @@ void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldS
 
     l_Player->GetMap()->AddUnit(l_Player);
 
-    p_WorldSocket->SendUnitCreateToSet(l_Player->GetID(), l_Player->GetName(), l_Player->GetLevel(), l_Player->GetSkinID(), l_Player->GetMapID(), l_Player->GetPosX(), l_Player->GetPosY(), l_Player->GetOrientation());
+    p_WorldSocket->SendUnitCreateToSet((uint8)TypeUnit::PLAYER, l_Player->GetID(), l_Player->GetName(), l_Player->GetLevel(), l_Player->GetSkinID(), l_Player->GetMapID(), l_Player->GetPosX(), l_Player->GetPosY(), l_Player->GetOrientation());
 }
 
 void PacketHandler::OperatePacket(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)

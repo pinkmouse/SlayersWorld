@@ -19,6 +19,7 @@ public:
     void AddUnit(Unit*);
     void RemoveUnit(Unit*);
     uint16  GetSquareID(uint16 , uint16) const;
+    Unit* GetUnit(TypeUnit, uint16);
     uint16 ChangeSquare(Unit*);
     void RemoveFromSquare(Unit*);
     void AddToSquare(Unit*, uint16);
@@ -30,8 +31,7 @@ private:
 	uint16 m_SizeY;
 
 	std::vector<Case*>	m_ListCase;
-    std::vector<Unit*>  m_ListUnit;
-    std::vector<Player*>  m_ListPlayer;
+    std::map<TypeUnit, std::map<uint16, Unit*>> m_ListUnitZone;
 
     std::map<uint16, Square> m_ListSquare;
 

@@ -16,9 +16,30 @@ void PacketHandler::LoadPacketHandlerMap()
 {
 	m_PacketHandleMap[1] = &PacketHandler::HandleConnexion;
     m_PacketHandleMap[10] = &PacketHandler::HandleCreateMainPlayer;
-    m_PacketHandleMap[11] = &PacketHandler::HandleCreatePlayer;
+    m_PacketHandleMap[11] = &PacketHandler::HandleCreateUnit;
+    m_PacketHandleMap[12] = &PacketHandler::HandleRemoveUnit;
     m_PacketHandleMap[20] = &PacketHandler::HandleUnitGoDirection;
     m_PacketHandleMap[21] = &PacketHandler::HandleStopMovement;
+}
+
+void PacketHandler::HandleRemoveUnit(WorldPacket &p_Packet)
+{
+    uint8 l_TypeID;
+    uint16 l_ID;
+
+    p_Packet >> l_TypeID;
+    p_Packet >> l_ID;
+
+    if (Map* l_Map = m_MapManager->GetActualMap())
+    {
+        Unit* l_Unit = l_Map->GetUnit((TypeUnit)l_TypeID, l_ID);
+
+        if (l_Unit == nullptr)
+            return;
+
+        l_Map->RemoveUnit(l_Unit);
+        delete l_Unit;
+    }
 }
 
 void PacketHandler::HandleStopMovement(WorldPacket &p_Packet)
@@ -42,6 +63,7 @@ void PacketHandler::HandleStopMovement(WorldPacket &p_Packet)
 
         if (l_Unit == nullptr)
         {
+            printf("! UNIT UNKNOW !\n");
             g_Socket->SendUnitUnknow(l_TypeID, l_ID); ///< Ask for unknow unit to server
             return;
         }
@@ -114,8 +136,9 @@ void PacketHandler::HandleCreateMainPlayer(WorldPacket &p_Packet)
         delete g_Player;
 }
 
-void PacketHandler::HandleCreatePlayer(WorldPacket &p_Packet)
+void PacketHandler::HandleCreateUnit(WorldPacket &p_Packet)
 {
+    uint8 l_TypeID;
     uint32 l_ID;
     std::string l_Name;
     uint8 l_Level;
@@ -125,6 +148,7 @@ void PacketHandler::HandleCreatePlayer(WorldPacket &p_Packet)
     uint32 l_PosY;
     uint8 l_Orientation;
 
+    p_Packet >> l_TypeID;
     p_Packet >> l_ID;
     p_Packet >> l_Name;
     p_Packet >> l_Level;
@@ -136,16 +160,19 @@ void PacketHandler::HandleCreatePlayer(WorldPacket &p_Packet)
 
     printf("Create new Player: %d %s %d %d %d %d\n", l_ID, l_Name.c_str(), l_SkinID, l_MapID, l_PosX, l_PosY);
 
-    Player* l_NewPlayer = new Player(l_ID, l_Name, l_Level, l_SkinID, l_MapID, l_PosX, l_PosY, (Orientation)l_Orientation);
+    Unit* l_NewUnit = nullptr;
+    if (l_TypeID == (uint8)TypeUnit::PLAYER)
+        l_NewUnit = new Player(l_ID, l_Name, l_Level, l_SkinID, l_MapID, l_PosX, l_PosY, (Orientation)l_Orientation);
+
     if (Map* l_ActualMap = m_MapManager->GetActualMap())
     {
         if (l_ActualMap->GetID() != l_MapID)
-            delete l_NewPlayer;
+            delete l_NewUnit;
         else
-            l_ActualMap->AddUnit(l_NewPlayer);
+            l_ActualMap->AddUnit(l_NewUnit);
     }
     else
-        delete l_NewPlayer;
+        delete l_NewUnit;
 }
 
 void PacketHandler::OperatePacket(WorldPacket &p_Packet)

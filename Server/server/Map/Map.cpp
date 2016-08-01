@@ -25,18 +25,27 @@ uint16 Map::GetSquareID(uint16 p_X, uint16 p_Y) const
     return (l_TotalSquareWidth * l_YSquare) + l_XSquare;
 }
 
+Unit* Map::GetUnit(TypeUnit p_TypeID, uint16 p_UnitID)
+{
+    return m_ListUnitZone[p_TypeID][p_UnitID];
+
+}
+
 void Map::Update(sf::Time p_Diff)
 {
-    for (std::vector<Player*>::iterator l_It = m_ListPlayer.begin(); l_It != m_ListPlayer.end(); ++l_It)
+    for (std::pair<TypeUnit, std::map<uint16, Unit*>> l_MapListUnit : m_ListUnitZone)
     {
-        Player* l_Player = (*l_It);
+        for (std::pair<uint16, Unit*> l_UnitPair : l_MapListUnit.second)
+        {
+            Unit* l_Unit = l_UnitPair.second;
 
-        if (l_Player == nullptr)
-            continue;
+            if (l_Unit == nullptr)
+                continue;
 
-        l_Player->Update(p_Diff);
-        if (l_Player->GetSquareID() != GetSquareID(l_Player->GetPosX(), l_Player->GetPosY()))
-            ChangeSquare(l_Player);
+            l_Unit->Update(p_Diff);
+            if (l_Unit->GetSquareID() != GetSquareID(l_Unit->GetPosX(), l_Unit->GetPosY()))
+                ChangeSquare(l_Unit);
+        }
     }
 }
 
@@ -56,27 +65,7 @@ uint16 Map::ChangeSquare(Unit* p_Unit)
 
 void Map::AddUnit(Unit* p_Unit)
 {
-    if (p_Unit->GetType() == TypeUnit::PLAYER)
-    {
-        std::vector<Player*>::iterator l_It = std::find(m_ListPlayer.begin(), m_ListPlayer.end(), p_Unit);
-        if (l_It != m_ListPlayer.end())
-            return;
-
-        Player* l_Player = p_Unit->ToPlayer();
-
-        if (l_Player == nullptr)
-            return;
-
-        m_ListPlayer.push_back(l_Player);
-    }
-    else
-    {
-        std::vector<Unit*>::iterator l_It = std::find(m_ListUnit.begin(), m_ListUnit.end(), p_Unit);
-        if (l_It != m_ListUnit.end())
-            return;
-
-        m_ListUnit.push_back(p_Unit);
-    }
+    m_ListUnitZone[p_Unit->GetType()][p_Unit->GetID()] = p_Unit;
 
     /// Add to square
     uint16 l_SquareId = GetSquareID(p_Unit->GetPosX(), p_Unit->GetPosY());
@@ -85,18 +74,7 @@ void Map::AddUnit(Unit* p_Unit)
 
 void Map::RemoveUnit(Unit* p_Unit)
 {
-    if (p_Unit->GetType() == TypeUnit::PLAYER)
-    {
-        std::vector<Player*>::iterator l_It = std::find(m_ListPlayer.begin(), m_ListPlayer.end(), p_Unit);
-        if (l_It != m_ListPlayer.end())
-            m_ListPlayer.erase(l_It);
-    }
-    else
-    {
-        std::vector<Unit*>::iterator l_It = std::find(m_ListUnit.begin(), m_ListUnit.end(), p_Unit);
-        if (l_It != m_ListUnit.end())
-            m_ListUnit.erase(l_It);
-    }
+    m_ListUnitZone[p_Unit->GetType()].erase(p_Unit->GetID());
 
     /// Remove from square
     RemoveFromSquare(p_Unit);

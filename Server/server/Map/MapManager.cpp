@@ -21,10 +21,25 @@ bool MapManager::InitializeMaps()
 	return true;
 }
 
-Map* MapManager::GetMap(uint16 p_Id) const
+Map* MapManager::GetMap(uint16 p_Id)
 {
-    Map* l_Map = m_MapList.at(p_Id);
+    Map* l_Map = m_MapList[p_Id];
     return l_Map;
+}
+
+bool MapManager::IsOnline(TypeUnit p_TypeID, uint16 p_UnitID)
+{
+    for (std::pair<uint16, Map*> l_MapPair : m_MapList)
+    {
+        Map* l_Map = l_MapPair.second;
+
+        if (l_Map == nullptr)
+            continue;
+
+        if (l_Map->GetUnit(p_TypeID, p_UnitID))
+            return true;
+    }
+    return false;
 }
 
 void MapManager::Update(sf::Time p_Diff)

@@ -65,32 +65,6 @@ void MovementHandler::UpdateAnimationWalk(sf::Time p_Diff)
         else
             m_MovementPosition = 0;
 
-        /*
-        m_MovementPosition++;
-        if (m_MovementPosition >= MAX_MOVEMENT_POSITION)
-            m_MovementPosition = 0;
-        */
-
-        /// UPDATE POSITION
-       /*switch (m_Orientation)
-        {
-        case Orientation::Down:
-            m_PosY = m_OldPosY + (uint32)(STEP_SIZE * m_Speed);
-            break;
-        case Orientation::Left:
-            m_PosX = m_OldPosX - (uint32)(STEP_SIZE * m_Speed);
-            break;
-        case Orientation::Right:
-            m_PosX = m_OldPosX + (uint32)(STEP_SIZE * m_Speed);
-            break;
-        case Orientation::Up:
-            m_PosY = m_OldPosY - (uint32)(STEP_SIZE * m_Speed);
-            break;
-        default:
-            break;
-        }
-       m_OldPosX = m_PosX;
-       m_OldPosY = m_PosY;*/
        m_DiffTimeUpdateAnimation -= (uint64)(UPDATE_TIME_MOVEMENT * 1000 * m_Speed);
     }
 }

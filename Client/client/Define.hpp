@@ -2,6 +2,9 @@
 
 #include <cstdio>
 
+#define IP_SERVER "192.168.1.23"
+#define PORT_SERVER 1234
+
 /// GRAPHICS
 #define X_WINDOW 640
 #define Y_WINDOW 480
@@ -15,6 +18,7 @@
 #define SIZE_DRAWING_SQUARE 6
 
 /// SKIN
+#define UPDATE_OPACITY_TIME 250
 #define SKINS_FOLDER "img/skins/"
 #define SKIN_SIZE_X 24
 #define SKIN_SIZE_Y 32

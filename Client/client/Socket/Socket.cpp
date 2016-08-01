@@ -16,7 +16,7 @@ Socket::~Socket()
 
 bool Socket::Connection()
 {
-	sf::Socket::Status l_Status = this->connect(sf::IpAddress("127.0.0.1"), 1234);
+	sf::Socket::Status l_Status = this->connect(sf::IpAddress(IP_SERVER), PORT_SERVER);
 
 	if (l_Status == sf::Socket::Status::Done)
 		return true;
@@ -59,8 +59,7 @@ void Socket::SendUnitUnknow(const uint8& p_TypeID, const uint16& p_ID)
     WorldPacket packet;
     uint8 l_ID = 10;
 
-    packet << p_TypeID;
-    packet << p_ID;
+    packet << l_ID << p_TypeID << p_ID;
 
     send(packet);
 }

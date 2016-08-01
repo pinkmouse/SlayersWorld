@@ -9,8 +9,9 @@ public:
 	MapManager();
 	~MapManager();
 	bool InitializeMaps();
-    Map* GetMap(uint16) const;
+    Map* GetMap(uint16);
     void Update(sf::Time);
+    bool IsOnline(TypeUnit, uint16);
 
 private:
     std::map<uint16, Map*> m_MapList;
