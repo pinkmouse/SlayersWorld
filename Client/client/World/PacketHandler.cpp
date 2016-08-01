@@ -6,6 +6,7 @@
 PacketHandler::PacketHandler(MapManager *p_MapManager) :
 	m_MapManager(p_MapManager)
 {
+    p_HasMinimalRequiered = false;
 }
 
 PacketHandler::~PacketHandler()
@@ -120,10 +121,19 @@ void PacketHandler::HandleConnexion(WorldPacket &p_Packet)
 
 	p_Packet >> l_Status;
 	printf("Auth Status: %d\n", l_Status);
-    if (!l_Status)
+
+    switch (l_Status)
+    {
+    case 0:
         printf("Auth Failed\n");
-    else
+        break;
+    case 1:
         printf("Auth Success\n");
+        break;
+    case 2:
+        printf("Already connected\n");
+        break;
+    }
 }
 
 void PacketHandler::HandleCreateMainPlayer(WorldPacket &p_Packet)
@@ -156,7 +166,9 @@ void PacketHandler::HandleCreateMainPlayer(WorldPacket &p_Packet)
 
     if (Map* l_ActualMap = m_MapManager->GetActualMap())
     {
+        g_Player->SetMap(l_ActualMap);
         l_ActualMap->AddUnit(g_Player);
+        p_HasMinimalRequiered = true;
     }
     else
         delete g_Player;
@@ -195,7 +207,10 @@ void PacketHandler::HandleCreateUnit(WorldPacket &p_Packet)
         if (l_ActualMap->GetID() != l_MapID)
             delete l_NewUnit;
         else
+        {
+            l_NewUnit->SetMap(l_ActualMap);
             l_ActualMap->AddUnit(l_NewUnit);
+        }
     }
     else
         delete l_NewUnit;
@@ -213,3 +228,7 @@ void PacketHandler::OperatePacket(WorldPacket &p_Packet)
 		printf("Packet %d Unknow\n", l_PacketID);
 }
 
+bool PacketHandler::HasMinimalRequiered() const
+{
+    return p_HasMinimalRequiered;
+}

@@ -16,6 +16,9 @@ Events::~Events()
 
 void Events::KeyRelease(sf::Keyboard::Key p_KeyRealease)
 {
+    if (g_Player == nullptr)
+        return;
+
     std::vector<sf::Keyboard::Key>::iterator l_It = std::find(m_KeyPressed.begin(), m_KeyPressed.end(), p_KeyRealease);
 
     if (l_It != m_KeyPressed.end())
@@ -43,6 +46,9 @@ void Events::NewKeyPressed(sf::Keyboard::Key p_NewKey)
         case sf::Keyboard::Key::Left:
         case sf::Keyboard::Key::Right:
         {
+            if (g_Player == nullptr)
+                return;
+
             std::vector<sf::Keyboard::Key>::iterator l_It = std::find(m_KeyPressed.begin(), m_KeyPressed.end(), p_NewKey);
 
             if (l_It != m_KeyPressed.end())
@@ -60,6 +66,9 @@ void Events::NewKeyPressed(sf::Keyboard::Key p_NewKey)
         /// Reset KeyPress queue when lost focus
         case sf::Event::LostFocus:
         {
+            if (g_Player == nullptr)
+                return;
+
             m_KeyPressed.clear();
             g_Player->GetMovementHandler()->StopMovement();
             break;

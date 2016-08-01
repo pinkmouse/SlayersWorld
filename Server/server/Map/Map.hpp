@@ -24,6 +24,8 @@ public:
     void RemoveFromSquare(Unit*);
     void AddToSquare(Unit*, uint16);
     std::vector<Square*> GetSquareSet(uint16);
+    uint16 GetSizeX() const;
+    uint16 GetSizeY() const;
 
 private:
 	uint16 m_ID;

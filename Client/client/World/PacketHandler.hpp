@@ -10,6 +10,7 @@ public:
 	PacketHandler(MapManager*);
 	~PacketHandler();
 	void LoadPacketHandlerMap();
+    bool HasMinimalRequiered() const;
 
 	void OperatePacket(WorldPacket &);
 	void HandleConnexion(WorldPacket &);
@@ -27,5 +28,6 @@ private:
 	using m_Func = void(PacketHandler::*)(WorldPacket &);
 
 	std::map<uint8, m_Func> m_PacketHandleMap;
+    bool p_HasMinimalRequiered;
 };
 

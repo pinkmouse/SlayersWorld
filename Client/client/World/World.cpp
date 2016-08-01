@@ -64,9 +64,12 @@ void World::Run()
 	while (m_Run)
 	{
 		UpdateSocket();
-        sf::Time l_Diff = m_Clock.restart();
-        m_MapManager->Update(l_Diff);
-		m_Graphics->CheckEvent();
+        if (m_PacketHandler->HasMinimalRequiered())
+        {
+            sf::Time l_Diff = m_Clock.restart();
+            m_MapManager->Update(l_Diff);
+        }
+        m_Graphics->CheckEvent();
 		if (!m_Graphics->WindowIsOpen())
 			End();
 	}

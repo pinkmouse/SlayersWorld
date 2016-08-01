@@ -3,15 +3,19 @@
 #include "../Define.hpp"
 #include "../World/ClockHandler.hpp"
 
+class Map;
+
 class MovementHandler
 {
 public:
-    MovementHandler();
+    MovementHandler(uint8, uint8);
     ~MovementHandler();
     void StartMovement(Orientation p_Orientation);
     void StopMovement();
     uint8 GetMovementPosition();
+    bool IsInColision(int64, int64) const;
     bool IsInMovement() const;
+    void SetMap(Map*);
 
     Orientation GetOrientation() const;
     void SetOrientation(Orientation);
@@ -35,4 +39,8 @@ private:
     uint32 m_PosY;
     uint64 m_DiffTime;
     uint64 m_DiffTimeUpdateAnimation;
+    uint8 m_SizeX;
+    uint8 m_SizeY;
+
+    Map* m_Map;
 };

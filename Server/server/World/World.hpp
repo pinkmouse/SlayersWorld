@@ -35,6 +35,7 @@ private:
 	/// NETWORK
 	void NetworkLoop();
 	bool NetworkInitialize();
+    std::vector<WorldSocket*> m_DisconnectedQueue;
 
 	void UpdatePacketQueue();
 

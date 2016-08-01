@@ -10,6 +10,9 @@ WorldSocket::WorldSocket()
 
 WorldSocket::~WorldSocket()
 {
+    if (m_Player == nullptr)
+        return;
+
     WorldPacket l_Packet;
     uint8 l_ID = 12;
     uint8 l_Type = (uint8)TypeUnit::PLAYER;

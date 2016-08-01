@@ -23,7 +23,7 @@ void Graphics::CreateWindow(uint32 p_X, uint32 p_Y, float p_Zoom)
 	m_View = m_Window.getDefaultView();
 	m_View.zoom(p_Zoom);
 	m_Window.setView(m_View);
-    m_Window.setFramerateLimit(30);
+    m_Window.setFramerateLimit(40);
 
 	m_TileSet = new TileSet();
 	m_TileSet->BuildSprites();
@@ -72,7 +72,7 @@ bool Graphics::WindowIsOpen() const
 
 void Graphics::DrawMap()
 {
-	if (!m_Window.isOpen() || !m_MapManager->HasMap())
+	if (!m_Window.isOpen() || !m_MapManager->HasMap() || g_Player == nullptr)
 		return;
 
 	Map* l_Map = m_MapManager->GetActualMap();
@@ -116,7 +116,7 @@ void Graphics::DrawMap()
                 uint8 l_SpriteNb = (l_Unit->GetOrientation() * MAX_MOVEMENT_POSITION) + l_Unit->GetMovementHandler()->GetMovementPosition();
                 SkinSprite l_SkinSprite = (*m_SkinsManager->GetSkinSprite(l_Unit->GetSkinID(), l_SpriteNb));
                 l_SkinSprite.setColor(sf::Color(255, 255, 255, l_Unit->GetOpacity()));
-                l_SkinSprite.setPosition((float)l_Unit->GetPosX(), (float)l_Unit->GetPosY());
+                l_SkinSprite.setPosition((float)l_Unit->GetPosX(), (float)l_Unit->GetPosY() - l_Unit->GetSizeY());
                 m_Window.draw(l_SkinSprite);
             }
         }

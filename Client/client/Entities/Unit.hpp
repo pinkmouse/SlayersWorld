@@ -16,6 +16,8 @@ public:
     uint16 GetMapID() const;
     uint32 GetPosX() const;
     uint32 GetPosY() const;
+    uint8 GetSizeX() const;
+    uint8 GetSizeY() const;
     uint8 GetLevel() const;
     uint8 GetSkinID() const;
     uint16 GetID() const;
@@ -30,6 +32,7 @@ public:
     void SetPosY(const uint32 &);
     void SetSkinID(const uint8 &);
     void SetOrientation(const Orientation &);
+    void SetMap(Map*);
 
     MovementHandler* GetMovementHandler();
     Player* ToPlayer();
@@ -40,14 +43,21 @@ protected:
     std::string m_Name;
     uint16 m_ID;
     uint8 m_Level;
+    uint8 m_SkinID;
     uint16 m_MapID;
+
     uint32 m_PosX;
     uint32 m_PosY;
-    uint8 m_SkinID;
+
+    uint8 m_SizeX;
+    uint8 m_SizeY;
+
     Orientation m_Orientation;
     MovementHandler* m_MovementHandler;
     TypeUnit m_Type;
     uint8 m_Opacity;
     uint64 m_DiffTimeOpactiy;
+
+    Map* m_Map;
 };
 

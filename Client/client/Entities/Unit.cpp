@@ -7,12 +7,15 @@ Unit::Unit(uint16 p_ID)
     m_MapID = 0;
     m_PosX = 0;
     m_PosY = 0;
-    m_MovementHandler = new MovementHandler();
     m_Orientation = Orientation::Down;
     m_Type = TypeUnit::CREATURE;
     m_ID = p_ID;
     m_Opacity = 0;
     m_DiffTimeOpactiy = 0;
+    m_SizeX = 24;
+    m_SizeY = 32;
+    m_MovementHandler = new MovementHandler(m_SizeX, m_SizeY);
+    m_Map = nullptr;
 }
 
 Unit::Unit(uint16 p_ID, TypeUnit p_Type)
@@ -21,14 +24,15 @@ Unit::Unit(uint16 p_ID, TypeUnit p_Type)
     m_MapID = 0;
     m_PosX = 0;
     m_PosY = 0;
-    m_MovementHandler = new MovementHandler();
     m_Orientation = Orientation::Down;
     m_Type = p_Type;
     m_ID = p_ID;
     m_Opacity = 0;
     m_DiffTimeOpactiy = 0;
+    m_SizeX = 24;
+    m_SizeY = 32;
+    m_MovementHandler = new MovementHandler(m_SizeX, m_SizeY);
 }
-
 
 Unit::~Unit()
 {
@@ -85,6 +89,16 @@ uint32 Unit::GetPosY() const
     return m_PosY;
 }
 
+uint8 Unit::GetSizeX() const
+{
+    return m_SizeX;
+}
+
+uint8 Unit::GetSizeY() const
+{
+    return m_SizeY;
+}
+
 uint8 Unit::GetLevel() const
 {
     return m_Level;
@@ -116,6 +130,12 @@ Player* Unit::ToPlayer()
 uint16 Unit::GetID() const
 {
     return m_ID;
+}
+
+void Unit::SetMap(Map* p_Map)
+{
+    m_Map = p_Map;
+    m_MovementHandler->SetMap(m_Map);
 }
 
 void Unit::SetName(const std::string & p_Name)

@@ -85,9 +85,14 @@ void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldS
     }
 
     uint32 l_Id = m_SqlManager->GetIDLogin(l_Login, l_Password);
-    if (!l_Id || m_MapManager->IsOnline(TypeUnit::PLAYER, l_Id))
+    if (!l_Id)
     {
         p_WorldSocket->SendAuthResponse(0); ///< Auth Failed
+        return;
+    }
+    if (m_MapManager->IsOnline(TypeUnit::PLAYER, l_Id))
+    {
+        p_WorldSocket->SendAuthResponse(2); ///< Already connected
         return;
     }
     /// Auth Success

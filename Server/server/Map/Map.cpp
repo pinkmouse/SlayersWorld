@@ -11,6 +11,16 @@ Map::~Map()
 {
 }
 
+uint16 Map::GetSizeX() const
+{
+    return m_SizeX;
+}
+
+uint16 Map::GetSizeY() const
+{
+    return m_SizeY;
+}
+
 uint16 Map::GetSquareID(uint16 p_X, uint16 p_Y) const
 {
     uint16 l_DrawingSquareID = 0;
@@ -18,8 +28,8 @@ uint16 Map::GetSquareID(uint16 p_X, uint16 p_Y) const
     /// Total square width
     uint16 l_TotalSquareWidth = (uint16)ceil((float)m_SizeX / SIZE_SENDING_SQUARE);
 
-    uint16 l_XSquare = (uint16)ceil((p_X / TILE_SIZE_X) / SIZE_SENDING_SQUARE);
-    uint16 l_YSquare = (uint16)ceil((p_Y / TILE_SIZE_Y) / SIZE_SENDING_SQUARE);
+    uint16 l_XSquare = (uint16)ceil((p_X / TILE_SIZE) / SIZE_SENDING_SQUARE);
+    uint16 l_YSquare = (uint16)ceil((p_Y / TILE_SIZE) / SIZE_SENDING_SQUARE);
 
     //printf("Calc %d %d %d", l_TotalSquareWidth, l_YSquare, l_XSquare);
     return (l_TotalSquareWidth * l_YSquare) + l_XSquare;

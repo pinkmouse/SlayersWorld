@@ -8,10 +8,12 @@ Unit::Unit(uint16 p_ID)
     m_MapID = 0;
     m_PosX = 0;
     m_PosY = 0;
-    m_MovementHandler = new MovementHandler();
     m_Orientation = Orientation::Down;
     m_Type = TypeUnit::CREATURE;
     m_ID = p_ID;
+    m_SizeX = 24;
+    m_SizeY = 32;
+    m_MovementHandler = new MovementHandler(m_SizeX, m_SizeY);
 }
 
 Unit::Unit(uint16 p_ID, TypeUnit p_Type)
@@ -21,9 +23,11 @@ Unit::Unit(uint16 p_ID, TypeUnit p_Type)
     m_MapID = 0;
     m_PosX = 0;
     m_PosY = 0;
-    m_MovementHandler = new MovementHandler();
     m_Orientation = Orientation::Down;
     m_ID = p_ID;
+    m_SizeX = 24;
+    m_SizeY = 32;
+    m_MovementHandler = new MovementHandler(m_SizeX, m_SizeY);
 }
 
 Player* Unit::ToPlayer()
@@ -79,6 +83,16 @@ uint32 Unit::GetPosX() const
 uint32 Unit::GetPosY() const
 {
     return m_PosY;
+}
+
+uint8 Unit::GetSizeX() const
+{
+    return m_SizeX;
+}
+
+uint8 Unit::GetSizeY() const
+{
+    return m_SizeY;
 }
 
 uint8 Unit::GetLevel() const
@@ -147,6 +161,7 @@ void Unit::SetOrientation(const Orientation & p_Orientation)
 void Unit::SetMap(Map* p_Map)
 {
     m_Map = p_Map;
+    m_MovementHandler->SetMap(m_Map);
 }
 
 uint16 Unit::GetSquareID() const

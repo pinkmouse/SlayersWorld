@@ -17,6 +17,8 @@ public:
     uint16 GetMapID() const;
     uint32 GetPosX() const;
     uint32 GetPosY() const;
+    uint8 GetSizeX() const;
+    uint8 GetSizeY() const;
     uint8 GetLevel() const;
     uint8 GetSkinID() const;
     uint8 GetOrientation() const;
@@ -44,8 +46,13 @@ protected:
     std::string m_Name;
     uint8 m_Level;
     uint16 m_MapID;
+
+    uint8 m_SizeX;
+    uint8 m_SizeY;
+
     uint32 m_PosX;
     uint32 m_PosY;
+
     uint8 m_SkinID;
     Orientation m_Orientation;
     MovementHandler* m_MovementHandler;
