@@ -17,7 +17,8 @@ public:
 	
 	uint16 GetSquareID(uint16, uint16) const;
 	std::vector<Case*> GetSquare(uint16);
-	std::vector<std::vector<Case*>> Map::GetSquareZone(uint16);
+	std::vector<std::vector<Case*>> GetSquareZone(uint16);
+    std::vector<uint16> GetSquareSetID(uint16);
 	Case* GetCase(uint16) const;
 	uint16 GetSizeX() const;
 	uint16 GetSizeY() const;

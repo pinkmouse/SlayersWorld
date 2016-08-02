@@ -3,9 +3,7 @@
 
 Graphics::Graphics(MapManager* p_MapManager, Events* p_Events) :
 	m_MapManager(p_MapManager),
-    m_Events(p_Events),
-	m_ThreadDraw(&Graphics::UpdateWindow, this),
-    m_Run(true)
+    m_Events(p_Events)
 {
 	m_TileSet = nullptr;
     m_SkinsManager = nullptr;
@@ -30,11 +28,6 @@ void Graphics::CreateWindow(uint32 p_X, uint32 p_Y, float p_Zoom)
 
     m_SkinsManager = new SkinsManager();
     m_SkinsManager->LoadSkins();
-}
-
-void Graphics::Run()
-{
-	m_ThreadDraw.launch();
 }
 
 void Graphics::CheckEvent()
@@ -125,22 +118,12 @@ void Graphics::DrawMap()
 
 void Graphics::UpdateWindow()
 {
-    while (m_Run)
-    {
-        m_MutexDraw.lock();
-        if (g_Player != nullptr)
-            m_View.setCenter((float)g_Player->GetPosX(), (float)g_Player->GetPosY());
-        m_Window.setView(m_View);
-        Clear();
-        DrawMap();
-        m_MutexDraw.unlock();
-        Display();
-    }
-}
-
-void Graphics::End()
-{
-	m_Run = false;
+    if (g_Player != nullptr)
+        m_View.setCenter((float)g_Player->GetPosX(), (float)g_Player->GetPosY());
+    m_Window.setView(m_View);
+    Clear();
+    DrawMap();
+    Display();
 }
 
 void Graphics::Clear()

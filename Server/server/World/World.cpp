@@ -178,6 +178,8 @@ void World::NetworkLoop()
 					}
                     if (l_IncIt)
                         ++l_It;
+                    else
+                        l_IncIt = true;
 				}
 
                 m_MutexSessions.unlock();

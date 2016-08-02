@@ -60,4 +60,5 @@ protected:
     Map* m_Map;
     uint16 m_SquareID;
     uint16 m_ID;
+    uint64 m_DiffUpdatePosTime;
 };

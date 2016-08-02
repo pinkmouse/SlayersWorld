@@ -14,6 +14,7 @@ Unit::Unit(uint16 p_ID)
     m_SizeX = 24;
     m_SizeY = 32;
     m_MovementHandler = new MovementHandler(m_SizeX, m_SizeY);
+    m_DiffUpdatePosTime = 0;
 }
 
 Unit::Unit(uint16 p_ID, TypeUnit p_Type)

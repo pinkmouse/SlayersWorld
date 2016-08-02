@@ -23,21 +23,16 @@ public:
 	void Display();
 	void Clear();
 	void CheckEvent();
-    void Run();
-	void End();
 	bool WindowIsOpen() const;
 
 private:
 	Window          m_Window;
 	sf::View        m_View;
-	sf::Thread      m_ThreadDraw;
-    sf::Mutex       m_MutexDraw;
 
 	MapManager*     m_MapManager;
 	TileSet*        m_TileSet;
     SkinsManager*   m_SkinsManager;
     Events*         m_Events;
-    bool            m_Run;
     ClockHandler*   m_Clock;
 };
 

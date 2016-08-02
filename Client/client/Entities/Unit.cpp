@@ -1,5 +1,5 @@
 #include "Unit.hpp"
-
+#include "../Map/Map.hpp"
 
 Unit::Unit(uint16 p_ID)
 {
@@ -36,6 +36,7 @@ Unit::Unit(uint16 p_ID, TypeUnit p_Type)
 
 Unit::~Unit()
 {
+    delete m_MovementHandler;
 }
 
 MovementHandler* Unit::GetMovementHandler()
@@ -174,4 +175,21 @@ void Unit::SetOrientation(const Orientation & p_Orientation)
 {
     m_Orientation = p_Orientation;
     m_MovementHandler->SetOrientation((Orientation)p_Orientation);
+}
+
+bool Unit::IsInRayVisible(Unit* p_Unit)
+{
+    if (p_Unit->GetMapID() != m_MapID)
+        return false;
+
+    std::vector<uint16> l_SquareSetID = m_Map->GetSquareSetID(m_Map->GetSquareID(GetPosX(), GetPosY()));
+    uint16 l_UnitSquareID = m_Map->GetSquareID(p_Unit->GetPosX(), GetPosY());
+
+    for (uint16 l_Id : l_SquareSetID)
+    {
+        if (l_Id == l_UnitSquareID)
+            return true;
+    }
+
+    return false;
 }

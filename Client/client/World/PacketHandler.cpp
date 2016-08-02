@@ -199,21 +199,20 @@ void PacketHandler::HandleCreateUnit(WorldPacket &p_Packet)
     printf("Create new Player: %d %s %d %d %d %d\n", l_ID, l_Name.c_str(), l_SkinID, l_MapID, l_PosX, l_PosY);
 
     Unit* l_NewUnit = nullptr;
-    if (l_TypeID == (uint8)TypeUnit::PLAYER)
-        l_NewUnit = new Player(l_ID, l_Name, l_Level, l_SkinID, l_MapID, l_PosX, l_PosY, (Orientation)l_Orientation);
 
-    if (Map* l_ActualMap = m_MapManager->GetActualMap())
+    Map* l_ActualMap = m_MapManager->GetActualMap();
+
+    if (l_ActualMap == nullptr)
+        return;
+
+    if (l_ActualMap->GetID() == l_MapID && l_ActualMap->GetUnit((TypeUnit)l_TypeID, l_ID) == nullptr)
     {
-        if (l_ActualMap->GetID() != l_MapID)
-            delete l_NewUnit;
-        else
-        {
-            l_NewUnit->SetMap(l_ActualMap);
-            l_ActualMap->AddUnit(l_NewUnit);
-        }
+        if (l_TypeID == (uint8)TypeUnit::PLAYER)
+            l_NewUnit = new Player(l_ID, l_Name, l_Level, l_SkinID, l_MapID, l_PosX, l_PosY, (Orientation)l_Orientation);
+
+        l_NewUnit->SetMap(l_ActualMap);
+        l_ActualMap->AddUnit(l_NewUnit);
     }
-    else
-        delete l_NewUnit;
 }
 
 void PacketHandler::OperatePacket(WorldPacket &p_Packet)

@@ -45,6 +45,7 @@ void Map::Update(sf::Time p_Diff)
 {
     for (std::pair<TypeUnit, std::map<uint16, Unit*>> l_MapListUnit : m_ListUnitZone)
     {
+        TypeUnit l_Type = l_MapListUnit.first;
         for (std::pair<uint16, Unit*> l_UnitPair : l_MapListUnit.second)
         {
             Unit* l_Unit = l_UnitPair.second;
@@ -52,9 +53,17 @@ void Map::Update(sf::Time p_Diff)
             if (l_Unit == nullptr)
                 continue;
 
-            l_Unit->Update(p_Diff);
+            if (l_Type == TypeUnit::PLAYER)
+                l_Unit->ToPlayer()->Update(p_Diff);
+            else
+                l_Unit->Update(p_Diff);
+
             if (l_Unit->GetSquareID() != GetSquareID(l_Unit->GetPosX(), l_Unit->GetPosY()))
+            {
+                if (l_Type == TypeUnit::PLAYER)
+                    l_Unit->ToPlayer()->UpdateNewSquares(l_Unit->GetSquareID(), GetSquareID(l_Unit->GetPosX(), l_Unit->GetPosY()));
                 ChangeSquare(l_Unit);
+            }
         }
     }
 }
@@ -158,6 +167,11 @@ bool Map::InitializeMap(const std::string & p_FileName)
 	return true;
 }
 
+Square* Map::GetSquare(uint16 p_SquareID)
+{
+    return &m_ListSquare[p_SquareID];
+}
+
 std::vector<Square*> Map::GetSquareSet(uint16 p_SquareID)
 {
     std::vector<Square*> l_SquareSet;
@@ -216,6 +230,43 @@ std::vector<Square*> Map::GetSquareSet(uint16 p_SquareID)
         //printf("8\n");
         l_SquareSet.push_back(&m_ListSquare[p_SquareID + l_TotalSquareWidth + 1]);
     }
+
+    return l_SquareSet;
+}
+
+std::vector<uint16> Map::GetSquareSetID(uint16 p_SquareID)
+{
+    std::vector<uint16> l_SquareSet;
+    l_SquareSet.push_back(p_SquareID);
+
+    uint16 l_TotalSquareWidth = (uint16)ceil((float)m_SizeX / SIZE_SENDING_SQUARE);
+    uint16 l_TotalSquareHeight = (uint16)ceil((float)m_SizeY / SIZE_SENDING_SQUARE);
+
+    if (!l_TotalSquareWidth || !l_TotalSquareHeight)
+        return l_SquareSet;
+
+    uint16 l_TotalSquare = l_TotalSquareWidth * l_TotalSquareHeight;
+
+    uint16 l_IDReal = p_SquareID + 1;
+    if (l_IDReal - l_TotalSquareWidth > 0) ///< Top Center
+        l_SquareSet.push_back(p_SquareID - l_TotalSquareWidth);
+    if (l_IDReal + l_TotalSquareWidth <= l_TotalSquare) ///< Bottom Center
+        l_SquareSet.push_back(p_SquareID + l_TotalSquareWidth);
+
+    if ((l_IDReal - 1) % l_TotalSquareWidth > 0) ///< Left Center
+        l_SquareSet.push_back(p_SquareID - 1);
+    if (l_IDReal % l_TotalSquareWidth > 0) ///< right Center
+        l_SquareSet.push_back(p_SquareID + 1);
+
+    if ((l_IDReal - 1) % l_TotalSquareWidth > 0 && (l_IDReal - l_TotalSquareWidth - 1 >= 0)) ///< Left Top
+        l_SquareSet.push_back(p_SquareID - l_TotalSquareWidth - 1);
+    if (l_IDReal % l_TotalSquareWidth > 0 && (l_IDReal - l_TotalSquareWidth - 1 >= 0)) ///< Right Top
+        l_SquareSet.push_back(p_SquareID - l_TotalSquareWidth + 1);
+
+    if (l_IDReal + l_TotalSquareWidth <= l_TotalSquare && (l_IDReal - 1) % l_TotalSquareWidth > 0) ///< Left Bottom
+        l_SquareSet.push_back(p_SquareID + l_TotalSquareWidth - 1);
+    if (l_IDReal % l_TotalSquareWidth > 0 && l_IDReal + l_TotalSquareWidth <= l_TotalSquare) ///< Right Bottom
+        l_SquareSet.push_back(p_SquareID + l_TotalSquareWidth + 1);
 
     return l_SquareSet;
 }

@@ -66,6 +66,9 @@ void WorldSocket::SendUnitCreate(uint8 p_Type, uint32 p_ID, std::string p_Name, 
     WorldPacket l_Packet;
     uint8 l_ID = 11;
 
+    if (p_Type == TypeUnit::PLAYER && p_ID == GetPlayer()->GetID())
+        return;
+
     l_Packet << l_ID << p_Type << p_ID << p_Name << p_Level << p_SkinID << p_MapID << p_PosX << p_PosY << p_Orientation;
     send(l_Packet);
     printf("Send create to unit\n");
@@ -105,7 +108,7 @@ void WorldSocket::SendMsg(WorldPacket p_Packet)
     send(p_Packet);
 }
 
-void WorldSocket::SendToSet(WorldPacket l_Packet, bool p_ExcludePlayer /*= false*/)
+void WorldSocket::SendToSet(WorldPacket p_Packet, bool p_ExcludePlayer /*= false*/)
 {
     Map* l_Map = GetPlayer()->GetMap();
 
@@ -119,7 +122,6 @@ void WorldSocket::SendToSet(WorldPacket l_Packet, bool p_ExcludePlayer /*= false
         if (l_Square == nullptr)
             continue;
 
-        printf("Send to %d\n", l_Square->size());
         for (std::vector<Unit*>::iterator l_It2 = l_Square->begin(); l_It2 != l_Square->end(); ++l_It2)
         {
             Unit* l_Unit = (*l_It2);
@@ -132,11 +134,11 @@ void WorldSocket::SendToSet(WorldPacket l_Packet, bool p_ExcludePlayer /*= false
 
             if (Player* l_Player = l_Unit->ToPlayer())
             {
-                if (p_ExcludePlayer && l_Player == GetPlayer())
+                if (p_ExcludePlayer && l_Player->GetID() == GetPlayer()->GetID())
                     continue;
 
                 printf("Send to %s\n", l_Player->GetName().c_str());
-                l_Player->GetSession()->send(l_Packet);
+                l_Player->GetSession()->send(p_Packet);
             }
         }
     }

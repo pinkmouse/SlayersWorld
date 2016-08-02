@@ -11,6 +11,9 @@ public:
     WorldSocket* GetSession() const;
     void SetSession(WorldSocket*);
 
+    void Update(sf::Time);
+    void UpdateNewSquares(uint16, uint16);
+
 private:
     WorldSocket* m_Session;
 };

@@ -37,7 +37,6 @@ bool World::InitializeWindow()
 void World::Initialize(char** p_Argv)
 {
 	InitializeWindow();
-    m_Graphics->Run();
     while (!InitializeConnection()) ///< While not connected, wait for connection
         ;
 
@@ -63,12 +62,17 @@ void World::Run()
 {
 	while (m_Run)
 	{
-		UpdateSocket();
+        if (!UpdateSocket())
+        {
+            End();
+            continue;
+        }
         if (m_PacketHandler->HasMinimalRequiered())
         {
             sf::Time l_Diff = m_Clock.restart();
             m_MapManager->Update(l_Diff);
         }
+        m_Graphics->UpdateWindow();
         m_Graphics->CheckEvent();
 		if (!m_Graphics->WindowIsOpen())
 			End();
@@ -93,6 +97,5 @@ bool World::UpdateSocket()
 void World::End()
 {
 	m_Run = false;
-	m_Graphics->End();
     g_Socket->disconnect();
 }

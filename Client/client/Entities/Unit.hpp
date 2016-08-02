@@ -34,6 +34,8 @@ public:
     void SetOrientation(const Orientation &);
     void SetMap(Map*);
 
+    bool IsInRayVisible(Unit*);
+
     MovementHandler* GetMovementHandler();
     Player* ToPlayer();
 
