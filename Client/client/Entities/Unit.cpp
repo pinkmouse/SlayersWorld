@@ -57,9 +57,10 @@ void Unit::Update(sf::Time p_Diff)
         while (m_DiffTimeOpactiy > (uint64)(UPDATE_OPACITY_TIME * 1000)) ///< 1000 because microsecond
         {
             /// UPDATE OPACITY
-            m_Opacity += 15;
-            if (m_Opacity > 255)
+            if ((int16)m_Opacity + 15 > 255)
                 m_Opacity = 255;
+            else
+                m_Opacity += 15;
             m_DiffTimeOpactiy -= (uint64)(UPDATE_TIME_MOVEMENT * 1000);
         }
     }
@@ -182,8 +183,11 @@ bool Unit::IsInRayVisible(Unit* p_Unit)
     if (p_Unit->GetMapID() != m_MapID)
         return false;
 
-    std::vector<uint16> l_SquareSetID = m_Map->GetSquareSetID(m_Map->GetSquareID(GetPosX(), GetPosY()));
-    uint16 l_UnitSquareID = m_Map->GetSquareID(p_Unit->GetPosX(), GetPosY());
+    if (p_Unit == this)
+        return true;
+
+    std::vector<uint16> l_SquareSetID = m_Map->GetSquareSetID(m_Map->GetSquareID(GetCasePosX(), GetCasePosY()));
+    uint16 l_UnitSquareID = m_Map->GetSquareID(p_Unit->GetCasePosX(), p_Unit->GetCasePosY());
 
     for (uint16 l_Id : l_SquareSetID)
     {
@@ -192,4 +196,22 @@ bool Unit::IsInRayVisible(Unit* p_Unit)
     }
 
     return false;
+}
+
+uint16 Unit::GetCasePosX() const
+{
+    return m_PosX / TILE_SIZE;
+}
+
+uint16 Unit::GetCasePosY() const
+{
+    return m_PosY / TILE_SIZE;
+}
+
+void Unit::StartMovement()
+{
+    if (m_MovementHandler == nullptr)
+        return;
+
+    m_MovementHandler->StartMovement();
 }

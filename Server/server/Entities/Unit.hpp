@@ -13,6 +13,7 @@ public:
     Unit(uint16, TypeUnit);
     ~Unit();
 
+    bool IsPlayer() const;
     std::string GetName() const;
     uint16 GetMapID() const;
     uint32 GetPosX() const;
@@ -36,6 +37,7 @@ public:
     void SetMap(Map*);
     void SetSquareID(uint16);
     TypeUnit GetType() const;
+    bool IsInMovement() const;
 
     Player* ToPlayer();
     MovementHandler* GetMovementHandler();

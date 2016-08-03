@@ -28,6 +28,7 @@ public:
     std::vector<uint16> GetSquareSetID(uint16);
     uint16 GetSizeX() const;
     uint16 GetSizeY() const;
+    void UpdateForPlayersInNewSquare(Unit*, bool p_UpdateAll = false);
 
 private:
 	uint16 m_ID;

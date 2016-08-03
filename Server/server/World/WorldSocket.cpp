@@ -51,17 +51,17 @@ void WorldSocket::SendPlayerCreate(uint32 p_ID, std::string p_Name, uint8 p_Leve
     printf("Send create\n");
 }
 
-void WorldSocket::SendUnitCreateToSet(uint8 p_Type, uint32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_SkinID, uint16 p_MapID, uint32 p_PosX, uint32 p_PosY, uint8 p_Orientation)
+void WorldSocket::SendUnitCreateToSet(uint8 p_Type, uint32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_SkinID, uint16 p_MapID, uint32 p_PosX, uint32 p_PosY, uint8 p_Orientation, bool p_InMovement)
 {
     WorldPacket l_Packet;
     uint8 l_ID = 11;
 
-    l_Packet << l_ID << p_Type << p_ID << p_Name << p_Level << p_SkinID << p_MapID << p_PosX << p_PosY << p_Orientation;
+    l_Packet << l_ID << p_Type << p_ID << p_Name << p_Level << p_SkinID << p_MapID << p_PosX << p_PosY << p_Orientation << p_InMovement;
     SendToSet(l_Packet, true);
     printf("Send create to square\n");
 }
 
-void WorldSocket::SendUnitCreate(uint8 p_Type, uint32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_SkinID, uint16 p_MapID, uint32 p_PosX, uint32 p_PosY, uint8 p_Orientation)
+void WorldSocket::SendUnitCreate(uint8 p_Type, uint32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_SkinID, uint16 p_MapID, uint32 p_PosX, uint32 p_PosY, uint8 p_Orientation, bool p_InMovement)
 {
     WorldPacket l_Packet;
     uint8 l_ID = 11;
@@ -69,7 +69,7 @@ void WorldSocket::SendUnitCreate(uint8 p_Type, uint32 p_ID, std::string p_Name, 
     if (p_Type == TypeUnit::PLAYER && p_ID == GetPlayer()->GetID())
         return;
 
-    l_Packet << l_ID << p_Type << p_ID << p_Name << p_Level << p_SkinID << p_MapID << p_PosX << p_PosY << p_Orientation;
+    l_Packet << l_ID << p_Type << p_ID << p_Name << p_Level << p_SkinID << p_MapID << p_PosX << p_PosY << p_Orientation << p_InMovement;
     send(l_Packet);
     printf("Send create to unit\n");
 }
@@ -116,20 +116,17 @@ void WorldSocket::SendToSet(WorldPacket p_Packet, bool p_ExcludePlayer /*= false
         return;
 
     std::vector<Square*> l_SquareSet = l_Map->GetSquareSet(GetPlayer()->GetSquareID());
-    for (std::vector<Square*>::iterator l_It = l_SquareSet.begin(); l_It != l_SquareSet.end(); ++l_It)
+    for (Square* l_Square : l_SquareSet)
     {
-        std::vector<Unit*>* l_Square = (*l_It)->GetList();
-        if (l_Square == nullptr)
+        std::map<uint16, Unit*>* l_SquareList = l_Square->GetList(TypeUnit::PLAYER);
+        if (l_SquareList == nullptr)
             continue;
 
-        for (std::vector<Unit*>::iterator l_It2 = l_Square->begin(); l_It2 != l_Square->end(); ++l_It2)
+        for (std::pair<uint16, Unit*> l_UnitPair : *l_SquareList)
         {
-            Unit* l_Unit = (*l_It2);
+            Unit* l_Unit = l_UnitPair.second;
 
             if (l_Unit == nullptr)
-                continue;
-
-            if (l_Unit->GetType() != TypeUnit::PLAYER)
                 continue;
 
             if (Player* l_Player = l_Unit->ToPlayer())

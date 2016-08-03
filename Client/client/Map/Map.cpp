@@ -19,29 +19,20 @@ void Map::Update(sf::Time p_Diff)
 {
     for (std::pair<TypeUnit, std::map<uint16, Unit*>> l_MapListUnit : m_ListUnitZone)
     {
-        std::map<uint16, Unit*> l_MapUnit = l_MapListUnit.second;
-        for (std::map<uint16, Unit*>::iterator l_It = l_MapUnit.begin(); l_It != l_MapUnit.end();)
+        for (std::pair<uint16, Unit*> l_UnitPair : l_MapListUnit.second)
         {
-            Unit* l_Unit = (*l_It).second;
+            Unit* l_Unit = l_UnitPair.second;
 
             if (l_Unit == nullptr)
-            {
-                l_It++;
                 continue;
-            }
 
             if (g_Player == nullptr)
                 return;
 
-            /*if (g_Player != l_Unit && !g_Player->IsInRayVisible(l_Unit))
-            {
-                l_It = l_MapUnit.erase(l_It);
-            }
+            if (!g_Player->IsInRayVisible(l_Unit))
+                m_ListUnitZone[l_Unit->GetType()].erase(l_Unit->GetID());
             else
-            {*/
                 l_Unit->Update(p_Diff);
-                l_It++;
-            /*}*/
         }
     }
 }
@@ -80,22 +71,6 @@ void Map::MoveUnitToDirection(TypeUnit p_TypeID, uint16 p_UnitID, uint8 p_Direct
 std::vector<Case*> Map::GetSquare(uint16 p_ID)
 {
 	return m_MapListCase[p_ID];
-}
-
-std::vector<Unit*> Map::GetPlayersInRay(uint32 p_PosX, uint32 p_PosY)
-{
-   /* for (std::vector<Player*>::iterator l_It = m_ListPlayerZone.begin(); l_It != m_ListPlayerZone.end();)
-    {
-        if ((*l_It)->GetPosX() > p_PosX + (PLAYER_RAY * TILE_SIZE) || (*l_It)->GetPosX() < p_PosX - (PLAYER_RAY * TILE_SIZE))
-            m_ListPlayerZone.erase(l_It);
-        else if ((*l_It)->GetPosY() > p_PosY + (PLAYER_RAY * TILE_SIZE) || (*l_It)->GetPosY() < p_PosY - (PLAYER_RAY * TILE_SIZE))
-            m_ListPlayerZone.erase(l_It);
-        else
-            ++l_It;
-    }
-    return m_ListPlayerZone;*/
-    std::vector<Unit*> a;
-    return a;
 }
 
 std::vector<std::vector<Case*>> Map::GetSquareZone(uint16 p_ID)

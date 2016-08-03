@@ -185,6 +185,7 @@ void PacketHandler::HandleCreateUnit(WorldPacket &p_Packet)
     uint32 l_PosX;
     uint32 l_PosY;
     uint8 l_Orientation;
+    bool l_IsInMovement;
 
     p_Packet >> l_TypeID;
     p_Packet >> l_ID;
@@ -195,6 +196,7 @@ void PacketHandler::HandleCreateUnit(WorldPacket &p_Packet)
     p_Packet >> l_PosX;
     p_Packet >> l_PosY;
     p_Packet >> l_Orientation;
+    p_Packet >> l_IsInMovement;
 
     printf("Create new Player: %d %s %d %d %d %d\n", l_ID, l_Name.c_str(), l_SkinID, l_MapID, l_PosX, l_PosY);
 
@@ -212,6 +214,8 @@ void PacketHandler::HandleCreateUnit(WorldPacket &p_Packet)
 
         l_NewUnit->SetMap(l_ActualMap);
         l_ActualMap->AddUnit(l_NewUnit);
+        if (l_IsInMovement)
+            l_NewUnit->StartMovement();
     }
 }
 

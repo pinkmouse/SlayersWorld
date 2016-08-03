@@ -70,7 +70,7 @@ void Graphics::DrawMap()
 
 	Map* l_Map = m_MapManager->GetActualMap();
 
-	std::vector<std::vector<Case*>> l_SquareZone = l_Map->GetSquareZone(l_Map->GetSquareID(g_Player->GetPosX() / TILE_SIZE, g_Player->GetPosY() / TILE_SIZE));
+	std::vector<std::vector<Case*>> l_SquareZone = l_Map->GetSquareZone(l_Map->GetSquareID(g_Player->GetCasePosX(), g_Player->GetCasePosY()));
 	//printf("Square Acutal = %d\n", l_Map->GetSquareID(m_MapManager->GetPosX() / TILE_SIZE, m_MapManager->GetPosY() / TILE_SIZE));
 	if (l_SquareZone.empty())
 		return;
@@ -119,7 +119,7 @@ void Graphics::DrawMap()
 void Graphics::UpdateWindow()
 {
     if (g_Player != nullptr)
-        m_View.setCenter((float)g_Player->GetPosX(), (float)g_Player->GetPosY());
+        m_View.setCenter((float)g_Player->GetPosX() + (g_Player->GetSizeX() / 2), (float)g_Player->GetPosY() - (g_Player->GetSizeY() / 2));
     m_Window.setView(m_View);
     Clear();
     DrawMap();

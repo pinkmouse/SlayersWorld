@@ -106,6 +106,20 @@ uint8 Unit::GetSkinID() const
     return m_SkinID;
 }
 
+bool Unit::IsPlayer() const
+{
+    return m_Type == TypeUnit::PLAYER;
+}
+
+bool Unit::IsInMovement() const
+{
+    if (m_MovementHandler == nullptr)
+        return false;
+
+    return m_MovementHandler->IsInMovement();
+}
+
+
 uint8 Unit::GetOrientation() const
 {
     return m_Orientation;

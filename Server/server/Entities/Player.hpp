@@ -12,7 +12,7 @@ public:
     void SetSession(WorldSocket*);
 
     void Update(sf::Time);
-    void UpdateNewSquares(uint16, uint16);
+    void UpdateNewSquares(uint16, uint16, bool p_UpdateAll = false);
 
 private:
     WorldSocket* m_Session;

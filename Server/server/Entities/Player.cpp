@@ -36,9 +36,11 @@ void Player::Update(sf::Time p_Diff)
     Unit::Update(p_Diff);
 }
 
-void Player::UpdateNewSquares(uint16 p_OldSquareID, uint16 p_NewSquareID)
+void Player::UpdateNewSquares(uint16 p_OldSquareID, uint16 p_NewSquareID, bool p_UpdateAll)
 {
-    std::vector<uint16> l_OldSquareSet = m_Map->GetSquareSetID(p_OldSquareID);
+    std::vector<uint16> l_OldSquareSet;
+    if (!p_UpdateAll)
+        l_OldSquareSet = m_Map->GetSquareSetID(p_OldSquareID);
     std::vector<uint16> l_NewSquareSet = m_Map->GetSquareSetID(p_NewSquareID);
 
     std::vector<uint16> l_DiffSquareSet;
@@ -57,9 +59,19 @@ void Player::UpdateNewSquares(uint16 p_OldSquareID, uint16 p_NewSquareID)
         if (l_Square == nullptr)
             continue;
 
-        std::vector<Unit*>* l_SquareList = l_Square->GetList();
+        std::map<TypeUnit, std::map<uint16, Unit*>>* l_SquareList = l_Square->GetList();
 
-        for (Unit* l_Unit : *l_SquareList)
-            GetSession()->SendUnitCreate(l_Unit->GetType(), l_Unit->GetID(), l_Unit->GetName(), l_Unit->GetLevel(), l_Unit->GetSkinID(), l_Unit->GetMapID(), l_Unit->GetPosX(), l_Unit->GetPosY(), l_Unit->GetOrientation());
+        for (std::pair<TypeUnit, std::map<uint16, Unit*>> l_SquareMap : *l_SquareList)
+        {
+            for (std::pair<uint16, Unit*> l_SquareList : l_SquareMap.second)
+            {
+                Unit* l_Unit = l_SquareList.second;
+
+                if (l_Unit == nullptr)
+                    continue;
+
+                GetSession()->SendUnitCreate(l_Unit->GetType(), l_Unit->GetID(), l_Unit->GetName(), l_Unit->GetLevel(), l_Unit->GetSkinID(), l_Unit->GetMapID(), l_Unit->GetPosX(), l_Unit->GetPosY(), l_Unit->GetOrientation(), l_Unit->IsInMovement());
+            }
+        }
     }
 }

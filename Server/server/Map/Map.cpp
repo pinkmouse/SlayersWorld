@@ -1,9 +1,12 @@
 #include <cstdio>
 #include "Map.hpp"
+#include "../World/WorldSocket.hpp"
 
 
 Map::Map()
 {
+    m_SizeX = 0;
+    m_SizeY = 0;
 }
 
 
@@ -59,27 +62,69 @@ void Map::Update(sf::Time p_Diff)
                 l_Unit->Update(p_Diff);
 
             if (l_Unit->GetSquareID() != GetSquareID(l_Unit->GetPosX(), l_Unit->GetPosY()))
-            {
-                if (l_Type == TypeUnit::PLAYER)
-                    l_Unit->ToPlayer()->UpdateNewSquares(l_Unit->GetSquareID(), GetSquareID(l_Unit->GetPosX(), l_Unit->GetPosY()));
                 ChangeSquare(l_Unit);
-            }
         }
     }
 }
 
 uint16 Map::ChangeSquare(Unit* p_Unit)
 {
+    /// Send the new Unit to Player entering
+    if (p_Unit->GetType() == TypeUnit::PLAYER)
+        p_Unit->ToPlayer()->UpdateNewSquares(p_Unit->GetSquareID(), GetSquareID(p_Unit->GetPosX(), p_Unit->GetPosY()));
+
+    /// Send the new Unit entering for the Player already in square
+    UpdateForPlayersInNewSquare(p_Unit);
+
+    /// Remove from old square
     Square* l_OldSquare = &m_ListSquare[p_Unit->GetSquareID()];
     l_OldSquare->RemoveUnit(p_Unit);
 
+    /// Add to new square
     uint16 l_SquareId = GetSquareID(p_Unit->GetPosX(), p_Unit->GetPosY());
-    Square* l_NewSquare = &m_ListSquare[l_SquareId];
-    l_NewSquare->AddUnit(p_Unit);
-    p_Unit->SetSquareID(l_SquareId);
+    AddToSquare(p_Unit, l_SquareId);
 
-    printf("Pass from square %d to square %d\n", p_Unit->GetSquareID(), l_SquareId);
     return l_SquareId;
+}
+
+void Map::UpdateForPlayersInNewSquare(Unit* p_Unit, bool p_UpdateAll)
+{
+    std::vector<uint16> l_OldSquareSet;
+    if (!p_UpdateAll)
+        l_OldSquareSet = GetSquareSetID(p_Unit->GetSquareID());
+    std::vector<uint16> l_NewSquareSet = GetSquareSetID(GetSquareID(p_Unit->GetPosX(), p_Unit->GetPosY()));
+
+    std::vector<uint16> l_DiffSquareSet;
+    for (uint16 l_Id : l_NewSquareSet)
+    {
+        std::vector<uint16>::iterator l_It = std::find(l_OldSquareSet.begin(), l_OldSquareSet.end(), l_Id);
+
+        if (l_It == l_OldSquareSet.end())
+            l_DiffSquareSet.push_back(l_Id);
+    }
+
+    for (uint16 l_Id : l_DiffSquareSet)
+    {
+        Square* l_Square = GetSquare(l_Id);
+
+        if (l_Square == nullptr)
+            continue;
+
+        std::map<uint16, Unit*>* l_SquareList = l_Square->GetList(TypeUnit::PLAYER);
+
+        for (std::pair<uint16, Unit*> l_UnitPair : *l_SquareList)
+        {
+            Player* l_Player = l_UnitPair.second->ToPlayer();
+            if (l_Player == nullptr)
+                continue;
+
+            WorldSocket* l_Session = l_Player->GetSession();
+            if (l_Session == nullptr)
+                continue;
+
+            l_Session->SendUnitCreate(p_Unit->GetType(), p_Unit->GetID(), p_Unit->GetName(), p_Unit->GetLevel(), p_Unit->GetSkinID(), p_Unit->GetMapID(), p_Unit->GetPosX(), p_Unit->GetPosY(), p_Unit->GetOrientation(), p_Unit->IsInMovement());
+        }
+    }
 }
 
 void Map::AddUnit(Unit* p_Unit)
@@ -89,6 +134,7 @@ void Map::AddUnit(Unit* p_Unit)
     /// Add to square
     uint16 l_SquareId = GetSquareID(p_Unit->GetPosX(), p_Unit->GetPosY());
     AddToSquare(p_Unit, l_SquareId);
+    UpdateForPlayersInNewSquare(p_Unit, true);
 }
 
 void Map::RemoveUnit(Unit* p_Unit)
@@ -147,23 +193,6 @@ bool Map::InitializeMap(const std::string & p_FileName)
 			l_Case->SetBlock(true);
 		m_ListCase.push_back(l_Case);
 	}
-
-    /// Initialize Squares
-   /* uint16 l_TotalSquareWidth = (uint16)ceil(m_SizeX / SIZE_SENDING_SQUARE);
-    uint16 l_TotalSquareHeight = (uint16)ceil(m_SizeY / SIZE_SENDING_SQUARE);
-
-    if (!l_TotalSquareWidth || !l_TotalSquareHeight)
-        return false;
-
-    uint16 l_TotalSquare = l_TotalSquareWidth * l_TotalSquareHeight;
-
-    for (uint16 i = 0; i < l_TotalSquare; ++i)
-    {
-        std::vector<Unit*>* l_Square = new std::vector<Unit*>();
-        m_ListSquare[i] = l_Square;
-        printf("--> %d\n", i);
-    }*/
-
 	return true;
 }
 
@@ -186,50 +215,25 @@ std::vector<Square*> Map::GetSquareSet(uint16 p_SquareID)
     uint16 l_TotalSquare = l_TotalSquareWidth * l_TotalSquareHeight;
 
     uint16 l_IDReal = p_SquareID + 1;
-    //printf("--> ID = %d, %d, %d, %d\n", p_ID, l_TotalSquareWidth, l_TotalSquareHeight, m_SizeY);
     if (l_IDReal - l_TotalSquareWidth > 0) ///< Top Center
-    {
-        //printf("1\n");
         l_SquareSet.push_back(&m_ListSquare[p_SquareID - l_TotalSquareWidth]);
-    }
     if (l_IDReal + l_TotalSquareWidth <= l_TotalSquare) ///< Bottom Center
-    {
-        //printf("2\n");
         l_SquareSet.push_back(&m_ListSquare[p_SquareID + l_TotalSquareWidth]);
-    }
 
     if ((l_IDReal - 1) % l_TotalSquareWidth > 0) ///< Left Center
-    {
-        //printf("3\n");
         l_SquareSet.push_back(&m_ListSquare[p_SquareID - 1]);
-    }
     if (l_IDReal % l_TotalSquareWidth > 0) ///< right Center
-    {
-        //printf("4\n");
         l_SquareSet.push_back(&m_ListSquare[p_SquareID + 1]);
-    }
 
     if ((l_IDReal - 1) % l_TotalSquareWidth > 0 && (l_IDReal - l_TotalSquareWidth - 1 >= 0)) ///< Left Top
-    {
-        //printf("5\n");
         l_SquareSet.push_back(&m_ListSquare[p_SquareID - l_TotalSquareWidth - 1]);
-    }
     if (l_IDReal % l_TotalSquareWidth > 0 && (l_IDReal - l_TotalSquareWidth - 1 >= 0)) ///< Right Top
-    {
-        //printf("6\n");
         l_SquareSet.push_back(&m_ListSquare[p_SquareID - l_TotalSquareWidth + 1]);
-    }
 
     if (l_IDReal + l_TotalSquareWidth <= l_TotalSquare && (l_IDReal - 1) % l_TotalSquareWidth > 0) ///< Left Bottom
-    {
-        //printf("7\n");
         l_SquareSet.push_back(&m_ListSquare[p_SquareID + l_TotalSquareWidth - 1]);
-    }
     if (l_IDReal % l_TotalSquareWidth > 0 && l_IDReal + l_TotalSquareWidth <= l_TotalSquare) ///< Right Bottom
-    {
-        //printf("8\n");
         l_SquareSet.push_back(&m_ListSquare[p_SquareID + l_TotalSquareWidth + 1]);
-    }
 
     return l_SquareSet;
 }

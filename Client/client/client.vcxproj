@@ -184,6 +184,7 @@
     <ClInclude Include="World\World.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Map\Map.cpp" />
     <ClCompile Include="World\ClockHandler.cpp" />
     <ClCompile Include="Entities\Player.cpp" />
     <ClCompile Include="Entities\Unit.cpp" />
@@ -193,7 +194,6 @@
     <ClCompile Include="client.cpp" />
     <ClCompile Include="Graphics\Graphics.cpp" />
     <ClCompile Include="Map\MapManager.cpp" />
-    <ClCompile Include="Map\Map.cpp" />
     <ClCompile Include="Graphics\TileSet.cpp" />
     <ClCompile Include="Graphics\TileSprite.cpp" />
     <ClCompile Include="Graphics\SkinsManager.cpp" />

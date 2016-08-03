@@ -12,19 +12,20 @@ Square::~Square()
 
 void Square::AddUnit(Unit* p_Unit)
 {
-    std::vector<Unit*>::iterator l_It = std::find(m_ListUnit.begin(), m_ListUnit.end(), p_Unit);
-    if (l_It == m_ListUnit.end())
-        m_ListUnit.push_back(p_Unit);
+    m_ListUnitSquare[p_Unit->GetType()][p_Unit->GetID()] = p_Unit;
 }
 
 void Square::RemoveUnit(Unit* p_Unit)
 {
-    std::vector<Unit*>::iterator l_It = std::find(m_ListUnit.begin(), m_ListUnit.end(), p_Unit);
-    if (l_It != m_ListUnit.end())
-        m_ListUnit.erase(l_It);
+    m_ListUnitSquare[p_Unit->GetType()].erase(p_Unit->GetID());
 }
 
-std::vector<Unit*>* Square::GetList()
+std::map<TypeUnit, std::map<uint16, Unit*>>* Square::GetList()
 {
-    return &m_ListUnit;
+    return &m_ListUnitSquare;
+}
+
+std::map<uint16, Unit*>* Square::GetList(TypeUnit p_TypeID)
+{
+    return &m_ListUnitSquare[p_TypeID];
 }

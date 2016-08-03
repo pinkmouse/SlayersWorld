@@ -107,9 +107,6 @@
     <ClCompile Include="World\WorldPacket.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="Map\Map.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="Map\MapManager.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
@@ -144,6 +141,12 @@
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="World\PacketHandler.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Map\Map.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Map\Map.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>

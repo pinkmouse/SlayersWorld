@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vector>
+#include <map>
 #include "../Entities/Unit.hpp"
 
 class Square
@@ -10,9 +10,10 @@ public:
     ~Square();
     void AddUnit(Unit*);
     void RemoveUnit(Unit*);
-    std::vector<Unit*>* GetList();
+    std::map<TypeUnit, std::map<uint16, Unit*>>* GetList();
+    std::map<uint16, Unit*>* GetList(TypeUnit);
 
 private:
-    std::vector<Unit*> m_ListUnit;
+    std::map<TypeUnit, std::map<uint16, Unit*>> m_ListUnitSquare;
 };
 

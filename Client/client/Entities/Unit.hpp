@@ -16,6 +16,8 @@ public:
     uint16 GetMapID() const;
     uint32 GetPosX() const;
     uint32 GetPosY() const;
+    uint16 GetCasePosX() const;
+    uint16 GetCasePosY() const;
     uint8 GetSizeX() const;
     uint8 GetSizeY() const;
     uint8 GetLevel() const;
@@ -33,7 +35,8 @@ public:
     void SetSkinID(const uint8 &);
     void SetOrientation(const Orientation &);
     void SetMap(Map*);
-
+    
+    void StartMovement();
     bool IsInRayVisible(Unit*);
 
     MovementHandler* GetMovementHandler();

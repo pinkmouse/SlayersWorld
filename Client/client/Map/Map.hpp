@@ -30,8 +30,6 @@ public:
     void AddUnit(Unit*);
     void RemoveUnit(Unit*);
 
-    std::vector<Unit*> GetPlayersInRay(uint32, uint32);
-
     void Update(sf::Time);
 
 private:

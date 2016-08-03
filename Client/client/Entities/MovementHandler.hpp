@@ -11,6 +11,7 @@ public:
     MovementHandler(uint8, uint8);
     ~MovementHandler();
     void StartMovement(Orientation p_Orientation);
+    void StartMovement();
     void StopMovement();
     uint8 GetMovementPosition();
     bool IsInColision(int64, int64) const;
