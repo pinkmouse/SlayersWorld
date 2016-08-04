@@ -13,6 +13,7 @@ public:
 	int16 GetTile(uint8) const;
 	uint16 GetPosX() const;
 	uint16 GetPosY() const;
+    bool IsBlocking() const;
 
 private:
 	bool m_Block;

@@ -135,6 +135,11 @@ Case* Map::GetCase(uint16 p_ID) const
 	return m_ListCase[p_ID];
 }
 
+Case* Map::GetCase(uint32 p_PosX, uint32 p_PosY) const
+{
+    return m_ListCase[(uint16)((p_PosY / TILE_SIZE) * m_SizeX) + (p_PosX / TILE_SIZE)];
+}
+
 uint16 Map::GetSizeX() const
 {
 	return m_SizeX;

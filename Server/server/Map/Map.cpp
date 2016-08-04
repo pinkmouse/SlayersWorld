@@ -24,6 +24,16 @@ uint16 Map::GetSizeY() const
     return m_SizeY;
 }
 
+Case* Map::GetCase(uint16 p_ID) const
+{
+    return m_ListCase[p_ID];
+}
+
+Case* Map::GetCase(uint32 p_PosX, uint32 p_PosY) const
+{
+    return m_ListCase[(uint16)((p_PosY / TILE_SIZE) * m_SizeX) + (p_PosX / TILE_SIZE)];
+}
+
 uint16 Map::GetSquareID(uint16 p_X, uint16 p_Y) const
 {
     uint16 l_DrawingSquareID = 0;

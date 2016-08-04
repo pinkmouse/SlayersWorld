@@ -15,7 +15,7 @@
 #define MAX_TILE_LEVEL 4
 #define TILE_SIZE 16
 #define TILE_FOLDER "img/tiles/"
-#define SIZE_DRAWING_SQUARE 6
+#define SIZE_DRAWING_SQUARE 14
 
 /// SKIN
 #define UPDATE_OPACITY_TIME 250

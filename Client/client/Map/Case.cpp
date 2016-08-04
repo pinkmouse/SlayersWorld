@@ -29,6 +29,10 @@ int16 Case::GetTile(uint8 p_Level) const
 	return m_TileList[p_Level];
 }
 
+bool Case::IsBlocking() const
+{
+    return m_Block;
+}
 
 void Case::SetTile(uint8 p_Level, int16 p_Value)
 {

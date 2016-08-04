@@ -93,27 +93,46 @@ void Graphics::DrawMap()
                 m_Window.draw(*l_TileSprite);
             }
 		}
+	}
+    std::map<TypeUnit, std::map<uint16, Unit*>>* l_ListUnitZone = l_Map->GetListUnitZone();
 
-        std::map<TypeUnit, std::map<uint16, Unit*>>* l_ListUnitZone = l_Map->GetListUnitZone();
-
-        /// Draw Entities
-        for (std::pair<TypeUnit, std::map<uint16, Unit*>> l_MapListUnit : (*l_ListUnitZone))
+    /// Draw Entities
+    for (std::pair<TypeUnit, std::map<uint16, Unit*>> l_MapListUnit : (*l_ListUnitZone))
+    {
+        for (std::pair<uint16, Unit*> l_UnitPair : l_MapListUnit.second)
         {
-            for (std::pair<uint16, Unit*> l_UnitPair : l_MapListUnit.second)
-            {
-                Unit* l_Unit = l_UnitPair.second;
+            Unit* l_Unit = l_UnitPair.second;
 
-                if (l_Unit == nullptr)
+            if (l_Unit == nullptr)
+                continue;
+
+            uint8 l_SpriteNb = (l_Unit->GetOrientation() * MAX_MOVEMENT_POSITION) + l_Unit->GetMovementHandler()->GetMovementPosition();
+            SkinSprite l_SkinSprite = (*m_SkinsManager->GetSkinSprite(l_Unit->GetSkinID(), l_SpriteNb));
+            l_SkinSprite.setColor(sf::Color(255, 255, 255, l_Unit->GetOpacity()));
+            l_SkinSprite.setPosition((float)l_Unit->GetPosX(), (float)l_Unit->GetPosY() - l_Unit->GetSizeY());
+            m_Window.draw(l_SkinSprite);
+        }
+    }
+
+    /// Level 2 to 4
+    for (std::vector<std::vector<Case*>>::iterator l_It = l_SquareZone.begin(); l_It != l_SquareZone.end(); ++l_It)
+    {
+        std::vector<Case*> l_Square = (*l_It);
+        for (std::vector<Case*>::iterator l_It2 = l_Square.begin(); l_It2 != l_Square.end(); ++l_It2)
+        {
+            for (uint8 l_LevelNb = 2; l_LevelNb < 4; ++l_LevelNb)
+            {
+                int16 l_TileID = (*l_It2)->GetTile(l_LevelNb);
+
+                if (l_TileID < 0)
                     continue;
 
-                uint8 l_SpriteNb = (l_Unit->GetOrientation() * MAX_MOVEMENT_POSITION) + l_Unit->GetMovementHandler()->GetMovementPosition();
-                SkinSprite l_SkinSprite = (*m_SkinsManager->GetSkinSprite(l_Unit->GetSkinID(), l_SpriteNb));
-                l_SkinSprite.setColor(sf::Color(255, 255, 255, l_Unit->GetOpacity()));
-                l_SkinSprite.setPosition((float)l_Unit->GetPosX(), (float)l_Unit->GetPosY() - l_Unit->GetSizeY());
-                m_Window.draw(l_SkinSprite);
+                TileSprite* l_TileSprite = m_TileSet->GetTileSprite(l_TileID);
+                l_TileSprite->setPosition((float)(*l_It2)->GetPosX() * TILE_SIZE, (float)(*l_It2)->GetPosY() * TILE_SIZE);
+                m_Window.draw(*l_TileSprite);
             }
         }
-	}
+    }
 }
 
 void Graphics::UpdateWindow()

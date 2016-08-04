@@ -21,6 +21,8 @@ public:
     uint16  GetSquareID(uint16 , uint16) const;
     Unit* GetUnit(TypeUnit, uint16);
     uint16 ChangeSquare(Unit*);
+    Case* GetCase(uint16) const;
+    Case* GetCase(uint32, uint32) const;
     void RemoveFromSquare(Unit*);
     void AddToSquare(Unit*, uint16);
     std::vector<Square*> GetSquareSet(uint16);

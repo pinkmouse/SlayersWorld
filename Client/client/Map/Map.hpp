@@ -20,6 +20,7 @@ public:
 	std::vector<std::vector<Case*>> GetSquareZone(uint16);
     std::vector<uint16> GetSquareSetID(uint16);
 	Case* GetCase(uint16) const;
+    Case* GetCase(uint32, uint32) const;
 	uint16 GetSizeX() const;
 	uint16 GetSizeY() const;
     uint16 GetID() const;

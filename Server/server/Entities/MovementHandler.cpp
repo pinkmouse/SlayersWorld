@@ -29,6 +29,22 @@ bool MovementHandler::IsInColision(int64 p_PosX, int64 p_PosY) const
     if (p_PosX + m_SizeX > m_Map->GetSizeX() * TILE_SIZE || p_PosY > m_Map->GetSizeY() * TILE_SIZE)
         return true;
 
+
+    std::vector<Case*> l_CaseList;
+    uint8 i = 0;
+    for (uint8 i = 0; i < m_SizeX; i += TILE_SIZE)
+        l_CaseList.push_back(m_Map->GetCase((uint32)p_PosX + i, (uint32)p_PosY));
+    l_CaseList.push_back(m_Map->GetCase((uint32)p_PosX + m_SizeX, (uint32)p_PosY));
+
+    for (Case* l_Case : l_CaseList)
+    {
+        if (l_Case == nullptr)
+            return true;
+
+        if (l_Case->IsBlocking())
+            return true;
+    }
+
     return false;
 }
 

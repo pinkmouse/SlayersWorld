@@ -28,6 +28,7 @@ void Events::KeyRelease(sf::Keyboard::Key p_KeyRealease)
     {
         g_Socket->SendGoDirection((Orientation)m_DirectionMap[m_KeyPressed.back()]);
         g_Player->SetOrientation((Orientation)m_DirectionMap[m_KeyPressed.back()]);
+        g_Player->StartMovement();
     }
     else
     {

@@ -14,6 +14,11 @@ Case::~Case()
 {
 }
 
+bool Case::IsBlocking() const
+{
+    return m_Block;
+}
+
 void Case::SetBlock(bool p_Block)
 {
 	m_Block = p_Block;

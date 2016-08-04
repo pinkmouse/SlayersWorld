@@ -7,6 +7,7 @@ public:
 	Case(uint16, uint16, uint16);
 	~Case();
 	void SetBlock(bool);
+    bool IsBlocking() const;
 
 private:
 	bool m_Block;
