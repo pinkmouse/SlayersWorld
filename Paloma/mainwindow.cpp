@@ -19,7 +19,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     m_TileSet = new TileSet(m_SelectedTile);
     m_Map = new Map(m_TileSet, m_Config);
-    if (!m_TileSet->SetTileSetImg("tiles.png"))
+    if (!m_TileSet->SetTileSetImg("tileset.png"))
         ui->statusBar->showMessage("Error: Loading TileSet Img");
 
 
@@ -233,6 +233,8 @@ void MainWindow::openMap()
 
             Tile* l_Tile = m_TileSet->GetTile(l_FluxCase.l_TabTileNb[j]);
             Tile* l_NewTile = new Tile(l_Tile->pixmap());
+            l_NewTile->SetID(l_Tile->GetID());
+
             l_Case->AddTile(l_NewTile, j);
         }
         if (l_Block)
@@ -265,7 +267,6 @@ void MainWindow::exportMap()
      for (int i = 0; i < m_Map->GetMapSize(); ++i)
      {
          Case* l_Case = m_Map->GetCase(i);
-
          t_Case l_FluxCase;
          for (int j = 0; j < l_Case->GetMaxTileLevel(); ++j)
          {
@@ -273,7 +274,10 @@ void MainWindow::exportMap()
             if (l_Tile == nullptr)
                 l_FluxCase.l_TabTileNb[j] = -1;
             else
+            {
+                std::cout << "Add tile Id = " << l_Tile->GetID() << std::endl;
                 l_FluxCase.l_TabTileNb[j] = l_Tile->GetID();
+            }
          }
         l_FluxCase.l_Block = l_Case->GetBlock();
         fwrite(&l_FluxCase, sizeof(l_FluxCase), 1, pFile);
