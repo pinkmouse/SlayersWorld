@@ -7,6 +7,7 @@ Events::Events()
     m_DirectionMap[sf::Keyboard::Key::Down] = Orientation::Down;
     m_DirectionMap[sf::Keyboard::Key::Left] = Orientation::Left;
     m_DirectionMap[sf::Keyboard::Key::Right] = Orientation::Right;
+    m_IsFieldTalkOpen = false;
 }
 
 
@@ -74,8 +75,23 @@ void Events::NewKeyPressed(sf::Keyboard::Key p_NewKey)
             g_Player->GetMovementHandler()->StopMovement();
             break;
         }
+        case sf::Keyboard::Key::Return:
+        {
+            m_IsFieldTalkOpen = !m_IsFieldTalkOpen;
+            break;
+        }
         default:
             break;
     }
+}
+
+void Events::TextEntered(sf::Uint32 p_Letter)
+{
+    /// TODO
+}
+
+bool Events::IsFieldTalkOpen()
+{
+    return m_IsFieldTalkOpen;
 }
 

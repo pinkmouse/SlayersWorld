@@ -7,6 +7,7 @@ Graphics::Graphics(MapManager* p_MapManager, Events* p_Events) :
 {
 	m_TileSet = nullptr;
     m_SkinsManager = nullptr;
+    m_InterfaceManager = nullptr;
     m_Clock = new ClockHandler();
 }
 
@@ -19,9 +20,13 @@ void Graphics::CreateWindow(uint32 p_X, uint32 p_Y, float p_Zoom)
 {
 	m_Window.create(sf::VideoMode(p_X, p_Y), NAME_WINDOW);
 	m_View = m_Window.getDefaultView();
+    m_ViewInterface = m_Window.getDefaultView();
 	m_View.zoom(p_Zoom);
 	m_Window.setView(m_View);
     m_Window.setFramerateLimit(40);
+
+    m_InterfaceManager = new InterfaceManager(m_Events);
+    m_InterfaceManager->Initialize();
 
 	m_TileSet = new TileSet();
 	m_TileSet->BuildSprites();
@@ -45,6 +50,9 @@ void Graphics::CheckEvent()
                 break;
             case sf::Event::KeyReleased: ///< Key Release
                 m_Events->KeyRelease(l_Event.key.code);
+                break;
+            case sf::Event::TextEntered: ///< Text Entered
+                m_Events->TextEntered(l_Event.text.unicode);
                 break;
             case sf::Event::Resized: ///< Resize Window
                 /*
@@ -135,13 +143,24 @@ void Graphics::DrawMap()
     }
 }
 
+void Graphics::DrawInterface()
+{
+    if (!m_Window.isOpen() || !m_MapManager->HasMap() || g_Player == nullptr)
+        return;
+
+    m_InterfaceManager->Draw(m_Window);
+}
+
+
 void Graphics::UpdateWindow()
 {
+    Clear();
     if (g_Player != nullptr)
         m_View.setCenter((float)g_Player->GetPosX() + (g_Player->GetSizeX() / 2), (float)g_Player->GetPosY() - (g_Player->GetSizeY() / 2));
     m_Window.setView(m_View);
-    Clear();
     DrawMap();
+    m_Window.setView(m_ViewInterface);
+    DrawInterface();
     Display();
 }
 

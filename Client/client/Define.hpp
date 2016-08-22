@@ -2,7 +2,7 @@
 
 #include <cstdio>
 
-#define IP_SERVER "192.168.1.23"
+#define IP_SERVER "82.247.125.1"
 #define PORT_SERVER 1234
 
 /// GRAPHICS
@@ -24,6 +24,11 @@
 #define SKIN_SIZE_Y 32
 #define MAX_MOVEMENT_POSITION 3
 #define UPDATE_TIME_MOVEMENT 250
+
+/// INTERFACE
+#define IMG_FOLDER "img/window/"
+#define FONT_FIELD_SIZE 128
+#define SIZE_FILED_TALK_Y 32
 
 /// EVENT
 #define MAX_KEY_SAVE 4

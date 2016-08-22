@@ -9,6 +9,7 @@
 #include "../Map/MapManager.hpp"
 #include "TileSet.hpp"
 #include "SkinsManager.hpp"
+#include "InterfaceManager.hpp"
 #include "../World/Events/Events.hpp"
 #include "../World/ClockHandler.hpp"
 
@@ -20,19 +21,22 @@ public:
 	void CreateWindow(uint32, uint32, float);
 	void UpdateWindow();
 	void DrawMap();
+    void DrawInterface();
 	void Display();
 	void Clear();
 	void CheckEvent();
 	bool WindowIsOpen() const;
 
 private:
-	Window          m_Window;
-	sf::View        m_View;
+	Window              m_Window;
+	sf::View            m_View;
+    sf::View            m_ViewInterface;
 
-	MapManager*     m_MapManager;
-	TileSet*        m_TileSet;
-    SkinsManager*   m_SkinsManager;
-    Events*         m_Events;
-    ClockHandler*   m_Clock;
+	MapManager*         m_MapManager;
+	TileSet*            m_TileSet;
+    SkinsManager*       m_SkinsManager;
+    InterfaceManager*   m_InterfaceManager;
+    Events*             m_Events;
+    ClockHandler*       m_Clock;
 };
 

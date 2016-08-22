@@ -161,6 +161,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Global.hpp" />
+    <ClInclude Include="Graphics\InterfaceManager.hpp" />
     <ClInclude Include="World\ClockHandler.hpp" />
     <ClInclude Include="Entities\Player.hpp" />
     <ClInclude Include="Entities\Unit.hpp" />
@@ -184,6 +185,7 @@
     <ClInclude Include="World\World.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Graphics\InterfaceManager.cpp" />
     <ClCompile Include="Map\Map.cpp" />
     <ClCompile Include="World\ClockHandler.cpp" />
     <ClCompile Include="Entities\Player.cpp" />
