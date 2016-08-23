@@ -16,6 +16,15 @@ Graphics::~Graphics()
 {
 }
 
+bool Graphics::LoadFont()
+{
+    std::string l_FontName = "arial.ttf";
+    g_Font = new sf::Font();
+    if (!g_Font->loadFromFile(FONT_FOLDER + l_FontName))
+        return false;
+    return true;
+}
+
 void Graphics::CreateWindow(uint32 p_X, uint32 p_Y, float p_Zoom)
 {
 	m_Window.create(sf::VideoMode(p_X, p_Y), NAME_WINDOW);

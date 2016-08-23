@@ -84,7 +84,10 @@
     <ClInclude Include="Define.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="Graphics\InterfaceManager.hpp">
+    <ClInclude Include="Graphics\Interface\InterfaceManager.hpp">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Interface\WritingField.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>
@@ -152,7 +155,10 @@
     <ClCompile Include="Map\Map.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="Graphics\InterfaceManager.cpp">
+    <ClCompile Include="Graphics\Interface\InterfaceManager.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Interface\WritingField.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>

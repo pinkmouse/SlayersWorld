@@ -25,6 +25,9 @@
 #define MAX_MOVEMENT_POSITION 3
 #define UPDATE_TIME_MOVEMENT 250
 
+/// FONT
+#define FONT_FOLDER "font/"
+
 /// INTERFACE
 #define IMG_FOLDER "img/window/"
 #define FONT_FIELD_SIZE 128

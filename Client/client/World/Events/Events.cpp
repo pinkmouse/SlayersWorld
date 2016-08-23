@@ -7,7 +7,7 @@ Events::Events()
     m_DirectionMap[sf::Keyboard::Key::Down] = Orientation::Down;
     m_DirectionMap[sf::Keyboard::Key::Left] = Orientation::Left;
     m_DirectionMap[sf::Keyboard::Key::Right] = Orientation::Right;
-    m_IsFieldTalkOpen = false;
+    m_WritingField = nullptr;
 }
 
 
@@ -22,19 +22,21 @@ void Events::KeyRelease(sf::Keyboard::Key p_KeyRealease)
 
     std::vector<sf::Keyboard::Key>::iterator l_It = std::find(m_KeyPressed.begin(), m_KeyPressed.end(), p_KeyRealease);
 
-    if (l_It != m_KeyPressed.end())
+    if (l_It != m_KeyPressed.end()) ///< If it's a movement key Release
+    {
         m_KeyPressed.erase(l_It);
 
-    if (m_KeyPressed.size() > 0)
-    {
-        g_Socket->SendGoDirection((Orientation)m_DirectionMap[m_KeyPressed.back()]);
-        g_Player->SetOrientation((Orientation)m_DirectionMap[m_KeyPressed.back()]);
-        g_Player->StartMovement();
-    }
-    else
-    {
-        g_Socket->SendStopMovement();
-        g_Player->GetMovementHandler()->StopMovement();
+        if (m_KeyPressed.size() > 0)
+        {
+            g_Socket->SendGoDirection((Orientation)m_DirectionMap[m_KeyPressed.back()]);
+            g_Player->SetOrientation((Orientation)m_DirectionMap[m_KeyPressed.back()]);
+            g_Player->StartMovement();
+        }
+        else
+        {
+            g_Socket->SendStopMovement();
+            g_Player->GetMovementHandler()->StopMovement();
+        }
     }
 }
 
@@ -77,7 +79,14 @@ void Events::NewKeyPressed(sf::Keyboard::Key p_NewKey)
         }
         case sf::Keyboard::Key::Return:
         {
-            m_IsFieldTalkOpen = !m_IsFieldTalkOpen;
+            if (m_WritingField == nullptr)
+                return;
+
+            if (m_WritingField->IsFieldOpen())
+                m_WritingField->Close();
+            else
+                m_WritingField->Open();
+
             break;
         }
         default:
@@ -87,11 +96,28 @@ void Events::NewKeyPressed(sf::Keyboard::Key p_NewKey)
 
 void Events::TextEntered(sf::Uint32 p_Letter)
 {
+    if (!m_WritingField->IsFieldOpen())
+        return;
+
+    if (p_Letter >= 128) ///< ASCII
+        return;
+
+    switch (p_Letter)
+    {
+        case 8:
+        {
+            m_WritingField->RemoveLastLetter();
+            break;
+        }
+        default:
+            if (p_Letter > 31 && p_Letter < 127)
+                m_WritingField->AddLetter(p_Letter);
+            break;
+    }
     /// TODO
 }
 
-bool Events::IsFieldTalkOpen()
+void Events::SetWritingField(WritingField* p_WritingField)
 {
-    return m_IsFieldTalkOpen;
+    m_WritingField = p_WritingField;
 }
-

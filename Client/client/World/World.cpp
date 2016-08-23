@@ -31,12 +31,15 @@ bool World::InitializeConnection()
 bool World::InitializeWindow()
 {
 	m_Graphics->CreateWindow(X_WINDOW, Y_WINDOW, 0.5f);
+    if (!m_Graphics->LoadFont())
+        return false;
 	return true;
 }
 
 void World::Initialize(char** p_Argv)
 {
-	InitializeWindow();
+    if (!InitializeWindow())
+        return;
     while (!InitializeConnection()) ///< While not connected, wait for connection
         ;
 

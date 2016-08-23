@@ -161,7 +161,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Global.hpp" />
-    <ClInclude Include="Graphics\InterfaceManager.hpp" />
+    <ClInclude Include="Graphics\Interface\InterfaceManager.hpp" />
     <ClInclude Include="World\ClockHandler.hpp" />
     <ClInclude Include="Entities\Player.hpp" />
     <ClInclude Include="Entities\Unit.hpp" />
@@ -183,9 +183,10 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Graphics\Window.hpp" />
     <ClInclude Include="World\World.hpp" />
+    <ClInclude Include="Graphics\Interface\WritingField.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Graphics\InterfaceManager.cpp" />
+    <ClCompile Include="Graphics\Interface\InterfaceManager.cpp" />
     <ClCompile Include="Map\Map.cpp" />
     <ClCompile Include="World\ClockHandler.cpp" />
     <ClCompile Include="Entities\Player.cpp" />
@@ -206,6 +207,7 @@
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="Graphics\Window.cpp" />
     <ClCompile Include="World\World.cpp" />
+    <ClCompile Include="Graphics\Interface\WritingField.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

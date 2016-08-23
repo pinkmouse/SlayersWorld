@@ -3,8 +3,9 @@
 #include "stdafx.h"
 #include "World/World.hpp"
 
-Player *g_Player;
-Socket *g_Socket;
+Player      *g_Player;
+Socket      *g_Socket;
+sf::Font    *g_Font;
 
 int main(int argc, char** argv)
 {

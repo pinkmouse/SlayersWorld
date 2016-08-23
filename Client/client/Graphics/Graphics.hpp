@@ -9,7 +9,7 @@
 #include "../Map/MapManager.hpp"
 #include "TileSet.hpp"
 #include "SkinsManager.hpp"
-#include "InterfaceManager.hpp"
+#include "Interface/InterfaceManager.hpp"
 #include "../World/Events/Events.hpp"
 #include "../World/ClockHandler.hpp"
 
@@ -18,6 +18,7 @@ class Graphics
 public:
 	Graphics(MapManager*, Events*);
 	~Graphics();
+    bool LoadFont();
 	void CreateWindow(uint32, uint32, float);
 	void UpdateWindow();
 	void DrawMap();
@@ -31,6 +32,7 @@ private:
 	Window              m_Window;
 	sf::View            m_View;
     sf::View            m_ViewInterface;
+    sf::Font            m_Font;
 
 	MapManager*         m_MapManager;
 	TileSet*            m_TileSet;

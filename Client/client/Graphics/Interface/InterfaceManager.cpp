@@ -1,8 +1,11 @@
 #include "InterfaceManager.hpp"
+#include "../../Global.hpp"
 
 InterfaceManager::InterfaceManager(Events* p_Events) :
-    m_Events(p_Events)
+    m_Events(p_Events),
+    m_WritingField(new WritingField())
 {
+    m_Events->SetWritingField(m_WritingField);
 }
 
 
@@ -31,10 +34,14 @@ void InterfaceManager::Draw(Window & p_Window)
     if (m_Events == nullptr)
         return;
 
-    if (m_Events->IsFieldTalkOpen())
+    if (m_WritingField->IsFieldOpen())
     {
         TileSprite l_Sprite = GetField(X_WINDOW, SIZE_FILED_TALK_Y);
         l_Sprite.setPosition(0, Y_WINDOW - SIZE_FILED_TALK_Y);
         p_Window.draw(l_Sprite);
+        sf::Font font;
+        font.loadFromFile("font/arial.ttf");
+        // Create a text
+        p_Window.draw(m_WritingField->GetText());
     }
 }
