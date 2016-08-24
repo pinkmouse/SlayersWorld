@@ -20,6 +20,7 @@ public:
     void HandleGoDirection(WorldPacket &, WorldSocket*);
     void HandleUnitUnknow(WorldPacket &, WorldSocket*);
     void HandleStopMovement(WorldPacket &, WorldSocket*);
+    void HandleTalk(WorldPacket &, WorldSocket*);
 
 private:
     using m_Func = void(PacketHandler::*)(WorldPacket &, WorldSocket*);

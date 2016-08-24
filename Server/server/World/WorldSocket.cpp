@@ -83,6 +83,15 @@ void WorldSocket::SendUnitGoDirationToSet(uint8 p_Type, uint16 p_UnitID, uint8 p
     SendToSet(l_Packet, true);
 }
 
+void WorldSocket::SendUnitTalk(uint8 p_Type, uint16 p_UnitID, const std::string & p_TalkString)
+{
+    WorldPacket l_Packet;
+    uint8 l_ID = 23;
+
+    l_Packet << l_ID << p_Type << p_UnitID << p_TalkString;
+    SendToSet(l_Packet);
+}
+
 void WorldSocket::SendUnitStopMovement(uint8 p_TypeID, uint16 p_ID, uint32 p_PosX, uint32 p_PosY, uint8 p_Orientation)
 {
     WorldPacket l_Packet;

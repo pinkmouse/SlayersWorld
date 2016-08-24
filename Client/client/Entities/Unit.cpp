@@ -16,6 +16,7 @@ Unit::Unit(uint16 p_ID)
     m_SizeY = 32;
     m_MovementHandler = new MovementHandler(m_SizeX, m_SizeY);
     m_Map = nullptr;
+    m_Talk = "";
 }
 
 Unit::Unit(uint16 p_ID, TypeUnit p_Type)
@@ -50,10 +51,9 @@ void Unit::Update(sf::Time p_Diff)
     m_PosX = m_MovementHandler->GetPosX();
     m_PosY = m_MovementHandler->GetPosY();
 
-    m_DiffTimeOpactiy += p_Diff.asMicroseconds();
-
     if (m_Opacity < 255)
     {
+        m_DiffTimeOpactiy += p_Diff.asMicroseconds();
         while (m_DiffTimeOpactiy > (uint64)(UPDATE_OPACITY_TIME * 1000)) ///< 1000 because microsecond
         {
             /// UPDATE OPACITY
@@ -62,6 +62,16 @@ void Unit::Update(sf::Time p_Diff)
             else
                 m_Opacity += 15;
             m_DiffTimeOpactiy -= (uint64)(UPDATE_TIME_MOVEMENT * 1000);
+        }
+    }
+
+    if (!m_Talk.empty())
+    {
+        m_DiffTimeTalk += p_Diff.asMicroseconds();
+        if (m_DiffTimeTalk > (uint64)(TALK_TIME_SHOW * 1000)) ///< 1000 because microsecon
+        {
+            m_Talk.clear();
+            m_DiffTimeTalk = 0;
         }
     }
 }
@@ -214,4 +224,15 @@ void Unit::StartMovement()
         return;
 
     m_MovementHandler->StartMovement();
+}
+
+void Unit::SetTalk(const std::string & p_Talk)
+{
+    m_Talk = p_Talk;
+    m_DiffTimeTalk = 0;
+}
+
+std::string Unit::GetTalk() const
+{
+    return m_Talk;
 }

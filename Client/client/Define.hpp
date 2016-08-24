@@ -25,6 +25,9 @@
 #define MAX_MOVEMENT_POSITION 3
 #define UPDATE_TIME_MOVEMENT 250
 
+/// UNIT
+#define TALK_TIME_SHOW 5000
+
 /// FONT
 #define FONT_FOLDER "font/"
 

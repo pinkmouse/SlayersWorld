@@ -13,4 +13,5 @@ public:
     void SendGoDirection(const uint8&);
     void SendStopMovement();
     void SendUnitUnknow(const uint8&, const uint16&);
+    void SendTalk(const std::string &);
 };

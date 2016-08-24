@@ -63,3 +63,13 @@ void Socket::SendUnitUnknow(const uint8& p_TypeID, const uint16& p_ID)
 
     send(packet);
 }
+
+void Socket::SendTalk(const std::string & p_TalkString)
+{
+    WorldPacket packet;
+    uint8 l_ID = 23;
+
+    packet << l_ID << p_TalkString;
+
+    send(packet);
+}

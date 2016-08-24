@@ -22,6 +22,7 @@ void PacketHandler::LoadPacketHandlerMap()
     m_PacketHandleMap[20] = &PacketHandler::HandleUnitGoDirection;
     m_PacketHandleMap[21] = &PacketHandler::HandleStopMovement;
     m_PacketHandleMap[22] = &PacketHandler::HandleUpdatePosition;
+    m_PacketHandleMap[23] = &PacketHandler::HandleTalk;
 }
 
 void PacketHandler::HandleRemoveUnit(WorldPacket &p_Packet)
@@ -41,6 +42,28 @@ void PacketHandler::HandleRemoveUnit(WorldPacket &p_Packet)
 
         l_Map->RemoveUnit(l_Unit);
         delete l_Unit;
+    }
+}
+
+void PacketHandler::HandleTalk(WorldPacket &p_Packet)
+{
+    uint8 l_TypeID;
+    uint16 l_ID;
+    std::string l_String;
+
+    p_Packet >> l_TypeID;
+    p_Packet >> l_ID;
+    p_Packet >> l_String;
+
+    if (Map* l_Map = m_MapManager->GetActualMap())
+    {
+        Unit* l_Unit = nullptr;
+       
+        l_Unit = l_Map->GetUnit((TypeUnit)l_TypeID, l_ID);
+        if (l_Unit == nullptr)
+            return;
+
+        l_Unit->SetTalk(l_String);
     }
 }
 

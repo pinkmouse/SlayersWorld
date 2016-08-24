@@ -16,6 +16,7 @@ void PacketHandler::LoadPacketHandlerMap()
     m_PacketHandleMap[10] = &PacketHandler::HandleUnitUnknow;
     m_PacketHandleMap[20] = &PacketHandler::HandleGoDirection;
     m_PacketHandleMap[21] = &PacketHandler::HandleStopMovement;
+    m_PacketHandleMap[23] = &PacketHandler::HandleTalk;
 }
 
 void PacketHandler::HandleUnitUnknow(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
@@ -66,6 +67,19 @@ void PacketHandler::HandleStopMovement(WorldPacket &p_Packet, WorldSocket* p_Wor
     l_Player->GetMovementHandler()->StopMovement();
     l_Player->GetSession()->SendUnitStopMovement((uint8)TypeUnit::PLAYER, l_Player->GetID(), l_Player->GetPosX(), l_Player->GetPosY(), l_Player->GetOrientation());
     l_Player->GetSession()->SendUpdatePosition((uint8)TypeUnit::PLAYER, l_Player->GetID(), l_Player->GetPosX(), l_Player->GetPosY());
+}
+
+void PacketHandler::HandleTalk(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
+{
+    Player* l_Player = p_WorldSocket->GetPlayer();
+
+    if (l_Player == nullptr)
+        return;
+
+    std::string l_String;
+    p_Packet >> l_String;
+
+    l_Player->GetSession()->SendUnitTalk((uint8)TypeUnit::PLAYER, l_Player->GetID(), l_String);
 }
 
 void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)

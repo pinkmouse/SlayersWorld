@@ -39,9 +39,6 @@ void InterfaceManager::Draw(Window & p_Window)
         TileSprite l_Sprite = GetField(X_WINDOW, SIZE_FILED_TALK_Y);
         l_Sprite.setPosition(0, Y_WINDOW - SIZE_FILED_TALK_Y);
         p_Window.draw(l_Sprite);
-        sf::Font font;
-        font.loadFromFile("font/arial.ttf");
-        // Create a text
         p_Window.draw(m_WritingField->GetText());
     }
 }

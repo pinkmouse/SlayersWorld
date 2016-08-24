@@ -42,6 +42,9 @@ public:
     MovementHandler* GetMovementHandler();
     Player* ToPlayer();
 
+    void SetTalk(const std::string &);
+    std::string GetTalk() const;
+
     void Update(sf::Time);
 
 protected:
@@ -64,5 +67,8 @@ protected:
     uint64 m_DiffTimeOpactiy;
 
     Map* m_Map;
+
+    std::string m_Talk;
+    uint64 m_DiffTimeTalk;
 };
 

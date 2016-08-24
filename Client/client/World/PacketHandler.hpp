@@ -19,9 +19,8 @@ public:
     void HandleStopMovement(WorldPacket &);
     void HandleRemoveUnit(WorldPacket &);
     void HandleUpdatePosition(WorldPacket &);
-
     void HandleUnitGoDirection(WorldPacket &);
-
+    void HandleTalk(WorldPacket &);
 
 private:
 	MapManager* m_MapManager;

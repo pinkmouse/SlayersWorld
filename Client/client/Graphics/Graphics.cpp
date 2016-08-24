@@ -80,6 +80,41 @@ bool Graphics::WindowIsOpen() const
 	return m_Window.isOpen();
 }
 
+void Graphics::DrawEntities()
+{
+    Map* l_Map = m_MapManager->GetActualMap();
+
+    std::map<TypeUnit, std::map<uint16, Unit*>>* l_ListUnitZone = l_Map->GetListUnitZone();
+
+    /// Draw Entities
+    for (std::pair<TypeUnit, std::map<uint16, Unit*>> l_MapListUnit : (*l_ListUnitZone))
+    {
+        for (std::pair<uint16, Unit*> l_UnitPair : l_MapListUnit.second)
+        {
+            Unit* l_Unit = l_UnitPair.second;
+
+            if (l_Unit == nullptr)
+                continue;
+
+            /// SKIN PART
+            uint8 l_SpriteNb = (l_Unit->GetOrientation() * MAX_MOVEMENT_POSITION) + l_Unit->GetMovementHandler()->GetMovementPosition();
+            SkinSprite l_SkinSprite = (*m_SkinsManager->GetSkinSprite(l_Unit->GetSkinID(), l_SpriteNb));
+            l_SkinSprite.setColor(sf::Color(255, 255, 255, l_Unit->GetOpacity()));
+            l_SkinSprite.setPosition((float)l_Unit->GetPosX(), (float)l_Unit->GetPosY() - l_Unit->GetSizeY());
+            m_Window.draw(l_SkinSprite);
+
+            /// TALK
+            if (!l_Unit->GetTalk().empty())
+            {
+                sf::Text l_Text(l_Unit->GetTalk(), *g_Font, 10);
+                l_Text.setColor(sf::Color::Black);
+                l_Text.setPosition((float)l_Unit->GetPosX() + (l_Unit->GetSizeX() / 2) - (l_Text.getLocalBounds().width / 2), (float)l_Unit->GetPosY() - l_Unit->GetSizeY() - l_Text.getLocalBounds().height);
+                m_Window.draw(l_Text);
+            }
+        }
+    }
+}
+
 void Graphics::DrawMap()
 {
 	if (!m_Window.isOpen() || !m_MapManager->HasMap() || g_Player == nullptr)
@@ -111,25 +146,8 @@ void Graphics::DrawMap()
             }
 		}
 	}
-    std::map<TypeUnit, std::map<uint16, Unit*>>* l_ListUnitZone = l_Map->GetListUnitZone();
 
-    /// Draw Entities
-    for (std::pair<TypeUnit, std::map<uint16, Unit*>> l_MapListUnit : (*l_ListUnitZone))
-    {
-        for (std::pair<uint16, Unit*> l_UnitPair : l_MapListUnit.second)
-        {
-            Unit* l_Unit = l_UnitPair.second;
-
-            if (l_Unit == nullptr)
-                continue;
-
-            uint8 l_SpriteNb = (l_Unit->GetOrientation() * MAX_MOVEMENT_POSITION) + l_Unit->GetMovementHandler()->GetMovementPosition();
-            SkinSprite l_SkinSprite = (*m_SkinsManager->GetSkinSprite(l_Unit->GetSkinID(), l_SpriteNb));
-            l_SkinSprite.setColor(sf::Color(255, 255, 255, l_Unit->GetOpacity()));
-            l_SkinSprite.setPosition((float)l_Unit->GetPosX(), (float)l_Unit->GetPosY() - l_Unit->GetSizeY());
-            m_Window.draw(l_SkinSprite);
-        }
-    }
+    DrawEntities();
 
     /// Level 2 to 4
     for (std::vector<std::vector<Case*>>::iterator l_It = l_SquareZone.begin(); l_It != l_SquareZone.end(); ++l_It)

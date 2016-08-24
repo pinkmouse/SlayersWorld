@@ -17,6 +17,7 @@ public:
     void SendUnitGoDirationToSet(uint8, uint16, uint8);
     void SendUnitStopMovement(uint8, uint16, uint32, uint32, uint8);
     void SendUpdatePosition(uint8, uint16, uint32, uint32);
+    void SendUnitTalk(uint8, uint16, const std::string &);
 	void SendAuthResponse(uint8);
     void SendMsg(WorldPacket);
     void SendToSet(WorldPacket, bool p_ExcludePlayer = false);

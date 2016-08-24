@@ -24,6 +24,8 @@ void WritingField::Open()
 void WritingField::Close()
 {
     m_IsOpen = false;
+    if (!m_WritingString.empty())
+        g_Socket->SendTalk(m_WritingString);
     ClearTxt();
 }
 

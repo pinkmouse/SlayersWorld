@@ -22,6 +22,7 @@ public:
 	void CreateWindow(uint32, uint32, float);
 	void UpdateWindow();
 	void DrawMap();
+    void DrawEntities();
     void DrawInterface();
 	void Display();
 	void Clear();
