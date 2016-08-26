@@ -11,6 +11,7 @@ Map::Map(TileSet *p_TileSet, Config *p_Config) :
     m_ID(0),
     m_GridOpacity(0.8)
 {
+    m_BrushSize = 1;
     setBackgroundBrush(Qt::black);
 }
 
@@ -247,6 +248,11 @@ void Map::SetIDMap(int p_ID)
     m_ID = p_ID;
 }
 
+void Map::SetBrushSize(int p_BrushSize)
+{
+    m_BrushSize = p_BrushSize;
+}
+
 void Map::ClickedLeftOnMap(const QPointF & p_Point)
 {
     if (m_TileSet == nullptr)
@@ -263,39 +269,50 @@ void Map::ClickedLeftOnMap(const QPointF & p_Point)
 
     int l_NbSelectedTile = (m_X * l_YClicked) + l_XClicked;
 
-    Case* l_Case = m_CaseList[l_NbSelectedTile];
-    int l_TileLevel = m_Config->GetTileLevel();
-    if (l_TileLevel >= 0)
+    std::cout << "X = " << m_X << std::endl;
+    for (int iy = 0; iy < m_BrushSize; iy++)
     {
-        Tile* l_Tile = m_TileSet->GetTile(m_TileSet->GetTileNB());
+        for (int ix = 0; ix < m_BrushSize; ix++)
+        {
+            Case* l_Case = m_CaseList[l_NbSelectedTile + (iy * m_X) + ix];
 
-        Tile* l_NewTile = new Tile(l_Tile->pixmap());
-        Tile* l_OldTIle = l_Case->GetTile(l_TileLevel);
-        if (l_OldTIle != nullptr)
-        {
-            removeItem(l_OldTIle);
-            l_Case->RemoveTile(l_TileLevel);
-        }
-        l_NewTile->SetID(l_Tile->GetID());
-        l_Case->AddTile(l_NewTile, l_TileLevel);
-        addItem(l_NewTile);
-        l_NewTile->setZValue(l_TileLevel);
-        l_NewTile->setPos(l_XClicked * TILESIZE, l_YClicked * TILESIZE);
-    }
-    else
-    {
-        l_Case->SetBlock(!l_Case->GetBlock());
-        if (l_Case->GetBlock())
-        {
-            QGraphicsTextItem *l_Txt = addText("B");
-            l_Txt->setPos(l_XClicked * TILESIZE, l_YClicked * TILESIZE);
-            l_Txt->setDefaultTextColor(QColor(255, 255, 255));
-            l_Txt->setZValue(l_Case->GetMaxTileLevel() + 1);
-            l_Case->AddTxt(l_Txt);
-        }
-        else
-        {
-           removeItem(l_Case->GetTxt());
+            if (l_Case == nullptr || l_XClicked + ix > m_X - 1 || l_YClicked + iy > m_Y - 1)
+                continue;
+
+            int l_TileLevel = m_Config->GetTileLevel();
+            if (l_TileLevel >= 0)
+            {
+                Tile* l_Tile = m_TileSet->GetTile(m_TileSet->GetTileNB());
+
+                Tile* l_NewTile = new Tile(l_Tile->pixmap());
+                Tile* l_OldTIle = l_Case->GetTile(l_TileLevel);
+                if (l_OldTIle != nullptr)
+                {
+                    removeItem(l_OldTIle);
+                    l_Case->RemoveTile(l_TileLevel);
+                }
+                l_NewTile->SetID(l_Tile->GetID());
+                l_Case->AddTile(l_NewTile, l_TileLevel);
+                addItem(l_NewTile);
+                l_NewTile->setZValue(l_TileLevel);
+                l_NewTile->setPos((l_XClicked + ix) * TILESIZE, (l_YClicked + iy) * TILESIZE);
+            }
+            else
+            {
+                l_Case->SetBlock(!l_Case->GetBlock());
+                if (l_Case->GetBlock())
+                {
+                    QGraphicsTextItem *l_Txt = addText("B");
+                    l_Txt->setPos((l_XClicked + ix) * TILESIZE, (l_YClicked + iy) * TILESIZE);
+                    l_Txt->setDefaultTextColor(QColor(255, 255, 255));
+                    l_Txt->setZValue(l_Case->GetMaxTileLevel() + 1);
+                    l_Case->AddTxt(l_Txt);
+                }
+                else
+                {
+                   removeItem(l_Case->GetTxt());
+                }
+            }
         }
     }
 }

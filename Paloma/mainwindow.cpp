@@ -48,6 +48,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->m_Level4, SIGNAL (clicked()), this, SLOT (handleLevel4()));
     connect(ui->m_Block, SIGNAL (clicked()), this, SLOT (handleBlock()));
     connect(ui->m_IDField,SIGNAL(valueChanged(int)),this,SLOT(setIDMap(int)));
+    connect(ui->m_BrushSize,SIGNAL(valueChanged(int)),this,SLOT(setBrushSize(int)));
     connect(ui->m_YSizeField,SIGNAL(valueChanged(int)),this,SLOT(setYMap(int)));
     connect(ui->m_XSizeField,SIGNAL(valueChanged(int)),this,SLOT(setXMap(int)));
     connect(ui->m_YSizeField,SIGNAL(valueChanged(int)),this,SLOT(setYMap(int)));
@@ -73,6 +74,11 @@ void MainWindow::setYMap(int p_Y)
 void MainWindow::setIDMap(int p_ID)
 {
     m_Map->SetIDMap(p_ID);
+}
+
+void MainWindow::setBrushSize(int p_Size)
+{
+    m_Map->SetBrushSize(p_Size);
 }
 
 

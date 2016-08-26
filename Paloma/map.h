@@ -22,6 +22,7 @@ public:
     void SetXMap(int);
     void SetYMap(int);
     void SetIDMap(int);
+    void SetBrushSize(int);
     int GetXMap() const;
     int GetYMap() const;
     int GetIDMap() const;
@@ -53,6 +54,7 @@ private:
     int m_X;
     int m_Y;
     int m_ID;
+    int m_BrushSize;
 
     /// GRID
     std::vector<QGraphicsLineItem*> m_ListLine;

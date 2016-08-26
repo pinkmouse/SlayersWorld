@@ -1,7 +1,7 @@
 #ifndef DEFINE_H
 #define DEFINE_H
 
-#define TILESIZE 16
+#define TILESIZE 32
 #define TILESVIEWSCALE 1
 #define MAPVIEWSCALE 1
 #define TILENUMBERONCASE 4

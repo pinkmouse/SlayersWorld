@@ -36,6 +36,7 @@ private slots:
     void setXMap(int);
     void setYMap(int);
     void setIDMap(int);
+    void setBrushSize(int);
     void exportMap();
     void openMap();
     void newMap();
