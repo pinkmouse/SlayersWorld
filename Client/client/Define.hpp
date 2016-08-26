@@ -8,16 +8,18 @@
 /// GRAPHICS
 #define X_WINDOW 640
 #define Y_WINDOW 480
+#define ZOOM_FACTOR 0.75f
 
 #define PLAYER_RAY 10
 
 /// TILES
 #define MAX_TILE_LEVEL 4
-#define TILE_SIZE 16
+#define TILE_SIZE 32
 #define TILE_FOLDER "img/tiles/"
 #define SIZE_DRAWING_SQUARE 14
 
 /// SKIN
+#define SKIN_ZOOM_FACTOR_DEFAULT 1.33f
 #define UPDATE_OPACITY_TIME 250
 #define SKINS_FOLDER "img/skins/"
 #define SKIN_SIZE_X 24
@@ -28,8 +30,13 @@
 /// UNIT
 #define TALK_TIME_SHOW 5000
 
+/// CHATBAR
+#define MAX_LETTER_STR 30
+
 /// FONT
 #define FONT_FOLDER "font/"
+#define SIZE_NAME_FONT 16
+#define SIZE_TALK_FONT 16
 
 /// INTERFACE
 #define IMG_FOLDER "img/window/"

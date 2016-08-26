@@ -20,9 +20,12 @@ public:
     uint16 GetCasePosY() const;
     uint8 GetSizeX() const;
     uint8 GetSizeY() const;
+    uint8 GetRealSizeX() const;
+    uint8 GetRealSizeY() const;
     uint8 GetLevel() const;
     uint8 GetSkinID() const;
     uint16 GetID() const;
+    float GetSkinZoomFactor() const;
     Orientation GetOrientation() const;
     TypeUnit GetType() const;
     uint8 GetOpacity() const;
@@ -34,6 +37,7 @@ public:
     void SetPosY(const uint32 &);
     void SetSkinID(const uint8 &);
     void SetOrientation(const Orientation &);
+    void SetSkinZoomFactor(const float &);
     void SetMap(Map*);
     
     void StartMovement();
@@ -52,6 +56,7 @@ protected:
     uint16 m_ID;
     uint8 m_Level;
     uint8 m_SkinID;
+    float m_SkinZoomFactor;
     uint16 m_MapID;
 
     uint32 m_PosX;

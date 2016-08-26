@@ -99,18 +99,30 @@ void Graphics::DrawEntities()
             /// SKIN PART
             uint8 l_SpriteNb = (l_Unit->GetOrientation() * MAX_MOVEMENT_POSITION) + l_Unit->GetMovementHandler()->GetMovementPosition();
             SkinSprite l_SkinSprite = (*m_SkinsManager->GetSkinSprite(l_Unit->GetSkinID(), l_SpriteNb));
+            l_SkinSprite.setScale(sf::Vector2f(l_Unit->GetSkinZoomFactor(), l_Unit->GetSkinZoomFactor()));
             l_SkinSprite.setColor(sf::Color(255, 255, 255, l_Unit->GetOpacity()));
-            l_SkinSprite.setPosition((float)l_Unit->GetPosX(), (float)l_Unit->GetPosY() - l_Unit->GetSizeY());
+            l_SkinSprite.setPosition((float)l_Unit->GetPosX(), (float)l_Unit->GetPosY() - l_Unit->GetRealSizeY());
             m_Window.draw(l_SkinSprite);
 
             /// TALK
             if (!l_Unit->GetTalk().empty())
             {
-                sf::Text l_Text(l_Unit->GetTalk(), *g_Font, 10);
-                l_Text.setColor(sf::Color::Black);
-                l_Text.setPosition((float)l_Unit->GetPosX() + (l_Unit->GetSizeX() / 2) - (l_Text.getLocalBounds().width / 2), (float)l_Unit->GetPosY() - l_Unit->GetSizeY() - l_Text.getLocalBounds().height);
+                sf::Text l_Text(l_Unit->GetTalk(), *g_Font, SIZE_TALK_FONT);
+
+                TileSprite l_Sprite = m_InterfaceManager->GetField(l_Text.getGlobalBounds().width, (float)g_Font->getLineSpacing(l_Text.getCharacterSize()));
+                l_Sprite.setPosition((float)l_Unit->GetPosX() + (l_Unit->GetRealSizeX() / 2) - (l_Text.getGlobalBounds().width / 2), (float)l_Unit->GetPosY() - l_Unit->GetRealSizeY() - l_Text.getGlobalBounds().height);
+                m_Window.draw(l_Sprite);
+
+                l_Text.setColor(sf::Color::White);
+                l_Text.setPosition((float)l_Unit->GetPosX() + (l_Unit->GetRealSizeX() / 2) - (l_Text.getGlobalBounds().width / 2), (float)l_Unit->GetPosY() - l_Unit->GetRealSizeY() - l_Text.getGlobalBounds().height);
                 m_Window.draw(l_Text);
             }
+
+            /// NAME
+            sf::Text l_Name(l_Unit->GetName(), *g_Font, SIZE_NAME_FONT);
+            l_Name.setColor(sf::Color::White);
+            l_Name.setPosition((float)l_Unit->GetPosX() + (l_Unit->GetRealSizeX() / 2) - (l_Name.getGlobalBounds().width / 2), (float)l_Unit->GetPosY());
+            m_Window.draw(l_Name);
         }
     }
 }
@@ -183,7 +195,7 @@ void Graphics::UpdateWindow()
 {
     Clear();
     if (g_Player != nullptr)
-        m_View.setCenter((float)g_Player->GetPosX() + (g_Player->GetSizeX() / 2), (float)g_Player->GetPosY() - (g_Player->GetSizeY() / 2));
+        m_View.setCenter((float)g_Player->GetPosX() + (g_Player->GetRealSizeX() / 2), (float)g_Player->GetPosY() - (g_Player->GetRealSizeY() / 2));
     m_Window.setView(m_View);
     DrawMap();
     m_Window.setView(m_ViewInterface);

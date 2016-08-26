@@ -17,6 +17,7 @@ Unit::Unit(uint16 p_ID)
     m_MovementHandler = new MovementHandler(m_SizeX, m_SizeY);
     m_Map = nullptr;
     m_Talk = "";
+    m_SkinZoomFactor = SKIN_ZOOM_FACTOR_DEFAULT;
 }
 
 Unit::Unit(uint16 p_ID, TypeUnit p_Type)
@@ -33,6 +34,7 @@ Unit::Unit(uint16 p_ID, TypeUnit p_Type)
     m_SizeX = 24;
     m_SizeY = 32;
     m_MovementHandler = new MovementHandler(m_SizeX, m_SizeY);
+    m_SkinZoomFactor = SKIN_ZOOM_FACTOR_DEFAULT;
 }
 
 Unit::~Unit()
@@ -109,6 +111,16 @@ uint8 Unit::GetSizeX() const
 uint8 Unit::GetSizeY() const
 {
     return m_SizeY;
+}
+
+uint8 Unit::GetRealSizeX() const
+{
+    return m_SizeX * m_SkinZoomFactor;
+}
+
+uint8 Unit::GetRealSizeY() const
+{
+    return m_SizeY * m_SkinZoomFactor;
 }
 
 uint8 Unit::GetLevel() const
@@ -235,4 +247,14 @@ void Unit::SetTalk(const std::string & p_Talk)
 std::string Unit::GetTalk() const
 {
     return m_Talk;
+}
+
+float Unit::GetSkinZoomFactor() const
+{
+    return m_SkinZoomFactor;
+}
+
+void Unit::SetSkinZoomFactor(const float & p_SkinZoomFactor)
+{
+    m_SkinZoomFactor = p_SkinZoomFactor;
 }

@@ -4,7 +4,7 @@
 #define CONF_FILE "server.conf"
 
 #define SIZE_SENDING_SQUARE 12
-#define TILE_SIZE 16
+#define TILE_SIZE 32
 
 #define UPDATE_TIME_MOVEMENT 250
 #define STEP_SIZE 10 /// In pixel

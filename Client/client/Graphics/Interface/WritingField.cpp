@@ -37,8 +37,10 @@ void WritingField::ClearTxt()
 
 std::string & WritingField::AddLetter(uint32 l_Letter)
 {
+    if (m_WritingString.size() >= MAX_LETTER_STR)
+        return m_WritingString;
+
     m_WritingString += l_Letter;
-    printf("%s\n", m_WritingString.c_str());
     m_Text.setFont(*g_Font);
     m_Text.setString(m_WritingString);
     return m_WritingString;

@@ -30,7 +30,7 @@ bool World::InitializeConnection()
 
 bool World::InitializeWindow()
 {
-	m_Graphics->CreateWindow(X_WINDOW, Y_WINDOW, 0.5f);
+	m_Graphics->CreateWindow(X_WINDOW, Y_WINDOW, ZOOM_FACTOR);
     if (!m_Graphics->LoadFont())
         return false;
 	return true;
