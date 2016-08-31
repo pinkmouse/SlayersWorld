@@ -269,7 +269,6 @@ void Map::ClickedLeftOnMap(const QPointF & p_Point)
 
     int l_NbSelectedTile = (m_X * l_YClicked) + l_XClicked;
 
-    std::cout << "X = " << m_X << std::endl;
     for (int iy = 0; iy < m_BrushSize; iy++)
     {
         for (int ix = 0; ix < m_BrushSize; ix++)
@@ -333,23 +332,29 @@ void Map::ClickedRightOnMap(const QPointF & p_Point)
 
     int l_NbSelectedTile = (m_X * l_YClicked) + l_XClicked;
 
-    Case* l_Case = m_CaseList[l_NbSelectedTile];
-    int l_TileLevel = m_Config->GetTileLevel();
-
-    if (l_TileLevel >= 0)
+    for (int iy = 0; iy < m_BrushSize; iy++)
     {
-        Tile* l_Tile = l_Case->GetTile(l_TileLevel);
+        for (int ix = 0; ix < m_BrushSize; ix++)
+        {
+            Case* l_Case = m_CaseList[l_NbSelectedTile + (iy * m_X) + ix];
+            int l_TileLevel = m_Config->GetTileLevel();
 
-        removeItem(l_Tile);
-        l_Case->RemoveTile(l_TileLevel);
-    }
-    else
-    {
-        if (!l_Case->GetBlock())
-            return;
+            if (l_TileLevel >= 0)
+            {
+                Tile* l_Tile = l_Case->GetTile(l_TileLevel);
 
-        l_Case->SetBlock(!l_Case->GetBlock());
-        removeItem(l_Case->GetTxt());
+                removeItem(l_Tile);
+                l_Case->RemoveTile(l_TileLevel);
+            }
+            else
+            {
+                if (!l_Case->GetBlock())
+                    return;
+
+                l_Case->SetBlock(!l_Case->GetBlock());
+                removeItem(l_Case->GetTxt());
+            }
+        }
     }
 }
 void Map::mousePressEvent(QGraphicsSceneMouseEvent *p_MouseEvent)

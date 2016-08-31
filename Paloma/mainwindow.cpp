@@ -228,6 +228,7 @@ void MainWindow::openMap()
     /// Draw Map
     for (int i = 0; i < (l_X * l_Y); ++i)
     {
+        ui->statusBar->showMessage("Opening " + QString::number(i / ((l_X * l_Y) / 100)) + "%");
         t_Case l_FluxCase;
         fread(&l_FluxCase, sizeof(l_FluxCase), 1, pFile);
         bool l_Block = l_FluxCase.l_Block;
