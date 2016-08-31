@@ -18,4 +18,12 @@ charactersDB = 127.0.0.1;root;root;characters;3306;
 
 ### Client
 
+  - Add datas folder side to client.exe
+  - Write a little launcher(windows) because client.exe need param
+
+`launcher.bat`
+```sh
+start "" "D:\Projects\Build\Client\client.exe" test@test.fr test
+```
+
 **We works Yeah!**
