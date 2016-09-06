@@ -41,12 +41,12 @@ void WorldSocket::SendUpdatePosition(uint8 p_Type, uint16 p_ID, uint32 p_PosX, u
     send(l_Packet);
 }
 
-void WorldSocket::SendPlayerCreate(uint32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_SkinID, uint16 p_MapID, uint32 p_PosX, uint32 p_PosY, uint8 p_Orientation)
+void WorldSocket::SendPlayerCreate(uint32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_Health, uint8 p_Alignment, uint8 p_SkinID, uint16 p_MapID, uint32 p_PosX, uint32 p_PosY, uint8 p_Orientation)
 {
     WorldPacket l_Packet;
     uint8 l_ID = 10;
 
-    l_Packet << l_ID << p_ID << p_Name << p_Level << p_SkinID << p_MapID << p_PosX << p_PosY << p_Orientation;
+    l_Packet << l_ID << p_ID << p_Name << p_Level << p_Health << p_Alignment << p_SkinID << p_MapID << p_PosX << p_PosY << p_Orientation;
     send(l_Packet);
     printf("Send create\n");
 }

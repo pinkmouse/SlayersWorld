@@ -39,12 +39,14 @@ int32 SqlManager::GetIDLogin(std::string p_Login, std::string p_Password)
 
 Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
 {
-    std::string l_Query = "SELECT characterID, name, level, skinID, mapID, posX, posY, orientation FROM characters WHERE accountID = '" + std::to_string(p_AccountID) + "'";
+    std::string l_Query = "SELECT characterID, name, level, health, alignment, skinID, mapID, posX, posY, orientation FROM characters WHERE accountID = '" + std::to_string(p_AccountID) + "'";
     mysql_query(&m_Mysql, l_Query.c_str());
 
     uint32 l_ID = 0;
     std::string l_Name = "";
     uint8 l_Lvl = 0;
+    uint8 l_Health = 0;
+    uint8 l_Alignment = 0;
     uint8 l_SkinID = 0;
     uint16 l_MapID = 0;
     uint32 l_PosX = 0;
@@ -60,14 +62,19 @@ Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
         l_ID = atoi(l_Row[0]);
         l_Name = std::string(l_Row[1]);
         l_Lvl = atoi(l_Row[2]);
-        l_SkinID = atoi(l_Row[3]);
-        l_MapID = atoi(l_Row[4]);
-        l_PosX = atoi(l_Row[5]);
-        l_PosY = atoi(l_Row[6]);
-        l_Orientation = atoi(l_Row[7]);
+        l_Health = atoi(l_Row[3]);
+        l_Alignment = atoi(l_Row[4]);
+        l_SkinID = atoi(l_Row[5]);
+        l_MapID = atoi(l_Row[6]);
+        l_PosX = atoi(l_Row[7]);
+        l_PosY = atoi(l_Row[8]);
+        l_Orientation = atoi(l_Row[9]);
     }
     mysql_free_result(l_Result);
 
     Player* l_Player = new Player(l_ID, l_Name, l_Lvl, l_SkinID, l_MapID, l_PosX, l_PosY, (Orientation)l_Orientation);
+    l_Player->SetHealth(l_Health);
+    l_Player->SetAlignment(l_Alignment);
+
     return l_Player;
 }

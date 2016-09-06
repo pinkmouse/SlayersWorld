@@ -15,6 +15,7 @@ Unit::Unit(uint16 p_ID)
     m_SizeY = 32;
     m_MovementHandler = new MovementHandler(m_SizeX, m_SizeY);
     m_DiffUpdatePosTime = 0;
+    m_Health = 100;
 }
 
 Unit::Unit(uint16 p_ID, TypeUnit p_Type)
@@ -29,6 +30,7 @@ Unit::Unit(uint16 p_ID, TypeUnit p_Type)
     m_SizeX = 24;
     m_SizeY = 32;
     m_MovementHandler = new MovementHandler(m_SizeX, m_SizeY);
+    m_Health = 100;
 }
 
 Player* Unit::ToPlayer()
@@ -99,6 +101,11 @@ uint8 Unit::GetSizeY() const
 uint8 Unit::GetLevel() const
 {
     return m_Level;
+}
+
+uint8 Unit::GetHealth() const
+{
+    return m_Health;
 }
 
 uint8 Unit::GetSkinID() const
@@ -177,6 +184,11 @@ void Unit::SetMap(Map* p_Map)
 {
     m_Map = p_Map;
     m_MovementHandler->SetMap(m_Map);
+}
+
+void Unit::SetHealth(const uint8 & p_Health)
+{
+    m_Health = p_Health;
 }
 
 uint16 Unit::GetSquareID() const

@@ -29,6 +29,7 @@ public:
     Orientation GetOrientation() const;
     TypeUnit GetType() const;
     uint8 GetOpacity() const;
+    uint8 GetHealth() const;
 
     void SetName(const std::string &);
     void SetLevel(const uint8 &);
@@ -39,6 +40,7 @@ public:
     void SetOrientation(const Orientation &);
     void SetSkinZoomFactor(const float &);
     void SetMap(Map*);
+    void SetHealth(const uint8 &);
     
     void StartMovement();
     bool IsInRayVisible(Unit*);
@@ -55,6 +57,7 @@ protected:
     std::string m_Name;
     uint16 m_ID;
     uint8 m_Level;
+    uint8 m_Health;
     uint8 m_SkinID;
     float m_SkinZoomFactor;
     uint16 m_MapID;

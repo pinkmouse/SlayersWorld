@@ -14,10 +14,12 @@ public:
 
     void Initialize();
     TileSprite GetField(uint16, uint16);
+    TileSprite GetFlask(uint8, bool, uint8 p_Pct = 100);
     void Draw(Window &);
 
 private:
     sf::Texture     m_SystemTexture;
+    sf::Texture     m_FlaskTexture;
     Events*         m_Events;
     WritingField*   m_WritingField;
 };

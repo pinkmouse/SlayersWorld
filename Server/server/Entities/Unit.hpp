@@ -26,6 +26,7 @@ public:
     Map* GetMap() const;
     uint16 GetSquareID() const;
     uint16 GetID() const;
+    uint8 GetHealth() const;
 
     void SetName(const std::string &);
     void SetLevel(const uint8 &);
@@ -33,6 +34,7 @@ public:
     void SetPosX(const uint32 &);
     void SetPoxY(const uint32 &);
     void SetSkinID(const uint8 &);
+    void SetHealth(const uint8 &);
     void SetOrientation(const Orientation &);
     void SetMap(Map*);
     void SetSquareID(uint16);
@@ -54,7 +56,7 @@ protected:
 
     uint32 m_PosX;
     uint32 m_PosY;
-
+    uint8 m_Health;
     uint8 m_SkinID;
     Orientation m_Orientation;
     MovementHandler* m_MovementHandler;

@@ -11,10 +11,15 @@ public:
     WorldSocket* GetSession() const;
     void SetSession(WorldSocket*);
 
+    void SetAlignment(const uint8 &);
+    uint8 GetAlignment() const;
+
     void Update(sf::Time);
     void UpdateNewSquares(uint16, uint16, bool p_UpdateAll = false);
 
 private:
     WorldSocket* m_Session;
+
+    uint8 m_Alignment;
 };
 

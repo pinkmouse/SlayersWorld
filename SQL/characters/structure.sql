@@ -23,6 +23,8 @@ CREATE TABLE IF NOT EXISTS `characters` (
   `name` tinytext NOT NULL,
   `skinID` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `level` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `health` tinyint(3) unsigned NOT NULL,
+  `alignment` tinyint(3) unsigned NOT NULL,
   `mapID` smallint(5) unsigned NOT NULL DEFAULT '0',
   `posX` int(10) unsigned NOT NULL DEFAULT '0',
   `posY` int(10) unsigned NOT NULL DEFAULT '0',

@@ -164,6 +164,8 @@ void PacketHandler::HandleCreateMainPlayer(WorldPacket &p_Packet)
     uint32 l_ID;
     std::string l_Name;
     uint8 l_Level;
+    uint8 l_Health;
+    uint8 l_Alignment;
     uint8 l_SkinID;
     uint16 l_MapID;
     uint32 l_PosX;
@@ -173,6 +175,8 @@ void PacketHandler::HandleCreateMainPlayer(WorldPacket &p_Packet)
     p_Packet >> l_ID;
     p_Packet >> l_Name;
     p_Packet >> l_Level;
+    p_Packet >> l_Health;
+    p_Packet >> l_Alignment;
     p_Packet >> l_SkinID;
     p_Packet >> l_MapID;
     p_Packet >> l_PosX;
@@ -184,6 +188,8 @@ void PacketHandler::HandleCreateMainPlayer(WorldPacket &p_Packet)
         return;
 
     g_Player = new Player(l_ID, l_Name, l_Level, l_SkinID, l_MapID, l_PosX, l_PosY, (Orientation)l_Orientation);
+    g_Player->SetHealth(l_Health);
+    g_Player->SetAlignment(l_Alignment);
     m_MapManager->SetPosX(l_PosX);
     m_MapManager->SetPosY(l_PosY);
 

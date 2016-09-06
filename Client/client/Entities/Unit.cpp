@@ -128,6 +128,11 @@ uint8 Unit::GetLevel() const
     return m_Level;
 }
 
+uint8 Unit::GetHealth() const
+{
+    return m_Health;
+}
+
 uint8 Unit::GetSkinID() const
 {
     return m_SkinID;
@@ -175,6 +180,11 @@ void Unit::SetLevel(const uint8 & p_Level)
 void Unit::SetSkinID(const uint8 & p_SkinID)
 {
     m_SkinID = p_SkinID;
+}
+
+void Unit::SetHealth(const uint8 & p_Health)
+{
+    m_Health = p_Health;
 }
 
 void Unit::SetMapID(const uint16 & p_MapID)

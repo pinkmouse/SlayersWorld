@@ -14,6 +14,7 @@ Player::Player(int32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_SkinID, ui
     SetOrientation(p_Orientation);
     m_Session = nullptr;
     m_DiffUpdatePosTime = 0;
+    m_Alignment = 0;
 }
 
 WorldSocket* Player::GetSession() const
@@ -74,4 +75,14 @@ void Player::UpdateNewSquares(uint16 p_OldSquareID, uint16 p_NewSquareID, bool p
             }
         }
     }
+}
+
+void Player::SetAlignment(const uint8 & p_Alignment)
+{
+    m_Alignment = p_Alignment;
+}
+
+uint8 Player::GetAlignment() const
+{
+    return m_Alignment;
 }

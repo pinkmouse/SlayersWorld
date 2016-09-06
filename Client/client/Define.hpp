@@ -42,6 +42,12 @@
 #define IMG_FOLDER "img/window/"
 #define FONT_FIELD_SIZE 128
 #define SIZE_FILED_TALK_Y 32
+#define FLASK_SIZE_X 16
+#define FLASK_SIZE_Y 72
+#define FLASK_OFFSET_TOP 22
+#define FLASK_OFFSET_BOTTOM 2
+#define FLASK_SCALE 2.0f
+
 
 /// EVENT
 #define MAX_KEY_SAVE 4
