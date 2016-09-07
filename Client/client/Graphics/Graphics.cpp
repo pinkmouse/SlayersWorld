@@ -30,6 +30,7 @@ void Graphics::CreateWindow(uint32 p_X, uint32 p_Y, float p_Zoom)
 	m_Window.create(sf::VideoMode(p_X, p_Y), NAME_WINDOW);
 	m_View = m_Window.getDefaultView();
     m_ViewInterface = m_Window.getDefaultView();
+    m_ViewFont = m_View;
 	m_View.zoom(p_Zoom);
 	m_Window.setView(m_View);
     m_Window.setFramerateLimit(40);
@@ -104,25 +105,33 @@ void Graphics::DrawEntities()
             l_SkinSprite.setPosition((float)l_Unit->GetPosX(), (float)l_Unit->GetPosY() - l_Unit->GetRealSizeY());
             m_Window.draw(l_SkinSprite);
 
+            /// Set view to don t have a zoom on text
+            m_ViewFont = m_View;
+            m_ViewFont.zoom(1.5f);
+            m_Window.setView(m_ViewFont);
+
             /// TALK
             if (!l_Unit->GetTalk().empty())
             {
                 sf::Text l_Text(l_Unit->GetTalk(), *g_Font, SIZE_TALK_FONT);
 
                 TileSprite l_Sprite = m_InterfaceManager->GetField(l_Text.getGlobalBounds().width, (float)g_Font->getLineSpacing(l_Text.getCharacterSize()));
-                l_Sprite.setPosition((float)l_Unit->GetPosX() + (l_Unit->GetRealSizeX() / 2) - (l_Text.getGlobalBounds().width / 2), (float)l_Unit->GetPosY() - l_Unit->GetRealSizeY() - l_Text.getGlobalBounds().height);
+                l_Sprite.setPosition((float)l_Unit->GetPosX() + (l_Unit->GetRealSizeX() / 2) - (l_Text.getGlobalBounds().width / 2), (float)l_Unit->GetPosY() - l_Unit->GetRealSizeY() - l_Text.getGlobalBounds().height - (l_Unit->GetRealSizeY() * ZOOM_FACTOR / 2.0f));
                 m_Window.draw(l_Sprite);
 
                 l_Text.setColor(sf::Color::White);
-                l_Text.setPosition((float)l_Unit->GetPosX() + (l_Unit->GetRealSizeX() / 2) - (l_Text.getGlobalBounds().width / 2), (float)l_Unit->GetPosY() - l_Unit->GetRealSizeY() - l_Text.getGlobalBounds().height);
+                l_Text.setPosition((float)l_Unit->GetPosX() + (l_Unit->GetRealSizeX() / 2) - (l_Text.getGlobalBounds().width / 2), (float)l_Unit->GetPosY() - l_Unit->GetRealSizeY() - l_Text.getGlobalBounds().height - (l_Unit->GetRealSizeY() * ZOOM_FACTOR / 2.0f));
                 m_Window.draw(l_Text);
             }
 
             /// NAME
             sf::Text l_Name(l_Unit->GetName(), *g_Font, SIZE_NAME_FONT);
             l_Name.setColor(sf::Color::White);
-            l_Name.setPosition((float)l_Unit->GetPosX() + (l_Unit->GetRealSizeX() / 2) - (l_Name.getGlobalBounds().width / 2), (float)l_Unit->GetPosY());
+            l_Name.setPosition((float)(l_Unit->GetPosX() + (l_Unit->GetRealSizeX() / 2) - (l_Name.getGlobalBounds().width / 2)), (float)l_Unit->GetPosY() + (l_Unit->GetRealSizeY() * ZOOM_FACTOR / 2.0f));
             m_Window.draw(l_Name);
+
+            /// Reset the view
+            m_Window.setView(m_View);
         }
     }
 }

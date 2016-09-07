@@ -4,10 +4,10 @@
 #define CONF_FILE "server.conf"
 
 #define SIZE_SENDING_SQUARE 12
-#define TILE_SIZE 32
+#define TILE_SIZE 16
 
 #define UPDATE_TIME_MOVEMENT 250
-#define STEP_SIZE 10 /// In pixel
+#define STEP_SIZE 8 /// In pixel
 
 typedef char int8;
 typedef short int16;

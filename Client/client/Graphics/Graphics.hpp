@@ -32,6 +32,7 @@ public:
 private:
 	Window              m_Window;
 	sf::View            m_View;
+    sf::View            m_ViewFont;
     sf::View            m_ViewInterface;
     sf::Font            m_Font;
 

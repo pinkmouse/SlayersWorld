@@ -45,6 +45,7 @@ bool World::Initialize()
 
 	printf("Load Packet Handler...\n");
 	m_PacketHandler->LoadPacketHandlerMap();
+
 	return true;
 }
 
@@ -53,6 +54,7 @@ void World::Run()
 	Initialize();
 	m_Thread.launch();
 
+    printf("WorldServer Start\n");
 	while (m_Run)
 	{
 		UpdatePacketQueue();

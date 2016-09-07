@@ -8,18 +8,18 @@
 /// GRAPHICS
 #define X_WINDOW 640
 #define Y_WINDOW 480
-#define ZOOM_FACTOR 0.75f
+#define ZOOM_FACTOR 0.5f
 
 #define PLAYER_RAY 10
 
 /// TILES
 #define MAX_TILE_LEVEL 4
-#define TILE_SIZE 32
+#define TILE_SIZE 16
 #define TILE_FOLDER "img/tiles/"
 #define SIZE_DRAWING_SQUARE 14
 
 /// SKIN
-#define SKIN_ZOOM_FACTOR_DEFAULT 1.33f
+#define SKIN_ZOOM_FACTOR_DEFAULT 1.0f
 #define UPDATE_OPACITY_TIME 250
 #define SKINS_FOLDER "img/skins/"
 #define SKIN_SIZE_X 24
@@ -57,7 +57,7 @@
 #define NAME_WINDOW "Slayers World"
 
 /// GENERAL
-#define STEP_SIZE 10 /// In pixel
+#define STEP_SIZE 8 /// In pixel
 
 typedef char int8;
 typedef short int16;
