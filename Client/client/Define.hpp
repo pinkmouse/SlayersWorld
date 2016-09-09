@@ -35,7 +35,7 @@
 
 /// FONT
 #define FONT_FOLDER "font/"
-#define SIZE_NAME_FONT 16
+#define SIZE_NAME_FONT 20
 #define SIZE_TALK_FONT 16
 
 /// INTERFACE

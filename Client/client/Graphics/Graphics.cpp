@@ -29,8 +29,8 @@ void Graphics::CreateWindow(uint32 p_X, uint32 p_Y, float p_Zoom)
 {
 	m_Window.create(sf::VideoMode(p_X, p_Y), NAME_WINDOW);
 	m_View = m_Window.getDefaultView();
+    m_ViewFont = m_Window.getDefaultView();
     m_ViewInterface = m_Window.getDefaultView();
-    m_ViewFont = m_View;
 	m_View.zoom(p_Zoom);
 	m_Window.setView(m_View);
     m_Window.setFramerateLimit(40);
@@ -106,8 +106,6 @@ void Graphics::DrawEntities()
             m_Window.draw(l_SkinSprite);
 
             /// Set view to don t have a zoom on text
-            m_ViewFont = m_View;
-            m_ViewFont.zoom(1.5f);
             m_Window.setView(m_ViewFont);
 
             /// TALK
@@ -127,7 +125,9 @@ void Graphics::DrawEntities()
             /// NAME
             sf::Text l_Name(l_Unit->GetName(), *g_Font, SIZE_NAME_FONT);
             l_Name.setColor(sf::Color::White);
-            l_Name.setPosition((float)(l_Unit->GetPosX() + (l_Unit->GetRealSizeX() / 2) - (l_Name.getGlobalBounds().width / 2)), (float)l_Unit->GetPosY() + (l_Unit->GetRealSizeY() * ZOOM_FACTOR / 2.0f));
+            sf::Vector2f v1(l_Unit->GetPosX() + (l_Unit->GetSizeX() / 2), l_Unit->GetPosY());
+            sf::Vector2i l_Coord = m_Window.mapCoordsToPixel(v1, m_View);
+            l_Name.setPosition((float)(l_Coord.x - (l_Name.getGlobalBounds().width / 2)), (float)l_Coord.y);
             m_Window.draw(l_Name);
 
             /// Reset the view
