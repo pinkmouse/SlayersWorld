@@ -162,6 +162,7 @@
   <ItemGroup>
     <ClInclude Include="Global.hpp" />
     <ClInclude Include="Graphics\Interface\InterfaceManager.hpp" />
+    <ClInclude Include="Graphics\Skin.hpp" />
     <ClInclude Include="World\ClockHandler.hpp" />
     <ClInclude Include="Entities\Player.hpp" />
     <ClInclude Include="Entities\Unit.hpp" />
@@ -188,6 +189,7 @@
   <ItemGroup>
     <ClCompile Include="Graphics\Interface\InterfaceManager.cpp" />
     <ClCompile Include="Map\Map.cpp" />
+    <ClCompile Include="Graphics\Skin.cpp" />
     <ClCompile Include="World\ClockHandler.cpp" />
     <ClCompile Include="Entities\Player.cpp" />
     <ClCompile Include="Entities\Unit.cpp" />

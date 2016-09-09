@@ -7,11 +7,13 @@ MovementHandler::MovementHandler(uint8 p_SizeX, uint8 p_SizeY) :
 {
     m_Speed = 1.0f;
     m_InMovement = false;
+    m_InAttack = false;
     m_MovementPosition = 0;
     m_Orientation = Orientation::Down;
     m_PosX = 0;
     m_PosY = 0;
-    m_DiffTimeUpdateAnimation = 0;
+    m_DiffTimeAnim = 0;
+    m_DiffTimeAnimAttack = 0;
     m_DiffTime = 0;
     m_Map = nullptr;
 }
@@ -52,6 +54,7 @@ bool MovementHandler::IsInColision(int64 p_PosX, int64 p_PosY) const
 void MovementHandler::Update(sf::Time p_Diff)
 {   
     UpdateAnimationWalk(p_Diff);
+    UpdateAnimationAttack(p_Diff);
     if (!m_InMovement)
         return;
 
@@ -97,9 +100,9 @@ void MovementHandler::UpdateAnimationWalk(sf::Time p_Diff)
     if (!m_InMovement)
         return;
 
-    m_DiffTimeUpdateAnimation += p_Diff.asMicroseconds();
+    m_DiffTimeAnim += p_Diff.asMicroseconds();
 
-    while (m_DiffTimeUpdateAnimation > (UPDATE_TIME_MOVEMENT * 1000 * m_Speed)) ///< 1000 because microsecond
+    while (m_DiffTimeAnim > (UPDATE_TIME_MOVEMENT * 1000 * m_Speed)) ///< 1000 because microsecond
     {
         /// UPDATE ANIMATION
         if (m_MovementPosition <= 1)
@@ -107,14 +110,43 @@ void MovementHandler::UpdateAnimationWalk(sf::Time p_Diff)
         else
             m_MovementPosition = 0;
 
-       m_DiffTimeUpdateAnimation -= (uint64)(UPDATE_TIME_MOVEMENT * 1000 * m_Speed);
+        m_DiffTimeAnim -= (uint64)(UPDATE_TIME_MOVEMENT * 1000 * m_Speed);
     }
 }
 
+void MovementHandler::UpdateAnimationAttack(sf::Time p_Diff)
+{
+    if (!m_InAttack)
+        return;
+
+    if (m_MovementPosition >= MAX_MOVEMENT_POSITION)
+    {
+        StopMovement();
+        m_InAttack = false;
+        return;
+    }
+
+    if (m_InMovement || m_MovementPosition >= MAX_MOVEMENT_POSITION)
+        return;
+
+    m_DiffTimeAnimAttack += p_Diff.asMicroseconds();
+
+    while (m_DiffTimeAnimAttack > (UPDATE_TIME_MOVEMENT * 1000 * m_Speed)) ///< 1000 because microsecond
+    {
+        /// UPDATE ANIMATION
+        m_MovementPosition++;
+        m_DiffTimeAnimAttack -= (uint64)(UPDATE_TIME_MOVEMENT * 1000 * m_Speed);
+    }
+}
 
 bool MovementHandler::IsInMovement() const
 {
     return m_InMovement;
+}
+
+bool MovementHandler::IsInAttack() const
+{
+    return m_InAttack;
 }
 
 void MovementHandler::StartMovement(Orientation p_Orientation)
@@ -135,7 +167,13 @@ void MovementHandler::StopMovement()
     m_InMovement = false;
     m_MovementPosition = 1;
     m_DiffTime = 0;
-    m_DiffTimeUpdateAnimation = 0;
+    m_DiffTimeAnim = 0;
+}
+
+void MovementHandler::StartAttack()
+{
+    StopMovement();
+    m_InAttack = true;
 }
 
 void MovementHandler::SetOrientation(Orientation p_Orientation)
