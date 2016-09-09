@@ -3,7 +3,7 @@
 
 ### Server
 
-  - Make a characters DB and execute the sql file in SQL Folder
+  - Make a characters DB and execute the sql file
   - Insert new account in login
   - Write `server.conf` and place it side to server.exe
 
@@ -15,10 +15,11 @@ charactersDB = 127.0.0.1;root;root;characters;3306;
 ```
 
   - Add map folder side to server.exe
+  - Add libmysql.dll side to server.exe
 
 ### Client
 
-  - Add datas folder side to client.exe
+  - Add datas folder side to client.exe (map, font, img)
   - Write a little launcher(windows) because client.exe need param
 
 `launcher.bat`
