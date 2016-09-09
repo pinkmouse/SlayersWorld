@@ -119,14 +119,7 @@ void MovementHandler::UpdateAnimationAttack(sf::Time p_Diff)
     if (!m_InAttack)
         return;
 
-    if (m_MovementPosition >= MAX_MOVEMENT_POSITION)
-    {
-        StopMovement();
-        m_InAttack = false;
-        return;
-    }
-
-    if (m_InMovement || m_MovementPosition >= MAX_MOVEMENT_POSITION)
+    if (m_InMovement)
         return;
 
     m_DiffTimeAnimAttack += p_Diff.asMicroseconds();
@@ -135,6 +128,15 @@ void MovementHandler::UpdateAnimationAttack(sf::Time p_Diff)
     {
         /// UPDATE ANIMATION
         m_MovementPosition++;
+
+        if (m_MovementPosition >= MAX_MOVEMENT_POSITION)
+        {
+            StopMovement();
+            m_InAttack = false;
+            return;
+        }
+
+
         m_DiffTimeAnimAttack -= (uint64)(UPDATE_TIME_MOVEMENT * 1000 * m_Speed);
     }
 }
@@ -173,7 +175,9 @@ void MovementHandler::StopMovement()
 void MovementHandler::StartAttack()
 {
     StopMovement();
+    m_MovementPosition = 0;
     m_InAttack = true;
+    m_DiffTimeAnimAttack = 0;
 }
 
 void MovementHandler::SetOrientation(Orientation p_Orientation)

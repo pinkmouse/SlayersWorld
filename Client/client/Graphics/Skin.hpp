@@ -9,7 +9,7 @@ public:
     Skin(uint8, uint8);
     ~Skin();
     void AddSprite(SkinSprite*);
-    SkinSprite* GetSprite(uint8) const;
+    SkinSprite* GetSprite(uint8);
     uint8 GetNbSpriteX() const;
     uint8 GetNbSpriteY() const;
 

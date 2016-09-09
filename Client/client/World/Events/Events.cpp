@@ -67,6 +67,12 @@ void Events::NewKeyPressed(sf::Keyboard::Key p_NewKey)
             g_Socket->SendGoDirection((Orientation)m_DirectionMap[p_NewKey]);
             break;
         }
+        /// Attack
+        case sf::Keyboard::Key::S:
+        {
+            g_Player->GetMovementHandler()->StartAttack();
+            break;
+        }
         /// Reset KeyPress queue when lost focus
         case sf::Event::LostFocus:
         {

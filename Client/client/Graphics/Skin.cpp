@@ -28,7 +28,13 @@ void Skin::AddSprite(SkinSprite* p_Sprite)
     m_SpriteList.push_back(p_Sprite);
 }
 
-SkinSprite* Skin::GetSprite(uint8 p_SpriteID) const
+SkinSprite* Skin::GetSprite(uint8 p_SpriteID)
 {
+    while (p_SpriteID >= m_SpriteList.size())
+        p_SpriteID -= (MAX_MOVEMENT_POSITION * Orientation::MAX);
+
+    if (p_SpriteID < 0)
+        p_SpriteID = 0;
+
     return m_SpriteList[p_SpriteID];
 }

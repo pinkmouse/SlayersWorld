@@ -98,7 +98,11 @@ void Graphics::DrawEntities()
                 continue;
 
             /// SKIN PART
-            uint8 l_SpriteNb = (l_Unit->GetOrientation() * MAX_MOVEMENT_POSITION) + l_Unit->GetMovementHandler()->GetMovementPosition();
+            MovementHandler* l_MovementHandler = l_Unit->GetMovementHandler();
+            uint8 l_SpriteNb = (l_Unit->GetOrientation() * MAX_MOVEMENT_POSITION) + l_MovementHandler->GetMovementPosition();
+            if (l_MovementHandler->IsInAttack())
+                l_SpriteNb += (MAX_MOVEMENT_POSITION * Orientation::MAX);
+
             SkinSprite l_SkinSprite = (*m_SkinsManager->GetSkinSprite(l_Unit->GetSkinID(), l_SpriteNb));
             l_SkinSprite.setScale(sf::Vector2f(l_Unit->GetSkinZoomFactor(), l_Unit->GetSkinZoomFactor()));
             l_SkinSprite.setColor(sf::Color(255, 255, 255, l_Unit->GetOpacity()));

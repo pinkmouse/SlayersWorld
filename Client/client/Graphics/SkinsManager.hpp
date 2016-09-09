@@ -12,6 +12,7 @@ public:
     ~SkinsManager();
     bool LoadSkins();
     SkinSprite* GetSkinSprite(uint8, uint8);
+    Skin* GetSkin(uint8);
 
 private:
     std::map<uint8, Skin*> m_SkinsMap;
