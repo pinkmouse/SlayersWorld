@@ -56,10 +56,11 @@ void Events::KeyRelease(sf::Keyboard::Key p_KeyRealease)
     if (l_It != m_KeyPressed.end())
     {
         m_KeyPressed.erase(l_It);
+        MovementHandler* l_MovementHandler = g_Player->GetMovementHandler();
 
         if (p_KeyRealease == sf::Keyboard::Key::S)
-            g_Player->GetMovementHandler()->StopAttack();
-        else if (m_KeyPressed.size() > 0) ///< Check the others action
+                l_MovementHandler->StopAttack();
+        else if (m_KeyPressed.size() > 0  && !l_MovementHandler->IsInAttack()) ///< Check the others action
         {
             switch (m_KeyPressed.back())
             {
@@ -82,7 +83,7 @@ void Events::KeyRelease(sf::Keyboard::Key p_KeyRealease)
                 }
             }
         }
-        else if (p_KeyRealease >= 71 && p_KeyRealease <= 74) ///< If the last key release
+        else if (p_KeyRealease >= 71 && p_KeyRealease <= 74 && !l_MovementHandler->IsInAttack()) ///< If the last key release
         {
             g_Socket->SendStopMovement();
             g_Player->GetMovementHandler()->StopMovement();
