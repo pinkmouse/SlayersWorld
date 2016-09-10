@@ -48,6 +48,7 @@ void Graphics::CreateWindow(uint32 p_X, uint32 p_Y, float p_Zoom)
 void Graphics::CheckEvent()
 {
 	sf::Event l_Event;
+    m_Events->Update();
 	while (m_Window.pollEvent(l_Event))
 	{
         switch(l_Event.type)

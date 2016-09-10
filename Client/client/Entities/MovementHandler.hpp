@@ -14,6 +14,7 @@ public:
     void StartMovement();
     void StopMovement();
     void StartAttack();
+    void StopAttack();
     uint8 GetMovementPosition();
     bool IsInColision(int64, int64) const;
     bool IsInMovement() const;
@@ -36,6 +37,8 @@ public:
 private:
     bool m_InMovement;
     bool m_InAttack;
+    bool m_StopAttack;
+
     float m_Speed;
     uint8 m_MovementPosition;
     Orientation m_Orientation;

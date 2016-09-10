@@ -15,24 +15,74 @@ Events::~Events()
 {
 }
 
+void Events::Update()
+{
+    if (g_Player == nullptr)
+        return;
+
+    MovementHandler* l_MovementHandler = g_Player->GetMovementHandler();
+
+    if (l_MovementHandler == nullptr)
+        return;
+
+    /// Need update to check if when attack is finish we have direction key press
+    if (!l_MovementHandler->IsInMovement() && !l_MovementHandler->IsInAttack())
+    {
+        if (m_KeyPressed.size() > 0) ///< Check the others action
+        {
+            switch (m_KeyPressed.back())
+            {
+                case sf::Keyboard::Key::Up:
+                case sf::Keyboard::Key::Down:
+                case sf::Keyboard::Key::Left:
+                case sf::Keyboard::Key::Right:
+                {
+                    g_Socket->SendGoDirection((Orientation)m_DirectionMap[m_KeyPressed.back()]);
+                    g_Player->SetOrientation((Orientation)m_DirectionMap[m_KeyPressed.back()]);
+                    g_Player->StartMovement();
+                    break;
+                }
+            }
+        }
+    }
+}
+
 void Events::KeyRelease(sf::Keyboard::Key p_KeyRealease)
 {
     if (g_Player == nullptr)
         return;
 
     std::vector<sf::Keyboard::Key>::iterator l_It = std::find(m_KeyPressed.begin(), m_KeyPressed.end(), p_KeyRealease);
-
-    if (l_It != m_KeyPressed.end()) ///< If it's a movement key Release
+    if (l_It != m_KeyPressed.end())
     {
         m_KeyPressed.erase(l_It);
 
-        if (m_KeyPressed.size() > 0)
+        if (p_KeyRealease == sf::Keyboard::Key::S)
+            g_Player->GetMovementHandler()->StopAttack();
+        else if (m_KeyPressed.size() > 0) ///< Check the others action
         {
-            g_Socket->SendGoDirection((Orientation)m_DirectionMap[m_KeyPressed.back()]);
-            g_Player->SetOrientation((Orientation)m_DirectionMap[m_KeyPressed.back()]);
-            g_Player->StartMovement();
+            switch (m_KeyPressed.back())
+            {
+                case sf::Keyboard::Key::Up:
+                case sf::Keyboard::Key::Down:
+                case sf::Keyboard::Key::Left:
+                case sf::Keyboard::Key::Right:
+                {
+                    g_Socket->SendGoDirection((Orientation)m_DirectionMap[m_KeyPressed.back()]);
+                    g_Player->SetOrientation((Orientation)m_DirectionMap[m_KeyPressed.back()]);
+                    g_Player->StartMovement();
+                    break;
+                }
+                case sf::Keyboard::Key::S:
+                {           
+                    MovementHandler* l_MovementHandler = g_Player->GetMovementHandler();
+                    if (!l_MovementHandler->IsInAttack())
+                        l_MovementHandler->StartAttack();
+                    break;
+                }
+            }
         }
-        else
+        else if (p_KeyRealease >= 71 && p_KeyRealease <= 74) ///< If the last key release
         {
             g_Socket->SendStopMovement();
             g_Player->GetMovementHandler()->StopMovement();
@@ -53,6 +103,8 @@ void Events::NewKeyPressed(sf::Keyboard::Key p_NewKey)
             if (g_Player == nullptr)
                 return;
 
+            MovementHandler* l_MovementHandler = g_Player->GetMovementHandler();
+
             std::vector<sf::Keyboard::Key>::iterator l_It = std::find(m_KeyPressed.begin(), m_KeyPressed.end(), p_NewKey);
 
             if (l_It != m_KeyPressed.end())
@@ -62,15 +114,24 @@ void Events::NewKeyPressed(sf::Keyboard::Key p_NewKey)
             if (m_KeyPressed.size() > MAX_KEY_SAVE)
                 m_KeyPressed.erase(m_KeyPressed.begin());
             m_KeyPressed.push_back(p_NewKey);
-            g_Player->GetMovementHandler()->StartMovement((Orientation)m_DirectionMap[p_NewKey]);
-            g_Player->SetOrientation((Orientation)m_DirectionMap[p_NewKey]);
-            g_Socket->SendGoDirection((Orientation)m_DirectionMap[p_NewKey]);
+            if (!l_MovementHandler->IsInAttack())
+            {
+                g_Player->GetMovementHandler()->StartMovement((Orientation)m_DirectionMap[p_NewKey]);
+                g_Player->SetOrientation((Orientation)m_DirectionMap[p_NewKey]);
+                g_Socket->SendGoDirection((Orientation)m_DirectionMap[p_NewKey]);
+            }
             break;
         }
         /// Attack
         case sf::Keyboard::Key::S:
         {
-            g_Player->GetMovementHandler()->StartAttack();
+            MovementHandler* l_MovementHandler = g_Player->GetMovementHandler();
+            if (m_KeyPressed.size() > MAX_KEY_SAVE)
+                m_KeyPressed.erase(m_KeyPressed.begin());
+            m_KeyPressed.push_back(p_NewKey);
+
+            if (!l_MovementHandler->IsInAttack())
+                l_MovementHandler->StartAttack();
             break;
         }
         /// Reset KeyPress queue when lost focus
@@ -81,6 +142,7 @@ void Events::NewKeyPressed(sf::Keyboard::Key p_NewKey)
 
             m_KeyPressed.clear();
             g_Player->GetMovementHandler()->StopMovement();
+            g_Player->GetMovementHandler()->StopAttack();
             break;
         }
         case sf::Keyboard::Key::Return:

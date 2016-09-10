@@ -8,6 +8,7 @@ MovementHandler::MovementHandler(uint8 p_SizeX, uint8 p_SizeY) :
     m_Speed = 1.0f;
     m_InMovement = false;
     m_InAttack = false;
+    m_StopAttack = false;
     m_MovementPosition = 0;
     m_Orientation = Orientation::Down;
     m_PosX = 0;
@@ -116,10 +117,10 @@ void MovementHandler::UpdateAnimationWalk(sf::Time p_Diff)
 
 void MovementHandler::UpdateAnimationAttack(sf::Time p_Diff)
 {
-    if (!m_InAttack)
+    if (m_InMovement)
         return;
 
-    if (m_InMovement)
+    if (!m_InAttack)
         return;
 
     m_DiffTimeAnimAttack += p_Diff.asMicroseconds();
@@ -131,8 +132,9 @@ void MovementHandler::UpdateAnimationAttack(sf::Time p_Diff)
 
         if (m_MovementPosition >= MAX_MOVEMENT_POSITION)
         {
-            StopMovement();
-            m_InAttack = false;
+            m_MovementPosition = 0;
+            if (m_StopAttack)
+                m_InAttack = false;
             return;
         }
 
@@ -174,10 +176,18 @@ void MovementHandler::StopMovement()
 
 void MovementHandler::StartAttack()
 {
+    if (m_InAttack)
+        return;
     StopMovement();
     m_MovementPosition = 0;
     m_InAttack = true;
+    m_StopAttack = false;
     m_DiffTimeAnimAttack = 0;
+}
+
+void MovementHandler::StopAttack()
+{
+    m_StopAttack = true;
 }
 
 void MovementHandler::SetOrientation(Orientation p_Orientation)
