@@ -8,7 +8,6 @@ Unit::Unit(uint16 p_ID)
     m_MapID = 0;
     m_PosX = 0;
     m_PosY = 0;
-    m_Orientation = Orientation::Down;
     m_Type = TypeUnit::CREATURE;
     m_ID = p_ID;
     m_SizeX = 24;
@@ -25,7 +24,6 @@ Unit::Unit(uint16 p_ID, TypeUnit p_Type)
     m_MapID = 0;
     m_PosX = 0;
     m_PosY = 0;
-    m_Orientation = Orientation::Down;
     m_ID = p_ID;
     m_SizeX = 24;
     m_SizeY = 32;
@@ -129,7 +127,7 @@ bool Unit::IsInMovement() const
 
 uint8 Unit::GetOrientation() const
 {
-    return m_Orientation;
+    return m_MovementHandler->GetOrientation();
 }
 
 Map* Unit::GetMap() const
@@ -176,7 +174,6 @@ void Unit::SetPoxY(const uint32 & p_PosY)
 
 void Unit::SetOrientation(const Orientation & p_Orientation)
 {
-    m_Orientation = p_Orientation;
     m_MovementHandler->SetOrientation(p_Orientation);
 }
 

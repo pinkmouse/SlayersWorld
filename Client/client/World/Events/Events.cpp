@@ -37,7 +37,7 @@ void Events::Update()
                 case sf::Keyboard::Key::Left:
                 case sf::Keyboard::Key::Right:
                 {
-                    g_Socket->SendGoDirection((Orientation)m_DirectionMap[m_KeyPressed.back()]);
+                    g_Socket->SendGoDirection((Orientation)m_DirectionMap[m_KeyPressed.back()], g_Player->GetPosX(), g_Player->GetPosY());
                     g_Player->SetOrientation((Orientation)m_DirectionMap[m_KeyPressed.back()]);
                     g_Player->StartMovement();
                     break;
@@ -69,7 +69,7 @@ void Events::KeyRelease(sf::Keyboard::Key p_KeyRealease)
                 case sf::Keyboard::Key::Left:
                 case sf::Keyboard::Key::Right:
                 {
-                    g_Socket->SendGoDirection((Orientation)m_DirectionMap[m_KeyPressed.back()]);
+                    g_Socket->SendGoDirection((Orientation)m_DirectionMap[m_KeyPressed.back()], g_Player->GetPosX(), g_Player->GetPosY());
                     g_Player->SetOrientation((Orientation)m_DirectionMap[m_KeyPressed.back()]);
                     g_Player->StartMovement();
                     break;
@@ -85,7 +85,7 @@ void Events::KeyRelease(sf::Keyboard::Key p_KeyRealease)
         }
         else if (p_KeyRealease >= 71 && p_KeyRealease <= 74 && !l_MovementHandler->IsInAttack()) ///< If the last key release
         {
-            g_Socket->SendStopMovement(l_MovementHandler->GetPosX(), l_MovementHandler->GetPosY);
+            g_Socket->SendStopMovement(l_MovementHandler->GetPosX(), l_MovementHandler->GetPosY());
             g_Player->GetMovementHandler()->StopMovement();
         }
     }
@@ -119,7 +119,7 @@ void Events::NewKeyPressed(sf::Keyboard::Key p_NewKey)
             {
                 g_Player->GetMovementHandler()->StartMovement((Orientation)m_DirectionMap[p_NewKey]);
                 g_Player->SetOrientation((Orientation)m_DirectionMap[p_NewKey]);
-                g_Socket->SendGoDirection((Orientation)m_DirectionMap[p_NewKey]);
+                g_Socket->SendGoDirection((Orientation)m_DirectionMap[p_NewKey], g_Player->GetPosX(), g_Player->GetPosY());
             }
             break;
         }

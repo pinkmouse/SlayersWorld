@@ -39,10 +39,10 @@ uint16 Map::GetSquareID(uint16 p_X, uint16 p_Y) const
     uint16 l_DrawingSquareID = 0;
 
     /// Total square width
-    uint16 l_TotalSquareWidth = (uint16)ceil((float)m_SizeX / SIZE_SENDING_SQUARE);
+    uint16 l_TotalSquareWidth = (uint16)ceil((float)m_SizeX / GRID_SIZE);
 
-    uint16 l_XSquare = (uint16)ceil((p_X / TILE_SIZE) / SIZE_SENDING_SQUARE);
-    uint16 l_YSquare = (uint16)ceil((p_Y / TILE_SIZE) / SIZE_SENDING_SQUARE);
+    uint16 l_XSquare = (uint16)ceil((p_X / TILE_SIZE) / GRID_SIZE);
+    uint16 l_YSquare = (uint16)ceil((p_Y / TILE_SIZE) / GRID_SIZE);
 
     //printf("Calc %d %d %d", l_TotalSquareWidth, l_YSquare, l_XSquare);
     return (l_TotalSquareWidth * l_YSquare) + l_XSquare;
@@ -216,8 +216,8 @@ std::vector<Square*> Map::GetSquareSet(uint16 p_SquareID)
     std::vector<Square*> l_SquareSet;
     l_SquareSet.push_back(&m_ListSquare[p_SquareID]);
 
-    uint16 l_TotalSquareWidth = (uint16)ceil((float)m_SizeX / SIZE_SENDING_SQUARE);
-    uint16 l_TotalSquareHeight = (uint16)ceil((float)m_SizeY / SIZE_SENDING_SQUARE);
+    uint16 l_TotalSquareWidth = (uint16)ceil((float)m_SizeX / GRID_SIZE);
+    uint16 l_TotalSquareHeight = (uint16)ceil((float)m_SizeY / GRID_SIZE);
 
     if (!l_TotalSquareWidth || !l_TotalSquareHeight)
         return l_SquareSet;
@@ -253,8 +253,8 @@ std::vector<uint16> Map::GetSquareSetID(uint16 p_SquareID)
     std::vector<uint16> l_SquareSet;
     l_SquareSet.push_back(p_SquareID);
 
-    uint16 l_TotalSquareWidth = (uint16)ceil((float)m_SizeX / SIZE_SENDING_SQUARE);
-    uint16 l_TotalSquareHeight = (uint16)ceil((float)m_SizeY / SIZE_SENDING_SQUARE);
+    uint16 l_TotalSquareWidth = (uint16)ceil((float)m_SizeX / GRID_SIZE);
+    uint16 l_TotalSquareHeight = (uint16)ceil((float)m_SizeY / GRID_SIZE);
 
     if (!l_TotalSquareWidth || !l_TotalSquareHeight)
         return l_SquareSet;

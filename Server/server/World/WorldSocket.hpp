@@ -14,7 +14,7 @@ public:
     void SendPlayerCreate(uint32, std::string, uint8, uint8, uint8, uint8, uint16, uint32, uint32, uint8);
     void SendUnitCreateToSet(uint8, uint32, std::string, uint8, uint8, uint16, uint32, uint32, uint8, bool);
     void SendUnitCreate(uint8, uint32, std::string, uint8, uint8, uint16, uint32, uint32, uint8, bool);
-    void SendUnitGoDirationToSet(uint8, uint16, uint8);
+    void SendUnitGoDirectionToSet(uint8, uint16, uint32, uint32, uint8);
     void SendUnitStopMovement(uint8, uint16, uint32, uint32, uint8);
     void SendUpdatePosition(uint8, uint16, uint32, uint32);
     void SendUnitTalk(uint8, uint16, const std::string &);

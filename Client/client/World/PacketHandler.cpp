@@ -71,17 +71,16 @@ void PacketHandler::HandleStopMovement(WorldPacket &p_Packet)
 {
     uint8 l_TypeID;
     uint16 l_ID;
-    uint32 l_PosX;
-    uint32 l_PosY;
+    Position l_Pos;
     uint8 l_Orientation;
 
     p_Packet >> l_TypeID;
     p_Packet >> l_ID;
-    p_Packet >> l_PosX;
-    p_Packet >> l_PosY;
+    p_Packet >> l_Pos.x;
+    p_Packet >> l_Pos.y;
     p_Packet >> l_Orientation;
 
-    printf("Stop movement for Type :%d, ID:%d, posX:%d, posY:%d, orientation:%d\n", l_TypeID, l_ID, l_PosX, l_PosY, l_Orientation);
+    printf("Stop movement for Type :%d, ID:%d, posX:%d, posY:%d, orientation:%d\n", l_TypeID, l_ID, l_Pos.x, l_Pos.y, l_Orientation);
     if (Map* l_Map = m_MapManager->GetActualMap())
     {
         Unit* l_Unit = l_Map->GetUnit((TypeUnit)l_TypeID, l_ID);
@@ -92,9 +91,7 @@ void PacketHandler::HandleStopMovement(WorldPacket &p_Packet)
             return;
         }
 
-        l_Unit->GetMovementHandler()->StopMovement();
-        l_Unit->SetPosX(l_PosX);
-        l_Unit->SetPosY(l_PosY);
+        l_Unit->GetMovementHandler()->AddMovementToStack(eActionType::Stop, l_Pos, (Orientation)l_Unit->GetOrientation());
     }
 }
 
@@ -129,13 +126,16 @@ void PacketHandler::HandleUnitGoDirection(WorldPacket &p_Packet)
     uint8 l_Type;
     uint16 l_UnitID;
     uint8 l_Direction;
+    Position l_Pos;
 
     p_Packet >> l_Type;
     p_Packet >> l_UnitID;
+    p_Packet >> l_Pos.x;
+    p_Packet >> l_Pos.y;
     p_Packet >> l_Direction;
 
     if (Map* l_Map = m_MapManager->GetActualMap())
-        l_Map->MoveUnitToDirection((TypeUnit)l_Type, l_UnitID, l_Direction);
+        l_Map->MoveUnitToDirection((TypeUnit)l_Type, l_UnitID, l_Pos, l_Direction);
 }
 
 void PacketHandler::HandleConnexion(WorldPacket &p_Packet)
@@ -211,8 +211,7 @@ void PacketHandler::HandleCreateUnit(WorldPacket &p_Packet)
     uint8 l_Level;
     uint8 l_SkinID;
     uint16 l_MapID;
-    uint32 l_PosX;
-    uint32 l_PosY;
+    Position l_Pos;
     uint8 l_Orientation;
     bool l_IsInMovement;
 
@@ -222,12 +221,12 @@ void PacketHandler::HandleCreateUnit(WorldPacket &p_Packet)
     p_Packet >> l_Level;
     p_Packet >> l_SkinID;
     p_Packet >> l_MapID;
-    p_Packet >> l_PosX;
-    p_Packet >> l_PosY;
+    p_Packet >> l_Pos.x;
+    p_Packet >> l_Pos.y;
     p_Packet >> l_Orientation;
     p_Packet >> l_IsInMovement;
 
-    printf("Create new Player: %d %s %d %d %d %d\n", l_ID, l_Name.c_str(), l_SkinID, l_MapID, l_PosX, l_PosY);
+    printf("Create new Player: %d %s %d %d %d %d\n", l_ID, l_Name.c_str(), l_SkinID, l_MapID, l_Pos.x, l_Pos.y);
 
     Unit* l_NewUnit = nullptr;
 
@@ -239,12 +238,12 @@ void PacketHandler::HandleCreateUnit(WorldPacket &p_Packet)
     if (l_ActualMap->GetID() == l_MapID && l_ActualMap->GetUnit((TypeUnit)l_TypeID, l_ID) == nullptr)
     {
         if (l_TypeID == (uint8)TypeUnit::PLAYER)
-            l_NewUnit = new Player(l_ID, l_Name, l_Level, l_SkinID, l_MapID, l_PosX, l_PosY, (Orientation)l_Orientation);
+            l_NewUnit = new Player(l_ID, l_Name, l_Level, l_SkinID, l_MapID, l_Pos.x, l_Pos.y, (Orientation)l_Orientation);
 
         l_NewUnit->SetMap(l_ActualMap);
         l_ActualMap->AddUnit(l_NewUnit);
         if (l_IsInMovement)
-            l_NewUnit->StartMovement();
+            l_NewUnit->GetMovementHandler()->AddMovementToStack(eActionType::Go, l_Pos, (Orientation)l_NewUnit->GetOrientation());
     }
 }
 

@@ -35,12 +35,12 @@ void Socket::SendAuth(const std::string & l_Login, const std::string & l_Passwor
 	send(packet);
 }
 
-void Socket::SendGoDirection(const uint8& p_Orientation)
+void Socket::SendGoDirection(const uint8& p_Orientation, const uint32& p_PosX, const uint32& p_PosY)
 {
     WorldPacket packet;
     uint8 l_ID = CMSG::C_UnitGoDirection;
 
-    packet << l_ID << p_Orientation;
+    packet << l_ID << p_Orientation << p_PosX << p_PosY;
 
     send(packet);
 }

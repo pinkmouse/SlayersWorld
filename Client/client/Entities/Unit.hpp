@@ -68,7 +68,6 @@ protected:
     uint8 m_SizeX;
     uint8 m_SizeY;
 
-    Orientation m_Orientation;
     MovementHandler* m_MovementHandler;
     TypeUnit m_Type;
     uint8 m_Opacity;

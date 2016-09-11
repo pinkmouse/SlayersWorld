@@ -2,6 +2,7 @@
 #include <SFML/System/Clock.hpp>
 #include "../Define.hpp"
 #include "../World/ClockHandler.hpp"
+#include <queue>
 
 class Map;
 
@@ -17,6 +18,8 @@ public:
     void StopAttack();
     uint8 GetMovementPosition();
     bool IsInColision(int64, int64) const;
+    bool CheckNextMovement(uint32, uint32);
+
     bool IsInMovement() const;
     bool IsInAttack() const;
     void SetMap(Map*);
@@ -34,6 +37,8 @@ public:
     void UpdateAnimationWalk(sf::Time);
     void UpdateAnimationAttack(sf::Time);
 
+    void AddMovementToStack(eActionType, Position, Orientation);
+
 private:
     bool m_InMovement;
     bool m_InAttack;
@@ -43,8 +48,7 @@ private:
     uint8 m_MovementPosition;
     Orientation m_Orientation;
 
-    uint32 m_PosX;
-    uint32 m_PosY;
+    Position m_Pos;
     uint64 m_DiffTime;
     uint64 m_DiffTimeAnim;
     uint64 m_DiffTimeAnimAttack;
@@ -52,4 +56,11 @@ private:
     uint8 m_SizeY;
 
     Map* m_Map;
+    struct MovementAction
+    {
+        eActionType m_ActionType;
+        Position m_Pos;
+        Orientation m_Orientation;
+    };
+    std::queue<MovementAction> m_MovementStack;
 };

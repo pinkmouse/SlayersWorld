@@ -58,7 +58,6 @@ protected:
     uint32 m_PosY;
     uint8 m_Health;
     uint8 m_SkinID;
-    Orientation m_Orientation;
     MovementHandler* m_MovementHandler;
     TypeUnit m_Type;
     Map* m_Map;

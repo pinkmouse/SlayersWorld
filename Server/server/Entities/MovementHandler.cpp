@@ -12,7 +12,6 @@ MovementHandler::MovementHandler(uint8 p_SizeX, uint8 p_SizeY) :
     m_Map = nullptr;
     m_Pos.x = 0;
     m_Pos.y = 0;
-    m_StopPos.Actif = false;
 }
 
 MovementHandler::~MovementHandler()
@@ -27,7 +26,7 @@ bool MovementHandler::IsInColision(int64 p_PosX, int64 p_PosY) const
     if (p_PosX < 0 || p_PosY < 0)
         return true;
 
-    if (p_PosX + m_SizeX > m_Map->GetSizeX() * TILE_SIZE || p_PosY > m_Map->GetSizeY() * TILE_SIZE)
+    if (p_PosX + m_SizeX >= m_Map->GetSizeX() * TILE_SIZE || p_PosY >= m_Map->GetSizeY() * TILE_SIZE)
         return true;
 
 
@@ -49,9 +48,53 @@ bool MovementHandler::IsInColision(int64 p_PosX, int64 p_PosY) const
     return false;
 }
 
+bool MovementHandler::CheckNextMovement(uint32 p_PosX, uint32 p_PosY)
+{
+    if (m_MovementStack.empty())
+        return false;
+
+    bool l_NextMovement = false;
+    MovementAction l_MovementAction = m_MovementStack.front();
+        switch (l_MovementAction.m_Orientation)
+        {
+        case Orientation::Down:
+            if (l_MovementAction.m_Pos.y <= p_PosY)
+                l_NextMovement = true;
+            break;
+        case Orientation::Left:
+            if (l_MovementAction.m_Pos.x >= p_PosX)
+                l_NextMovement = true;
+            break;
+        case Orientation::Right:
+            if (l_MovementAction.m_Pos.x <= p_PosX)
+                l_NextMovement = true;
+            break;
+        case Orientation::Up:
+            if (l_MovementAction.m_Pos.y >= p_PosY)
+                l_NextMovement = true;
+            break;
+        default:
+            break;
+        }
+        if (!l_NextMovement)
+            return false;
+
+        m_Pos.x = l_MovementAction.m_Pos.x;
+        m_Pos.y = l_MovementAction.m_Pos.y;
+        m_MovementStack.pop();
+
+        if (l_MovementAction.m_ActionType == eActionType::Go)
+            StartMovement((Orientation)l_MovementAction.m_Orientation);
+        else if (l_MovementAction.m_ActionType == eActionType::Stop)
+            StopMovement();
+        return true;
+}
+
 void MovementHandler::Update(sf::Time p_Diff)
 {
-    if (!m_InMovement)
+    CheckNextMovement(m_Pos.x, m_Pos.y);
+
+    if (!IsInAction())
         return;
 
     int64 l_PosX = m_Pos.x;
@@ -81,11 +124,6 @@ void MovementHandler::Update(sf::Time p_Diff)
         }
         m_DiffTime -= (uint64)((UPDATE_TIME_MOVEMENT / STEP_SIZE) * 1000);
 
-        if (m_StopPos.Actif && m_StopPos.Pos.x == l_PosX && m_StopPos.Pos.y == l_PosY)
-        {
-            StopMovement();
-            return;
-        }
         if (!IsInColision(l_PosX, l_PosY))
         {
             m_Pos.x = (uint32)l_PosX;
@@ -106,6 +144,12 @@ bool MovementHandler::IsInMovement() const
     return m_InMovement;
 }
 
+bool MovementHandler::IsInAction() const
+{
+    return m_InMovement;
+}
+
+
 void MovementHandler::StartMovement(Orientation p_Orientation)
 {
     m_InMovement = true;
@@ -117,14 +161,6 @@ void MovementHandler::StopMovement()
     m_InMovement = false;
     m_DiffTime = 0;
 }
-
-void MovementHandler::StopMovementAt(const uint32 & p_PosX, const uint32 & p_PosY)
-{
-    m_StopPos.Actif = true;
-    m_StopPos.Pos.x = p_PosX;
-    m_StopPos.Pos.y = p_PosY;
-}
-
 
 void MovementHandler::SetOrientation(Orientation p_Orientation)
 {
@@ -159,4 +195,13 @@ uint32 MovementHandler::GetPosY() const
 Position MovementHandler::GetPos() const
 {
     return m_Pos;
+}
+
+void MovementHandler::AddMovementToStack(eActionType p_Action, Position p_Pos, Orientation p_Orientation)
+{
+    MovementAction l_Act;
+    l_Act.m_ActionType = p_Action;
+    l_Act.m_Pos = p_Pos;
+    l_Act.m_Orientation = p_Orientation;
+    m_MovementStack.push(l_Act);
 }

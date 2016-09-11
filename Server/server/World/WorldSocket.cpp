@@ -75,12 +75,12 @@ void WorldSocket::SendUnitCreate(uint8 p_Type, uint32 p_ID, std::string p_Name, 
     printf("Send create to unit\n");
 }
 
-void WorldSocket::SendUnitGoDirationToSet(uint8 p_Type, uint16 p_UnitID, uint8 p_Direction)
+void WorldSocket::SendUnitGoDirectionToSet(uint8 p_Type, uint16 p_UnitID, uint32 p_PosX, uint32 p_PosY, uint8 p_Direction)
 {
     WorldPacket l_Packet;
     uint8 l_ID = SMSG::S_UnitGoDirection;
 
-    l_Packet << l_ID << p_Type << p_UnitID << p_Direction;
+    l_Packet << l_ID << p_Type << p_UnitID << p_PosX << p_PosY << p_Direction;
     SendToSet(l_Packet, true);
 }
 

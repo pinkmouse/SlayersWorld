@@ -3,7 +3,7 @@
 #define MAP_PATH "map/"
 #define CONF_FILE "server.conf"
 
-#define SIZE_SENDING_SQUARE 12
+#define GRID_SIZE 10
 #define TILE_SIZE 16
 
 #define UPDATE_TIME_MOVEMENT 250
@@ -28,12 +28,6 @@ enum Orientation
     Left = 3
 };
 
-enum Action
-{
-    Neutral = 0,
-    Attack = 1
-};
-
 enum TypeUnit
 {
     CREATURE = 0,
@@ -44,4 +38,11 @@ struct Position
 {
     uint32 x;
     uint32 y;
+};
+
+enum eActionType
+{
+    Go = 0,
+    Attack = 1,
+    Stop = 2
 };

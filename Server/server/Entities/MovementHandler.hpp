@@ -2,6 +2,7 @@
 #include <SFML/System/Clock.hpp>
 #include "../Define.hpp"
 #include "../World/ClockHandler.hpp"
+#include <queue>
 
 class Map;
 
@@ -12,10 +13,11 @@ public:
     ~MovementHandler();
     void StartMovement(Orientation p_Orientation);
     void StopMovement();
-    void StopMovementAt(const uint32 &, const uint32 &);
+    bool IsInAction() const;
     bool IsInMovement() const;
     void SetMap(Map*);
     bool IsInColision(int64, int64) const;
+    bool CheckNextMovement(uint32, uint32);
 
     Orientation GetOrientation() const;
     void SetOrientation(Orientation);
@@ -29,6 +31,8 @@ public:
 
     void Update(sf::Time);
 
+    void AddMovementToStack(eActionType, Position, Orientation);
+
 private:
     bool m_InMovement;
     float m_Speed;
@@ -40,12 +44,11 @@ private:
     uint8 m_SizeY;
 
     Map* m_Map;
-
-    struct StopPos
+    struct MovementAction
     {
-        Position Pos;
-        bool Actif;
+        eActionType m_ActionType;
+        Position m_Pos;
+        Orientation m_Orientation;
     };
-    StopPos m_StopPos;
-
+    std::queue<MovementAction> m_MovementStack;
 };

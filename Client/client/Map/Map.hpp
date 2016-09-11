@@ -25,7 +25,7 @@ public:
 	uint16 GetSizeY() const;
     uint16 GetID() const;
     Unit* GetUnit(TypeUnit, uint16);
-    void MoveUnitToDirection(TypeUnit, uint16, uint8);
+    void MoveUnitToDirection(TypeUnit, uint16, Position, uint8);
     std::map<TypeUnit, std::map<uint16, Unit*>>* GetListUnitZone();
 
     void AddUnit(Unit*);

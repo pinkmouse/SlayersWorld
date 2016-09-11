@@ -7,7 +7,6 @@ Unit::Unit(uint16 p_ID)
     m_MapID = 0;
     m_PosX = 0;
     m_PosY = 0;
-    m_Orientation = Orientation::Down;
     m_Type = TypeUnit::CREATURE;
     m_ID = p_ID;
     m_Opacity = 0;
@@ -26,7 +25,6 @@ Unit::Unit(uint16 p_ID, TypeUnit p_Type)
     m_MapID = 0;
     m_PosX = 0;
     m_PosY = 0;
-    m_Orientation = Orientation::Down;
     m_Type = p_Type;
     m_ID = p_ID;
     m_Opacity = 0;
@@ -140,7 +138,7 @@ uint8 Unit::GetSkinID() const
 
 Orientation Unit::GetOrientation() const
 {
-    return m_Orientation;
+    return m_MovementHandler->GetOrientation();
 }
 
 TypeUnit Unit::GetType() const
@@ -206,7 +204,6 @@ void Unit::SetPosY(const uint32 & p_PosY)
 
 void Unit::SetOrientation(const Orientation & p_Orientation)
 {
-    m_Orientation = p_Orientation;
     m_MovementHandler->SetOrientation((Orientation)p_Orientation);
 }
 

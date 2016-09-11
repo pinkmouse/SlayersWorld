@@ -16,7 +16,7 @@ enum SMSG : uint8
     S_UnitCreate = 11,
     S_UnitRemove = 12,
     S_UnitGoDirection = 20,
-    S_UnitStopMovement = 11,
+    S_UnitStopMovement = 21,
     S_UnitUpdatePosition = 22,
     S_UnitTalk = 23,
 };
