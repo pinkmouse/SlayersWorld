@@ -177,6 +177,7 @@
     <ClInclude Include="Graphics\TileSprite.hpp" />
     <ClInclude Include="Graphics\SkinsManager.hpp" />
     <ClInclude Include="Graphics\SkinSprite.hpp" />
+    <ClInclude Include="World\PacketDefine.hpp" />
     <ClInclude Include="World\WorldPacket.hpp" />
     <ClInclude Include="World\PacketHandler.hpp" />
     <ClInclude Include="Socket\Socket.hpp" />

@@ -164,6 +164,7 @@
     <ClInclude Include="Entities\Unit.hpp" />
     <ClInclude Include="Entities\Player.hpp" />
     <ClInclude Include="Entities\MovementHandler.hpp" />
+    <ClInclude Include="World\PacketDefine.hpp" />
     <ClInclude Include="World\SqlManager.hpp" />
     <ClInclude Include="World\ConfigHandler.hpp" />
     <ClInclude Include="Define.hpp" />

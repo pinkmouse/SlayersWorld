@@ -1,4 +1,5 @@
 #include "PacketHandler.hpp"
+#include "PacketDefine.hpp"
 
 PacketHandler::PacketHandler(SqlManager* p_SqlManager, MapManager* p_MapManager) :
     m_SqlManager(p_SqlManager),
@@ -12,11 +13,11 @@ PacketHandler::~PacketHandler()
 
 void PacketHandler::LoadPacketHandlerMap()
 {
-    m_PacketHandleMap[1] = &PacketHandler::HandleConnexion;
-    m_PacketHandleMap[10] = &PacketHandler::HandleUnitUnknow;
-    m_PacketHandleMap[20] = &PacketHandler::HandleGoDirection;
-    m_PacketHandleMap[21] = &PacketHandler::HandleStopMovement;
-    m_PacketHandleMap[23] = &PacketHandler::HandleTalk;
+    m_PacketHandleMap[CMSG::C_Connexion] = &PacketHandler::HandleConnexion;
+    m_PacketHandleMap[CMSG::C_UnitCreate] = &PacketHandler::HandleUnitUnknow;
+    m_PacketHandleMap[CMSG::C_UnitGoDirection] = &PacketHandler::HandleGoDirection;
+    m_PacketHandleMap[CMSG::C_UnitStopMovement] = &PacketHandler::HandleStopMovement;
+    m_PacketHandleMap[CMSG::C_UnitTalk] = &PacketHandler::HandleTalk;
 }
 
 void PacketHandler::HandleUnitUnknow(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
@@ -59,14 +60,20 @@ void PacketHandler::HandleGoDirection(WorldPacket &p_Packet, WorldSocket* p_Worl
 
 void PacketHandler::HandleStopMovement(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
 {
+    uint32 l_PosX = 0;
+    uint32 l_PosY = 0;
+
+    p_Packet >> l_PosX;
+    p_Packet >> l_PosY;
+
     Player* l_Player = p_WorldSocket->GetPlayer();
 
     if (l_Player == nullptr)
         return;
 
-    l_Player->GetMovementHandler()->StopMovement();
+    l_Player->GetMovementHandler()->StopMovementAt(l_PosX, l_PosY);
     l_Player->GetSession()->SendUnitStopMovement((uint8)TypeUnit::PLAYER, l_Player->GetID(), l_Player->GetPosX(), l_Player->GetPosY(), l_Player->GetOrientation());
-    l_Player->GetSession()->SendUpdatePosition((uint8)TypeUnit::PLAYER, l_Player->GetID(), l_Player->GetPosX(), l_Player->GetPosY());
+    ///l_Player->GetSession()->SendUpdatePosition((uint8)TypeUnit::PLAYER, l_Player->GetID(), l_Player->GetPosX(), l_Player->GetPosY());
 }
 
 void PacketHandler::HandleTalk(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)

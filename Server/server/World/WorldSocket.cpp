@@ -1,6 +1,7 @@
 #include "../stdafx.h"
 #include "WorldSocket.hpp"
 #include "../Map/Map.hpp"
+#include "PacketDefine.hpp"
 
 WorldSocket::WorldSocket()
 {
@@ -14,7 +15,7 @@ WorldSocket::~WorldSocket()
         return;
 
     WorldPacket l_Packet;
-    uint8 l_ID = 12;
+    uint8 l_ID = SMSG::S_UnitRemove;
     uint8 l_Type = (uint8)TypeUnit::PLAYER;
 
     l_Packet << l_ID << l_Type << m_Player->GetID();
@@ -25,7 +26,7 @@ WorldSocket::~WorldSocket()
 void WorldSocket::SendAuthResponse(uint8 p_Status)
 {
 	WorldPacket l_Packet;
-	uint8 l_ID = 1;
+	uint8 l_ID = SMSG::S_Connexion;
 
 	l_Packet << l_ID << p_Status;
 	send(l_Packet);
@@ -35,7 +36,7 @@ void WorldSocket::SendAuthResponse(uint8 p_Status)
 void WorldSocket::SendUpdatePosition(uint8 p_Type, uint16 p_ID, uint32 p_PosX, uint32 p_PosY)
 {
     WorldPacket l_Packet;
-    uint8 l_ID = 22;
+    uint8 l_ID = SMSG::S_UnitUpdatePosition;
 
     l_Packet << l_ID << p_Type << p_ID << p_PosX << p_PosY;
     send(l_Packet);
@@ -44,7 +45,7 @@ void WorldSocket::SendUpdatePosition(uint8 p_Type, uint16 p_ID, uint32 p_PosX, u
 void WorldSocket::SendPlayerCreate(uint32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_Health, uint8 p_Alignment, uint8 p_SkinID, uint16 p_MapID, uint32 p_PosX, uint32 p_PosY, uint8 p_Orientation)
 {
     WorldPacket l_Packet;
-    uint8 l_ID = 10;
+    uint8 l_ID = SMSG::S_PlayerCreate;
 
     l_Packet << l_ID << p_ID << p_Name << p_Level << p_Health << p_Alignment << p_SkinID << p_MapID << p_PosX << p_PosY << p_Orientation;
     send(l_Packet);
@@ -54,7 +55,7 @@ void WorldSocket::SendPlayerCreate(uint32 p_ID, std::string p_Name, uint8 p_Leve
 void WorldSocket::SendUnitCreateToSet(uint8 p_Type, uint32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_SkinID, uint16 p_MapID, uint32 p_PosX, uint32 p_PosY, uint8 p_Orientation, bool p_InMovement)
 {
     WorldPacket l_Packet;
-    uint8 l_ID = 11;
+    uint8 l_ID = SMSG::S_UnitCreate;
 
     l_Packet << l_ID << p_Type << p_ID << p_Name << p_Level << p_SkinID << p_MapID << p_PosX << p_PosY << p_Orientation << p_InMovement;
     SendToSet(l_Packet, true);
@@ -64,7 +65,7 @@ void WorldSocket::SendUnitCreateToSet(uint8 p_Type, uint32 p_ID, std::string p_N
 void WorldSocket::SendUnitCreate(uint8 p_Type, uint32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_SkinID, uint16 p_MapID, uint32 p_PosX, uint32 p_PosY, uint8 p_Orientation, bool p_InMovement)
 {
     WorldPacket l_Packet;
-    uint8 l_ID = 11;
+    uint8 l_ID = SMSG::S_UnitCreate;
 
     if (p_Type == TypeUnit::PLAYER && p_ID == GetPlayer()->GetID())
         return;
@@ -77,7 +78,7 @@ void WorldSocket::SendUnitCreate(uint8 p_Type, uint32 p_ID, std::string p_Name, 
 void WorldSocket::SendUnitGoDirationToSet(uint8 p_Type, uint16 p_UnitID, uint8 p_Direction)
 {
     WorldPacket l_Packet;
-    uint8 l_ID = 20;
+    uint8 l_ID = SMSG::S_UnitGoDirection;
 
     l_Packet << l_ID << p_Type << p_UnitID << p_Direction;
     SendToSet(l_Packet, true);
@@ -86,7 +87,7 @@ void WorldSocket::SendUnitGoDirationToSet(uint8 p_Type, uint16 p_UnitID, uint8 p
 void WorldSocket::SendUnitTalk(uint8 p_Type, uint16 p_UnitID, const std::string & p_TalkString)
 {
     WorldPacket l_Packet;
-    uint8 l_ID = 23;
+    uint8 l_ID = SMSG::S_UnitTalk;
 
     l_Packet << l_ID << p_Type << p_UnitID << p_TalkString;
     SendToSet(l_Packet);
@@ -95,7 +96,7 @@ void WorldSocket::SendUnitTalk(uint8 p_Type, uint16 p_UnitID, const std::string 
 void WorldSocket::SendUnitStopMovement(uint8 p_TypeID, uint16 p_ID, uint32 p_PosX, uint32 p_PosY, uint8 p_Orientation)
 {
     WorldPacket l_Packet;
-    uint8 l_ID = 21;
+    uint8 l_ID = SMSG::S_UnitStopMovement;
 
     l_Packet << l_ID << p_TypeID << p_ID << p_PosX << p_PosY << p_Orientation;
     SendToSet(l_Packet, true);

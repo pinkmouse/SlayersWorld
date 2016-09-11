@@ -1,7 +1,7 @@
 #include "PacketHandler.hpp"
 #include "../Entities/Player.hpp"
 #include "../Global.hpp"
-
+#include "PacketDefine.hpp"
 
 PacketHandler::PacketHandler(MapManager *p_MapManager) :
 	m_MapManager(p_MapManager)
@@ -15,14 +15,14 @@ PacketHandler::~PacketHandler()
 
 void PacketHandler::LoadPacketHandlerMap()
 {
-	m_PacketHandleMap[1] = &PacketHandler::HandleConnexion;
-    m_PacketHandleMap[10] = &PacketHandler::HandleCreateMainPlayer;
-    m_PacketHandleMap[11] = &PacketHandler::HandleCreateUnit;
-    m_PacketHandleMap[12] = &PacketHandler::HandleRemoveUnit;
-    m_PacketHandleMap[20] = &PacketHandler::HandleUnitGoDirection;
-    m_PacketHandleMap[21] = &PacketHandler::HandleStopMovement;
-    m_PacketHandleMap[22] = &PacketHandler::HandleUpdatePosition;
-    m_PacketHandleMap[23] = &PacketHandler::HandleTalk;
+	m_PacketHandleMap[SMSG::S_Connexion] = &PacketHandler::HandleConnexion;
+    m_PacketHandleMap[SMSG::S_PlayerCreate] = &PacketHandler::HandleCreateMainPlayer;
+    m_PacketHandleMap[SMSG::S_UnitCreate] = &PacketHandler::HandleCreateUnit;
+    m_PacketHandleMap[SMSG::S_UnitRemove] = &PacketHandler::HandleRemoveUnit;
+    m_PacketHandleMap[SMSG::S_UnitGoDirection] = &PacketHandler::HandleUnitGoDirection;
+    m_PacketHandleMap[SMSG::S_UnitStopMovement] = &PacketHandler::HandleStopMovement;
+    m_PacketHandleMap[SMSG::S_UnitUpdatePosition] = &PacketHandler::HandleUpdatePosition;
+    m_PacketHandleMap[SMSG::S_UnitTalk] = &PacketHandler::HandleTalk;
 }
 
 void PacketHandler::HandleRemoveUnit(WorldPacket &p_Packet)

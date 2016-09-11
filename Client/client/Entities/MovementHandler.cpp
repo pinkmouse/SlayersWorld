@@ -134,7 +134,10 @@ void MovementHandler::UpdateAnimationAttack(sf::Time p_Diff)
         {
             m_MovementPosition = 0;
             if (m_StopAttack)
+            {
                 m_InAttack = false;
+                m_MovementPosition = 1;
+            }
             return;
         }
 

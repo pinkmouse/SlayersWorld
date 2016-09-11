@@ -8,10 +8,11 @@ MovementHandler::MovementHandler(uint8 p_SizeX, uint8 p_SizeY) :
     m_Speed = 1.0f;
     m_InMovement = false;
     m_Orientation = Orientation::Down;
-    m_PosX = 0;
-    m_PosY = 0;
     m_DiffTime = 0;
     m_Map = nullptr;
+    m_Pos.x = 0;
+    m_Pos.y = 0;
+    m_StopPos.Actif = false;
 }
 
 MovementHandler::~MovementHandler()
@@ -53,8 +54,8 @@ void MovementHandler::Update(sf::Time p_Diff)
     if (!m_InMovement)
         return;
 
-    int64 l_PosX = m_PosX;
-    int64 l_PosY = m_PosY;
+    int64 l_PosX = m_Pos.x;
+    int64 l_PosY = m_Pos.y;
 
     m_DiffTime += p_Diff.asMicroseconds();
 
@@ -80,10 +81,15 @@ void MovementHandler::Update(sf::Time p_Diff)
         }
         m_DiffTime -= (uint64)((UPDATE_TIME_MOVEMENT / STEP_SIZE) * 1000);
 
+        if (m_StopPos.Actif && m_StopPos.Pos.x == l_PosX && m_StopPos.Pos.y == l_PosY)
+        {
+            StopMovement();
+            return;
+        }
         if (!IsInColision(l_PosX, l_PosY))
         {
-            m_PosX = (uint32)l_PosX;
-            m_PosY = (uint32)l_PosY;
+            m_Pos.x = (uint32)l_PosX;
+            m_Pos.y = (uint32)l_PosY;
         }
         else
             StopMovement();
@@ -112,6 +118,14 @@ void MovementHandler::StopMovement()
     m_DiffTime = 0;
 }
 
+void MovementHandler::StopMovementAt(const uint32 & p_PosX, const uint32 & p_PosY)
+{
+    m_StopPos.Actif = true;
+    m_StopPos.Pos.x = p_PosX;
+    m_StopPos.Pos.y = p_PosY;
+}
+
+
 void MovementHandler::SetOrientation(Orientation p_Orientation)
 {
     m_Orientation = p_Orientation;
@@ -124,20 +138,25 @@ Orientation MovementHandler::GetOrientation() const
 
 void MovementHandler::SetPosX(uint32 p_PosX)
 {
-    m_PosX = p_PosX;
+    m_Pos.x = p_PosX;
 }
 
 void MovementHandler::SetPosY(uint32 p_PosY)
 {
-    m_PosY = p_PosY;
+    m_Pos.y = p_PosY;
 }
 
 uint32 MovementHandler::GetPosX() const
 {
-    return m_PosX;
+    return m_Pos.x;
 }
 
 uint32 MovementHandler::GetPosY() const
 {
-    return m_PosY;
+    return m_Pos.y;
+}
+
+Position MovementHandler::GetPos() const
+{
+    return m_Pos;
 }

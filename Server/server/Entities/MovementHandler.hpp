@@ -12,6 +12,7 @@ public:
     ~MovementHandler();
     void StartMovement(Orientation p_Orientation);
     void StopMovement();
+    void StopMovementAt(const uint32 &, const uint32 &);
     bool IsInMovement() const;
     void SetMap(Map*);
     bool IsInColision(int64, int64) const;
@@ -22,6 +23,7 @@ public:
     void SetPosX(uint32);
     void SetPosY(uint32);
 
+    Position GetPos() const;
     uint32 GetPosX() const;
     uint32 GetPosY() const;
 
@@ -31,12 +33,19 @@ private:
     bool m_InMovement;
     float m_Speed;
     Orientation m_Orientation;
-
-    uint32 m_PosX;
-    uint32 m_PosY;
+    
+    Position m_Pos;
     uint64 m_DiffTime;
     uint8 m_SizeX;
     uint8 m_SizeY;
 
     Map* m_Map;
+
+    struct StopPos
+    {
+        Position Pos;
+        bool Actif;
+    };
+    StopPos m_StopPos;
+
 };

@@ -39,3 +39,9 @@ enum TypeUnit
     CREATURE = 0,
     PLAYER = 1
 };
+
+struct Position 
+{
+    uint32 x;
+    uint32 y;
+};

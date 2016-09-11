@@ -3,6 +3,7 @@
 #include "../Define.hpp"
 #include <SFML/Network/IpAddress.hpp>
 #include "../World/WorldPacket.hpp"
+#include "../World/PacketDefine.hpp"
 
 
 Socket::Socket()
@@ -27,7 +28,7 @@ bool Socket::Connection()
 void Socket::SendAuth(const std::string & l_Login, const std::string & l_Password)
 {
 	WorldPacket packet;
-	uint8 l_ID = 1;
+	uint8 l_ID = CMSG::C_Connexion;
 
 	packet << l_ID << l_Login << l_Password;
 
@@ -37,19 +38,19 @@ void Socket::SendAuth(const std::string & l_Login, const std::string & l_Passwor
 void Socket::SendGoDirection(const uint8& p_Orientation)
 {
     WorldPacket packet;
-    uint8 l_ID = 20;
+    uint8 l_ID = CMSG::C_UnitGoDirection;
 
     packet << l_ID << p_Orientation;
 
     send(packet);
 }
 
-void Socket::SendStopMovement()
+void Socket::SendStopMovement(const uint32& p_Posx, const uint32& p_PosY)
 {
     WorldPacket packet;
-    uint8 l_ID = 21;
+    uint8 l_ID = CMSG::C_UnitStopMovement;
 
-    packet << l_ID;
+    packet << l_ID << p_Posx << p_PosY;
 
     send(packet);
 }
@@ -57,7 +58,7 @@ void Socket::SendStopMovement()
 void Socket::SendUnitUnknow(const uint8& p_TypeID, const uint16& p_ID)
 {
     WorldPacket packet;
-    uint8 l_ID = 10;
+    uint8 l_ID = CMSG::C_UnitCreate;
 
     packet << l_ID << p_TypeID << p_ID;
 
@@ -67,7 +68,7 @@ void Socket::SendUnitUnknow(const uint8& p_TypeID, const uint16& p_ID)
 void Socket::SendTalk(const std::string & p_TalkString)
 {
     WorldPacket packet;
-    uint8 l_ID = 23;
+    uint8 l_ID = CMSG::C_UnitTalk;
 
     packet << l_ID << p_TalkString;
 
