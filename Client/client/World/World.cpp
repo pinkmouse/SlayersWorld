@@ -36,7 +36,7 @@ bool World::InitializeWindow()
 	return true;
 }
 
-void World::Initialize(char** p_Argv)
+void World::Initialize()
 {
     if (!InitializeWindow())
         return;
@@ -45,20 +45,11 @@ void World::Initialize(char** p_Argv)
 
 	m_MapManager->InitializeMaps();
 	m_PacketHandler->LoadPacketHandlerMap();
-
-	Login(p_Argv);
-	Run();
 }
 
-void World::Login(char** p_Argv)
+void World::Login(const std::string& login, const std::string& password)
 {
-	WorldPacket packet;
-	uint8 l_ID = 1;
-
-	std::string l_Login(p_Argv[1]);
-	std::string l_Password(p_Argv[2]);
-
-    g_Socket->SendAuth(l_Login, l_Password);
+    g_Socket->SendAuth(login, password);
 }
 
 void World::Run()
