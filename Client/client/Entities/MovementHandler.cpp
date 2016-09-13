@@ -59,8 +59,12 @@ bool MovementHandler::CheckNextMovement(uint32 p_PosX, uint32 p_PosY)
 
     bool l_NextMovement = false;
     MovementAction l_MovementAction = m_MovementStack.front();
-    switch (l_MovementAction.m_Orientation)
+    if (l_MovementAction.m_ActionType == eActionType::StopAttack)
+        l_NextMovement = true;
+    else if (!IsInAttack())
     {
+        switch (l_MovementAction.m_Orientation)
+        {
         case Orientation::Down:
             if (l_MovementAction.m_Pos.y <= p_PosY)
                 l_NextMovement = true;
@@ -79,18 +83,26 @@ bool MovementHandler::CheckNextMovement(uint32 p_PosX, uint32 p_PosY)
             break;
         default:
             break;
+        }
     }
     if (!l_NextMovement)
         return false;
 
-    m_Pos.x = l_MovementAction.m_Pos.x;
-    m_Pos.y = l_MovementAction.m_Pos.y;
+    if (l_MovementAction.m_ActionType != eActionType::StopAttack)
+    {
+        m_Pos.x = l_MovementAction.m_Pos.x;
+        m_Pos.y = l_MovementAction.m_Pos.y;
+    }
     m_MovementStack.pop();
 
     if (l_MovementAction.m_ActionType == eActionType::Go)
         StartMovement((Orientation)l_MovementAction.m_Orientation);
     else if (l_MovementAction.m_ActionType == eActionType::Stop)
         StopMovement();
+    else if (l_MovementAction.m_ActionType == eActionType::Attack)
+        StartAttack();
+    else if (l_MovementAction.m_ActionType == eActionType::StopAttack)
+        StopAttack();
     return true;
 }
 
@@ -177,6 +189,7 @@ void MovementHandler::UpdateAnimationAttack(sf::Time p_Diff)
         if (m_MovementPosition >= MAX_MOVEMENT_POSITION)
         {
             m_MovementPosition = 0;
+            m_DiffTimeAnimAttack = 0;
             if (m_StopAttack)
             {
                 m_InAttack = false;
@@ -184,8 +197,7 @@ void MovementHandler::UpdateAnimationAttack(sf::Time p_Diff)
             }
             return;
         }
-
-
+        else
         m_DiffTimeAnimAttack -= (uint64)(UPDATE_TIME_MOVEMENT * 1000 * m_Speed);
     }
 }

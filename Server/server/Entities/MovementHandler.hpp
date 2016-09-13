@@ -13,8 +13,11 @@ public:
     ~MovementHandler();
     void StartMovement(Orientation p_Orientation);
     void StopMovement();
+    void StartAttack();
+    void StopAttack();
     bool IsInAction() const;
     bool IsInMovement() const;
+    bool IsInAttack() const;
     void SetMap(Map*);
     bool IsInColision(int64, int64) const;
     bool CheckNextMovement(uint32, uint32);
@@ -30,16 +33,20 @@ public:
     uint32 GetPosY() const;
 
     void Update(sf::Time);
+    void UpdateAttack(sf::Time);
 
     void AddMovementToStack(eActionType, Position, Orientation);
 
 private:
     bool m_InMovement;
+    bool m_InAttack;
+    bool m_StopAttack;
     float m_Speed;
     Orientation m_Orientation;
     
     Position m_Pos;
     uint64 m_DiffTime;
+    uint64 m_DiffTimeAttack;
     uint8 m_SizeX;
     uint8 m_SizeY;
 

@@ -8,6 +8,7 @@
 
 #define UPDATE_TIME_MOVEMENT 250
 #define STEP_SIZE 8 /// In pixel
+#define MAX_MOVEMENT_POSITION 3
 
 typedef char int8;
 typedef short int16;
@@ -44,5 +45,6 @@ enum eActionType
 {
     Go = 0,
     Attack = 1,
-    Stop = 2
+    Stop = 2,
+    StopAttack = 3
 };

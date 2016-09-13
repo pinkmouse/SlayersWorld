@@ -21,6 +21,8 @@ public:
     void HandleUnitUnknow(WorldPacket &, WorldSocket*);
     void HandleStopMovement(WorldPacket &, WorldSocket*);
     void HandleTalk(WorldPacket &, WorldSocket*);
+    void HandleStartAttack(WorldPacket &, WorldSocket*);
+    void HandleStopAttack(WorldPacket &, WorldSocket*);
 
 private:
     using m_Func = void(PacketHandler::*)(WorldPacket &, WorldSocket*);

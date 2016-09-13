@@ -55,6 +55,26 @@ void Socket::SendStopMovement(const uint32& p_Posx, const uint32& p_PosY)
     send(packet);
 }
 
+void Socket::SendStartAttack(const uint32& p_Posx, const uint32& p_PosY)
+{
+    WorldPacket packet;
+    uint8 l_ID = CMSG::C_UnitStartAttack;
+
+    packet << l_ID << p_Posx << p_PosY;
+
+    send(packet);
+}
+
+void Socket::SendStopAttack()
+{
+    WorldPacket packet;
+    uint8 l_ID = CMSG::C_UnitStopAttack;
+
+    packet << l_ID;
+
+    send(packet);
+}
+
 void Socket::SendUnitUnknow(const uint8& p_TypeID, const uint16& p_ID)
 {
     WorldPacket packet;

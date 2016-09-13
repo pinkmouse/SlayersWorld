@@ -6,7 +6,9 @@ enum CMSG : uint8
     C_UnitCreate = 10,
     C_UnitGoDirection = 20,
     C_UnitStopMovement = 21,
-    C_UnitTalk = 23
+    C_UnitTalk = 23,
+    C_UnitStartAttack = 24,
+    C_UnitStopAttack = 25,
 };
 
 enum SMSG : uint8
@@ -19,4 +21,6 @@ enum SMSG : uint8
     S_UnitStopMovement = 21,
     S_UnitUpdatePosition = 22,
     S_UnitTalk = 23,
+    S_UnitStartAttack = 24,
+    S_UnitStopAttack = 25,
 };

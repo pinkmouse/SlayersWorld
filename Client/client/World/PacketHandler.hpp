@@ -20,6 +20,8 @@ public:
     void HandleRemoveUnit(WorldPacket &);
     void HandleUpdatePosition(WorldPacket &);
     void HandleUnitGoDirection(WorldPacket &);
+    void HandleUnitStartAttack(WorldPacket &);
+    void HandleUnitStopAttack(WorldPacket &);
     void HandleTalk(WorldPacket &);
 
 private:

@@ -95,5 +95,6 @@ enum eActionType
 {
     Go = 0,
     Attack = 1,
-    Stop = 2
+    Stop = 2,
+    StopAttack = 4
 };

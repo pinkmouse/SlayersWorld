@@ -55,6 +55,10 @@ bool MovementHandler::CheckNextMovement(uint32 p_PosX, uint32 p_PosY)
 
     bool l_NextMovement = false;
     MovementAction l_MovementAction = m_MovementStack.front();
+    if (l_MovementAction.m_ActionType == eActionType::StopAttack)
+        l_NextMovement = true;
+    else if (!IsInAttack())
+    {
         switch (l_MovementAction.m_Orientation)
         {
         case Orientation::Down:
@@ -76,25 +80,50 @@ bool MovementHandler::CheckNextMovement(uint32 p_PosX, uint32 p_PosY)
         default:
             break;
         }
+    }
+
         if (!l_NextMovement)
             return false;
 
-        m_Pos.x = l_MovementAction.m_Pos.x;
-        m_Pos.y = l_MovementAction.m_Pos.y;
+        if (l_MovementAction.m_ActionType != eActionType::StopAttack)
+        {
+            m_Pos.x = l_MovementAction.m_Pos.x;
+            m_Pos.y = l_MovementAction.m_Pos.y;
+        }
         m_MovementStack.pop();
 
         if (l_MovementAction.m_ActionType == eActionType::Go)
             StartMovement((Orientation)l_MovementAction.m_Orientation);
         else if (l_MovementAction.m_ActionType == eActionType::Stop)
             StopMovement();
+        else if (l_MovementAction.m_ActionType == eActionType::Attack)
+            StartAttack();
+        else if (l_MovementAction.m_ActionType == eActionType::StopAttack)
+            StopAttack();
         return true;
+}
+
+void MovementHandler::UpdateAttack(sf::Time p_Diff)
+{
+    if (!IsInAttack())
+        return;
+
+    m_DiffTimeAttack += p_Diff.asMicroseconds();
+
+    while (m_DiffTimeAttack > (MAX_MOVEMENT_POSITION * UPDATE_TIME_MOVEMENT * 1000 * m_Speed)) ///< 1000 because microsecond
+    {
+        if (m_StopAttack)
+            m_InAttack = false;
+        else
+            m_DiffTimeAttack = 0;
+    }
 }
 
 void MovementHandler::Update(sf::Time p_Diff)
 {
     CheckNextMovement(m_Pos.x, m_Pos.y);
-
-    if (!IsInAction())
+    UpdateAttack(p_Diff);
+    if (!IsInMovement())
         return;
 
     int64 l_PosX = m_Pos.x;
@@ -144,9 +173,14 @@ bool MovementHandler::IsInMovement() const
     return m_InMovement;
 }
 
+bool MovementHandler::IsInAttack() const
+{
+    return m_InAttack;
+}
+
 bool MovementHandler::IsInAction() const
 {
-    return m_InMovement;
+    return m_InMovement || m_InAttack;
 }
 
 
@@ -160,6 +194,16 @@ void MovementHandler::StopMovement()
 {
     m_InMovement = false;
     m_DiffTime = 0;
+}
+
+void MovementHandler::StartAttack()
+{
+    m_InAttack = true;
+}
+
+void MovementHandler::StopAttack()
+{
+    m_StopAttack = true;
 }
 
 void MovementHandler::SetOrientation(Orientation p_Orientation)

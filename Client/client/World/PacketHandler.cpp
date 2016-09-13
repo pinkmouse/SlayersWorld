@@ -23,6 +23,8 @@ void PacketHandler::LoadPacketHandlerMap()
     m_PacketHandleMap[SMSG::S_UnitStopMovement] = &PacketHandler::HandleStopMovement;
     m_PacketHandleMap[SMSG::S_UnitUpdatePosition] = &PacketHandler::HandleUpdatePosition;
     m_PacketHandleMap[SMSG::S_UnitTalk] = &PacketHandler::HandleTalk;
+    m_PacketHandleMap[SMSG::S_UnitStartAttack] = &PacketHandler::HandleUnitStartAttack;
+    m_PacketHandleMap[SMSG::S_UnitStopAttack] = &PacketHandler::HandleUnitStopAttack;
 }
 
 void PacketHandler::HandleRemoveUnit(WorldPacket &p_Packet)
@@ -80,7 +82,6 @@ void PacketHandler::HandleStopMovement(WorldPacket &p_Packet)
     p_Packet >> l_Pos.y;
     p_Packet >> l_Orientation;
 
-    printf("Stop movement for Type :%d, ID:%d, posX:%d, posY:%d, orientation:%d\n", l_TypeID, l_ID, l_Pos.x, l_Pos.y, l_Orientation);
     if (Map* l_Map = m_MapManager->GetActualMap())
     {
         Unit* l_Unit = l_Map->GetUnit((TypeUnit)l_TypeID, l_ID);
@@ -92,6 +93,59 @@ void PacketHandler::HandleStopMovement(WorldPacket &p_Packet)
         }
 
         l_Unit->GetMovementHandler()->AddMovementToStack(eActionType::Stop, l_Pos, (Orientation)l_Unit->GetOrientation());
+    }
+}
+
+void PacketHandler::HandleUnitStartAttack(WorldPacket &p_Packet)
+{
+    uint8 l_TypeID;
+    uint16 l_ID;
+    Position l_Pos;
+    uint8 l_Orientation;
+
+    p_Packet >> l_TypeID;
+    p_Packet >> l_ID;
+    p_Packet >> l_Pos.x;
+    p_Packet >> l_Pos.y;
+    p_Packet >> l_Orientation;
+
+    printf("Attack for Type :%d, ID:%d, posX:%d, posY:%d, orientation:%d\n", l_TypeID, l_ID, l_Pos.x, l_Pos.y, l_Orientation);
+    if (Map* l_Map = m_MapManager->GetActualMap())
+    {
+        Unit* l_Unit = l_Map->GetUnit((TypeUnit)l_TypeID, l_ID);
+
+        if (l_Unit == nullptr)
+        {
+            g_Socket->SendUnitUnknow(l_TypeID, l_ID); ///< Ask for unknow unit to server
+            return;
+        }
+
+        l_Unit->GetMovementHandler()->AddMovementToStack(eActionType::Attack, l_Pos, (Orientation)l_Unit->GetOrientation());
+    }
+}
+
+void PacketHandler::HandleUnitStopAttack(WorldPacket &p_Packet)
+{
+    uint8 l_TypeID;
+    uint16 l_ID;
+    Position l_Pos;
+    l_Pos.x = 0;
+    l_Pos.y = 0;
+
+    p_Packet >> l_TypeID;
+    p_Packet >> l_ID;
+
+    if (Map* l_Map = m_MapManager->GetActualMap())
+    {
+        Unit* l_Unit = l_Map->GetUnit((TypeUnit)l_TypeID, l_ID);
+
+        if (l_Unit == nullptr)
+        {
+            g_Socket->SendUnitUnknow(l_TypeID, l_ID); ///< Ask for unknow unit to server
+            return;
+        }
+
+        l_Unit->GetMovementHandler()->AddMovementToStack(eActionType::StopAttack, l_Pos, (Orientation)l_Unit->GetOrientation());
     }
 }
 

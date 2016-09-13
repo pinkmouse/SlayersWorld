@@ -100,7 +100,26 @@ void WorldSocket::SendUnitStopMovement(uint8 p_TypeID, uint16 p_ID, uint32 p_Pos
 
     l_Packet << l_ID << p_TypeID << p_ID << p_PosX << p_PosY << p_Orientation;
     SendToSet(l_Packet, true);
-    printf("Send Stop Movement\n");
+}
+
+void WorldSocket::SendUnitStartAttack(uint8 p_TypeID, uint16 p_ID, uint32 p_PosX, uint32 p_PosY, uint8 p_Orientation)
+{
+    WorldPacket l_Packet;
+    uint8 l_ID = SMSG::S_UnitStartAttack;
+
+    l_Packet << l_ID << p_TypeID << p_ID << p_PosX << p_PosY << p_Orientation;
+    SendToSet(l_Packet, true);
+    printf("Send Attack\n");
+}
+
+void WorldSocket::SendUnitStopAttack(uint8 p_TypeID, uint16 p_ID)
+{
+    WorldPacket l_Packet;
+    uint8 l_ID = SMSG::S_UnitStopAttack;
+
+    l_Packet << l_ID << p_TypeID << p_ID;
+    SendToSet(l_Packet, true);
+    printf("Send Attack\n");
 }
 
 Player* WorldSocket::GetPlayer()

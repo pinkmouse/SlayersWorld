@@ -59,7 +59,10 @@ void Events::KeyRelease(sf::Keyboard::Key p_KeyRealease)
         MovementHandler* l_MovementHandler = g_Player->GetMovementHandler();
 
         if (p_KeyRealease == sf::Keyboard::Key::S)
-                l_MovementHandler->StopAttack();
+        {
+            g_Socket->SendStopAttack();
+            l_MovementHandler->StopAttack();
+        }
         else if (m_KeyPressed.size() > 0  && !l_MovementHandler->IsInAttack()) ///< Check the others action
         {
             switch (m_KeyPressed.back())
@@ -128,6 +131,9 @@ void Events::NewKeyPressed(sf::Keyboard::Key p_NewKey)
         {
             MovementHandler* l_MovementHandler = g_Player->GetMovementHandler();
 
+            if (l_MovementHandler->IsInAttack())
+                return;
+
             g_Socket->SendStopMovement(l_MovementHandler->GetPosX(), l_MovementHandler->GetPosY());
             l_MovementHandler->StopMovement();
             if (m_KeyPressed.size() > MAX_KEY_SAVE)
@@ -135,7 +141,10 @@ void Events::NewKeyPressed(sf::Keyboard::Key p_NewKey)
             m_KeyPressed.push_back(p_NewKey);
 
             if (!l_MovementHandler->IsInAttack())
+            {
+                g_Socket->SendStartAttack(g_Player->GetPosX(), g_Player->GetPosY());
                 l_MovementHandler->StartAttack();
+            }
             break;
         }
         /// Reset KeyPress queue when lost focus
@@ -145,8 +154,14 @@ void Events::NewKeyPressed(sf::Keyboard::Key p_NewKey)
                 return;
 
             m_KeyPressed.clear();
-            g_Player->GetMovementHandler()->StopMovement();
-            g_Player->GetMovementHandler()->StopAttack();
+            MovementHandler* l_MovementHandler = g_Player->GetMovementHandler();
+
+            if (l_MovementHandler->IsInAttack())
+                g_Socket->SendStopAttack();
+            if (l_MovementHandler->IsInMovement())
+                g_Socket->SendStopMovement(l_MovementHandler->GetPosX(), l_MovementHandler->GetPosY());
+            l_MovementHandler->StopMovement();
+            l_MovementHandler->StopAttack();
             break;
         }
         case sf::Keyboard::Key::Return:
