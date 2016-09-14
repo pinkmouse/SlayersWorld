@@ -114,8 +114,7 @@ void MovementHandler::UpdateAttack(sf::Time p_Diff)
     {
         if (m_StopAttack)
             m_InAttack = false;
-        else
-            m_DiffTimeAttack = 0;
+        m_DiffTimeAttack = 0;
     }
 }
 

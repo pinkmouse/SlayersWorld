@@ -21,7 +21,6 @@ bool Socket::Connection()
 
 	if (l_Status == sf::Socket::Status::Done)
 		return true;
-
 	return false;
 }
 

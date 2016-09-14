@@ -42,6 +42,7 @@ Player* Unit::ToPlayer()
 Unit::~Unit()
 {
     m_MovementHandler->StopMovement();
+    m_MovementHandler->StopAttack();
     m_Map->RemoveUnit(this);
     delete m_MovementHandler;
 }
