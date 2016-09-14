@@ -2,7 +2,7 @@
 
 #include <cstdio>
 
-#define IP_SERVER "82.247.125.1"
+#define IP_SERVER "127.0.0.1"
 #define PORT_SERVER 1234
 
 /// GRAPHICS
@@ -10,13 +10,11 @@
 #define Y_WINDOW 480
 #define ZOOM_FACTOR 0.5f
 
-#define PLAYER_RAY 10
-
 /// TILES
 #define MAX_TILE_LEVEL 4
 #define TILE_SIZE 16
 #define TILE_FOLDER "img/tiles/"
-#define GRID_SIZE 10
+#define GRID_SIZE 12
 
 /// SKIN
 #define SKIN_ZOOM_FACTOR_DEFAULT 1.0f

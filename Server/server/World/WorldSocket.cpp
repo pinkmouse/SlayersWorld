@@ -20,6 +20,7 @@ WorldSocket::~WorldSocket()
 
     l_Packet << l_ID << l_Type << m_Player->GetID();
     SendToSet(l_Packet, true);
+    /// Save Player
     delete m_Player;
 }
 

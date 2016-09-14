@@ -3,7 +3,7 @@
 #define MAP_PATH "map/"
 #define CONF_FILE "server.conf"
 
-#define GRID_SIZE 10
+#define GRID_SIZE 12
 #define TILE_SIZE 16
 
 #define UPDATE_TIME_MOVEMENT 250
