@@ -22,13 +22,13 @@ bool World::Initialize()
 	printf("Load Config...\n");
 	if (!g_Config->Initialize())
 	{
-		printf("Config error");
+		printf("Config error\n");
 		return false;
 	}
 	printf("Load Maps...\n");
 	if (!m_MapManager->InitializeMaps())
 	{
-		printf("Load Maps Error");
+		printf("Load Maps Error\n");
 		return false;
 	}
 	printf("Connection SQL...\n");
@@ -39,7 +39,7 @@ bool World::Initialize()
 	printf("Launch Network...\n");
 	if (!this->NetworkInitialize())
 	{
-		printf("Network error");
+		printf("Network error\n");
 		return false;
 	}
 
@@ -51,10 +51,13 @@ bool World::Initialize()
 
 void World::Run()
 {
-	Initialize();
+	if (Initialize())
+        printf("WorldServer Start\n");
+    else
+        printf("WorldServer didn't start\n");
+
 	m_Thread.launch();
 
-    printf("WorldServer Start\n");
 	while (m_Run)
 	{
 		UpdatePacketQueue();

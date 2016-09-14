@@ -11,7 +11,13 @@ sf::Font    *g_Font;
 int main(int argc, char** argv)
 {
 	World l_World;
-	l_World.Initialize();
+
+    if (!l_World.Initialize())
+    {
+        printf("Initialization failed\n");
+        while (1)
+            ;
+    }
 
 	std::string login;
 	std::string password;

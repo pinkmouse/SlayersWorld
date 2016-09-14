@@ -36,15 +36,16 @@ bool World::InitializeWindow()
 	return true;
 }
 
-void World::Initialize()
+bool World::Initialize()
 {
     if (!InitializeWindow())
-        return;
+        return false;
     while (!InitializeConnection()) ///< While not connected, wait for connection
         ;
 
 	m_MapManager->InitializeMaps();
 	m_PacketHandler->LoadPacketHandlerMap();
+    return true;
 }
 
 void World::Login(const std::string& login, const std::string& password)

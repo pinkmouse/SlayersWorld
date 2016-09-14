@@ -15,7 +15,7 @@ public:
 	bool UpdateSocket();
 
 	void End();
-	void Initialize();
+	bool Initialize();
 	void Login(const std::string& login, const std::string& password);
 	bool InitializeConnection();
 	bool InitializeWindow();
