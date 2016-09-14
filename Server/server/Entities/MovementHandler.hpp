@@ -36,6 +36,7 @@ public:
     void UpdateAttack(sf::Time);
 
     void AddMovementToStack(eActionType, Position, Orientation);
+    void AddMovementToStack(eActionType);
 
 private:
     bool m_InMovement;
@@ -54,6 +55,7 @@ private:
     struct MovementAction
     {
         eActionType m_ActionType;
+        bool m_PositionOptions;
         Position m_Pos;
         Orientation m_Orientation;
     };

@@ -145,7 +145,7 @@ void PacketHandler::HandleUnitStopAttack(WorldPacket &p_Packet)
             return;
         }
 
-        l_Unit->GetMovementHandler()->AddMovementToStack(eActionType::StopAttack, l_Pos, (Orientation)l_Unit->GetOrientation());
+        l_Unit->GetMovementHandler()->AddMovementToStack(eActionType::StopAttack);
     }
 }
 

@@ -62,17 +62,6 @@ void PacketHandler::HandleGoDirection(WorldPacket &p_Packet, WorldSocket* p_Worl
 
     l_Player->GetMovementHandler()->AddMovementToStack(eActionType::Go, l_Pos, (Orientation)l_Orientation);
     p_WorldSocket->SendUnitGoDirectionToSet((uint8)TypeUnit::PLAYER, l_Player->GetID(), l_Pos.x, l_Pos.y, l_Orientation);
-    /*if (!l_Player->GetMovementHandler()->IsInMovement())
-    {
-        l_Player->GetMovementHandler()->StartMovement((Orientation)l_Orientation);
-        l_Player->SetOrientation((Orientation)l_Orientation);
-        p_WorldSocket->SendUnitGoDirationToSet((uint8)TypeUnit::PLAYER, l_Player->GetID(), l_Orientation);
-    }
-    else
-    {
-        l_Player->SetOrientationAt((Orientation)l_Orientation, uint16, uint16);
-        p_WorldSocket->SendUnitGoDirationToSet((uint8)TypeUnit::PLAYER, l_Player->GetID(), l_Orientation);
-    }*/
 }
 
 void PacketHandler::HandleStopMovement(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
@@ -92,9 +81,7 @@ void PacketHandler::HandleStopMovement(WorldPacket &p_Packet, WorldSocket* p_Wor
         return;
 
     l_Player->GetMovementHandler()->AddMovementToStack(eActionType::Stop, l_Pos, (Orientation)l_Player->GetOrientation());
-    //l_Player->GetMovementHandler()->StopMovementAt(l_PosX, l_PosY);
     l_Player->GetSession()->SendUnitStopMovement((uint8)TypeUnit::PLAYER, l_Player->GetID(), l_Pos.x, l_Pos.y, l_Player->GetOrientation());
-    ///l_Player->GetSession()->SendUpdatePosition((uint8)TypeUnit::PLAYER, l_Player->GetID(), l_Player->GetPosX(), l_Player->GetPosY());
 }
 
 void PacketHandler::HandleTalk(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
@@ -140,7 +127,7 @@ void PacketHandler::HandleStopAttack(WorldPacket &p_Packet, WorldSocket* p_World
     if (l_Player == nullptr)
         return;
 
-    l_Player->GetMovementHandler()->AddMovementToStack(eActionType::StopAttack, l_Pos, (Orientation)l_Player->GetOrientation());
+    l_Player->GetMovementHandler()->AddMovementToStack(eActionType::StopAttack);
     l_Player->GetSession()->SendUnitStopAttack((uint8)TypeUnit::PLAYER, l_Player->GetID());
 }
 
