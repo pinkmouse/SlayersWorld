@@ -23,6 +23,7 @@ public:
     void HandleTalk(WorldPacket &, WorldSocket*);
     void HandleStartAttack(WorldPacket &, WorldSocket*);
     void HandleStopAttack(WorldPacket &, WorldSocket*);
+    void HandleDisconnected(WorldSocket*);
 
 private:
     using m_Func = void(PacketHandler::*)(WorldPacket &, WorldSocket*);

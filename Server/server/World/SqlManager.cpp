@@ -78,3 +78,9 @@ Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
 
     return l_Player;
 }
+
+void SqlManager::SavePlayer(Player const* p_Player)
+{
+    std::string l_Query = "UPDATE characters SET posX = '" + std::to_string(p_Player->GetPosX())  + "', posY = '" + std::to_string(p_Player->GetPosY()) + "', mapID = '" + std::to_string(p_Player->GetMapID()) + "', orientation = '" + std::to_string(p_Player->GetOrientation()) + "', health = '" + std::to_string(p_Player->GetHealth()) + "', alignment = '" + std::to_string(p_Player->GetAlignment()) + "' WHERE characterID = '" + std::to_string(p_Player->GetID()) + "'";
+    mysql_query(&m_Mysql, l_Query.c_str());
+}

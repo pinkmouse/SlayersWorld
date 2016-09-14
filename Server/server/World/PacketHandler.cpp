@@ -144,6 +144,19 @@ void PacketHandler::HandleStopAttack(WorldPacket &p_Packet, WorldSocket* p_World
     l_Player->GetSession()->SendUnitStopAttack((uint8)TypeUnit::PLAYER, l_Player->GetID());
 }
 
+void PacketHandler::HandleDisconnected(WorldSocket* p_WorldSocket)
+{
+    if (m_SqlManager == nullptr)
+        return;
+
+    Player* l_Player = p_WorldSocket->GetPlayer();
+
+    if (l_Player == nullptr)
+        return;
+
+    m_SqlManager->SavePlayer(l_Player);
+}
+
 void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
 {
     if (m_SqlManager == nullptr)
