@@ -16,7 +16,14 @@ charactersDB = 127.0.0.1;root;root;characters;3306;
 
   - Add map folder side to server.exe
   - Add libmysql.dll side to server.exe
+  - Create account on Database
 
+```INSERT INTO `login` (login, password) VALUES ('test@test', MD5('test'));```
+
+  - Create a player
+  
+```INSERT INTO `characters` (accountID, name, health, alignment) VALUES (1, 'toto', 100, 0);```
+  
 ### Client
 
   - Add datas folder side to client.exe (map, font, img)
