@@ -38,6 +38,7 @@ public:
     void SetOrientation(const Orientation &);
     void SetMap(Map*);
     void SetSquareID(uint16);
+    float GetDistance(Unit const*) const;
     TypeUnit GetType() const;
     bool IsInMovement() const;
 

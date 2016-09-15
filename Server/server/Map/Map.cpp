@@ -137,6 +137,43 @@ void Map::UpdateForPlayersInNewSquare(Unit* p_Unit, bool p_UpdateAll)
     }
 }
 
+Unit* Map::GetCloserUnit(Unit const* p_Unit, float p_Range)
+{
+    /// TODO : QuadTree
+    std::vector<Square*> l_Grid = GetSquareSet(p_Unit->GetSquareID());
+    Unit* l_CloserUnit = nullptr;
+
+    for (uint8 i = 0; i < l_Grid.size(); ++i)
+    {
+        Square* l_Square = l_Grid[i];
+
+        std::map<TypeUnit, std::map<uint16, Unit*>>* l_SquareList = l_Square->GetList();
+
+        for (std::pair<TypeUnit, std::map<uint16, Unit*>> l_SquareMap : *l_SquareList)
+        {
+            for (std::pair<uint16, Unit*> l_SquareList : l_SquareMap.second)
+            {
+                Unit* l_Unit = l_SquareList.second;
+
+                if (l_Unit == nullptr)
+                    continue;
+
+                if (l_Unit == p_Unit)
+                    continue;
+
+                float l_Dist = p_Unit->GetDistance(l_Unit);
+
+                if (l_Dist > p_Range)
+                    continue;
+
+                if (l_CloserUnit != nullptr && l_Dist < p_Unit->GetDistance(l_CloserUnit))
+                    l_CloserUnit = l_Unit;
+            }
+        }
+    }
+    return l_CloserUnit;
+}
+
 void Map::AddUnit(Unit* p_Unit)
 {
     m_ListUnitZone[p_Unit->GetType()][p_Unit->GetID()] = p_Unit;

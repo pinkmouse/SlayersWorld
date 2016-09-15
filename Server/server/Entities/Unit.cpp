@@ -198,3 +198,13 @@ void Unit::SetSquareID(uint16 p_SquareID)
 {
     m_SquareID = p_SquareID;
 }
+
+float Unit::GetDistance(Unit const* p_Unit) const
+{
+    uint32 l_X = std::max(m_PosX, p_Unit->GetPosX()) - std::min(m_PosX, p_Unit->GetPosX());
+    uint32 l_Y = std::max(m_PosY, p_Unit->GetPosY()) - std::min(m_PosY, p_Unit->GetPosY());
+
+    float l_Dist = sqrt((float)((l_X * l_X) + (l_Y * l_Y)));
+    printf("Distance = %f\n", l_Dist);
+    return l_Dist;
+}
