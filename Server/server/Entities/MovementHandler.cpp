@@ -12,6 +12,8 @@ MovementHandler::MovementHandler(uint8 p_SizeX, uint8 p_SizeY) :
     m_Map = nullptr;
     m_Pos.x = 0;
     m_Pos.y = 0;
+    m_AttackDamage.m_DamageDone = false;
+    m_AttackDamage.m_DamageReady = false;
 }
 
 MovementHandler::~MovementHandler()
@@ -104,6 +106,17 @@ bool MovementHandler::CheckNextMovement(uint32 p_PosX, uint32 p_PosY)
         return true;
 }
 
+bool MovementHandler::IsDamageReady() const
+{
+    return m_AttackDamage.m_DamageReady;
+}
+
+void MovementHandler::SetDamageDone(bool p_DamageDone)
+{
+    m_AttackDamage.m_DamageReady = !p_DamageDone;
+    m_AttackDamage.m_DamageDone = p_DamageDone;
+}
+
 void MovementHandler::UpdateAttack(sf::Time p_Diff)
 {
     if (!IsInAttack())
@@ -111,11 +124,22 @@ void MovementHandler::UpdateAttack(sf::Time p_Diff)
 
     m_DiffTimeAttack += p_Diff.asMicroseconds();
 
+    if (!m_AttackDamage.m_DamageDone)
+    {
+        if (m_DiffTimeAttack > ((MAX_MOVEMENT_POSITION * UPDATE_TIME_MOVEMENT * 1000 * m_Speed) / 2.0f)) ///< 1000 because microsecond
+            m_AttackDamage.m_DamageReady = true;
+    }
+
     while (m_DiffTimeAttack > (MAX_MOVEMENT_POSITION * UPDATE_TIME_MOVEMENT * 1000 * m_Speed)) ///< 1000 because microsecond
     {
         if (m_StopAttack)
+        {
             m_InAttack = false;
+            m_StopAttack = false;
+        }
         m_DiffTimeAttack = 0;
+        m_AttackDamage.m_DamageDone = false;
+        m_AttackDamage.m_DamageReady = false;
     }
 }
 

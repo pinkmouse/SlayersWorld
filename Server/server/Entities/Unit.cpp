@@ -55,6 +55,18 @@ void Unit::Update(sf::Time p_Diff)
     m_MovementHandler->Update(p_Diff);
     m_PosX = m_MovementHandler->GetPosX();
     m_PosY = m_MovementHandler->GetPosY();
+
+    if (m_MovementHandler->IsDamageReady())
+    {
+        Unit* l_Unit =m_Map->GetCloserUnit(this, this->GetSizeX());
+
+        if (l_Unit != nullptr)
+        {
+            printf("Damage Go\n");
+        }
+
+        m_MovementHandler->SetDamageDone(true);
+    }
 }
 
 TypeUnit Unit::GetType() const

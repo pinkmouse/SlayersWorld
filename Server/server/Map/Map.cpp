@@ -166,7 +166,9 @@ Unit* Map::GetCloserUnit(Unit const* p_Unit, float p_Range)
                 if (l_Dist > p_Range)
                     continue;
 
-                if (l_CloserUnit != nullptr && l_Dist < p_Unit->GetDistance(l_CloserUnit))
+                if (l_CloserUnit == nullptr)
+                    l_CloserUnit = l_Unit;
+                else if (l_CloserUnit != nullptr && l_Dist < p_Unit->GetDistance(l_CloserUnit))
                     l_CloserUnit = l_Unit;
             }
         }

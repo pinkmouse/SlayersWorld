@@ -115,7 +115,6 @@ void PacketHandler::HandleStartAttack(WorldPacket &p_Packet, WorldSocket* p_Worl
 
     l_Player->GetMovementHandler()->AddMovementToStack(eActionType::Attack, l_Pos, (Orientation)l_Player->GetOrientation());
     l_Player->GetSession()->SendUnitStartAttack((uint8)TypeUnit::PLAYER, l_Player->GetID(), l_Pos.x, l_Pos.y, l_Player->GetOrientation());
-    l_Player->GetMap()->GetCloserUnit(l_Player, l_Player->GetSizeX());
 }
 
 void PacketHandler::HandleStopAttack(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
