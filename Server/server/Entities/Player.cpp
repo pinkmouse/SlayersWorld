@@ -15,11 +15,17 @@ Player::Player(int32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_SkinID, ui
     m_Session = nullptr;
     m_DiffUpdatePosTime = 0;
     m_Alignment = 0;
+    m_Initilize = false;
 }
 
 WorldSocket* Player::GetSession() const
 {
     return m_Session;
+}
+
+void Player::HasBeenInitialize()
+{
+    m_Initilize = true;
 }
 
 void Player::SetSession(WorldSocket* p_Session)
@@ -85,4 +91,11 @@ void Player::SetAlignment(const uint8 & p_Alignment)
 uint8 Player::GetAlignment() const
 {
     return m_Alignment;
+}
+
+void Player::SetHealth(const uint8 & p_Health)
+{
+    Unit::SetHealth(p_Health);
+    if (m_Initilize)
+        m_Session->SendUpdateHealth(p_Health);
 }

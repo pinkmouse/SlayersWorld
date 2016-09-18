@@ -16,10 +16,13 @@ public:
 
     void Update(sf::Time);
     void UpdateNewSquares(uint16, uint16, bool p_UpdateAll = false);
+    void SetHealth(const uint8 &);
+    void HasBeenInitialize();
 
 private:
     WorldSocket* m_Session;
 
     uint8 m_Alignment;
+    bool m_Initilize;
 };
 

@@ -1,13 +1,12 @@
 #include "Unit.hpp"
 #include "../Map/Map.hpp"
+#include <cstdlib>
 
 
 Unit::Unit(uint16 p_ID)
 {
     m_Name = "";
     m_MapID = 0;
-    m_PosX = 0;
-    m_PosY = 0;
     m_Type = TypeUnit::CREATURE;
     m_ID = p_ID;
     m_SizeX = 24;
@@ -22,8 +21,6 @@ Unit::Unit(uint16 p_ID, TypeUnit p_Type)
     m_Type = p_Type;
     m_Name = "";
     m_MapID = 0;
-    m_PosX = 0;
-    m_PosY = 0;
     m_ID = p_ID;
     m_SizeX = 24;
     m_SizeY = 32;
@@ -53,20 +50,58 @@ void Unit::Update(sf::Time p_Diff)
         return;
 
     m_MovementHandler->Update(p_Diff);
-    m_PosX = m_MovementHandler->GetPosX();
-    m_PosY = m_MovementHandler->GetPosY();
+    SetPosX(m_MovementHandler->GetPosX());
+    SetPosY(m_MovementHandler->GetPosY());
 
     if (m_MovementHandler->IsDamageReady())
     {
-        Unit* l_Unit =m_Map->GetCloserUnit(this, this->GetSizeX());
+        Unit* l_Unit = m_Map->GetCloserUnit(this, this->GetSizeX());
 
         if (l_Unit != nullptr)
-        {
-            printf("Damage Go\n");
-        }
+            DealDamage(l_Unit);
 
         m_MovementHandler->SetDamageDone(true);
     }
+}
+
+bool Unit::IsInFront(const Position & p_Position) const
+{
+    switch (GetOrientation())
+    {
+        case Orientation::Down:
+            if (p_Position.y >= GetPosY())
+                return true;
+            break;
+        case Orientation::Left:
+            if (p_Position.x <= GetPosX())
+                return true;
+            break;
+        case Orientation::Right:
+            if (p_Position.x >= GetPosX())
+                return true;
+            break;
+        case Orientation::Up:
+            if (p_Position.y <= GetPosY())
+                return true;
+            break;
+        default:
+            break;
+    }
+    return false;
+}
+
+void Unit::DealDamage(Unit* p_Victim)
+{
+    uint8 l_Damage = rand() %  8 + 8;
+    int16 l_NewHealth = p_Victim->GetHealth() - l_Damage;
+    if (l_NewHealth < 0)
+        l_NewHealth = 0;
+    p_Victim->ToPlayer()->SetHealth((uint8)l_NewHealth);
+}
+
+bool Unit::IsInFront(Unit const* p_Unit) const
+{
+    return IsInFront(p_Unit->GetPosition());
 }
 
 TypeUnit Unit::GetType() const
@@ -87,16 +122,6 @@ std::string Unit::GetName() const
 uint16 Unit::GetMapID() const
 {
     return m_MapID;
-}
-
-uint32 Unit::GetPosX() const
-{
-    return m_PosX;
-}
-
-uint32 Unit::GetPosY() const
-{
-    return m_PosY;
 }
 
 uint8 Unit::GetSizeX() const
@@ -140,6 +165,9 @@ bool Unit::IsInMovement() const
 
 uint8 Unit::GetOrientation() const
 {
+    if (m_MovementHandler == nullptr)
+        return Orientation::Down;
+
     return m_MovementHandler->GetOrientation();
 }
 
@@ -175,13 +203,13 @@ void Unit::SetMapID(const uint16 & p_MapID)
 
 void Unit::SetPosX(const uint32 & p_PosX)
 {
-    m_PosX = p_PosX;
+    WorldObject::SetPosX(p_PosX);
     m_MovementHandler->SetPosX(p_PosX);
 }
 
 void Unit::SetPoxY(const uint32 & p_PosY)
 {
-    m_PosY = p_PosY;
+    WorldObject::SetPosY(p_PosY);
     m_MovementHandler->SetPosY(p_PosY);
 }
 
@@ -209,14 +237,4 @@ uint16 Unit::GetSquareID() const
 void Unit::SetSquareID(uint16 p_SquareID)
 {
     m_SquareID = p_SquareID;
-}
-
-float Unit::GetDistance(Unit const* p_Unit) const
-{
-    uint32 l_X = std::max(m_PosX, p_Unit->GetPosX()) - std::min(m_PosX, p_Unit->GetPosX());
-    uint32 l_Y = std::max(m_PosY, p_Unit->GetPosY()) - std::min(m_PosY, p_Unit->GetPosY());
-
-    float l_Dist = sqrt((float)((l_X * l_X) + (l_Y * l_Y)));
-    printf("Distance = %f\n", l_Dist);
-    return l_Dist;
 }

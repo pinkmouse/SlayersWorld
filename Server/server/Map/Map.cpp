@@ -137,7 +137,7 @@ void Map::UpdateForPlayersInNewSquare(Unit* p_Unit, bool p_UpdateAll)
     }
 }
 
-Unit* Map::GetCloserUnit(Unit const* p_Unit, float p_Range)
+Unit* Map::GetCloserUnit(Unit const* p_Unit, float p_Range /*= 2.0f*/, bool p_InFront /*= true*/)
 {
     /// TODO : QuadTree
     std::vector<Square*> l_Grid = GetSquareSet(p_Unit->GetSquareID());
@@ -164,6 +164,9 @@ Unit* Map::GetCloserUnit(Unit const* p_Unit, float p_Range)
                 float l_Dist = p_Unit->GetDistance(l_Unit);
 
                 if (l_Dist > p_Range)
+                    continue;
+
+                if (p_InFront && !p_Unit->IsInFront(l_Unit))
                     continue;
 
                 if (l_CloserUnit == nullptr)

@@ -19,6 +19,7 @@ public:
     void SendUnitStartAttack(uint8, uint16, uint32, uint32, uint8);
     void SendUnitStopAttack(uint8, uint16);
     void SendUpdatePosition(uint8, uint16, uint32, uint32);
+    void SendUpdateHealth(uint8);
     void SendUnitTalk(uint8, uint16, const std::string &);
 	void SendAuthResponse(uint8);
     void SendMsg(WorldPacket);
