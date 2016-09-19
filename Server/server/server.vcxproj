@@ -158,6 +158,7 @@
   <ItemGroup>
     <ClInclude Include="Map\Square.hpp" />
     <ClInclude Include="Entities\WorldObject.hpp" />
+    <ClInclude Include="System\WorldPosition.hpp" />
     <ClInclude Include="World\ClockHandler.hpp" />
     <ClInclude Include="Map\Case.hpp" />
     <ClInclude Include="Global.hpp" />
@@ -180,6 +181,7 @@
   <ItemGroup>
     <ClCompile Include="Map\Square.cpp" />
     <ClCompile Include="Entities\WorldObject.cpp" />
+    <ClCompile Include="System\WorldPosition.cpp" />
     <ClCompile Include="World\ClockHandler.cpp" />
     <ClCompile Include="Map\Case.cpp" />
     <ClCompile Include="Map\MapManager.cpp" />

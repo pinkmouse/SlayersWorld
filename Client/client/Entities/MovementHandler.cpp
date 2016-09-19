@@ -63,7 +63,7 @@ bool MovementHandler::CheckNextMovement(uint32 p_PosX, uint32 p_PosY)
         l_NextMovement = true;
     else if (!IsInAttack())
     {
-        switch (l_MovementAction.m_Orientation)
+        switch (GetOrientation())
         {
         case Orientation::Down:
             if (l_MovementAction.m_Pos.y <= p_PosY)

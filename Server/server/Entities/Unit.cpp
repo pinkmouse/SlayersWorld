@@ -119,11 +119,6 @@ std::string Unit::GetName() const
     return m_Name;
 }
 
-uint16 Unit::GetMapID() const
-{
-    return m_MapID;
-}
-
 uint8 Unit::GetSizeX() const
 {
     return m_SizeX;
@@ -194,11 +189,6 @@ void Unit::SetLevel(const uint8 & p_Level)
 void Unit::SetSkinID(const uint8 & p_SkinID)
 {
     m_SkinID = p_SkinID;
-}
-
-void Unit::SetMapID(const uint16 & p_MapID)
-{
-    m_MapID = p_MapID;
 }
 
 void Unit::SetPosX(const uint32 & p_PosX)

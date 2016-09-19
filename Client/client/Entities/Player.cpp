@@ -7,13 +7,13 @@ Player::Player(int32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_SkinID, ui
     m_Name = p_Name;
     m_Level = p_Level;
     m_SkinID = p_SkinID;
-    m_MapID = p_MapID;
-    m_PosX = p_PosX;
-    m_PosY = p_PosY;
+    SetPosX(p_PosX);
+    SetPosY(p_PosY);
     m_MovementHandler->SetPosX(p_PosX);
     m_MovementHandler->SetPosY(p_PosY);
     m_MovementHandler->SetOrientation(p_Orientation);
     m_Alignment = 0;
+    SetMapID(p_MapID);
 }
 
 Player::~Player()

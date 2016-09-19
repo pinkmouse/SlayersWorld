@@ -16,7 +16,6 @@ public:
 
     bool IsPlayer() const;
     std::string GetName() const;
-    uint16 GetMapID() const;
     uint8 GetSizeX() const;
     uint8 GetSizeY() const;
     uint8 GetLevel() const;
@@ -29,7 +28,6 @@ public:
 
     void SetName(const std::string &);
     void SetLevel(const uint8 &);
-    void SetMapID(const uint16 &);
     void SetPosX(const uint32 &);
     void SetPoxY(const uint32 &);
     void SetSkinID(const uint8 &);
@@ -64,4 +62,6 @@ protected:
     uint16 m_SquareID;
     uint16 m_ID;
     uint64 m_DiffUpdatePosTime;
+
+    WorldPosition m_Respawn;
 };

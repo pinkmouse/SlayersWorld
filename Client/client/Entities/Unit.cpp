@@ -3,28 +3,12 @@
 
 Unit::Unit(uint16 p_ID)
 {
-    m_Name = "";
-    m_MapID = 0;
-    m_PosX = 0;
-    m_PosY = 0;
-    m_Type = TypeUnit::CREATURE;
-    m_ID = p_ID;
-    m_Opacity = 0;
-    m_DiffTimeOpactiy = 0;
-    m_SizeX = 24;
-    m_SizeY = 32;
-    m_MovementHandler = new MovementHandler(m_SizeX, m_SizeY);
-    m_Map = nullptr;
-    m_Talk = "";
-    m_SkinZoomFactor = SKIN_ZOOM_FACTOR_DEFAULT;
+    Unit(p_ID, TypeUnit::CREATURE);
 }
 
 Unit::Unit(uint16 p_ID, TypeUnit p_Type)
 {
     m_Name = "";
-    m_MapID = 0;
-    m_PosX = 0;
-    m_PosY = 0;
     m_Type = p_Type;
     m_ID = p_ID;
     m_Opacity = 0;
@@ -48,8 +32,8 @@ MovementHandler* Unit::GetMovementHandler()
 void Unit::Update(sf::Time p_Diff)
 {
     m_MovementHandler->Update(p_Diff);
-    m_PosX = m_MovementHandler->GetPosX();
-    m_PosY = m_MovementHandler->GetPosY();
+    SetPosX(m_MovementHandler->GetPosX());
+    SetPosY(m_MovementHandler->GetPosY());
 
     if (m_Opacity < 255)
     {
@@ -84,21 +68,6 @@ uint8 Unit::GetOpacity() const
 std::string Unit::GetName() const
 {
     return m_Name;
-}
-
-uint16 Unit::GetMapID() const
-{
-    return m_MapID;
-}
-
-uint32 Unit::GetPosX() const
-{
-    return m_PosX;
-}
-
-uint32 Unit::GetPosY() const
-{
-    return m_PosY;
 }
 
 uint8 Unit::GetSizeX() const
@@ -185,20 +154,15 @@ void Unit::SetHealth(const uint8 & p_Health)
     m_Health = p_Health;
 }
 
-void Unit::SetMapID(const uint16 & p_MapID)
-{
-    m_MapID = p_MapID;
-}
-
 void Unit::SetPosX(const uint32 & p_PosX)
 {
-    m_PosX = p_PosX;
+    WorldObject::SetPosX(p_PosX);
     m_MovementHandler->SetPosX(p_PosX);
 }
 
 void Unit::SetPosY(const uint32 & p_PosY)
 {
-    m_PosY = p_PosY;
+    WorldObject::SetPosY(p_PosY);
     m_MovementHandler->SetPosY(p_PosY);
 }
 
@@ -209,7 +173,7 @@ void Unit::SetOrientation(const Orientation & p_Orientation)
 
 bool Unit::IsInRayVisible(Unit* p_Unit)
 {
-    if (p_Unit->GetMapID() != m_MapID)
+    if (p_Unit->GetMapID() != GetMapID())
         return false;
 
     if (p_Unit == this)
@@ -229,12 +193,12 @@ bool Unit::IsInRayVisible(Unit* p_Unit)
 
 uint16 Unit::GetCasePosX() const
 {
-    return m_PosX / TILE_SIZE;
+    return GetPosX() / TILE_SIZE;
 }
 
 uint16 Unit::GetCasePosY() const
 {
-    return m_PosY / TILE_SIZE;
+    return GetPosY() / TILE_SIZE;
 }
 
 void Unit::StartMovement()
