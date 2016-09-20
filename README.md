@@ -38,7 +38,7 @@ start "" "D:\Projects\Build\Client\client.exe" test@test.fr test
 
   1) Compilation
     ```fopen deprecated warning```
-    Configuration Properties -> C/C++ -> Preprocessor
-    In the field PreprocessorDefinitions add ;_CRT_SECURE_NO_WARNINGS to turn those warnings off.
+      -Configuration Properties -> C/C++ -> Preprocessor
+      -In the field PreprocessorDefinitions add ;_CRT_SECURE_NO_WARNINGS to turn those warnings off.
     
 **We roxx Yeah!**
