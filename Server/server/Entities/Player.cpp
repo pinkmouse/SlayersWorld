@@ -2,7 +2,7 @@
 #include "../World/WorldSocket.hpp"
 #include "../Map/Map.hpp"
 
-Player::Player(int32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_SkinID, uint16 p_MapID, uint32 p_PosX, uint32 p_PosY, Orientation p_Orientation) :
+Player::Player(int32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_Health, uint8 p_SkinID, uint16 p_MapID, uint32 p_PosX, uint32 p_PosY, Orientation p_Orientation) :
     Unit(p_ID, TypeUnit::PLAYER)
 {
     m_Name = p_Name;
@@ -13,9 +13,9 @@ Player::Player(int32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_SkinID, ui
     SetPoxY(p_PosY);
     SetOrientation(p_Orientation);
     m_Session = nullptr;
-    m_DiffUpdatePosTime = 0;
     m_Alignment = 0;
     m_Initilize = false;
+    m_Health = p_Health;
 }
 
 WorldSocket* Player::GetSession() const
@@ -41,6 +41,16 @@ Player::~Player()
 void Player::Update(sf::Time p_Diff)
 {
     Unit::Update(p_Diff);
+
+    if (IsDeath())
+    {
+        m_ResTimer += p_Diff.asMicroseconds();
+        if (m_ResTimer >= PLAYER_TIME_RESPAWN * IN_MICROSECOND)
+        {
+            SetHealth(100);
+            m_ResTimer = 0;
+        }
+    }
 }
 
 void Player::UpdateNewSquares(uint16 p_OldSquareID, uint16 p_NewSquareID, bool p_UpdateAll)
@@ -77,7 +87,7 @@ void Player::UpdateNewSquares(uint16 p_OldSquareID, uint16 p_NewSquareID, bool p
                 if (l_Unit == nullptr)
                     continue;
 
-                GetSession()->SendUnitCreate(l_Unit->GetType(), l_Unit->GetID(), l_Unit->GetName(), l_Unit->GetLevel(), l_Unit->GetSkinID(), l_Unit->GetMapID(), l_Unit->GetPosX(), l_Unit->GetPosY(), l_Unit->GetOrientation(), l_Unit->IsInMovement());
+                GetSession()->SendUnitCreate(l_Unit->GetType(), l_Unit->GetID(), l_Unit->GetName(), l_Unit->GetLevel(), l_Unit->GetHealth(), l_Unit->GetSkinID(), l_Unit->GetMapID(), l_Unit->GetPosX(), l_Unit->GetPosY(), l_Unit->GetOrientation(), l_Unit->IsInMovement());
             }
         }
     }
@@ -97,5 +107,5 @@ void Player::SetHealth(const uint8 & p_Health)
 {
     Unit::SetHealth(p_Health);
     if (m_Initilize)
-        m_Session->SendUpdateHealth(p_Health);
+        m_Session->SendUpdateUnitHealth(GetType(), GetID(), p_Health);
 }

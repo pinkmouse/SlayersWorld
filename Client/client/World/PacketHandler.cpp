@@ -50,10 +50,23 @@ void PacketHandler::HandleRemoveUnit(WorldPacket &p_Packet)
 
 void PacketHandler::HandleUpdateHealth(WorldPacket &p_Packet)
 {
+    uint8 l_TypeID;
+    uint16 l_ID;
     uint8 l_NewHealth;
 
+    p_Packet >> l_TypeID;
+    p_Packet >> l_ID;
     p_Packet >> l_NewHealth;
-    g_Player->SetHealth(l_NewHealth);
+    if (Map* l_Map = m_MapManager->GetActualMap())
+    {
+        Unit* l_Unit = nullptr;
+
+        l_Unit = l_Map->GetUnit((TypeUnit)l_TypeID, l_ID);
+        if (l_Unit == nullptr)
+            return;
+
+        l_Unit->SetHealth(l_NewHealth);
+    }
 }
 
 void PacketHandler::HandleTalk(WorldPacket &p_Packet)
@@ -250,8 +263,7 @@ void PacketHandler::HandleCreateMainPlayer(WorldPacket &p_Packet)
     if (!m_MapManager->LoadMap(l_MapID))
         return;
 
-    g_Player = new Player(l_ID, l_Name, l_Level, l_SkinID, l_MapID, l_PosX, l_PosY, (Orientation)l_Orientation);
-    g_Player->SetHealth(l_Health);
+    g_Player = new Player(l_ID, l_Name, l_Level, l_Health, l_SkinID, l_MapID, l_PosX, l_PosY, (Orientation)l_Orientation);
     g_Player->SetAlignment(l_Alignment);
     m_MapManager->SetPosX(l_PosX);
     m_MapManager->SetPosY(l_PosY);
@@ -272,6 +284,7 @@ void PacketHandler::HandleCreateUnit(WorldPacket &p_Packet)
     uint32 l_ID;
     std::string l_Name;
     uint8 l_Level;
+    uint8 l_Health;
     uint8 l_SkinID;
     uint16 l_MapID;
     Position l_Pos;
@@ -282,6 +295,7 @@ void PacketHandler::HandleCreateUnit(WorldPacket &p_Packet)
     p_Packet >> l_ID;
     p_Packet >> l_Name;
     p_Packet >> l_Level;
+    p_Packet >> l_Health;
     p_Packet >> l_SkinID;
     p_Packet >> l_MapID;
     p_Packet >> l_Pos.x;
@@ -301,7 +315,7 @@ void PacketHandler::HandleCreateUnit(WorldPacket &p_Packet)
     if (l_ActualMap->GetID() == l_MapID && l_ActualMap->GetUnit((TypeUnit)l_TypeID, l_ID) == nullptr)
     {
         if (l_TypeID == (uint8)TypeUnit::PLAYER)
-            l_NewUnit = new Player(l_ID, l_Name, l_Level, l_SkinID, l_MapID, l_Pos.x, l_Pos.y, (Orientation)l_Orientation);
+            l_NewUnit = new Player(l_ID, l_Name, l_Level, l_Health, l_SkinID, l_MapID, l_Pos.x, l_Pos.y, (Orientation)l_Orientation);
 
         l_NewUnit->SetMap(l_ActualMap);
         l_ActualMap->AddUnit(l_NewUnit);

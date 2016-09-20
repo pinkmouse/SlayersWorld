@@ -24,6 +24,13 @@ Unit::~Unit()
     delete m_MovementHandler;
 }
 
+bool Unit::IsDeath() const
+{
+    if (m_Health > 0)
+        return false;
+    return true;
+}
+
 MovementHandler* Unit::GetMovementHandler()
 {
     return m_MovementHandler;
@@ -35,14 +42,14 @@ void Unit::Update(sf::Time p_Diff)
     SetPosX(m_MovementHandler->GetPosX());
     SetPosY(m_MovementHandler->GetPosY());
 
-    if (m_Opacity < 255)
+    if (m_Opacity < MAX_OPACITY)
     {
         m_DiffTimeOpactiy += p_Diff.asMicroseconds();
         while (m_DiffTimeOpactiy > (uint64)(UPDATE_OPACITY_TIME * 1000)) ///< 1000 because microsecond
         {
             /// UPDATE OPACITY
-            if ((int16)m_Opacity + 15 > 255)
-                m_Opacity = 255;
+            if ((int16)m_Opacity + 15 > MAX_OPACITY)
+                m_Opacity = MAX_OPACITY;
             else
                 m_Opacity += 15;
             m_DiffTimeOpactiy -= (uint64)(UPDATE_TIME_MOVEMENT * 1000);
@@ -62,6 +69,9 @@ void Unit::Update(sf::Time p_Diff)
 
 uint8 Unit::GetOpacity() const
 {
+    if (IsDeath())
+        return DEATH_OPACITY;
+
     return m_Opacity;
 }
 

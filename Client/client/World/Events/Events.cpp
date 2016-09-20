@@ -8,11 +8,23 @@ Events::Events()
     m_DirectionMap[sf::Keyboard::Key::Left] = Orientation::Left;
     m_DirectionMap[sf::Keyboard::Key::Right] = Orientation::Right;
     m_WritingField = nullptr;
+
+    m_KeyUsableWhileDeath[sf::Keyboard::Key::Up] = true;
+    m_KeyUsableWhileDeath[sf::Keyboard::Key::Down] = true;
+    m_KeyUsableWhileDeath[sf::Keyboard::Key::Left] = true;
+    m_KeyUsableWhileDeath[sf::Keyboard::Key::Right] = true;
 }
 
 
 Events::~Events()
 {
+}
+
+bool Events::IsKeyUsableWhileDeath(sf::Keyboard::Key p_Key)
+{
+    if (m_KeyUsableWhileDeath.find(p_Key) != m_KeyUsableWhileDeath.end())
+        return m_KeyUsableWhileDeath[p_Key];
+    return false;
 }
 
 void Events::Update()
@@ -50,6 +62,9 @@ void Events::Update()
 void Events::KeyRelease(sf::Keyboard::Key p_KeyRealease)
 {
     if (g_Player == nullptr)
+        return;
+
+    if (g_Player->IsDeath() && !IsKeyUsableWhileDeath(p_KeyRealease))
         return;
 
     std::vector<sf::Keyboard::Key>::iterator l_It = std::find(m_KeyPressed.begin(), m_KeyPressed.end(), p_KeyRealease);
@@ -96,6 +111,12 @@ void Events::KeyRelease(sf::Keyboard::Key p_KeyRealease)
 
 void Events::NewKeyPressed(sf::Keyboard::Key p_NewKey)
 {
+    if (g_Player == nullptr)
+        return;
+
+    if (g_Player->IsDeath() && !IsKeyUsableWhileDeath(p_NewKey))
+        return;
+
     switch (p_NewKey)
     {
         /// Direction

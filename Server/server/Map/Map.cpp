@@ -132,12 +132,12 @@ void Map::UpdateForPlayersInNewSquare(Unit* p_Unit, bool p_UpdateAll)
             if (l_Session == nullptr)
                 continue;
 
-            l_Session->SendUnitCreate(p_Unit->GetType(), p_Unit->GetID(), p_Unit->GetName(), p_Unit->GetLevel(), p_Unit->GetSkinID(), p_Unit->GetMapID(), p_Unit->GetPosX(), p_Unit->GetPosY(), p_Unit->GetOrientation(), p_Unit->IsInMovement());
+            l_Session->SendUnitCreate(p_Unit->GetType(), p_Unit->GetID(), p_Unit->GetName(), p_Unit->GetLevel(), p_Unit->GetHealth(), p_Unit->GetSkinID(), p_Unit->GetMapID(), p_Unit->GetPosX(), p_Unit->GetPosY(), p_Unit->GetOrientation(), p_Unit->IsInMovement());
         }
     }
 }
 
-Unit* Map::GetCloserUnit(Unit const* p_Unit, float p_Range /*= 2.0f*/, bool p_InFront /*= true*/)
+Unit* Map::GetCloserUnit(Unit const* p_Unit, float p_Range /*= 2.0f*/, bool p_OnlyInLife /*= flase*/, bool p_InFront /*= true*/)
 {
     /// TODO : QuadTree
     std::vector<Square*> l_Grid = GetSquareSet(p_Unit->GetSquareID());
@@ -159,6 +159,9 @@ Unit* Map::GetCloserUnit(Unit const* p_Unit, float p_Range /*= 2.0f*/, bool p_In
                     continue;
 
                 if (l_Unit == p_Unit)
+                    continue;
+
+                if (p_OnlyInLife && l_Unit->IsDeath())
                     continue;
 
                 float l_Dist = p_Unit->GetDistance(l_Unit);
