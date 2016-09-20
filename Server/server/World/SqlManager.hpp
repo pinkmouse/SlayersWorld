@@ -15,6 +15,7 @@ public:
 
     int32 GetIDLogin(std::string, std::string);
     Player* GetNewPlayer(uint32);
+    void SavePlayer(Player const*);
 
 private:
 	MYSQL m_Mysql;

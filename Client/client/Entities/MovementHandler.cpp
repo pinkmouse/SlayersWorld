@@ -9,7 +9,6 @@ MovementHandler::MovementHandler(uint8 p_SizeX, uint8 p_SizeY) :
     m_InMovement = false;
     m_InAttack = false;
     m_StopAttack = false;
-    m_MovementPosition = 0;
     m_Orientation = Orientation::Down;
     m_Pos.x = 0;
     m_Pos.y = 0;
@@ -17,6 +16,7 @@ MovementHandler::MovementHandler(uint8 p_SizeX, uint8 p_SizeY) :
     m_DiffTimeAnimAttack = 0;
     m_DiffTime = 0;
     m_Map = nullptr;
+    m_MovementPosition = 1;
 }
 
 MovementHandler::~MovementHandler()
@@ -59,11 +59,11 @@ bool MovementHandler::CheckNextMovement(uint32 p_PosX, uint32 p_PosY)
 
     bool l_NextMovement = false;
     MovementAction l_MovementAction = m_MovementStack.front();
-    if (l_MovementAction.m_ActionType == eActionType::StopAttack)
+    if (!l_MovementAction.m_PositionOptions)
         l_NextMovement = true;
     else if (!IsInAttack())
     {
-        switch (l_MovementAction.m_Orientation)
+        switch (GetOrientation())
         {
         case Orientation::Down:
             if (l_MovementAction.m_Pos.y <= p_PosY)
@@ -88,7 +88,7 @@ bool MovementHandler::CheckNextMovement(uint32 p_PosX, uint32 p_PosY)
     if (!l_NextMovement)
         return false;
 
-    if (l_MovementAction.m_ActionType != eActionType::StopAttack)
+    if (l_MovementAction.m_PositionOptions)
     {
         m_Pos.x = l_MovementAction.m_Pos.x;
         m_Pos.y = l_MovementAction.m_Pos.y;
@@ -292,10 +292,19 @@ uint32 MovementHandler::GetPosY() const
     return m_Pos.y;
 }
 
+void MovementHandler::AddMovementToStack(eActionType p_Action)
+{
+    MovementAction l_Act;
+    l_Act.m_ActionType = p_Action;
+    l_Act.m_PositionOptions = false;
+    m_MovementStack.push(l_Act);
+}
+
 void MovementHandler::AddMovementToStack(eActionType p_Action, Position p_Pos, Orientation p_Orientation)
 {
     MovementAction l_Act;
     l_Act.m_ActionType = p_Action;
+    l_Act.m_PositionOptions = true;
     l_Act.m_Pos = p_Pos;
     l_Act.m_Orientation = p_Orientation;
     m_MovementStack.push(l_Act);

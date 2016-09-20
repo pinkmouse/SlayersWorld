@@ -21,6 +21,8 @@ public:
     void SetMap(Map*);
     bool IsInColision(int64, int64) const;
     bool CheckNextMovement(uint32, uint32);
+    bool IsDamageReady() const;
+    void SetDamageDone(bool);
 
     Orientation GetOrientation() const;
     void SetOrientation(Orientation);
@@ -36,6 +38,7 @@ public:
     void UpdateAttack(sf::Time);
 
     void AddMovementToStack(eActionType, Position, Orientation);
+    void AddMovementToStack(eActionType);
 
 private:
     bool m_InMovement;
@@ -47,6 +50,7 @@ private:
     Position m_Pos;
     uint64 m_DiffTime;
     uint64 m_DiffTimeAttack;
+    uint8 m_AttackPosition;
     uint8 m_SizeX;
     uint8 m_SizeY;
 
@@ -54,8 +58,17 @@ private:
     struct MovementAction
     {
         eActionType m_ActionType;
+        bool m_PositionOptions;
         Position m_Pos;
         Orientation m_Orientation;
     };
+
     std::queue<MovementAction> m_MovementStack;
+
+    struct AttackDamageState
+    {
+        bool m_DamageReady;
+        bool m_DamageDone;
+    };
+    AttackDamageState m_AttackDamage;
 };

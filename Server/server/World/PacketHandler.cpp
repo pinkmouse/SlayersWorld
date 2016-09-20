@@ -62,17 +62,6 @@ void PacketHandler::HandleGoDirection(WorldPacket &p_Packet, WorldSocket* p_Worl
 
     l_Player->GetMovementHandler()->AddMovementToStack(eActionType::Go, l_Pos, (Orientation)l_Orientation);
     p_WorldSocket->SendUnitGoDirectionToSet((uint8)TypeUnit::PLAYER, l_Player->GetID(), l_Pos.x, l_Pos.y, l_Orientation);
-    /*if (!l_Player->GetMovementHandler()->IsInMovement())
-    {
-        l_Player->GetMovementHandler()->StartMovement((Orientation)l_Orientation);
-        l_Player->SetOrientation((Orientation)l_Orientation);
-        p_WorldSocket->SendUnitGoDirationToSet((uint8)TypeUnit::PLAYER, l_Player->GetID(), l_Orientation);
-    }
-    else
-    {
-        l_Player->SetOrientationAt((Orientation)l_Orientation, uint16, uint16);
-        p_WorldSocket->SendUnitGoDirationToSet((uint8)TypeUnit::PLAYER, l_Player->GetID(), l_Orientation);
-    }*/
 }
 
 void PacketHandler::HandleStopMovement(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
@@ -92,9 +81,7 @@ void PacketHandler::HandleStopMovement(WorldPacket &p_Packet, WorldSocket* p_Wor
         return;
 
     l_Player->GetMovementHandler()->AddMovementToStack(eActionType::Stop, l_Pos, (Orientation)l_Player->GetOrientation());
-    //l_Player->GetMovementHandler()->StopMovementAt(l_PosX, l_PosY);
     l_Player->GetSession()->SendUnitStopMovement((uint8)TypeUnit::PLAYER, l_Player->GetID(), l_Pos.x, l_Pos.y, l_Player->GetOrientation());
-    ///l_Player->GetSession()->SendUpdatePosition((uint8)TypeUnit::PLAYER, l_Player->GetID(), l_Player->GetPosX(), l_Player->GetPosY());
 }
 
 void PacketHandler::HandleTalk(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
@@ -140,8 +127,21 @@ void PacketHandler::HandleStopAttack(WorldPacket &p_Packet, WorldSocket* p_World
     if (l_Player == nullptr)
         return;
 
-    l_Player->GetMovementHandler()->AddMovementToStack(eActionType::StopAttack, l_Pos, (Orientation)l_Player->GetOrientation());
+    l_Player->GetMovementHandler()->AddMovementToStack(eActionType::StopAttack);
     l_Player->GetSession()->SendUnitStopAttack((uint8)TypeUnit::PLAYER, l_Player->GetID());
+}
+
+void PacketHandler::HandleDisconnected(WorldSocket* p_WorldSocket)
+{
+    if (m_SqlManager == nullptr)
+        return;
+
+    Player* l_Player = p_WorldSocket->GetPlayer();
+
+    if (l_Player == nullptr)
+        return;
+
+    m_SqlManager->SavePlayer(l_Player);
 }
 
 void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
@@ -193,7 +193,7 @@ void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldS
     /// Send to Player
     p_WorldSocket->SendPlayerCreate(l_Player->GetID(), l_Player->GetName(), l_Player->GetLevel(), l_Player->GetHealth(), l_Player->GetAlignment(), l_Player->GetSkinID(), l_Player->GetMapID(), l_Player->GetPosX(), l_Player->GetPosY(), l_Player->GetOrientation());
     p_WorldSocket->SetPlayer(l_Player);
-
+    l_Player->HasBeenInitialize();
     l_Player->GetMap()->AddUnit(l_Player);
 
     l_Player->UpdateNewSquares(0, l_Player->GetSquareID(), true);

@@ -1,4 +1,5 @@
 #pragma once
+#include "WorldObject.hpp"
 #include "MovementHandler.hpp"
 #include "../Define.hpp"
 #include <string>
@@ -6,7 +7,7 @@
 class Map;
 class Player;
 
-class Unit
+class Unit : public WorldObject
 {
 public:
     Unit(uint16);
@@ -15,9 +16,6 @@ public:
 
     bool IsPlayer() const;
     std::string GetName() const;
-    uint16 GetMapID() const;
-    uint32 GetPosX() const;
-    uint32 GetPosY() const;
     uint8 GetSizeX() const;
     uint8 GetSizeY() const;
     uint8 GetLevel() const;
@@ -30,7 +28,6 @@ public:
 
     void SetName(const std::string &);
     void SetLevel(const uint8 &);
-    void SetMapID(const uint16 &);
     void SetPosX(const uint32 &);
     void SetPoxY(const uint32 &);
     void SetSkinID(const uint8 &);
@@ -38,6 +35,9 @@ public:
     void SetOrientation(const Orientation &);
     void SetMap(Map*);
     void SetSquareID(uint16);
+    bool IsInFront(const Position &) const;
+    bool IsInFront(Unit const*) const;
+    void DealDamage(Unit*);
     TypeUnit GetType() const;
     bool IsInMovement() const;
 
@@ -54,8 +54,6 @@ protected:
     uint8 m_SizeX;
     uint8 m_SizeY;
 
-    uint32 m_PosX;
-    uint32 m_PosY;
     uint8 m_Health;
     uint8 m_SkinID;
     MovementHandler* m_MovementHandler;
@@ -64,4 +62,6 @@ protected:
     uint16 m_SquareID;
     uint16 m_ID;
     uint64 m_DiffUpdatePosTime;
+
+    WorldPosition m_Respawn;
 };

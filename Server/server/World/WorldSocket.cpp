@@ -120,7 +120,15 @@ void WorldSocket::SendUnitStopAttack(uint8 p_TypeID, uint16 p_ID)
 
     l_Packet << l_ID << p_TypeID << p_ID;
     SendToSet(l_Packet, true);
-    printf("Send Attack\n");
+}
+
+void WorldSocket::SendUpdateHealth(uint8 p_NewHealth)
+{
+    WorldPacket l_Packet;
+    uint8 l_ID = SMSG::S_PlayerUpdateLife;
+
+    l_Packet << l_ID << p_NewHealth;
+    send(l_Packet);
 }
 
 Player* WorldSocket::GetPlayer()
