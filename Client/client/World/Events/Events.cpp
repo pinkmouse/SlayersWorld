@@ -176,13 +176,11 @@ void Events::NewKeyPressed(sf::Keyboard::Key p_NewKey)
 
             m_KeyPressed.clear();
             MovementHandler* l_MovementHandler = g_Player->GetMovementHandler();
-
-            if (l_MovementHandler->IsInAttack())
-                g_Socket->SendStopAttack();
-            if (l_MovementHandler->IsInMovement())
-                g_Socket->SendStopMovement(l_MovementHandler->GetPosX(), l_MovementHandler->GetPosY());
-            l_MovementHandler->StopMovement();
-            l_MovementHandler->StopAttack();
+            KeyRelease(sf::Keyboard::Key::Up);
+            KeyRelease(sf::Keyboard::Key::Down);
+            KeyRelease(sf::Keyboard::Key::Left);
+            KeyRelease(sf::Keyboard::Key::Right);
+            KeyRelease(sf::Keyboard::Key::S);
             break;
         }
         case sf::Keyboard::Key::Return:
