@@ -177,11 +177,13 @@ void PacketHandler::HandleUpdatePosition(WorldPacket &p_Packet)
     uint16 l_UnitID;
     uint32 l_PosX;
     uint32 l_PosY;
+    uint8 l_Orientation;
 
     p_Packet >> l_TypeID;
     p_Packet >> l_UnitID;
     p_Packet >> l_PosX;
     p_Packet >> l_PosY;
+    p_Packet >> l_Orientation;
 
     if (Map* l_Map = m_MapManager->GetActualMap())
     {
@@ -194,6 +196,7 @@ void PacketHandler::HandleUpdatePosition(WorldPacket &p_Packet)
         }
         l_Unit->SetPosX(l_PosX);
         l_Unit->SetPosY(l_PosY);
+        l_Unit->SetOrientation((Orientation)l_Orientation);
     }
 }
 

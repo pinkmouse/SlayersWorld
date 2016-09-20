@@ -74,8 +74,33 @@ Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
 
     Player* l_Player = new Player(l_ID, l_Name, l_Lvl, l_Health, l_SkinID, l_MapID, l_PosX, l_PosY, (Orientation)l_Orientation);
     l_Player->SetAlignment(l_Alignment);
-
+    l_Player->SetRespawnPosition(GetRespawnPositionForPlayer(l_ID));
     return l_Player;
+}
+
+WorldPosition SqlManager::GetRespawnPositionForPlayer(uint32 p_PlayerID)
+{
+    std::string l_Query = "SELECT posX, posY, mapID, orientation FROM characters_respawn WHERE characterID = '" + std::to_string(p_PlayerID) + "'";
+    mysql_query(&m_Mysql, l_Query.c_str());
+ 
+    uint32 l_PosX = 0;
+    uint32 l_PosY = 0;
+    uint16 l_MapID = 0;
+    uint8 l_Orientation = 0;
+
+    MYSQL_RES *l_Result = NULL;
+    MYSQL_ROW l_Row;
+    l_Result = mysql_use_result(&m_Mysql);
+    while ((l_Row = mysql_fetch_row(l_Result)))
+    {
+        l_PosX = atoi(l_Row[0]);
+        l_PosY = atoi(l_Row[1]);
+        l_MapID = atoi(l_Row[2]);
+        l_Orientation = atoi(l_Row[3]);
+    }
+
+    WorldPosition l_Position(l_PosX, l_PosY, l_MapID, (Orientation)l_Orientation);
+    return l_Position;
 }
 
 void SqlManager::SavePlayer(Player const* p_Player)

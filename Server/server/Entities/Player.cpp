@@ -10,7 +10,7 @@ Player::Player(int32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_Health, ui
     m_SkinID = p_SkinID;
     m_MapID = p_MapID;
     SetPosX(p_PosX);
-    SetPoxY(p_PosY);
+    SetPosY(p_PosY);
     SetOrientation(p_Orientation);
     m_Session = nullptr;
     m_Alignment = 0;
@@ -47,8 +47,7 @@ void Player::Update(sf::Time p_Diff)
         m_ResTimer += p_Diff.asMicroseconds();
         if (m_ResTimer >= PLAYER_TIME_RESPAWN * IN_MICROSECOND)
         {
-            SetHealth(100);
-            m_ResTimer = 0;
+            Respawn();
         }
     }
 }
@@ -108,4 +107,13 @@ void Player::SetHealth(const uint8 & p_Health)
     Unit::SetHealth(p_Health);
     if (m_Initilize)
         m_Session->SendUpdateUnitHealth(GetType(), GetID(), p_Health);
+}
+
+void Player::Respawn()
+{
+    Unit::Respawn();
+    GetSession()->SendUpdatePositionToSet(GetType(), GetID(), GetPosX(), GetPosY(), GetOrientation());
+
+    SetHealth(100);
+    m_ResTimer = 0;
 }

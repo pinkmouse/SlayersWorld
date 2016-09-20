@@ -34,13 +34,22 @@ void WorldSocket::SendAuthResponse(uint8 p_Status)
 	printf("Send Status Auth %d\n", p_Status);
 }
 
-void WorldSocket::SendUpdatePosition(uint8 p_Type, uint16 p_ID, uint32 p_PosX, uint32 p_PosY)
+void WorldSocket::SendUpdatePosition(uint8 p_Type, uint16 p_ID, uint32 p_PosX, uint32 p_PosY, uint8 p_Orientation)
 {
     WorldPacket l_Packet;
     uint8 l_ID = SMSG::S_UnitUpdatePosition;
 
-    l_Packet << l_ID << p_Type << p_ID << p_PosX << p_PosY;
+    l_Packet << l_ID << p_Type << p_ID << p_PosX << p_PosY << p_Orientation;
     send(l_Packet);
+}
+
+void WorldSocket::SendUpdatePositionToSet(uint8 p_Type, uint16 p_ID, uint32 p_PosX, uint32 p_PosY, uint8 p_Orientation)
+{
+    WorldPacket l_Packet;
+    uint8 l_ID = SMSG::S_UnitUpdatePosition;
+
+    l_Packet << l_ID << p_Type << p_ID << p_PosX << p_PosY << p_Orientation;
+    SendToSet(l_Packet);
 }
 
 void WorldSocket::SendPlayerCreate(uint32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_Health, uint8 p_Alignment, uint8 p_SkinID, uint16 p_MapID, uint32 p_PosX, uint32 p_PosY, uint8 p_Orientation)

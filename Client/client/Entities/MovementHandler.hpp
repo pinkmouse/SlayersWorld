@@ -36,6 +36,7 @@ public:
     void Update(sf::Time);
     void UpdateAnimationWalk(sf::Time);
     void UpdateAnimationAttack(sf::Time);
+    void Clear();
 
     void AddMovementToStack(eActionType, Position, Orientation);
     void AddMovementToStack(eActionType);

@@ -30,15 +30,17 @@ public:
     void SetName(const std::string &);
     void SetLevel(const uint8 &);
     void SetPosX(const uint32 &);
-    void SetPoxY(const uint32 &);
+    void SetPosY(const uint32 &);
     void SetSkinID(const uint8 &);
     void SetHealth(const uint8 &);
     void SetOrientation(const Orientation &);
     void SetMap(Map*);
     void SetSquareID(uint16);
+    void SetRespawnPosition(const WorldPosition &);
     bool IsInFront(const Position &) const;
     bool IsInFront(Unit const*) const;
     void DealDamage(Unit*);
+    void Respawn();
     TypeUnit GetType() const;
     bool IsInMovement() const;
 
@@ -63,7 +65,6 @@ protected:
     uint16 m_SquareID;
     uint16 m_ID;
 
-    WorldPosition m_Respawn;
-
+    WorldPosition m_RespawnPosition;
     uint64 m_ResTimer;
 };

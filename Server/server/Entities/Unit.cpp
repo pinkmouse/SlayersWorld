@@ -196,7 +196,7 @@ void Unit::SetPosX(const uint32 & p_PosX)
     m_MovementHandler->SetPosX(p_PosX);
 }
 
-void Unit::SetPoxY(const uint32 & p_PosY)
+void Unit::SetPosY(const uint32 & p_PosY)
 {
     WorldObject::SetPosY(p_PosY);
     m_MovementHandler->SetPosY(p_PosY);
@@ -233,4 +233,16 @@ uint16 Unit::GetSquareID() const
 void Unit::SetSquareID(uint16 p_SquareID)
 {
     m_SquareID = p_SquareID;
+}
+
+void Unit::SetRespawnPosition(const WorldPosition & p_RespawnPosition)
+{
+    m_RespawnPosition = p_RespawnPosition;
+}
+
+void Unit::Respawn()
+{
+    SetPosX(m_RespawnPosition.GetPosX());
+    SetPosY(m_RespawnPosition.GetPosY());
+    SetOrientation(m_RespawnPosition.GetOrientation());
 }

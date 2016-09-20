@@ -19,6 +19,7 @@ public:
     void SetHealth(const uint8 &);
     void HasBeenInitialize();
 
+    void Respawn();
 private:
     WorldSocket* m_Session;
 

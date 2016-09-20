@@ -5,6 +5,7 @@
 #include <string>
 #include "../Define.hpp"
 #include "../Entities/Player.hpp"
+#include "../System/WorldPosition.hpp"
 
 class SqlManager
 {
@@ -15,6 +16,7 @@ public:
 
     int32 GetIDLogin(std::string, std::string);
     Player* GetNewPlayer(uint32);
+    WorldPosition GetRespawnPositionForPlayer(uint32);
     void SavePlayer(Player const*);
 
 private:

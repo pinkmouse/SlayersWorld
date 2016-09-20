@@ -4,6 +4,7 @@
 class WorldPosition
 {
 public:
+    WorldPosition(uint32, uint32, uint16, Orientation);
     WorldPosition();
     ~WorldPosition();
 
