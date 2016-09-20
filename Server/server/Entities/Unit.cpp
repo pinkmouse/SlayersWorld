@@ -12,7 +12,6 @@ Unit::Unit(uint16 p_ID)
     m_SizeX = 24;
     m_SizeY = 32;
     m_MovementHandler = new MovementHandler(m_SizeX, m_SizeY);
-    m_DiffUpdatePosTime = 0;
     m_Health = 100;
 }
 
@@ -55,7 +54,7 @@ void Unit::Update(sf::Time p_Diff)
 
     if (m_MovementHandler->IsDamageReady())
     {
-        Unit* l_Unit = m_Map->GetCloserUnit(this, this->GetSizeX());
+        Unit* l_Unit = m_Map->GetCloserUnit(this, this->GetSizeX(), true);
 
         if (l_Unit != nullptr)
             DealDamage(l_Unit);
@@ -217,6 +216,13 @@ void Unit::SetMap(Map* p_Map)
 void Unit::SetHealth(const uint8 & p_Health)
 {
     m_Health = p_Health;
+}
+
+bool Unit::IsDeath() const
+{
+    if (m_Health)
+        return false;
+    return true;
 }
 
 uint16 Unit::GetSquareID() const

@@ -25,6 +25,7 @@ public:
     uint16 GetSquareID() const;
     uint16 GetID() const;
     uint8 GetHealth() const;
+    bool IsDeath() const;
 
     void SetName(const std::string &);
     void SetLevel(const uint8 &);
@@ -61,7 +62,8 @@ protected:
     Map* m_Map;
     uint16 m_SquareID;
     uint16 m_ID;
-    uint64 m_DiffUpdatePosTime;
 
     WorldPosition m_Respawn;
+
+    uint64 m_ResTimer;
 };

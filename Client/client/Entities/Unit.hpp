@@ -28,6 +28,7 @@ public:
     TypeUnit GetType() const;
     uint8 GetOpacity() const;
     uint8 GetHealth() const;
+    bool IsDeath() const;
 
     void SetName(const std::string &);
     void SetLevel(const uint8 &);

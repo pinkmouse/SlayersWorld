@@ -53,17 +53,17 @@ void WorldSocket::SendPlayerCreate(uint32 p_ID, std::string p_Name, uint8 p_Leve
     printf("Send create\n");
 }
 
-void WorldSocket::SendUnitCreateToSet(uint8 p_Type, uint32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_SkinID, uint16 p_MapID, uint32 p_PosX, uint32 p_PosY, uint8 p_Orientation, bool p_InMovement)
+void WorldSocket::SendUnitCreateToSet(uint8 p_Type, uint32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_Health, uint8 p_SkinID, uint16 p_MapID, uint32 p_PosX, uint32 p_PosY, uint8 p_Orientation, bool p_InMovement)
 {
     WorldPacket l_Packet;
     uint8 l_ID = SMSG::S_UnitCreate;
 
-    l_Packet << l_ID << p_Type << p_ID << p_Name << p_Level << p_SkinID << p_MapID << p_PosX << p_PosY << p_Orientation << p_InMovement;
+    l_Packet << l_ID << p_Type << p_ID << p_Name << p_Level << p_Health << p_SkinID << p_MapID << p_PosX << p_PosY << p_Orientation << p_InMovement;
     SendToSet(l_Packet, true);
     printf("Send create to square\n");
 }
 
-void WorldSocket::SendUnitCreate(uint8 p_Type, uint32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_SkinID, uint16 p_MapID, uint32 p_PosX, uint32 p_PosY, uint8 p_Orientation, bool p_InMovement)
+void WorldSocket::SendUnitCreate(uint8 p_Type, uint32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_Health, uint8 p_SkinID, uint16 p_MapID, uint32 p_PosX, uint32 p_PosY, uint8 p_Orientation, bool p_InMovement)
 {
     WorldPacket l_Packet;
     uint8 l_ID = SMSG::S_UnitCreate;
@@ -71,7 +71,7 @@ void WorldSocket::SendUnitCreate(uint8 p_Type, uint32 p_ID, std::string p_Name, 
     if (p_Type == TypeUnit::PLAYER && p_ID == GetPlayer()->GetID())
         return;
 
-    l_Packet << l_ID << p_Type << p_ID << p_Name << p_Level << p_SkinID << p_MapID << p_PosX << p_PosY << p_Orientation << p_InMovement;
+    l_Packet << l_ID << p_Type << p_ID << p_Name << p_Level << p_Health << p_SkinID << p_MapID << p_PosX << p_PosY << p_Orientation << p_InMovement;
     send(l_Packet);
     printf("Send create to unit\n");
 }
@@ -122,13 +122,13 @@ void WorldSocket::SendUnitStopAttack(uint8 p_TypeID, uint16 p_ID)
     SendToSet(l_Packet, true);
 }
 
-void WorldSocket::SendUpdateHealth(uint8 p_NewHealth)
+void WorldSocket::SendUpdateUnitHealth(uint8 p_TypeID, uint16 p_ID, uint8 p_NewHealth)
 {
     WorldPacket l_Packet;
     uint8 l_ID = SMSG::S_PlayerUpdateLife;
 
-    l_Packet << l_ID << p_NewHealth;
-    send(l_Packet);
+    l_Packet << l_ID << p_TypeID << p_ID << p_NewHealth;
+    SendToSet(l_Packet);
 }
 
 Player* WorldSocket::GetPlayer()
