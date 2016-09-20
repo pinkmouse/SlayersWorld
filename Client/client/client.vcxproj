@@ -160,9 +160,11 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Entities\WorldObject.hpp" />
     <ClInclude Include="Global.hpp" />
     <ClInclude Include="Graphics\Interface\InterfaceManager.hpp" />
     <ClInclude Include="Graphics\Skin.hpp" />
+    <ClInclude Include="System\WorldPosition.hpp" />
     <ClInclude Include="World\ClockHandler.hpp" />
     <ClInclude Include="Entities\Player.hpp" />
     <ClInclude Include="Entities\Unit.hpp" />
@@ -188,9 +190,11 @@
     <ClInclude Include="Graphics\Interface\WritingField.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Entities\WorldObject.cpp" />
     <ClCompile Include="Graphics\Interface\InterfaceManager.cpp" />
     <ClCompile Include="Map\Map.cpp" />
     <ClCompile Include="Graphics\Skin.cpp" />
+    <ClCompile Include="System\WorldPosition.cpp" />
     <ClCompile Include="World\ClockHandler.cpp" />
     <ClCompile Include="Entities\Player.cpp" />
     <ClCompile Include="Entities\Unit.cpp" />
