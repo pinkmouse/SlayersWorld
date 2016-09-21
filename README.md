@@ -12,6 +12,7 @@
 Port = 1234
 LoginDebug = 0
 charactersDB = 127.0.0.1;root;root;characters;3306;
+worldDB = 127.0.0.1;root;root;world;3306;
 ```
 
   - Add map folder side to server.exe
@@ -34,11 +35,4 @@ charactersDB = 127.0.0.1;root;root;characters;3306;
 start "" "D:\Projects\Build\Client\client.exe" test@test.fr test
 ```
 
-### Issues
-
-  1) Compilation
-    ```fopen deprecated warning```
-      -Configuration Properties -> C/C++ -> Preprocessor
-      -In the field PreprocessorDefinitions add ;_CRT_SECURE_NO_WARNINGS to turn those warnings off.
-    
 **We roxx Yeah!**
