@@ -10,8 +10,6 @@ MovementHandler::MovementHandler(uint8 p_SizeX, uint8 p_SizeY) :
     m_Orientation = Orientation::Down;
     m_DiffTime = 0;
     m_Map = nullptr;
-    m_Pos.x = 0;
-    m_Pos.y = 0;
     m_AttackDamage.m_DamageDone = false;
     m_AttackDamage.m_DamageReady = false;
 }
@@ -64,19 +62,19 @@ bool MovementHandler::CheckNextMovement(uint32 p_PosX, uint32 p_PosY)
         switch (GetOrientation())
         {
         case Orientation::Down:
-            if (l_MovementAction.m_Pos.y <= p_PosY)
+            if (l_MovementAction.m_Pos.m_Y <= p_PosY)
                 l_NextMovement = true;
             break;
         case Orientation::Left:
-            if (l_MovementAction.m_Pos.x >= p_PosX)
+            if (l_MovementAction.m_Pos.m_X >= p_PosX)
                 l_NextMovement = true;
             break;
         case Orientation::Right:
-            if (l_MovementAction.m_Pos.x <= p_PosX)
+            if (l_MovementAction.m_Pos.m_X <= p_PosX)
                 l_NextMovement = true;
             break;
         case Orientation::Up:
-            if (l_MovementAction.m_Pos.y >= p_PosY)
+            if (l_MovementAction.m_Pos.m_Y >= p_PosY)
                 l_NextMovement = true;
             break;
         default:
@@ -89,8 +87,8 @@ bool MovementHandler::CheckNextMovement(uint32 p_PosX, uint32 p_PosY)
 
         if (l_MovementAction.m_PositionOptions)
         {
-            m_Pos.x = l_MovementAction.m_Pos.x;
-            m_Pos.y = l_MovementAction.m_Pos.y;
+            m_Pos.m_X = l_MovementAction.m_Pos.m_X;
+            m_Pos.m_Y = l_MovementAction.m_Pos.m_Y;
         }
 
         m_MovementStack.pop();
@@ -145,13 +143,13 @@ void MovementHandler::UpdateAttack(sf::Time p_Diff)
 
 void MovementHandler::Update(sf::Time p_Diff)
 {
-    CheckNextMovement(m_Pos.x, m_Pos.y);
+    CheckNextMovement(m_Pos.m_X, m_Pos.m_Y);
     UpdateAttack(p_Diff);
     if (!IsInMovement())
         return;
 
-    int64 l_PosX = m_Pos.x;
-    int64 l_PosY = m_Pos.y;
+    int64 l_PosX = m_Pos.m_X;
+    int64 l_PosY = m_Pos.m_Y;
 
     m_DiffTime += p_Diff.asMicroseconds();
 
@@ -179,8 +177,8 @@ void MovementHandler::Update(sf::Time p_Diff)
 
         if (!IsInColision(l_PosX, l_PosY))
         {
-            m_Pos.x = (uint32)l_PosX;
-            m_Pos.y = (uint32)l_PosY;
+            m_Pos.m_X = (uint32)l_PosX;
+            m_Pos.m_Y = (uint32)l_PosY;
         }
         else
             StopMovement();
@@ -242,22 +240,22 @@ Orientation MovementHandler::GetOrientation() const
 
 void MovementHandler::SetPosX(uint32 p_PosX)
 {
-    m_Pos.x = p_PosX;
+    m_Pos.m_X = p_PosX;
 }
 
 void MovementHandler::SetPosY(uint32 p_PosY)
 {
-    m_Pos.y = p_PosY;
+    m_Pos.m_Y = p_PosY;
 }
 
 uint32 MovementHandler::GetPosX() const
 {
-    return m_Pos.x;
+    return m_Pos.m_X;
 }
 
 uint32 MovementHandler::GetPosY() const
 {
-    return m_Pos.y;
+    return m_Pos.m_Y;
 }
 
 Position MovementHandler::GetPos() const

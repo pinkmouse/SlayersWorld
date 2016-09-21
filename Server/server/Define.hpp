@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 
 #define MAP_PATH "map/"
 #define CONF_FILE "server.conf"
@@ -10,6 +11,7 @@
 #define IN_MICROSECOND 1000 * IN_MILLISECOND
 
 #define PLAYER_TIME_RESPAWN 9
+#define MAX_HEALTH 100
 
 #define UPDATE_TIME_MOVEMENT 250
 #define STEP_SIZE 8 /// In pixel
@@ -40,16 +42,44 @@ enum TypeUnit
     PLAYER = 1
 };
 
-struct Position 
-{
-    uint32 x;
-    uint32 y;
-};
-
 enum eActionType
 {
     Go = 0,
     Attack = 1,
     Stop = 2,
     StopAttack = 3
+};
+
+struct Position 
+{
+    uint32 m_X;
+    uint32 m_Y;
+
+    Position() :
+    m_X(0), m_Y(0) {}
+
+    Position(uint32 p_X, uint32 p_Y) :
+    m_X(p_X), m_Y(p_Y) {}
+
+    Position(const Position & p_Position) :
+    m_X(p_Position.m_X), m_Y(p_Position.m_Y) {}
+};
+
+struct CreatureTemplate
+{
+    uint32 m_Entry;
+    uint8 m_SkinID;
+    std::string m_Name;
+    uint8 m_Level;
+    uint8 m_Force;
+    uint8 m_Stamina;
+    uint8 m_Dexterity;
+    uint8 m_Xp;
+    uint8 m_State;
+
+    CreatureTemplate() :
+    m_Entry(0), m_SkinID(0), m_Name(""), m_Level(0), m_Force(0), m_Stamina(0), m_Dexterity(0), m_Xp(0), m_State(0) {}
+
+    CreatureTemplate(uint32 p_Entry, uint8 p_SkinID, std::string p_Name, uint8 p_Level, uint8 p_Force, uint8 p_Stamina, uint8 p_Dexterity, uint8 p_Xp, uint8 p_State) :
+    m_Entry(p_Entry), m_SkinID(p_SkinID), m_Name(p_Name), m_Level(p_Level), m_Force(p_Force), m_Stamina(p_Stamina), m_Dexterity(p_Dexterity), m_Xp(p_Xp), m_State(p_State) {}
 };

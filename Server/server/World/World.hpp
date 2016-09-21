@@ -10,6 +10,7 @@
 #include "SqlManager.hpp"
 #include "ClockHandler.hpp"
 #include "../Map/MapManager.hpp"
+#include "CreatureManager.hpp"
 
 class World
 {
@@ -31,6 +32,9 @@ private:
     /// PACKET
     std::vector<std::pair<WorldSocket*, WorldPacket>> m_PaquetQueue;
     PacketHandler* m_PacketHandler;
+
+    /// CREATURE MANAGER
+    CreatureManager* m_CreatureManager;
 
 	/// NETWORK
 	void NetworkLoop();

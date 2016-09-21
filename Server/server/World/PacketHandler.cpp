@@ -46,14 +46,11 @@ void PacketHandler::HandleUnitUnknow(WorldPacket &p_Packet, WorldSocket* p_World
 void PacketHandler::HandleGoDirection(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
 {
     uint8 l_Orientation = 0;
-    Position l_Pos;
-
-    l_Pos.x = 0;
-    l_Pos.y = 0;
+    Position l_Pos(0, 0);
 
     p_Packet >> l_Orientation;
-    p_Packet >> l_Pos.x;
-    p_Packet >> l_Pos.y;
+    p_Packet >> l_Pos.m_X;
+    p_Packet >> l_Pos.m_Y;
 
     Player* l_Player = p_WorldSocket->GetPlayer();
 
@@ -61,19 +58,15 @@ void PacketHandler::HandleGoDirection(WorldPacket &p_Packet, WorldSocket* p_Worl
         return;
 
     l_Player->GetMovementHandler()->AddMovementToStack(eActionType::Go, l_Pos, (Orientation)l_Orientation);
-    p_WorldSocket->SendUnitGoDirectionToSet((uint8)TypeUnit::PLAYER, l_Player->GetID(), l_Pos.x, l_Pos.y, l_Orientation);
+    p_WorldSocket->SendUnitGoDirectionToSet((uint8)TypeUnit::PLAYER, l_Player->GetID(), l_Pos, l_Orientation);
 }
 
 void PacketHandler::HandleStopMovement(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
 {
-    Position l_Pos;
+    Position l_Pos(0, 0);
 
-    l_Pos.x = 0;
-    l_Pos.y = 0;
-
-
-    p_Packet >> l_Pos.x;
-    p_Packet >> l_Pos.y;
+    p_Packet >> l_Pos.m_X;
+    p_Packet >> l_Pos.m_Y;
 
     Player* l_Player = p_WorldSocket->GetPlayer();
 
@@ -81,7 +74,7 @@ void PacketHandler::HandleStopMovement(WorldPacket &p_Packet, WorldSocket* p_Wor
         return;
 
     l_Player->GetMovementHandler()->AddMovementToStack(eActionType::Stop, l_Pos, (Orientation)l_Player->GetOrientation());
-    l_Player->GetSession()->SendUnitStopMovement((uint8)TypeUnit::PLAYER, l_Player->GetID(), l_Pos.x, l_Pos.y, l_Player->GetOrientation());
+    l_Player->GetSession()->SendUnitStopMovement((uint8)TypeUnit::PLAYER, l_Player->GetID(), l_Pos, l_Player->GetOrientation());
 }
 
 void PacketHandler::HandleTalk(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
@@ -99,14 +92,10 @@ void PacketHandler::HandleTalk(WorldPacket &p_Packet, WorldSocket* p_WorldSocket
 
 void PacketHandler::HandleStartAttack(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
 {
-    Position l_Pos;
+    Position l_Pos(0, 0);
 
-    l_Pos.x = 0;
-    l_Pos.y = 0;
-
-
-    p_Packet >> l_Pos.x;
-    p_Packet >> l_Pos.y;
+    p_Packet >> l_Pos.m_X;
+    p_Packet >> l_Pos.m_Y;
 
     Player* l_Player = p_WorldSocket->GetPlayer();
 
@@ -114,15 +103,12 @@ void PacketHandler::HandleStartAttack(WorldPacket &p_Packet, WorldSocket* p_Worl
         return;
 
     l_Player->GetMovementHandler()->AddMovementToStack(eActionType::Attack, l_Pos, (Orientation)l_Player->GetOrientation());
-    l_Player->GetSession()->SendUnitStartAttack((uint8)TypeUnit::PLAYER, l_Player->GetID(), l_Pos.x, l_Pos.y, l_Player->GetOrientation());
+    l_Player->GetSession()->SendUnitStartAttack((uint8)TypeUnit::PLAYER, l_Player->GetID(), l_Pos, l_Player->GetOrientation());
 }
 
 void PacketHandler::HandleStopAttack(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
 {
     Player* l_Player = p_WorldSocket->GetPlayer();
-    Position l_Pos;
-    l_Pos.x = 0;
-    l_Pos.y = 0;
 
     if (l_Player == nullptr)
         return;

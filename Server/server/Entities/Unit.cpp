@@ -68,19 +68,19 @@ bool Unit::IsInFront(const Position & p_Position) const
     switch (GetOrientation())
     {
         case Orientation::Down:
-            if (p_Position.y >= GetPosY())
+            if (p_Position.m_Y >= GetPosY())
                 return true;
             break;
         case Orientation::Left:
-            if (p_Position.x <= GetPosX())
+            if (p_Position.m_X <= GetPosX())
                 return true;
             break;
         case Orientation::Right:
-            if (p_Position.x >= GetPosX())
+            if (p_Position.m_X >= GetPosX())
                 return true;
             break;
         case Orientation::Up:
-            if (p_Position.y <= GetPosY())
+            if (p_Position.m_Y <= GetPosY())
                 return true;
             break;
         default:

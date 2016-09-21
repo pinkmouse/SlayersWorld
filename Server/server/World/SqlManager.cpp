@@ -4,32 +4,41 @@
 
 SqlManager::SqlManager()
 {
-	mysql_init(&m_Mysql);
+	mysql_init(&m_MysqlCharacters);
+    mysql_init(&m_MysqlWorld);
 }
 
 
 SqlManager::~SqlManager()
 {
-    mysql_close(&m_Mysql);
+    mysql_close(&m_MysqlCharacters);
+    mysql_close(&m_MysqlWorld);
 }
 
-bool SqlManager::Initialize(std::string p_Host, std::string p_User, std::string p_PassWord, std::string p_DB, std::string p_Port)
+bool SqlManager::InitializeCharacters(std::string p_Host, std::string p_User, std::string p_PassWord, std::string p_DB, std::string p_Port)
 {
-	if (!mysql_real_connect(&m_Mysql, p_Host.c_str(), p_User.c_str(), p_PassWord.c_str(), p_DB.c_str(), std::stoi(p_Port), NULL, 0))
+	if (!mysql_real_connect(&m_MysqlCharacters, p_Host.c_str(), p_User.c_str(), p_PassWord.c_str(), p_DB.c_str(), std::stoi(p_Port), NULL, 0))
 		return false;
 	return true;
+}
+
+bool SqlManager::InitializeWorld(std::string p_Host, std::string p_User, std::string p_PassWord, std::string p_DB, std::string p_Port)
+{
+    if (!mysql_real_connect(&m_MysqlWorld, p_Host.c_str(), p_User.c_str(), p_PassWord.c_str(), p_DB.c_str(), std::stoi(p_Port), NULL, 0))
+        return false;
+    return true;
 }
 
 int32 SqlManager::GetIDLogin(std::string p_Login, std::string p_Password)
 {
     std::string l_Query = "SELECT id FROM login WHERE login = '" + p_Login + "' AND password = MD5('" + p_Password + "')";
-    mysql_query(&m_Mysql, l_Query.c_str());
+    mysql_query(&m_MysqlCharacters, l_Query.c_str());
 
     int32 l_ID = 0;
     MYSQL_RES *l_Result = NULL;
     MYSQL_ROW l_Row;
 
-    l_Result = mysql_use_result(&m_Mysql);
+    l_Result = mysql_use_result(&m_MysqlCharacters);
     while ((l_Row = mysql_fetch_row(l_Result)))
         l_ID = atoi(l_Row[0]);
 
@@ -40,7 +49,7 @@ int32 SqlManager::GetIDLogin(std::string p_Login, std::string p_Password)
 Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
 {
     std::string l_Query = "SELECT characterID, name, level, health, alignment, skinID, mapID, posX, posY, orientation FROM characters WHERE accountID = '" + std::to_string(p_AccountID) + "'";
-    mysql_query(&m_Mysql, l_Query.c_str());
+    mysql_query(&m_MysqlCharacters, l_Query.c_str());
 
     uint32 l_ID = 0;
     std::string l_Name = "";
@@ -56,7 +65,7 @@ Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
     MYSQL_RES *l_Result = NULL;
     MYSQL_ROW l_Row;
 
-    l_Result = mysql_use_result(&m_Mysql);
+    l_Result = mysql_use_result(&m_MysqlCharacters);
     while ((l_Row = mysql_fetch_row(l_Result)))
     {
         l_ID = atoi(l_Row[0]);
@@ -81,7 +90,7 @@ Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
 WorldPosition SqlManager::GetRespawnPositionForPlayer(uint32 p_PlayerID)
 {
     std::string l_Query = "SELECT posX, posY, mapID, orientation FROM characters_respawn WHERE characterID = '" + std::to_string(p_PlayerID) + "'";
-    mysql_query(&m_Mysql, l_Query.c_str());
+    mysql_query(&m_MysqlCharacters, l_Query.c_str());
  
     uint32 l_PosX = 0;
     uint32 l_PosY = 0;
@@ -90,7 +99,7 @@ WorldPosition SqlManager::GetRespawnPositionForPlayer(uint32 p_PlayerID)
 
     MYSQL_RES *l_Result = NULL;
     MYSQL_ROW l_Row;
-    l_Result = mysql_use_result(&m_Mysql);
+    l_Result = mysql_use_result(&m_MysqlCharacters);
     while ((l_Row = mysql_fetch_row(l_Result)))
     {
         l_PosX = atoi(l_Row[0]);
@@ -98,6 +107,7 @@ WorldPosition SqlManager::GetRespawnPositionForPlayer(uint32 p_PlayerID)
         l_MapID = atoi(l_Row[2]);
         l_Orientation = atoi(l_Row[3]);
     }
+    mysql_free_result(l_Result);
 
     WorldPosition l_Position(l_PosX, l_PosY, l_MapID, (Orientation)l_Orientation);
     return l_Position;
@@ -106,5 +116,41 @@ WorldPosition SqlManager::GetRespawnPositionForPlayer(uint32 p_PlayerID)
 void SqlManager::SavePlayer(Player const* p_Player)
 {
     std::string l_Query = "UPDATE characters SET posX = '" + std::to_string(p_Player->GetPosX())  + "', posY = '" + std::to_string(p_Player->GetPosY()) + "', mapID = '" + std::to_string(p_Player->GetMapID()) + "', orientation = '" + std::to_string(p_Player->GetOrientation()) + "', health = '" + std::to_string(p_Player->GetHealth()) + "', alignment = '" + std::to_string(p_Player->GetAlignment()) + "' WHERE characterID = '" + std::to_string(p_Player->GetID()) + "'";
-    mysql_query(&m_Mysql, l_Query.c_str());
+    mysql_query(&m_MysqlCharacters, l_Query.c_str());
+}
+
+bool SqlManager::InitializeCreatureTemplate(CreatureManager* p_CreatureManager)
+{
+    std::string l_Query = "SELECT `entry`, `skinID`, `name`, `level`, `force`, `stamina`, `dexterity`, `xp`, `state` FROM creature_template";
+    mysql_query(&m_MysqlWorld, l_Query.c_str());
+
+    uint32 l_Entry = 0;
+    uint8 l_SkinID = 0;
+    std::string l_Name = "";
+    uint8 l_Lvl = 0;
+    uint8 l_Force = 0;
+    uint8 l_Stamina = 0;
+    uint8 l_Dexterity = 0;
+    uint8 l_Xp = 0;
+    uint8 l_State = 0;
+
+    MYSQL_RES *l_Result = NULL;
+    MYSQL_ROW l_Row;
+    l_Result = mysql_use_result(&m_MysqlWorld);
+    while ((l_Row = mysql_fetch_row(l_Result)))
+    {
+        l_Entry = atoi(l_Row[0]);
+        l_SkinID = atoi(l_Row[1]);
+        l_Name = std::string(l_Row[2]);
+        l_Lvl = atoi(l_Row[3]);
+        l_Force = atoi(l_Row[4]);
+        l_Stamina = atoi(l_Row[5]);
+        l_Dexterity = atoi(l_Row[6]);
+        l_Xp = atoi(l_Row[7]);
+        l_State = atoi(l_Row[8]);
+        p_CreatureManager->AddCreatureTemplate(CreatureTemplate(l_Entry, l_SkinID, l_Name, l_Lvl, l_Force, l_Stamina, l_Dexterity, l_Xp, l_State));
+    }
+    mysql_free_result(l_Result);
+
+    return true;
 }

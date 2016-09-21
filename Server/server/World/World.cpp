@@ -5,9 +5,10 @@
 World::World()
     : m_Thread(&World::NetworkLoop, this),
     m_Run(true),
-    m_SqlManager(new SqlManager),
-	m_MapManager(new MapManager),
-    m_PacketHandler(new PacketHandler(m_SqlManager, m_MapManager))
+    m_SqlManager(new SqlManager()),
+	m_MapManager(new MapManager()),
+    m_PacketHandler(new PacketHandler(m_SqlManager, m_MapManager)),
+    m_CreatureManager(new CreatureManager())
 {
 	g_Config = new ConfigHandler();
 }
@@ -32,9 +33,17 @@ bool World::Initialize()
 		return false;
 	}
 	printf("Connection SQL...\n");
-	std::vector<std::string> l_ConfigSQL = g_Config->GetValueList(g_Config->GetValue("charactersDB"));
-	if (!m_SqlManager->Initialize(l_ConfigSQL[0], l_ConfigSQL[1], l_ConfigSQL[2], l_ConfigSQL[3], l_ConfigSQL[4]))
-		printf("Error connection SQL...\n");
+	std::vector<std::string> l_ConfigSQLCharacters = g_Config->GetValueList(g_Config->GetValue("charactersDB"));
+	if (!m_SqlManager->InitializeCharacters(l_ConfigSQLCharacters[0], l_ConfigSQLCharacters[1], l_ConfigSQLCharacters[2], l_ConfigSQLCharacters[3], l_ConfigSQLCharacters[4]))
+		printf("Error connection character SQL...\n");
+
+    std::vector<std::string> l_ConfigSQLWorld = g_Config->GetValueList(g_Config->GetValue("worldDB"));
+    if (!m_SqlManager->InitializeWorld(l_ConfigSQLWorld[0], l_ConfigSQLWorld[1], l_ConfigSQLWorld[2], l_ConfigSQLWorld[3], l_ConfigSQLWorld[4]))
+        printf("Error connection world SQL...\n");
+
+    printf("Initialize CreatureTemplate\n");
+    if (!m_SqlManager->InitializeCreatureTemplate(m_CreatureManager))
+        printf("Error Initialize CreatureTemplate...\n");
 
 	printf("Launch Network...\n");
 	if (!this->NetworkInitialize())

@@ -85,12 +85,12 @@ void WorldSocket::SendUnitCreate(uint8 p_Type, uint32 p_ID, std::string p_Name, 
     printf("Send create to unit\n");
 }
 
-void WorldSocket::SendUnitGoDirectionToSet(uint8 p_Type, uint16 p_UnitID, uint32 p_PosX, uint32 p_PosY, uint8 p_Direction)
+void WorldSocket::SendUnitGoDirectionToSet(uint8 p_Type, uint16 p_UnitID, const Position & p_Pos, uint8 p_Direction)
 {
     WorldPacket l_Packet;
     uint8 l_ID = SMSG::S_UnitGoDirection;
 
-    l_Packet << l_ID << p_Type << p_UnitID << p_PosX << p_PosY << p_Direction;
+    l_Packet << l_ID << p_Type << p_UnitID << p_Pos.m_X << p_Pos.m_Y << p_Direction;
     SendToSet(l_Packet, true);
 }
 
@@ -103,21 +103,21 @@ void WorldSocket::SendUnitTalk(uint8 p_Type, uint16 p_UnitID, const std::string 
     SendToSet(l_Packet);
 }
 
-void WorldSocket::SendUnitStopMovement(uint8 p_TypeID, uint16 p_ID, uint32 p_PosX, uint32 p_PosY, uint8 p_Orientation)
+void WorldSocket::SendUnitStopMovement(uint8 p_TypeID, uint16 p_ID, const Position & p_Pos, uint8 p_Orientation)
 {
     WorldPacket l_Packet;
     uint8 l_ID = SMSG::S_UnitStopMovement;
 
-    l_Packet << l_ID << p_TypeID << p_ID << p_PosX << p_PosY << p_Orientation;
+    l_Packet << l_ID << p_TypeID << p_ID << p_Pos.m_X << p_Pos.m_Y << p_Orientation;
     SendToSet(l_Packet, true);
 }
 
-void WorldSocket::SendUnitStartAttack(uint8 p_TypeID, uint16 p_ID, uint32 p_PosX, uint32 p_PosY, uint8 p_Orientation)
+void WorldSocket::SendUnitStartAttack(uint8 p_TypeID, uint16 p_ID, const Position & p_Pos, uint8 p_Orientation)
 {
     WorldPacket l_Packet;
     uint8 l_ID = SMSG::S_UnitStartAttack;
 
-    l_Packet << l_ID << p_TypeID << p_ID << p_PosX << p_PosY << p_Orientation;
+    l_Packet << l_ID << p_TypeID << p_ID << p_Pos.m_X << p_Pos.m_Y << p_Orientation;
     SendToSet(l_Packet, true);
     printf("Send Attack\n");
 }
