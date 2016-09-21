@@ -4,6 +4,7 @@
 ### Server
 
   - Make a characters DB and execute the sql file
+  - Make a world DB and execute the sql file
   - Insert new account in login
   - Write `server.conf` and place it side to server.exe
 
