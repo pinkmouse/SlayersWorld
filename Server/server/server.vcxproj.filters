@@ -36,9 +36,6 @@
     <ClInclude Include="World\WorldSocket.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="World\WorldPacket.hpp">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="Define.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
@@ -99,9 +96,6 @@
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="World\WorldSocket.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="World\WorldPacket.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="Map\Map.cpp">

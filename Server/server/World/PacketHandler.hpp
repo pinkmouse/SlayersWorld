@@ -2,11 +2,11 @@
 
 #include <map>
 #include "../Define.hpp"
-#include "WorldPacket.hpp"
 #include "WorldSocket.hpp"
 #include "SqlManager.hpp"
 #include "../Global.hpp"
 #include "../Map/MapManager.hpp"
+#include <Nazara/Network/NetPacket.hpp>
 
 class PacketHandler
 {
@@ -15,20 +15,20 @@ public:
     ~PacketHandler();
     void LoadPacketHandlerMap();
 
-    void OperatePacket(WorldPacket &, WorldSocket*);
-    void HandleConnexion(WorldPacket &, WorldSocket*);
-    void HandleGoDirection(WorldPacket &, WorldSocket*);
-    void HandleUnitUnknow(WorldPacket &, WorldSocket*);
-    void HandleStopMovement(WorldPacket &, WorldSocket*);
-    void HandleTalk(WorldPacket &, WorldSocket*);
-    void HandleStartAttack(WorldPacket &, WorldSocket*);
-    void HandleStopAttack(WorldPacket &, WorldSocket*);
+    void OperatePacket(Nz::NetPacket&, WorldSocket*);
+    void HandleConnexion(Nz::NetPacket&, WorldSocket*);
+    void HandleGoDirection(Nz::NetPacket&, WorldSocket*);
+    void HandleUnitUnknow(Nz::NetPacket&, WorldSocket*);
+    void HandleStopMovement(Nz::NetPacket&, WorldSocket*);
+    void HandleTalk(Nz::NetPacket&, WorldSocket*);
+    void HandleStartAttack(Nz::NetPacket&, WorldSocket*);
+    void HandleStopAttack(Nz::NetPacket&, WorldSocket*);
     void HandleDisconnected(WorldSocket*);
 
 private:
-    using m_Func = void(PacketHandler::*)(WorldPacket &, WorldSocket*);
+    using m_Func = void(PacketHandler::*)(Nz::NetPacket&, WorldSocket*);
 
-    std::map<uint8, m_Func> m_PacketHandleMap;
+    std::map<uint16, m_Func> m_PacketHandleMap;
     SqlManager* m_SqlManager;
     MapManager* m_MapManager;
 };

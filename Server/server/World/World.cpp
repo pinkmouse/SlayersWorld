@@ -1,9 +1,9 @@
 #include "../stdafx.h"
+#include <Nazara/Core/LockGuard.hpp>
 #include "World.hpp"
-#include "WorldPacket.hpp"
 
 World::World()
-    : m_Thread(&World::NetworkLoop, this),
+    :
     m_Run(true),
     m_SqlManager(new SqlManager()),
 	m_MapManager(new MapManager()),
@@ -66,7 +66,7 @@ void World::Run()
     else
         printf("WorldServer didn't start\n");
 
-	m_Thread.launch();
+	m_Thread = Nz::Thread(&World::NetworkLoop, this);
 
 	while (m_Run)
 	{
@@ -78,53 +78,41 @@ void World::Run()
 
 void World::UpdatePacketQueue()
 {
-    m_MutexPacketQueue.lock();
+	Nz::LockGuard lock(m_MutexPacketQueue);
 
-	for (std::vector<std::pair<WorldSocket*, WorldPacket>>::iterator l_It = m_PaquetQueue.begin(); l_It != m_PaquetQueue.end();)
+	for (auto l_It = m_PaquetQueue.begin(); l_It != m_PaquetQueue.end();)
 	{
-        m_PacketHandler->OperatePacket((*l_It).second, (*l_It).first);
+        m_PacketHandler->OperatePacket(l_It->second, l_It->first);
 		l_It = m_PaquetQueue.erase(l_It);
 	}
-    for (std::vector<WorldSocket*>::iterator l_It = m_DisconnectedQueue.begin(); l_It != m_DisconnectedQueue.end();)
+
+    for (WorldSocket* l_Socket : m_DisconnectedQueue)
     {
-        m_PacketHandler->HandleDisconnected(*l_It);
-        delete (*l_It);
-        l_It = m_DisconnectedQueue.erase(l_It);
+        m_PacketHandler->HandleDisconnected(l_Socket);
+        delete l_Socket;
     }
 
-    m_MutexPacketQueue.unlock();
+	m_DisconnectedQueue.clear();
 }
 
 bool World::NetworkInitialize()
 {
 	int l_Port = std::stoi(g_Config->GetValue("Port"));
 	printf("Port: %d -> ", l_Port);
-	sf::Socket::Status l_ErrorListen = m_Listener.listen(l_Port);
-	switch (l_ErrorListen)
+
+	Nz::SocketState l_ErrorListen = m_Listener.Listen(Nz::NetProtocol_IPv4, l_Port);
+	if (l_ErrorListen != Nz::SocketState_Bound)
 	{
-	case sf::Socket::Done:
-		printf("OK\n");
-		break;
-	case sf::Socket::NotReady:
-		printf("Not Ready\n");
+		printf("Failed to listen to port %u\n", l_Port);
 		return false;
-		break;
-	case sf::Socket::Partial:
-		printf("Partial\n");
-		return false;
-		break;
-	case sf::Socket::Disconnected:
-		printf("Disconnected\n");
-		return false;
-		break;
-	case sf::Socket::Error:
-		printf("Error\n");
-		return false;
-		break;
-	default:
-		break;
 	}
-	m_Selector.add(m_Listener);
+
+	if (!m_Selector.RegisterSocket(m_Listener))
+	{
+		printf("Failed to register listener socket\n");
+		return false;
+	}
+
 	return true;
 }
 
@@ -134,21 +122,21 @@ void World::NetworkLoop()
 
 	while (l_Continue)
 	{
-		if (m_Selector.wait())
+		if (m_Selector.Wait(0U)) //< Indefinite block
 		{
-			if (m_Selector.isReady(m_Listener))
+			if (m_Selector.IsReady(m_Listener))
 			{
 				WorldSocket* l_NewWorldSocket = new WorldSocket();
-				if (m_Listener.accept(*l_NewWorldSocket) == sf::Socket::Done)
+				if (m_Listener.AcceptClient(l_NewWorldSocket))
 				{
 					printf("New connection\n");
-					l_NewWorldSocket->setBlocking(false);
+					l_NewWorldSocket->EnableBlocking(false);
 
-                    m_MutexSessions.lock();
+                    m_MutexSessions.Lock();
 					m_Sessions.push_back(l_NewWorldSocket);
-                    m_MutexSessions.unlock();
+                    m_MutexSessions.Unlock();
 					
-                    m_Selector.add(*l_NewWorldSocket);
+                    m_Selector.RegisterSocket(*l_NewWorldSocket);
 				}
 				else
 				{
@@ -158,47 +146,44 @@ void World::NetworkLoop()
 			else
 			{
 				/// Check if receive data
-                m_MutexSessions.lock();
+				Nz::LockGuard sessionLock(m_MutexSessions);
 
-                bool l_IncIt = true;;
+                bool l_IncIt = true;
 				for (std::vector<WorldSocket*>::iterator l_It = m_Sessions.begin(); l_It != m_Sessions.end();)
 				{
 					WorldSocket* l_Session = (*l_It);
-					if (m_Selector.isReady(*l_Session))
+					if (m_Selector.IsReady(*l_Session))
 					{
-						WorldPacket l_Packet;
-						sf::Socket::Status l_SocketStatus;
-						l_SocketStatus = l_Session->receive(l_Packet);
-						if (l_SocketStatus == sf::Socket::Status::Done) ///< Reception OK
+						std::pair<WorldSocket*, Nz::NetPacket> l_PaquetElement;
+						l_PaquetElement.first = l_Session;
+
+						if (l_Session->ReceivePacket(&l_PaquetElement.second)) ///< Reception OK
 						{
-							std::pair<WorldSocket*, WorldPacket> l_PaquetElement;
+							Nz::LockGuard packetQueueLock(m_MutexPacketQueue);
 
-							l_PaquetElement.first = l_Session;
-							l_PaquetElement.second = l_Packet;
-
-                            m_MutexPacketQueue.lock();
-							m_PaquetQueue.push_back(l_PaquetElement);
-                            m_MutexPacketQueue.unlock();
+							m_PaquetQueue.emplace_back(std::move(l_PaquetElement));
 						}
-                        if (l_SocketStatus == sf::Socket::Status::Disconnected) ///< Disconnecetd
-                        {
-                            m_Selector.remove(*l_Session);
+						else
+						{
+							if (l_Session->GetState() == Nz::SocketState_NotConnected)
+							{
+								m_Selector.UnregisterSocket(*l_Session);
 
-                            m_MutexPacketQueue.lock();
-                            m_DisconnectedQueue.push_back(l_Session);
-                            m_MutexPacketQueue.unlock();
-                            l_It = m_Sessions.erase(l_It);
-                            l_IncIt = false;
-                            printf("Disco\n");
-                        }
+								Nz::LockGuard packetQueueLock(m_MutexPacketQueue);
+
+								m_DisconnectedQueue.push_back(l_Session);
+
+								l_It = m_Sessions.erase(l_It);
+								l_IncIt = false;
+								printf("Disco\n");
+							}
+						}
 					}
                     if (l_IncIt)
                         ++l_It;
                     else
                         l_IncIt = true;
 				}
-
-                m_MutexSessions.unlock();
 			}
 		}
 	}

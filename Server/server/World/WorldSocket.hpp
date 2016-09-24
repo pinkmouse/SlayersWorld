@@ -1,11 +1,11 @@
 #pragma once
 
-#include <SFML/Network/TcpSocket.hpp>
-#include "WorldPacket.hpp"
+#include <Nazara/Network/NetPacket.hpp>
+#include <Nazara/Network/TcpClient.hpp>
 #include "../Define.hpp"
 #include "../Entities/Player.hpp"
 
-class WorldSocket : public sf::TcpSocket
+class WorldSocket : public Nz::TcpClient
 {
 public:
 	WorldSocket();
@@ -23,8 +23,8 @@ public:
     void SendUpdateUnitHealth(uint8, uint16, uint8);
     void SendUnitTalk(uint8, uint16, const std::string &);
 	void SendAuthResponse(uint8);
-    void SendMsg(WorldPacket);
-    void SendToSet(WorldPacket, bool p_ExcludePlayer = false);
+    void SendMsg(const Nz::NetPacket& packet);
+    void SendToSet(const Nz::NetPacket& packet, bool p_ExcludePlayer = false);
 
     Player* GetPlayer();
     void SetPlayer(Player*);

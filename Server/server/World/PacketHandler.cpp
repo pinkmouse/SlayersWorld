@@ -22,7 +22,7 @@ void PacketHandler::LoadPacketHandlerMap()
     m_PacketHandleMap[CMSG::C_UnitStopAttack] = &PacketHandler::HandleStopAttack;
 }
 
-void PacketHandler::HandleUnitUnknow(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
+void PacketHandler::HandleUnitUnknow(Nz::NetPacket& p_Packet, WorldSocket* p_WorldSocket)
 {
     uint8 l_Type = 0;
     uint16 l_ID = 0;
@@ -43,7 +43,7 @@ void PacketHandler::HandleUnitUnknow(WorldPacket &p_Packet, WorldSocket* p_World
     p_WorldSocket->SendUnitCreate(l_UniknowUnit->GetType(), l_UniknowUnit->GetID(), l_UniknowUnit->GetName(), l_UniknowUnit->GetLevel(), l_UniknowUnit->GetHealth(), l_UniknowUnit->GetSkinID(), l_UniknowUnit->GetMapID(), l_UniknowUnit->GetPosX(), l_UniknowUnit->GetPosY(), l_UniknowUnit->GetOrientation(), l_UniknowUnit->IsInMovement());
 }
 
-void PacketHandler::HandleGoDirection(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
+void PacketHandler::HandleGoDirection(Nz::NetPacket& p_Packet, WorldSocket* p_WorldSocket)
 {
     uint8 l_Orientation = 0;
     Position l_Pos(0, 0);
@@ -61,7 +61,7 @@ void PacketHandler::HandleGoDirection(WorldPacket &p_Packet, WorldSocket* p_Worl
     p_WorldSocket->SendUnitGoDirectionToSet((uint8)TypeUnit::PLAYER, l_Player->GetID(), l_Pos, l_Orientation);
 }
 
-void PacketHandler::HandleStopMovement(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
+void PacketHandler::HandleStopMovement(Nz::NetPacket& p_Packet, WorldSocket* p_WorldSocket)
 {
     Position l_Pos(0, 0);
 
@@ -77,20 +77,20 @@ void PacketHandler::HandleStopMovement(WorldPacket &p_Packet, WorldSocket* p_Wor
     l_Player->GetSession()->SendUnitStopMovement((uint8)TypeUnit::PLAYER, l_Player->GetID(), l_Pos, l_Player->GetOrientation());
 }
 
-void PacketHandler::HandleTalk(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
+void PacketHandler::HandleTalk(Nz::NetPacket& p_Packet, WorldSocket* p_WorldSocket)
 {
     Player* l_Player = p_WorldSocket->GetPlayer();
 
     if (l_Player == nullptr)
         return;
 
-    std::string l_String;
+    Nz::String l_String;
     p_Packet >> l_String;
 
     l_Player->GetSession()->SendUnitTalk((uint8)TypeUnit::PLAYER, l_Player->GetID(), l_String);
 }
 
-void PacketHandler::HandleStartAttack(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
+void PacketHandler::HandleStartAttack(Nz::NetPacket& p_Packet, WorldSocket* p_WorldSocket)
 {
     Position l_Pos(0, 0);
 
@@ -106,7 +106,7 @@ void PacketHandler::HandleStartAttack(WorldPacket &p_Packet, WorldSocket* p_Worl
     l_Player->GetSession()->SendUnitStartAttack((uint8)TypeUnit::PLAYER, l_Player->GetID(), l_Pos, l_Player->GetOrientation());
 }
 
-void PacketHandler::HandleStopAttack(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
+void PacketHandler::HandleStopAttack(Nz::NetPacket& p_Packet, WorldSocket* p_WorldSocket)
 {
     Player* l_Player = p_WorldSocket->GetPlayer();
 
@@ -130,13 +130,13 @@ void PacketHandler::HandleDisconnected(WorldSocket* p_WorldSocket)
     m_SqlManager->SavePlayer(l_Player);
 }
 
-void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
+void PacketHandler::HandleConnexion(Nz::NetPacket& p_Packet, WorldSocket* p_WorldSocket)
 {
     if (m_SqlManager == nullptr)
         return;
 
-    std::string l_Login;
-    std::string l_Password;
+    Nz::String l_Login;
+    Nz::String l_Password;
     p_Packet >> l_Login;
     p_Packet >> l_Password;
 
@@ -185,15 +185,13 @@ void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldS
     l_Player->UpdateNewSquares(0, l_Player->GetSquareID(), true);
 }
 
-void PacketHandler::OperatePacket(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
+void PacketHandler::OperatePacket(Nz::NetPacket& p_Packet, WorldSocket* p_WorldSocket)
 {
-    uint8 l_PacketID;
-    p_Packet >> l_PacketID;
-    printf("Receive Packet %d\n", l_PacketID);
-    m_Func l_Fun = m_PacketHandleMap[l_PacketID];
-    if (l_Fun != nullptr)
-        (this->*(l_Fun))(p_Packet, p_WorldSocket);
-    else
-        printf("Packet %d Unknow\n", l_PacketID);
+    printf("Receive Packet %d\n", p_Packet.GetNetCode());
 
+	auto l_It = m_PacketHandleMap.find(p_Packet.GetNetCode());
+    if (l_It != m_PacketHandleMap.end())
+        (this->*l_It->second)(p_Packet, p_WorldSocket);
+    else
+        printf("Unknown packet %d\n", p_Packet.GetNetCode());
 }
