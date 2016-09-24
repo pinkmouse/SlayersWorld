@@ -166,6 +166,7 @@
     <ClInclude Include="Entities\Unit.hpp" />
     <ClInclude Include="Entities\Player.hpp" />
     <ClInclude Include="Entities\MovementHandler.hpp" />
+    <ClInclude Include="World\CreatureManager.hpp" />
     <ClInclude Include="World\PacketDefine.hpp" />
     <ClInclude Include="World\SqlManager.hpp" />
     <ClInclude Include="World\ConfigHandler.hpp" />
@@ -188,6 +189,7 @@
     <ClCompile Include="Entities\Unit.cpp" />
     <ClCompile Include="Entities\Player.cpp" />
     <ClCompile Include="Entities\MovementHandler.cpp" />
+    <ClCompile Include="World\CreatureManager.cpp" />
     <ClCompile Include="World\PacketHandler.cpp" />
     <ClCompile Include="World\SqlManager.cpp" />
     <ClCompile Include="World\ConfigHandler.cpp" />

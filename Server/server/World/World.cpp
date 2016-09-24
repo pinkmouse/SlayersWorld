@@ -32,10 +32,7 @@ bool World::Initialize()
 		printf("Load Maps Error\n");
 		return false;
 	}
-	printf("Connection SQL...\n");
-	std::vector<std::string> l_ConfigSQLCharacters = g_Config->GetValueList(g_Config->GetValue("charactersDB"));
-	if (!m_SqlManager->InitializeCharacters(l_ConfigSQLCharacters[0], l_ConfigSQLCharacters[1], l_ConfigSQLCharacters[2], l_ConfigSQLCharacters[3], l_ConfigSQLCharacters[4]))
-		printf("Error connection character SQL...\n");
+    printf("Connection SQL...\n");
 
     std::vector<std::string> l_ConfigSQLWorld = g_Config->GetValueList(g_Config->GetValue("worldDB"));
     if (!m_SqlManager->InitializeWorld(l_ConfigSQLWorld[0], l_ConfigSQLWorld[1], l_ConfigSQLWorld[2], l_ConfigSQLWorld[3], l_ConfigSQLWorld[4]))
@@ -44,6 +41,10 @@ bool World::Initialize()
     printf("Initialize CreatureTemplate\n");
     if (!m_SqlManager->InitializeCreatureTemplate(m_CreatureManager))
         printf("Error Initialize CreatureTemplate...\n");
+
+    std::vector<std::string> l_ConfigSQLCharacters = g_Config->GetValueList(g_Config->GetValue("charactersDB"));
+    if (!m_SqlManager->InitializeCharacters(l_ConfigSQLCharacters[0], l_ConfigSQLCharacters[1], l_ConfigSQLCharacters[2], l_ConfigSQLCharacters[3], l_ConfigSQLCharacters[4]))
+        printf("Error connection character SQL...\n");
 
 	printf("Launch Network...\n");
 	if (!this->NetworkInitialize())
