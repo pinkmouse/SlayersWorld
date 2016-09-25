@@ -1,6 +1,5 @@
 #include "World.hpp"
 #include "../Global.hpp"
-#include "WorldPacket.hpp"
 #include <vector>
 
 World::World()
@@ -24,7 +23,7 @@ bool World::InitializeConnection()
 		printf("Error Connection...\n");
 		return false;
 	}
-    g_Socket->setBlocking(false);
+    g_Socket->EnableBlocking(false);
 	return true;
 }
 
@@ -76,12 +75,11 @@ void World::Run()
 
 bool World::UpdateSocket()
 {
-	WorldPacket l_Packet;
-	sf::Socket::Status l_SocketStatus;
-	l_SocketStatus = g_Socket->receive(l_Packet);
-	if (l_SocketStatus == sf::Socket::Status::Done) ///< Reception OK
+	Nz::NetPacket l_Packet;
+	if (g_Socket->ReceivePacket(&l_Packet)) ///< Reception OK
 		m_PacketHandler->OperatePacket(l_Packet);
-	if (l_SocketStatus == sf::Socket::Status::Disconnected) ///< Disconnecetd
+
+	if (g_Socket->GetState() == Nz::SocketState_NotConnected)
 	{
 		printf("Disco\n");
 		return false;
@@ -92,5 +90,5 @@ bool World::UpdateSocket()
 void World::End()
 {
 	m_Run = false;
-    g_Socket->disconnect();
+    g_Socket->Disconnect();
 }

@@ -36,9 +36,6 @@
     <ClInclude Include="World\PacketHandler.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="World\WorldPacket.hpp">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="Map\Map.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
@@ -120,9 +117,6 @@
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="Graphics\Window.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="World\WorldPacket.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="Map\MapManager.cpp">

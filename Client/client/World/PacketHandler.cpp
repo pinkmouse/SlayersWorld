@@ -28,7 +28,7 @@ void PacketHandler::LoadPacketHandlerMap()
     m_PacketHandleMap[SMSG::S_UnitStopAttack] = &PacketHandler::HandleUnitStopAttack;
 }
 
-void PacketHandler::HandleRemoveUnit(WorldPacket &p_Packet)
+void PacketHandler::HandleRemoveUnit(Nz::NetPacket& p_Packet)
 {
     uint8 l_TypeID;
     uint16 l_ID;
@@ -48,7 +48,7 @@ void PacketHandler::HandleRemoveUnit(WorldPacket &p_Packet)
     }
 }
 
-void PacketHandler::HandleUpdateHealth(WorldPacket &p_Packet)
+void PacketHandler::HandleUpdateHealth(Nz::NetPacket& p_Packet)
 {
     uint8 l_TypeID;
     uint16 l_ID;
@@ -69,11 +69,11 @@ void PacketHandler::HandleUpdateHealth(WorldPacket &p_Packet)
     }
 }
 
-void PacketHandler::HandleTalk(WorldPacket &p_Packet)
+void PacketHandler::HandleTalk(Nz::NetPacket& p_Packet)
 {
     uint8 l_TypeID;
     uint16 l_ID;
-    std::string l_String;
+    Nz::String l_String;
 
     p_Packet >> l_TypeID;
     p_Packet >> l_ID;
@@ -91,7 +91,7 @@ void PacketHandler::HandleTalk(WorldPacket &p_Packet)
     }
 }
 
-void PacketHandler::HandleStopMovement(WorldPacket &p_Packet)
+void PacketHandler::HandleStopMovement(Nz::NetPacket& p_Packet)
 {
     uint8 l_TypeID;
     uint16 l_ID;
@@ -118,7 +118,7 @@ void PacketHandler::HandleStopMovement(WorldPacket &p_Packet)
     }
 }
 
-void PacketHandler::HandleUnitStartAttack(WorldPacket &p_Packet)
+void PacketHandler::HandleUnitStartAttack(Nz::NetPacket& p_Packet)
 {
     uint8 l_TypeID;
     uint16 l_ID;
@@ -146,7 +146,7 @@ void PacketHandler::HandleUnitStartAttack(WorldPacket &p_Packet)
     }
 }
 
-void PacketHandler::HandleUnitStopAttack(WorldPacket &p_Packet)
+void PacketHandler::HandleUnitStopAttack(Nz::NetPacket& p_Packet)
 {
     uint8 l_TypeID;
     uint16 l_ID;
@@ -171,7 +171,7 @@ void PacketHandler::HandleUnitStopAttack(WorldPacket &p_Packet)
     }
 }
 
-void PacketHandler::HandleUpdatePosition(WorldPacket &p_Packet)
+void PacketHandler::HandleUpdatePosition(Nz::NetPacket& p_Packet)
 {
     uint8 l_TypeID;
     uint16 l_UnitID;
@@ -200,7 +200,7 @@ void PacketHandler::HandleUpdatePosition(WorldPacket &p_Packet)
     }
 }
 
-void PacketHandler::HandleUnitGoDirection(WorldPacket &p_Packet)
+void PacketHandler::HandleUnitGoDirection(Nz::NetPacket& p_Packet)
 {
     uint8 l_Type;
     uint16 l_UnitID;
@@ -217,7 +217,7 @@ void PacketHandler::HandleUnitGoDirection(WorldPacket &p_Packet)
         l_Map->MoveUnitToDirection((TypeUnit)l_Type, l_UnitID, l_Pos, l_Direction);
 }
 
-void PacketHandler::HandleConnexion(WorldPacket &p_Packet)
+void PacketHandler::HandleConnexion(Nz::NetPacket& p_Packet)
 {
 	uint8 l_Status;
 
@@ -238,10 +238,10 @@ void PacketHandler::HandleConnexion(WorldPacket &p_Packet)
     }
 }
 
-void PacketHandler::HandleCreateMainPlayer(WorldPacket &p_Packet)
+void PacketHandler::HandleCreateMainPlayer(Nz::NetPacket& p_Packet)
 {
     uint32 l_ID;
-    std::string l_Name;
+	Nz::String l_Name;
     uint8 l_Level;
     uint8 l_Health;
     uint8 l_Alignment;
@@ -262,7 +262,7 @@ void PacketHandler::HandleCreateMainPlayer(WorldPacket &p_Packet)
     p_Packet >> l_PosY;
     p_Packet >> l_Orientation;
 
-    printf("Create me: %d %s %d %d %d %d\n", l_ID, l_Name.c_str(), l_SkinID, l_MapID, l_PosX, l_PosY);
+    printf("Create me: %d %s %d %d %d %d\n", l_ID, l_Name.GetConstBuffer(), l_SkinID, l_MapID, l_PosX, l_PosY);
     if (!m_MapManager->LoadMap(l_MapID))
         return;
 
@@ -281,11 +281,11 @@ void PacketHandler::HandleCreateMainPlayer(WorldPacket &p_Packet)
         delete g_Player;
 }
 
-void PacketHandler::HandleCreateUnit(WorldPacket &p_Packet)
+void PacketHandler::HandleCreateUnit(Nz::NetPacket& p_Packet)
 {
     uint8 l_TypeID;
     uint32 l_ID;
-    std::string l_Name;
+	Nz::String l_Name;
     uint8 l_Level;
     uint8 l_Health;
     uint8 l_SkinID;
@@ -306,7 +306,7 @@ void PacketHandler::HandleCreateUnit(WorldPacket &p_Packet)
     p_Packet >> l_Orientation;
     p_Packet >> l_IsInMovement;
 
-    printf("Create new Player: %d %s %d %d %d %d\n", l_ID, l_Name.c_str(), l_SkinID, l_MapID, l_Pos.x, l_Pos.y);
+    printf("Create new Player: %d %s %d %d %d %d\n", l_ID, l_Name.GetConstBuffer(), l_SkinID, l_MapID, l_Pos.x, l_Pos.y);
 
     Unit* l_NewUnit = nullptr;
 
@@ -327,16 +327,15 @@ void PacketHandler::HandleCreateUnit(WorldPacket &p_Packet)
     }
 }
 
-void PacketHandler::OperatePacket(WorldPacket &p_Packet)
+void PacketHandler::OperatePacket(Nz::NetPacket& p_Packet)
 {
-	uint8 l_PacketID;
-	p_Packet >> l_PacketID;
-	printf("Receive Packet %d\n", l_PacketID);
-	m_Func l_Fun = m_PacketHandleMap[l_PacketID];
-	if (l_Fun != nullptr)
-		(this->*(l_Fun))(p_Packet);
-	else
-		printf("Packet %d Unknow\n", l_PacketID);
+    printf("Receive Packet %d\n", p_Packet.GetNetCode());
+
+	auto l_It = m_PacketHandleMap.find(p_Packet.GetNetCode());
+    if (l_It != m_PacketHandleMap.end())
+        (this->*l_It->second)(p_Packet);
+    else
+        printf("Unknown packet %d\n", p_Packet.GetNetCode());
 }
 
 bool PacketHandler::HasMinimalRequiered() const

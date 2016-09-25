@@ -106,7 +106,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>E:\Lib\SFML-2.3.2\include</AdditionalIncludeDirectories>
     </ClCompile>
@@ -180,7 +180,6 @@
     <ClInclude Include="Graphics\SkinsManager.hpp" />
     <ClInclude Include="Graphics\SkinSprite.hpp" />
     <ClInclude Include="World\PacketDefine.hpp" />
-    <ClInclude Include="World\WorldPacket.hpp" />
     <ClInclude Include="World\PacketHandler.hpp" />
     <ClInclude Include="Socket\Socket.hpp" />
     <ClInclude Include="stdafx.h" />
@@ -208,7 +207,6 @@
     <ClCompile Include="Graphics\TileSprite.cpp" />
     <ClCompile Include="Graphics\SkinsManager.cpp" />
     <ClCompile Include="Graphics\SkinSprite.cpp" />
-    <ClCompile Include="World\WorldPacket.cpp" />
     <ClCompile Include="World\PacketHandler.cpp" />
     <ClCompile Include="Socket\Socket.cpp" />
     <ClCompile Include="stdafx.cpp" />

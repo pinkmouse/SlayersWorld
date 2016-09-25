@@ -1,8 +1,8 @@
 #include <map>
 #include "../Define.hpp"
-#include "WorldPacket.hpp"
 #include "../Map/MapManager.hpp"
 #include "../Socket/Socket.hpp"
+#include <Nazara/Network/NetPacket.hpp>
 
 class PacketHandler
 {
@@ -12,22 +12,22 @@ public:
 	void LoadPacketHandlerMap();
     bool HasMinimalRequiered() const;
 
-	void OperatePacket(WorldPacket &);
-	void HandleConnexion(WorldPacket &);
-    void HandleCreateMainPlayer(WorldPacket &);
-    void HandleCreateUnit(WorldPacket &);
-    void HandleStopMovement(WorldPacket &);
-    void HandleRemoveUnit(WorldPacket &);
-    void HandleUpdateHealth(WorldPacket &);
-    void HandleUpdatePosition(WorldPacket &);
-    void HandleUnitGoDirection(WorldPacket &);
-    void HandleUnitStartAttack(WorldPacket &);
-    void HandleUnitStopAttack(WorldPacket &);
-    void HandleTalk(WorldPacket &);
+	void OperatePacket(Nz::NetPacket&);
+	void HandleConnexion(Nz::NetPacket&);
+    void HandleCreateMainPlayer(Nz::NetPacket&);
+    void HandleCreateUnit(Nz::NetPacket&);
+    void HandleStopMovement(Nz::NetPacket&);
+    void HandleRemoveUnit(Nz::NetPacket&);
+    void HandleUpdateHealth(Nz::NetPacket&);
+    void HandleUpdatePosition(Nz::NetPacket&);
+    void HandleUnitGoDirection(Nz::NetPacket&);
+    void HandleUnitStartAttack(Nz::NetPacket&);
+    void HandleUnitStopAttack(Nz::NetPacket&);
+    void HandleTalk(Nz::NetPacket&);
 
 private:
 	MapManager* m_MapManager;
-	using m_Func = void(PacketHandler::*)(WorldPacket &);
+	using m_Func = void(PacketHandler::*)(Nz::NetPacket&);
 
 	std::map<uint8, m_Func> m_PacketHandleMap;
     bool p_HasMinimalRequiered;

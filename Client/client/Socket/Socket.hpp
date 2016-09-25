@@ -1,9 +1,9 @@
 #pragma once
 
-#include <SFML/Network/TcpSocket.hpp>
+#include <Nazara/Network/TcpClient.hpp>
 #include "../Define.hpp"
 
-class Socket : public sf::TcpSocket
+class Socket : public Nz::TcpClient
 {
 public:
 	Socket();
