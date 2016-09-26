@@ -156,6 +156,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Entities\Creature.hpp" />
     <ClInclude Include="Map\Square.hpp" />
     <ClInclude Include="Entities\WorldObject.hpp" />
     <ClInclude Include="System\WorldPosition.hpp" />
@@ -180,6 +181,8 @@
     <ClInclude Include="World\World.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Entities\Creature.cpp" />
+    <ClCompile Include="Map\MapNetwork.cpp" />
     <ClCompile Include="Map\Square.cpp" />
     <ClCompile Include="Entities\WorldObject.cpp" />
     <ClCompile Include="System\WorldPosition.cpp" />

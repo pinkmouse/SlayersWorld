@@ -5,9 +5,10 @@
 #include <string>
 #include <vector>
 #include <map>
-#include "../Entities/Unit.hpp"
 #include "../Entities/Player.hpp"
+#include "../Entities/Creature.hpp"
 #include "Square.hpp"
+#include "../World/WorldPacket.hpp"
 
 class Map
 {
@@ -32,6 +33,10 @@ public:
     uint16 GetSizeX() const;
     uint16 GetSizeY() const;
     void UpdateForPlayersInNewSquare(Unit*, bool p_UpdateAll = false);
+
+    /// Network
+    void SendToSet(WorldPacket, Unit*);
+
 
 private:
 	uint16 m_ID;

@@ -160,6 +160,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Entities\Creature.hpp" />
     <ClInclude Include="Entities\WorldObject.hpp" />
     <ClInclude Include="Global.hpp" />
     <ClInclude Include="Graphics\Interface\InterfaceManager.hpp" />
@@ -190,6 +191,7 @@
     <ClInclude Include="Graphics\Interface\WritingField.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Entities\Creature.cpp" />
     <ClCompile Include="Entities\WorldObject.cpp" />
     <ClCompile Include="Graphics\Interface\InterfaceManager.cpp" />
     <ClCompile Include="Map\Map.cpp" />

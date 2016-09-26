@@ -6,6 +6,7 @@
 
 class Map;
 class Player;
+class Creature;
 
 class Unit : public WorldObject
 {
@@ -44,6 +45,7 @@ public:
     TypeUnit GetType() const;
     bool IsInMovement() const;
 
+    Creature* ToCreature();
     Player* ToPlayer();
     MovementHandler* GetMovementHandler();
 

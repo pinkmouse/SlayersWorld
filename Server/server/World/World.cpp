@@ -42,6 +42,10 @@ bool World::Initialize()
     if (!m_SqlManager->InitializeCreatureTemplate(m_CreatureManager))
         printf("Error Initialize CreatureTemplate...\n");
 
+    printf("Initialize Creature\n");
+    if (!m_SqlManager->InitializeCreature(m_MapManager, m_CreatureManager))
+        printf("Error Initialize CreatureTemplate...\n");
+
     std::vector<std::string> l_ConfigSQLCharacters = g_Config->GetValueList(g_Config->GetValue("charactersDB"));
     if (!m_SqlManager->InitializeCharacters(l_ConfigSQLCharacters[0], l_ConfigSQLCharacters[1], l_ConfigSQLCharacters[2], l_ConfigSQLCharacters[3], l_ConfigSQLCharacters[4]))
         printf("Error connection character SQL...\n");

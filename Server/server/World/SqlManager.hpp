@@ -6,6 +6,7 @@
 #include "../Define.hpp"
 #include "../Entities/Player.hpp"
 #include "../System/WorldPosition.hpp"
+#include "../Map/MapManager.hpp"
 #include "CreatureManager.hpp"
 
 class SqlManager
@@ -21,6 +22,7 @@ public:
     WorldPosition GetRespawnPositionForPlayer(uint32);
     void SavePlayer(Player const*);
     bool InitializeCreatureTemplate(CreatureManager*);
+    bool InitializeCreature(MapManager*, CreatureManager*);
 
 private:
 	MYSQL m_MysqlCharacters;

@@ -1,5 +1,6 @@
 #include "SqlManager.hpp"
 #include "../Define.hpp"
+#include "../Entities/Creature.hpp"
 #include <cstdlib>
 
 SqlManager::SqlManager()
@@ -149,6 +150,39 @@ bool SqlManager::InitializeCreatureTemplate(CreatureManager* p_CreatureManager)
         l_Xp = atoi(l_Row[7]);
         l_State = atoi(l_Row[8]);
         p_CreatureManager->AddCreatureTemplate(CreatureTemplate(l_Entry, l_SkinID, l_Name, l_Lvl, l_Force, l_Stamina, l_Dexterity, l_Xp, l_State));
+    }
+    mysql_free_result(l_Result);
+
+    return true;
+}
+
+bool SqlManager::InitializeCreature(MapManager* p_MapManager, CreatureManager* p_CreatureManager)
+{
+    std::string l_Query = "SELECT `id`, `entry`, `mapID`, `posX`, `posY` FROM creature";
+    mysql_query(&m_MysqlWorld, l_Query.c_str());
+
+    uint16 l_Id = 0;
+    uint16 l_Entry = 0;
+    uint16 l_MapID = 0;
+    uint32 l_PosX = 0;
+    uint32 l_PosY = 0;
+
+    MYSQL_RES *l_Result = NULL;
+    MYSQL_ROW l_Row;
+    l_Result = mysql_use_result(&m_MysqlWorld);
+    while ((l_Row = mysql_fetch_row(l_Result)))
+    {
+        l_Id = atoi(l_Row[0]);
+        l_Entry = atoi(l_Row[1]);
+        l_MapID = atoi(l_Row[2]);
+        l_PosX = atoi(l_Row[3]);
+        l_PosY = atoi(l_Row[4]);
+
+        uint16 l_Id = 0;
+
+        Creature* l_Creature = new Creature(l_Id, l_Entry, p_CreatureManager->GetCreatureTemplate(l_Entry), l_MapID, l_PosX, l_PosY);
+        Map* l_Map = p_MapManager->GetMap(l_MapID);
+        l_Map->AddUnit(l_Creature);
     }
     mysql_free_result(l_Result);
 

@@ -68,6 +68,8 @@ void Map::Update(sf::Time p_Diff)
 
             if (l_Type == TypeUnit::PLAYER)
                 l_Unit->ToPlayer()->Update(p_Diff);
+            else if (l_Type == TypeUnit::CREATURE)
+                l_Unit->ToCreature()->Update(p_Diff);
             else
                 l_Unit->Update(p_Diff);
 

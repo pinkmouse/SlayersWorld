@@ -35,6 +35,14 @@ Player* Unit::ToPlayer()
         return nullptr;
 }
 
+Creature* Unit::ToCreature()
+{
+    if (m_Type == TypeUnit::CREATURE)
+        return  reinterpret_cast<Creature*>(this);
+    else
+        return nullptr;
+}
+
 Unit::~Unit()
 {
     m_MovementHandler->StopMovement();
