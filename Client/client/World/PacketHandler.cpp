@@ -1,5 +1,6 @@
 #include "PacketHandler.hpp"
 #include "../Entities/Player.hpp"
+#include "../Entities/Creature.hpp"
 #include "../Global.hpp"
 #include "PacketDefine.hpp"
 
@@ -320,7 +321,7 @@ void PacketHandler::HandleCreateUnit(WorldPacket &p_Packet)
         if (l_TypeID == (uint8)TypeUnit::PLAYER)
             l_NewUnit = new Player(l_ID, l_Name, l_Level, l_Health, l_SkinID, l_MapID, l_Pos.x, l_Pos.y, (Orientation)l_Orientation);
         else if (l_TypeID == (uint8)TypeUnit::CREATURE)
-            l_NewUnit = new Player(l_ID, l_Name, l_Level, l_Health, l_SkinID, l_MapID, l_Pos.x, l_Pos.y, (Orientation)l_Orientation);
+            l_NewUnit = new Creature(l_ID, l_Name, l_Level, l_Health, l_SkinID, l_MapID, l_Pos.x, l_Pos.y, (Orientation)l_Orientation);
 
         l_NewUnit->SetMap(l_ActualMap);
         l_ActualMap->AddUnit(l_NewUnit);

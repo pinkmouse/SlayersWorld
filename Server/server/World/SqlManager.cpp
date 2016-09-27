@@ -178,8 +178,6 @@ bool SqlManager::InitializeCreature(MapManager* p_MapManager, CreatureManager* p
         l_PosX = atoi(l_Row[3]);
         l_PosY = atoi(l_Row[4]);
 
-        uint16 l_Id = 0;
-
         Creature* l_Creature = new Creature(l_Id, l_Entry, p_CreatureManager->GetCreatureTemplate(l_Entry), l_MapID, l_PosX, l_PosY);
         Map* l_Map = p_MapManager->GetMap(l_MapID);
         l_Map->AddUnit(l_Creature);

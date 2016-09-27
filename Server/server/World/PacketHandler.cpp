@@ -173,14 +173,13 @@ void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldS
         return;
     }
     l_Player->SetSession(p_WorldSocket);
-    l_Player->SetMap(l_Map);
     printf("Load Player success\n");
 
     /// Send to Player
     p_WorldSocket->SendPlayerCreate(l_Player->GetID(), l_Player->GetName(), l_Player->GetLevel(), l_Player->GetHealth(), l_Player->GetAlignment(), l_Player->GetSkinID(), l_Player->GetMapID(), l_Player->GetPosX(), l_Player->GetPosY(), l_Player->GetOrientation());
     p_WorldSocket->SetPlayer(l_Player);
+    l_Map->AddUnit(l_Player);
     l_Player->HasBeenInitialize();
-    l_Player->GetMap()->AddUnit(l_Player);
 
     l_Player->UpdateNewSquares(0, l_Player->GetSquareID(), true);
 }

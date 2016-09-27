@@ -29,8 +29,16 @@ void Creature::Update(sf::Time p_Diff)
 
     while (m_DiffMovementTime > (10 * IN_MICROSECOND)) ///< 1000 because microsecond
     {
-       /* if (m_MovementHandler->IsInMovement())
+        if (m_MovementHandler->IsInMovement())
+        {
             m_MovementHandler->StopMovement();
+
+            WorldPacket l_Packet;
+            uint8 l_ID = SMSG::S_UnitStopMovement;
+
+            l_Packet << l_ID << (uint8)TypeUnit::CREATURE << GetID() << GetPosX() << GetPosY() << GetOrientation();
+            m_Map->SendToSet(l_Packet, this);
+        }
         else
         {
             if (m_MovementHandler->GetOrientation() != (Orientation)Left)
@@ -39,7 +47,7 @@ void Creature::Update(sf::Time p_Diff)
                 WorldPacket l_Packet;
                 uint8 l_ID = SMSG::S_UnitGoDirection;
 
-                l_Packet << l_ID << TypeUnit::CREATURE << GetID() << GetPosX() << GetPosY() << GetOrientation();
+                l_Packet << l_ID << (uint8)TypeUnit::CREATURE << GetID() << GetPosX() << GetPosY() << GetOrientation();
                 m_Map->SendToSet(l_Packet, this);
             }
             else
@@ -48,10 +56,10 @@ void Creature::Update(sf::Time p_Diff)
                 WorldPacket l_Packet;
                 uint8 l_ID = SMSG::S_UnitGoDirection;
 
-                l_Packet << l_ID << TypeUnit::CREATURE << GetID() << GetPosX() << GetPosY() << GetOrientation();
+                l_Packet << l_ID << (uint8)TypeUnit::CREATURE << GetID() << GetPosX() << GetPosY() << GetOrientation();
                 m_Map->SendToSet(l_Packet, this);
             }
-            m_DiffMovementTime = 0;
-        }*/
+        }
+        m_DiffMovementTime = 0;
     }
 }

@@ -186,10 +186,12 @@ Unit* Map::GetCloserUnit(Unit const* p_Unit, float p_Range /*= 2.0f*/, bool p_On
 
 void Map::AddUnit(Unit* p_Unit)
 {
+    p_Unit->SetMap(this);
     m_ListUnitZone[p_Unit->GetType()][p_Unit->GetID()] = p_Unit;
 
     /// Add to square
     uint16 l_SquareId = GetSquareID(p_Unit->GetPosX(), p_Unit->GetPosY());
+    printf("Add to square %d\n", l_SquareId);
     AddToSquare(p_Unit, l_SquareId);
     UpdateForPlayersInNewSquare(p_Unit, true);
 }
@@ -261,7 +263,8 @@ Square* Map::GetSquare(uint16 p_SquareID)
 std::vector<Square*> Map::GetSquareSet(uint16 p_SquareID)
 {
     std::vector<Square*> l_SquareSet;
-    l_SquareSet.push_back(&m_ListSquare[p_SquareID]);
+    Square* l_Square = GetSquare(p_SquareID);
+    l_SquareSet.push_back(l_Square);
 
     uint16 l_TotalSquareWidth = (uint16)ceil((float)m_SizeX / GRID_SIZE);
     uint16 l_TotalSquareHeight = (uint16)ceil((float)m_SizeY / GRID_SIZE);
