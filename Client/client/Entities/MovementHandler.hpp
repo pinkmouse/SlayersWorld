@@ -29,6 +29,7 @@ public:
 
     void SetPosX(uint32);
     void SetPosY(uint32);
+    void SetSpeed(float);
 
     uint32 GetPosX() const;
     uint32 GetPosY() const;

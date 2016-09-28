@@ -44,6 +44,7 @@ public:
     void Respawn();
     TypeUnit GetType() const;
     bool IsInMovement() const;
+    Orientation GetOrientationToPoint(Position) const;
 
     Creature* ToCreature();
     Player* ToPlayer();

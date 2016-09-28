@@ -12,5 +12,6 @@ private:
     uint16 m_Entry;
     uint64 m_DiffMovementTime;
     CreatureTemplate m_CreatureTemplate;
+    uint16 m_RandMovementTime;
 };
 

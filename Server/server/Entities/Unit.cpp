@@ -254,3 +254,29 @@ void Unit::Respawn()
     SetPosY(m_RespawnPosition.GetPosY());
     SetOrientation(m_RespawnPosition.GetOrientation());
 }
+
+Orientation Unit::GetOrientationToPoint(Position p_Position) const
+{
+    int32 l_X = GetPosX() - p_Position.m_X;
+    int32 l_Y = GetPosY() - p_Position.m_Y;
+
+    if (l_X < 0)
+        l_X *= -1;
+    if (l_Y < 0)
+        l_Y *= -1;
+
+    if (l_X > l_Y)
+    {
+        if (GetPosX() < p_Position.m_X)
+            return Orientation::Right;
+        else
+            return Orientation::Left;
+    }
+    else
+    {
+        if (GetPosY() < p_Position.m_Y)
+            return Orientation::Down;
+        else
+            return Orientation::Up;
+    }
+}

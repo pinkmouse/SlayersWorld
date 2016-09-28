@@ -15,6 +15,7 @@ Creature::Creature(int32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_Health
     m_MovementHandler->SetOrientation(p_Orientation);
     m_Health = p_Health;
     SetMapID(p_MapID);
+    m_MovementHandler->SetSpeed(0.5f);
 }
 
 

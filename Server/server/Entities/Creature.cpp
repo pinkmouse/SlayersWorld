@@ -14,6 +14,12 @@ Creature::Creature(uint16 p_ID, uint16 p_Entry, CreatureTemplate p_CreatureTempl
     m_Name = p_CreatureTemplate.m_Name;
     m_CreatureTemplate = p_CreatureTemplate;
     m_DiffMovementTime = 0;
+
+    m_RespawnPosition.SetMapID(p_MapID);
+    m_RespawnPosition.SetPosX(p_PosX);
+    m_RespawnPosition.SetPosY(p_PosY);
+    m_MovementHandler->SetSpeed(0.5f);
+    m_RandMovementTime = rand() % 100;
 }
 
 
@@ -27,39 +33,29 @@ void Creature::Update(sf::Time p_Diff)
 
     m_DiffMovementTime += p_Diff.asMicroseconds();
 
-    while (m_DiffMovementTime > (10 * IN_MICROSECOND)) ///< 1000 because microsecond
+    if (!m_CreatureTemplate.m_MaxRay)
+        return;
+
+    while (m_DiffMovementTime > (1.5f * IN_MICROSECOND) + (((1.5f * IN_MICROSECOND) / 100.0f) * m_RandMovementTime)) ///< 1000 because microsecond
     {
         if (m_MovementHandler->IsInMovement())
         {
             m_MovementHandler->StopMovement();
-
-            WorldPacket l_Packet;
-            uint8 l_ID = SMSG::S_UnitStopMovement;
-
-            l_Packet << l_ID << (uint8)TypeUnit::CREATURE << GetID() << GetPosX() << GetPosY() << GetOrientation();
-            m_Map->SendToSet(l_Packet, this);
+            PacketStopMovement l_Packet;
+            l_Packet.BuildPacket((uint8)TypeUnit::CREATURE, GetID(), GetPosition(), GetOrientation());
+            m_Map->SendToSet(l_Packet.m_Packet, this);
         }
         else
         {
-            if (m_MovementHandler->GetOrientation() != (Orientation)Left)
-            {
-                m_MovementHandler->StartMovement((Orientation)Left);
-                WorldPacket l_Packet;
-                uint8 l_ID = SMSG::S_UnitGoDirection;
-
-                l_Packet << l_ID << (uint8)TypeUnit::CREATURE << GetID() << GetPosX() << GetPosY() << GetOrientation();
-                m_Map->SendToSet(l_Packet, this);
-            }
-            else
-            {
-                m_MovementHandler->StartMovement((Orientation)Right);
-                WorldPacket l_Packet;
-                uint8 l_ID = SMSG::S_UnitGoDirection;
-
-                l_Packet << l_ID << (uint8)TypeUnit::CREATURE << GetID() << GetPosX() << GetPosY() << GetOrientation();
-                m_Map->SendToSet(l_Packet, this);
-            }
+            uint8 l_Orientation = rand() % 4;
+            if (GetDistance(m_RespawnPosition.GetPosition()) > m_CreatureTemplate.m_MaxRay)
+                l_Orientation = GetOrientationToPoint(m_RespawnPosition.GetPosition());
+            m_MovementHandler->StartMovement((Orientation)l_Orientation);
+            PacketGoDirection l_Packet;
+            l_Packet.BuildPacket((uint8)TypeUnit::CREATURE, GetID(), GetPosition(), GetOrientation());
+            m_Map->SendToSet(l_Packet.m_Packet, this);
         }
         m_DiffMovementTime = 0;
+        m_RandMovementTime = rand() % 100;
     }
 }

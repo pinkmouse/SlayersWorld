@@ -120,27 +120,27 @@ void MovementHandler::Update(sf::Time p_Diff)
 
     m_DiffTime += p_Diff.asMicroseconds();
 
-    while (m_DiffTime > ((UPDATE_TIME_MOVEMENT / STEP_SIZE) * 1000)) ///< 1000 because microsecond
+    while (m_DiffTime > ((UPDATE_TIME_MOVEMENT / STEP_SIZE) * 1000 * (2.0f - m_Speed))) ///< 1000 because microsecond
     {
         /// UPDATE POSITION
         switch (m_Orientation)
         {
         case Orientation::Down:
-            l_PosY += (uint32)((STEP_SIZE / STEP_SIZE) * m_Speed);
+            l_PosY += (uint32)((STEP_SIZE / STEP_SIZE));
             break;
         case Orientation::Left:
-            l_PosX -= (uint32)((STEP_SIZE / STEP_SIZE) * m_Speed);
+            l_PosX -= (uint32)((STEP_SIZE / STEP_SIZE));
             break;
         case Orientation::Right:
-            l_PosX += (uint32)((STEP_SIZE / STEP_SIZE) * m_Speed);
+            l_PosX += (uint32)((STEP_SIZE / STEP_SIZE));
             break;
         case Orientation::Up:
-            l_PosY -= (uint32)((STEP_SIZE / STEP_SIZE) * m_Speed);
+            l_PosY -= (uint32)((STEP_SIZE / STEP_SIZE));
             break;
         default:
             break;
         }
-        m_DiffTime -= (uint64)((UPDATE_TIME_MOVEMENT / STEP_SIZE) * 1000);
+        m_DiffTime -= (uint64)((UPDATE_TIME_MOVEMENT / STEP_SIZE) * 1000 * (2.0f - m_Speed));
 
         if (!IsInColision(l_PosX, l_PosY))
         {
@@ -159,7 +159,7 @@ void MovementHandler::UpdateAnimationWalk(sf::Time p_Diff)
 
     m_DiffTimeAnim += p_Diff.asMicroseconds();
 
-    while (m_DiffTimeAnim > (UPDATE_TIME_MOVEMENT * 1000 * m_Speed)) ///< 1000 because microsecond
+    while (m_DiffTimeAnim > (UPDATE_TIME_MOVEMENT * 1000 * (2.0f - m_Speed))) ///< 1000 because microsecond
     {
         /// UPDATE ANIMATION
         if (m_MovementPosition <= 1)
@@ -167,7 +167,7 @@ void MovementHandler::UpdateAnimationWalk(sf::Time p_Diff)
         else
             m_MovementPosition = 0;
 
-        m_DiffTimeAnim -= (uint64)(UPDATE_TIME_MOVEMENT * 1000 * m_Speed);
+        m_DiffTimeAnim = 0;
     }
 }
 
@@ -181,7 +181,7 @@ void MovementHandler::UpdateAnimationAttack(sf::Time p_Diff)
 
     m_DiffTimeAnimAttack += p_Diff.asMicroseconds();
 
-    while (m_DiffTimeAnimAttack > (UPDATE_TIME_MOVEMENT * 1000 * m_Speed)) ///< 1000 because microsecond
+    while (m_DiffTimeAnimAttack > (UPDATE_TIME_MOVEMENT * 1000 * (2.0f - m_Speed))) ///< 1000 because microsecond
     {
         /// UPDATE ANIMATION
         m_MovementPosition++;
@@ -198,7 +198,7 @@ void MovementHandler::UpdateAnimationAttack(sf::Time p_Diff)
             return;
         }
         else
-        m_DiffTimeAnimAttack -= (uint64)(UPDATE_TIME_MOVEMENT * 1000 * m_Speed);
+        m_DiffTimeAnimAttack -= (uint64)(UPDATE_TIME_MOVEMENT * 1000 * (2.0f - m_Speed));
     }
 }
 
@@ -290,6 +290,11 @@ uint32 MovementHandler::GetPosX() const
 uint32 MovementHandler::GetPosY() const
 {
     return m_Pos.y;
+}
+
+void MovementHandler::SetSpeed(float p_Speed)
+{
+    m_Speed = p_Speed;
 }
 
 void MovementHandler::AddMovementToStack(eActionType p_Action)

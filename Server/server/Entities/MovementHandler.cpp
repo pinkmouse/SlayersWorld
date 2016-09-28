@@ -124,11 +124,11 @@ void MovementHandler::UpdateAttack(sf::Time p_Diff)
 
     if (!m_AttackDamage.m_DamageDone)
     {
-        if (m_DiffTimeAttack > ((MAX_MOVEMENT_POSITION * UPDATE_TIME_MOVEMENT * 1000 * m_Speed) / 2.0f)) ///< 1000 because microsecond
+        if (m_DiffTimeAttack > ((MAX_MOVEMENT_POSITION * UPDATE_TIME_MOVEMENT * 1000 * (2.0f - m_Speed)) / 2.0f)) ///< 1000 because microsecond
             m_AttackDamage.m_DamageReady = true;
     }
 
-    while (m_DiffTimeAttack > (MAX_MOVEMENT_POSITION * UPDATE_TIME_MOVEMENT * 1000 * m_Speed)) ///< 1000 because microsecond
+    while (m_DiffTimeAttack > (MAX_MOVEMENT_POSITION * UPDATE_TIME_MOVEMENT * 1000 * (2.0f - m_Speed))) ///< 1000 because microsecond
     {
         if (m_StopAttack)
         {
@@ -153,27 +153,27 @@ void MovementHandler::Update(sf::Time p_Diff)
 
     m_DiffTime += p_Diff.asMicroseconds();
 
-    while (m_DiffTime > (uint64)((UPDATE_TIME_MOVEMENT / STEP_SIZE) * 1000)) ///< 1000 because microsecond
+    while (m_DiffTime > (uint64)((UPDATE_TIME_MOVEMENT / STEP_SIZE) * 1000 * (2.0f - m_Speed))) ///< 1000 because microsecond
     {
         /// UPDATE POSITION
         switch (m_Orientation)
         {
         case Orientation::Down:
-            l_PosY += (uint32)((STEP_SIZE / STEP_SIZE) * m_Speed);
+            l_PosY += (uint32)((STEP_SIZE / STEP_SIZE));
             break;
         case Orientation::Left:
-            l_PosX -= (uint32)((STEP_SIZE / STEP_SIZE) * m_Speed);
+            l_PosX -= (uint32)((STEP_SIZE / STEP_SIZE));
             break;
         case Orientation::Right:
-            l_PosX += (uint32)((STEP_SIZE / STEP_SIZE) * m_Speed);
+            l_PosX += (uint32)((STEP_SIZE / STEP_SIZE));
             break;
         case Orientation::Up:
-            l_PosY -= (uint32)((STEP_SIZE / STEP_SIZE) * m_Speed);
+            l_PosY -= (uint32)((STEP_SIZE / STEP_SIZE));
             break;
         default:
             break;
         }
-        m_DiffTime -= (uint64)((UPDATE_TIME_MOVEMENT / STEP_SIZE) * 1000);
+        m_DiffTime -= (uint64)((UPDATE_TIME_MOVEMENT / STEP_SIZE) * 1000 * (2.0f - m_Speed));
 
         if (!IsInColision(l_PosX, l_PosY))
         {
@@ -241,6 +241,11 @@ Orientation MovementHandler::GetOrientation() const
 void MovementHandler::SetPosX(uint32 p_PosX)
 {
     m_Pos.m_X = p_PosX;
+}
+
+void MovementHandler::SetSpeed(float p_Speed)
+{
+    m_Speed = p_Speed;
 }
 
 void MovementHandler::SetPosY(uint32 p_PosY)
