@@ -3,6 +3,9 @@
 
 void Map::SendToSet(WorldPacket p_Packet, Unit* l_Unit)
 {
+    if (!l_Unit->IsInWorld())
+        return;
+
     std::vector<Square*> l_SquareSet = GetSquareSet(l_Unit->GetSquareID());
     for (Square* l_Square : l_SquareSet)
     {

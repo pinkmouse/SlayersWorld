@@ -6,7 +6,10 @@ class Creature : public Unit
 public:
     Creature(uint16, uint16, CreatureTemplate, uint16, uint32, uint32);
     ~Creature();
+
     void Update(sf::Time);
+    void Respawn();
+    void SetHealth(const uint8 &);
 
 private:
     uint16 m_Entry;

@@ -5,18 +5,12 @@
 
 Unit::Unit(uint16 p_ID)
 {
-    m_Name = "";
-    m_MapID = 0;
-    m_Type = TypeUnit::CREATURE;
-    m_ID = p_ID;
-    m_SizeX = 24;
-    m_SizeY = 32;
-    m_MovementHandler = new MovementHandler(m_SizeX, m_SizeY);
-    m_Health = 100;
+    Unit::Unit(p_ID, TypeUnit::CREATURE);
 }
 
 Unit::Unit(uint16 p_ID, TypeUnit p_Type)
 {
+    m_InWorld = true;
     m_Type = p_Type;
     m_Name = "";
     m_MapID = 0;
@@ -25,6 +19,8 @@ Unit::Unit(uint16 p_ID, TypeUnit p_Type)
     m_SizeY = 32;
     m_MovementHandler = new MovementHandler(m_SizeX, m_SizeY);
     m_Health = 100;
+    m_ResTimer = 0;
+    m_RespawnTime = 0;
 }
 
 Player* Unit::ToPlayer()
@@ -51,9 +47,36 @@ Unit::~Unit()
     delete m_MovementHandler;
 }
 
+void Unit::UpdateDeathState(sf::Time p_Diff)
+{
+    if (IsDeath())
+    {
+        m_ResTimer += p_Diff.asMicroseconds();
+        if (m_ResTimer >= m_RespawnTime)
+        {
+            switch (m_Type)
+            {
+            case TypeUnit::PLAYER:
+                ToPlayer()->Respawn();
+                break;
+            case TypeUnit::CREATURE:
+                ToCreature()->Respawn();
+                break;
+            default:
+                break;
+            }
+        }
+    }
+}
+
 void Unit::Update(sf::Time p_Diff)
 {
+    UpdateDeathState(p_Diff);
+
     if (m_MovementHandler == nullptr)
+        return;
+
+    if (!IsInWorld())
         return;
 
     m_MovementHandler->Update(p_Diff);
@@ -100,15 +123,34 @@ bool Unit::IsInFront(const Position & p_Position) const
 void Unit::DealDamage(Unit* p_Victim)
 {
     uint8 l_Damage = rand() %  8 + 8;
-    int16 l_NewHealth = p_Victim->GetHealth() - l_Damage;
-    if (l_NewHealth < 0)
-        l_NewHealth = 0;
-    p_Victim->ToPlayer()->SetHealth((uint8)l_NewHealth);
+    int8 l_NewHealth = std::max(p_Victim->GetHealth() - l_Damage, 0);
+
+    switch (p_Victim->GetType())
+    {
+        case TypeUnit::PLAYER:
+            p_Victim->ToPlayer()->SetHealth((uint8)l_NewHealth);
+        break;
+        case TypeUnit::CREATURE:
+            p_Victim->ToCreature()->SetHealth((uint8)l_NewHealth);
+            break;
+        default:
+            break;
+    }
 }
 
 bool Unit::IsInFront(Unit const* p_Unit) const
 {
     return IsInFront(p_Unit->GetPosition());
+}
+
+bool Unit::IsInWorld() const
+{
+    return m_InWorld;
+}
+
+void Unit::SetInWorld(bool p_InWorld)
+{
+    m_InWorld = p_InWorld;
 }
 
 TypeUnit Unit::GetType() const

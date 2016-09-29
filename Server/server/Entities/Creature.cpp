@@ -20,6 +20,8 @@ Creature::Creature(uint16 p_ID, uint16 p_Entry, CreatureTemplate p_CreatureTempl
     m_RespawnPosition.SetPosY(p_PosY);
     m_MovementHandler->SetSpeed(0.5f);
     m_RandMovementTime = rand() % 100;
+
+    m_RespawnTime = m_CreatureTemplate.m_RespawnTime * IN_MILLISECOND;
 }
 
 
@@ -30,6 +32,9 @@ Creature::~Creature()
 void Creature::Update(sf::Time p_Diff)
 {
     Unit::Update(p_Diff);
+
+    if (!IsInWorld())
+        return;
 
     m_DiffMovementTime += p_Diff.asMicroseconds();
 
@@ -58,4 +63,38 @@ void Creature::Update(sf::Time p_Diff)
         m_DiffMovementTime = 0;
         m_RandMovementTime = rand() % 100;
     }
+}
+
+void Creature::SetHealth(const uint8 & p_Health)
+{
+    Unit::SetHealth(p_Health);
+    if (IsDeath())
+    {
+        m_MovementHandler->StopMovement();
+        m_MovementHandler->StopAttack();
+
+        WorldPacket l_Packet;
+        uint8 l_ID = SMSG::S_UnitRemove;
+        uint8 l_Type = (uint8)TypeUnit::CREATURE;
+
+        l_Packet << l_ID << l_Type << GetID();
+        m_Map->SendToSet(l_Packet, this);
+        SetInWorld(false);
+    }
+}
+
+void Creature::Respawn()
+{
+    Unit::Respawn();
+    m_DiffMovementTime = 0;
+    SetInWorld(true);
+
+    SetHealth(MAX_HEALTH);
+    m_ResTimer = 0;
+
+    WorldPacket l_Packet;
+    uint8 l_ID = SMSG::S_UnitCreate;
+
+    l_Packet << l_ID << (uint8)GetType() << (uint32)GetID() << GetName() << GetLevel() << GetHealth() << GetSkinID() << GetMapID() << GetPosX() << GetPosY() << GetOrientation() << m_MovementHandler->IsInMovement();
+    m_Map->SendToSet(l_Packet, this);
 }

@@ -50,8 +50,9 @@ uint16 Map::GetSquareID(uint16 p_X, uint16 p_Y) const
 
 Unit* Map::GetUnit(TypeUnit p_TypeID, uint16 p_UnitID)
 {
-    return m_ListUnitZone[p_TypeID][p_UnitID];
-
+    if (m_ListUnitZone[p_TypeID].find(p_UnitID) != m_ListUnitZone[p_TypeID].end())
+        return m_ListUnitZone[p_TypeID][p_UnitID];
+    return nullptr;
 }
 
 void Map::Update(sf::Time p_Diff)
@@ -187,6 +188,7 @@ Unit* Map::GetCloserUnit(Unit const* p_Unit, float p_Range /*= 2.0f*/, bool p_On
 void Map::AddUnit(Unit* p_Unit)
 {
     p_Unit->SetMap(this);
+    p_Unit->SetInWorld(true);
     m_ListUnitZone[p_Unit->GetType()][p_Unit->GetID()] = p_Unit;
 
     /// Add to square
@@ -199,7 +201,7 @@ void Map::AddUnit(Unit* p_Unit)
 void Map::RemoveUnit(Unit* p_Unit)
 {
     m_ListUnitZone[p_Unit->GetType()].erase(p_Unit->GetID());
-
+    p_Unit->SetInWorld(false);
     /// Remove from square
     RemoveFromSquare(p_Unit);
 }

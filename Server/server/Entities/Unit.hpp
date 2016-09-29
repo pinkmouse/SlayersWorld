@@ -42,6 +42,8 @@ public:
     bool IsInFront(Unit const*) const;
     void DealDamage(Unit*);
     void Respawn();
+    bool IsInWorld() const;
+    void SetInWorld(bool);
     TypeUnit GetType() const;
     bool IsInMovement() const;
     Orientation GetOrientationToPoint(Position) const;
@@ -51,11 +53,13 @@ public:
     MovementHandler* GetMovementHandler();
 
     void Update(sf::Time);
+    void UpdateDeathState(sf::Time);
 
 protected:
     std::string m_Name;
     uint8 m_Level;
     uint16 m_MapID;
+    bool m_InWorld;
 
     uint8 m_SizeX;
     uint8 m_SizeY;
@@ -69,5 +73,6 @@ protected:
     uint16 m_ID;
 
     WorldPosition m_RespawnPosition;
+    uint64 m_RespawnTime;
     uint64 m_ResTimer;
 };

@@ -16,6 +16,7 @@ Player::Player(int32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_Health, ui
     m_Alignment = 0;
     m_Initilize = false;
     m_Health = p_Health;
+    m_RespawnTime = PLAYER_TIME_RESPAWN * IN_MICROSECOND;
 }
 
 WorldSocket* Player::GetSession() const
@@ -41,15 +42,6 @@ Player::~Player()
 void Player::Update(sf::Time p_Diff)
 {
     Unit::Update(p_Diff);
-
-    if (IsDeath())
-    {
-        m_ResTimer += p_Diff.asMicroseconds();
-        if (m_ResTimer >= PLAYER_TIME_RESPAWN * IN_MICROSECOND)
-        {
-            Respawn();
-        }
-    }
 }
 
 void Player::UpdateNewSquares(uint16 p_OldSquareID, uint16 p_NewSquareID, bool p_UpdateAll)
@@ -83,7 +75,7 @@ void Player::UpdateNewSquares(uint16 p_OldSquareID, uint16 p_NewSquareID, bool p
             {
                 Unit* l_Unit = l_SquareList.second;
 
-                if (l_Unit == nullptr)
+                if (l_Unit == nullptr || !l_Unit->IsInWorld())
                     continue;
 
                 if (l_Unit->IsPlayer() && l_Unit->GetID() == GetID())

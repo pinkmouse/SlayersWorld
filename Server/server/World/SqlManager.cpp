@@ -122,7 +122,7 @@ void SqlManager::SavePlayer(Player const* p_Player)
 
 bool SqlManager::InitializeCreatureTemplate(CreatureManager* p_CreatureManager)
 {
-    std::string l_Query = "SELECT `entry`, `skinID`, `name`, `level`, `force`, `stamina`, `dexterity`, `xp`, `state`, `maxRay` FROM creature_template";
+    std::string l_Query = "SELECT `entry`, `skinID`, `name`, `level`, `force`, `stamina`, `dexterity`, `xp`, `state`, `maxRay`, `respawnTime` FROM creature_template";
     mysql_query(&m_MysqlWorld, l_Query.c_str());
 
     uint32 l_Entry = 0;
@@ -135,6 +135,7 @@ bool SqlManager::InitializeCreatureTemplate(CreatureManager* p_CreatureManager)
     uint8 l_Xp = 0;
     uint8 l_State = 0;
     uint16 l_MaxRay = 0;
+    uint16 l_RespawnTime = 0;
 
     MYSQL_RES *l_Result = NULL;
     MYSQL_ROW l_Row;
@@ -151,7 +152,8 @@ bool SqlManager::InitializeCreatureTemplate(CreatureManager* p_CreatureManager)
         l_Xp = atoi(l_Row[7]);
         l_State = atoi(l_Row[8]);
         l_MaxRay = atoi(l_Row[9]);
-        p_CreatureManager->AddCreatureTemplate(CreatureTemplate(l_Entry, l_SkinID, l_Name, l_Lvl, l_Force, l_Stamina, l_Dexterity, l_Xp, l_State, l_MaxRay));
+        l_RespawnTime = atoi(l_Row[10]);
+        p_CreatureManager->AddCreatureTemplate(CreatureTemplate(l_Entry, l_SkinID, l_Name, l_Lvl, l_Force, l_Stamina, l_Dexterity, l_Xp, l_State, l_MaxRay, l_RespawnTime));
     }
     mysql_free_result(l_Result);
 

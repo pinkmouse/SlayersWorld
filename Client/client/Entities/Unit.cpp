@@ -70,7 +70,15 @@ void Unit::Update(sf::Time p_Diff)
 uint8 Unit::GetOpacity() const
 {
     if (IsDeath())
-        return DEATH_OPACITY;
+    {
+        switch (GetType())
+        {
+            case TypeUnit::PLAYER:
+                return DEATH_OPACITY;
+            default:
+                return 0;
+        }
+    }
 
     return m_Opacity;
 }
