@@ -8,7 +8,11 @@ public:
     ~Creature();
 
     void Update(sf::Time);
+    void UpdatePassive(sf::Time);
+    void RandMoving();
+    void StopMovement();
     void Respawn();
+    void Unspawn();
     void SetHealth(const uint8 &);
 
 private:

@@ -10,17 +10,24 @@ Unit::Unit(uint16 p_ID)
 
 Unit::Unit(uint16 p_ID, TypeUnit p_Type)
 {
-    m_InWorld = true;
     m_Type = p_Type;
     m_Name = "";
     m_MapID = 0;
     m_ID = p_ID;
     m_SizeX = 24;
     m_SizeY = 32;
-    m_MovementHandler = new MovementHandler(m_SizeX, m_SizeY);
     m_Health = 100;
+
+    m_InWorld = true;
+    m_InCombat = false;
+
+    m_CombatTimer = 0;
     m_ResTimer = 0;
     m_RespawnTime = 0;
+    
+    m_Victim = nullptr;
+    m_Attacker = nullptr;
+    m_MovementHandler = new MovementHandler(m_SizeX, m_SizeY);
 }
 
 Player* Unit::ToPlayer()
@@ -69,9 +76,24 @@ void Unit::UpdateDeathState(sf::Time p_Diff)
     }
 }
 
+void Unit::UpdateCombat(sf::Time p_Diff)
+{
+    if (!IsInWorld())
+        return;
+
+    if (IsInCombat())
+    {
+        m_CombatTimer += p_Diff.asMicroseconds();
+
+        if (m_CombatTimer >= OUT_OF_COMBAT_TIME * IN_MICROSECOND)
+            OutOfCombat();
+    }
+}
+
 void Unit::Update(sf::Time p_Diff)
 {
     UpdateDeathState(p_Diff);
+    UpdateCombat(p_Diff);
 
     if (m_MovementHandler == nullptr)
         return;
@@ -125,6 +147,9 @@ void Unit::DealDamage(Unit* p_Victim)
     uint8 l_Damage = rand() %  8 + 8;
     int8 l_NewHealth = std::max(p_Victim->GetHealth() - l_Damage, 0);
 
+    if (!l_Damage)
+        return;
+
     switch (p_Victim->GetType())
     {
         case TypeUnit::PLAYER:
@@ -135,6 +160,17 @@ void Unit::DealDamage(Unit* p_Victim)
             break;
         default:
             break;
+    }
+
+    if (p_Victim->IsDeath())
+        return;
+
+    if (GetVictim() != p_Victim)
+        EnterInCombat(p_Victim);
+    else
+    {
+        InCombat();
+        p_Victim->InCombat();
     }
 }
 
@@ -266,6 +302,9 @@ void Unit::SetMap(Map* p_Map)
 void Unit::SetHealth(const uint8 & p_Health)
 {
     m_Health = p_Health;
+
+    if (!m_Health)
+        OutOfCombat();
 }
 
 bool Unit::IsDeath() const
@@ -322,3 +361,35 @@ Orientation Unit::GetOrientationToPoint(Position p_Position) const
             return Orientation::Up;
     }
 }
+
+/// COMBAT
+bool Unit::IsInCombat() const
+{
+    return m_InCombat;
+}
+
+void Unit::InCombat()
+{
+    m_InCombat = true;
+    m_CombatTimer = 0;
+}
+
+void Unit::OutOfCombat()
+{
+    m_InCombat = false;
+    m_Attacker = nullptr;
+    m_Victim = nullptr;
+}
+
+void Unit::EnterInCombat(Unit* p_Victim)
+{
+    p_Victim->SetAttacker(this);
+    SetVictim(p_Victim);
+    InCombat();
+    p_Victim->InCombat();
+}
+
+void Unit::SetAttacker(Unit* p_Attacker) { m_Attacker = p_Attacker; }
+void Unit::SetVictim(Unit* p_Victim) { m_Victim = p_Victim; }
+Unit* Unit::GetAttacker() const { return m_Attacker; }
+Unit* Unit::GetVictim() const { return m_Victim; }

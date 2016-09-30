@@ -158,7 +158,7 @@ Unit* Map::GetCloserUnit(Unit const* p_Unit, float p_Range /*= 2.0f*/, bool p_On
             {
                 Unit* l_Unit = l_SquareList.second;
 
-                if (l_Unit == nullptr)
+                if (l_Unit == nullptr || !l_Unit->IsInWorld())
                     continue;
 
                 if (l_Unit == p_Unit)

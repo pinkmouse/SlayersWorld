@@ -53,7 +53,17 @@ public:
     MovementHandler* GetMovementHandler();
 
     void Update(sf::Time);
+    void UpdateCombat(sf::Time);
     void UpdateDeathState(sf::Time);
+
+    bool IsInCombat() const;
+    void EnterInCombat(Unit*);
+    void InCombat();
+    void OutOfCombat();
+    void SetAttacker(Unit*);
+    void SetVictim(Unit*);
+    Unit* GetAttacker() const;
+    Unit* GetVictim() const;
 
 protected:
     std::string m_Name;
@@ -75,4 +85,10 @@ protected:
     WorldPosition m_RespawnPosition;
     uint64 m_RespawnTime;
     uint64 m_ResTimer;
+
+private:
+    bool m_InCombat;
+    uint64 m_CombatTimer;
+    Unit* m_Victim;
+    Unit* m_Attacker;
 };

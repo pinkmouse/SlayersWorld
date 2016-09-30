@@ -17,6 +17,8 @@
 #define STEP_SIZE 8 /// In pixel
 #define MAX_MOVEMENT_POSITION 3
 
+#define OUT_OF_COMBAT_TIME 5
+
 typedef char int8;
 typedef short int16;
 typedef int int32;
@@ -40,6 +42,13 @@ enum TypeUnit
 {
     CREATURE = 0,
     PLAYER = 1
+};
+
+enum eAiType
+{
+    PASSIVE = 0,
+    DEFENSIVE = 1,
+    AGRESIVE = 2
 };
 
 enum eActionType
@@ -78,10 +87,16 @@ struct CreatureTemplate
     uint8 m_State;
     uint16 m_MaxRay;
     uint16 m_RespawnTime;
+    uint8 m_Rank;
+    uint8 m_AiType;
 
     CreatureTemplate() :
-    m_Entry(0), m_SkinID(0), m_Name(""), m_Level(0), m_Force(0), m_Stamina(0), m_Dexterity(0), m_Xp(0), m_State(0) {}
+    m_Entry(0), m_SkinID(0), m_Name(""), m_Level(0), m_Force(0), m_Stamina(0), m_Dexterity(0), m_Xp(0), m_State(0), m_MaxRay(0), m_RespawnTime(0), m_Rank(0), m_AiType(0) {}
 
-    CreatureTemplate(uint32 p_Entry, uint8 p_SkinID, std::string p_Name, uint8 p_Level, uint8 p_Force, uint8 p_Stamina, uint8 p_Dexterity, uint8 p_Xp, uint8 p_State, uint16 p_MaxRay, uint16 p_RespawnTime) :
-    m_Entry(p_Entry), m_SkinID(p_SkinID), m_Name(p_Name), m_Level(p_Level), m_Force(p_Force), m_Stamina(p_Stamina), m_Dexterity(p_Dexterity), m_Xp(p_Xp), m_State(p_State), m_MaxRay(p_MaxRay), m_RespawnTime(p_RespawnTime) {}
+    CreatureTemplate(uint32 p_Entry, uint8 p_SkinID, std::string p_Name, uint8 p_Level, uint8 p_Force, uint8 p_Stamina, uint8 p_Dexterity, uint8 p_Xp, uint8 p_State, uint16 p_MaxRay, uint16 p_RespawnTime, uint8 p_Rank, uint8 p_AiType) :
+    m_Entry(p_Entry), m_SkinID(p_SkinID), m_Name(p_Name), m_Level(p_Level), m_Force(p_Force), m_Stamina(p_Stamina), m_Dexterity(p_Dexterity), m_Xp(p_Xp), m_State(p_State), m_MaxRay(p_MaxRay), m_RespawnTime(p_RespawnTime), m_Rank(p_Rank), m_AiType(p_AiType){}
 };
+
+
+static uint32 PixelToCase(uint32 p_NbPixel) { return p_NbPixel / TILE_SIZE; }
+static uint32 CaseToPixel(uint32 p_NbCase) { return p_NbCase * TILE_SIZE; }

@@ -128,12 +128,15 @@ void Graphics::DrawEntities()
             }
 
             /// NAME
-            sf::Text l_Name(l_Unit->GetName(), *g_Font, SIZE_NAME_FONT);
-            l_Name.setColor(sf::Color::White);
-            sf::Vector2f v1(l_Unit->GetPosX() + (l_Unit->GetSizeX() / 2), l_Unit->GetPosY());
-            sf::Vector2i l_Coord = m_Window.mapCoordsToPixel(v1, m_View);
-            l_Name.setPosition((float)(l_Coord.x - (l_Name.getGlobalBounds().width / 2)), (float)l_Coord.y);
-            m_Window.draw(l_Name);
+            if (l_Unit->IsPlayer())
+            {
+                sf::Text l_Name(l_Unit->GetName(), *g_Font, SIZE_NAME_FONT);
+                l_Name.setColor(sf::Color::White);
+                sf::Vector2f v1(l_Unit->GetPosX() + (l_Unit->GetSizeX() / 2), l_Unit->GetPosY());
+                sf::Vector2i l_Coord = m_Window.mapCoordsToPixel(v1, m_View);
+                l_Name.setPosition((float)(l_Coord.x - (l_Name.getGlobalBounds().width / 2)), (float)l_Coord.y);
+                m_Window.draw(l_Name);
+            }
 
             /// Reset the view
             m_Window.setView(m_View);

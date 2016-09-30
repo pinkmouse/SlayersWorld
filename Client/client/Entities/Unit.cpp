@@ -31,6 +31,11 @@ bool Unit::IsDeath() const
     return true;
 }
 
+bool Unit::IsPlayer() const
+{
+    return m_Type == TypeUnit::PLAYER;
+}
+
 MovementHandler* Unit::GetMovementHandler()
 {
     return m_MovementHandler;

@@ -13,6 +13,7 @@ public:
     Unit(uint16, TypeUnit);
     ~Unit();
 
+    bool IsPlayer() const;
     std::string GetName() const;
     uint16 GetCasePosX() const;
     uint16 GetCasePosY() const;
