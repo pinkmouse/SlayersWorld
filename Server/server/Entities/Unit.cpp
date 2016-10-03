@@ -20,6 +20,7 @@ Unit::Unit(uint16 p_ID, TypeUnit p_Type)
 
     m_InWorld = true;
     m_InCombat = false;
+    m_Evade = false;
 
     m_CombatTimer = 0;
     m_ResTimer = 0;
@@ -107,7 +108,7 @@ void Unit::Update(sf::Time p_Diff)
 
     if (m_MovementHandler->IsDamageReady())
     {
-        Unit* l_Unit = m_Map->GetCloserUnit(this, this->GetSizeX(), true);
+        Unit* l_Unit = m_Map->GetCloserUnit(this, MELEE_RANGE, true);
 
         if (l_Unit != nullptr)
             DealDamage(l_Unit);
@@ -336,32 +337,6 @@ void Unit::Respawn()
     SetOrientation(m_RespawnPosition.GetOrientation());
 }
 
-Orientation Unit::GetOrientationToPoint(Position p_Position) const
-{
-    int32 l_X = GetPosX() - p_Position.m_X;
-    int32 l_Y = GetPosY() - p_Position.m_Y;
-
-    if (l_X < 0)
-        l_X *= -1;
-    if (l_Y < 0)
-        l_Y *= -1;
-
-    if (l_X > l_Y)
-    {
-        if (GetPosX() < p_Position.m_X)
-            return Orientation::Right;
-        else
-            return Orientation::Left;
-    }
-    else
-    {
-        if (GetPosY() < p_Position.m_Y)
-            return Orientation::Down;
-        else
-            return Orientation::Up;
-    }
-}
-
 /// COMBAT
 bool Unit::IsInCombat() const
 {
@@ -387,6 +362,21 @@ void Unit::EnterInCombat(Unit* p_Victim)
     SetVictim(p_Victim);
     InCombat();
     p_Victim->InCombat();
+}
+
+void Unit::EnterInEvade()
+{
+    m_Evade = true;
+}
+
+void Unit::OutOfEvade()
+{
+    m_Evade = false;
+}
+
+bool Unit::IsInEvade() const
+{
+    return m_Evade;
 }
 
 void Unit::SetAttacker(Unit* p_Attacker) { m_Attacker = p_Attacker; }

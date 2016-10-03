@@ -34,7 +34,15 @@ void Creature::RandMoving()
     uint8 l_Orientation = rand() % 4;
     if (GetDistance(m_RespawnPosition.GetPosition()) > CaseToPixel(m_CreatureTemplate.m_MaxRay))
         l_Orientation = GetOrientationToPoint(m_RespawnPosition.GetPosition());
-    m_MovementHandler->StartMovement((Orientation)l_Orientation);
+    StartMovement((Orientation)l_Orientation);
+}
+
+void Creature::StartMovement(Orientation p_Orientation)
+{
+    if (m_MovementHandler == nullptr)
+        return;
+
+    m_MovementHandler->StartMovement(p_Orientation);
     PacketGoDirection l_Packet;
     l_Packet.BuildPacket((uint8)TypeUnit::CREATURE, GetID(), GetPosition(), GetOrientation());
     m_Map->SendToSet(l_Packet.m_Packet, this);
@@ -48,6 +56,22 @@ void Creature::StopMovement()
     m_MovementHandler->StopMovement();
     PacketStopMovement l_Packet;
     l_Packet.BuildPacket((uint8)TypeUnit::CREATURE, GetID(), GetPosition(), GetOrientation());
+    m_Map->SendToSet(l_Packet.m_Packet, this);
+}
+
+void Creature::StartAttack(Unit* p_Victim)
+{
+    m_MovementHandler->StartAttack();
+    PacketStartAttack l_Packet;
+    l_Packet.BuildPacket((uint8)TypeUnit::CREATURE, GetID(), GetPosition(), GetOrientation());
+    m_Map->SendToSet(l_Packet.m_Packet, this);
+}
+
+void Creature::StopAttack()
+{
+    m_MovementHandler->StopAttack();
+    PacketStopAttack l_Packet;
+    l_Packet.BuildPacket((uint8)TypeUnit::CREATURE, GetID());
     m_Map->SendToSet(l_Packet.m_Packet, this);
 }
 
@@ -76,6 +100,71 @@ void Creature::UpdatePassive(sf::Time p_Diff)
     }
 }
 
+void Creature::UpdateDefensive(sf::Time p_Diff)
+{
+    if (!IsInCombat())
+    {
+        while (m_DiffMovementTime > (1.5f * IN_MICROSECOND) + (((1.5f * IN_MICROSECOND) / 100.0f) * m_RandMovementTime)) ///< 1000 because microsecond
+        {
+            if (GetDistance(m_RespawnPosition.GetPosition()) > CaseToPixel(m_CreatureTemplate.m_MaxRay))
+            {
+                Orientation l_Orientation = GetOrientationToPoint(m_RespawnPosition.GetPosition());
+                if (GetOrientation() != l_Orientation || !IsInMovement())
+                    StartMovement(l_Orientation);
+            }
+            else if (m_MovementHandler->IsInMovement())
+            {
+                OutOfEvade();
+                StopMovement();
+            }
+            else
+                RandMoving();
+            m_DiffMovementTime = 0;
+            m_RandMovementTime = rand() % 100;
+        }
+    }
+    else
+    {
+        if (GetAttacker() == nullptr || GetAttacker()->IsDeath())
+        {
+            if (m_MovementHandler->IsInAttack() && !m_MovementHandler->IsStopingAttack())
+                StopAttack();
+            OutOfCombat();
+            return;
+        }
+
+        if (GetVictim() == nullptr)
+            SetVictim(GetAttacker());
+
+        if (GetDistance(m_RespawnPosition.GetPosition()) > CaseToPixel(m_CreatureTemplate.m_MaxRay) * 2)
+        {
+            EnterInEvade();
+            OutOfCombat();
+            return;
+        }
+
+        if (GetDistance(GetVictim()) > MELEE_RANGE)
+        {
+            if (m_MovementHandler->IsInAttack() && !m_MovementHandler->IsStopingAttack())
+                StopAttack();
+            if (!m_MovementHandler->IsInAttack())
+            {
+                Orientation l_Orientation = GetOrientationToPoint(GetVictim());
+                if (GetOrientation() != l_Orientation || !IsInMovement())
+                    StartMovement(l_Orientation);
+            }
+        }
+        else
+        {
+            if (m_MovementHandler->IsInMovement())
+                StopMovement();
+
+            if (!m_MovementHandler->IsInAttack())
+                StartAttack(GetVictim());
+        }
+    }
+}
+
 void Creature::Update(sf::Time p_Diff)
 {
     Unit::Update(p_Diff);
@@ -87,6 +176,9 @@ void Creature::Update(sf::Time p_Diff)
     {
         case eAiType::PASSIVE:
             UpdatePassive(p_Diff);
+            break;
+        case eAiType::DEFENSIVE:
+            UpdateDefensive(p_Diff);
             break;
         default:
             break;

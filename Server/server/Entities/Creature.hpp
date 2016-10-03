@@ -9,8 +9,12 @@ public:
 
     void Update(sf::Time);
     void UpdatePassive(sf::Time);
+    void UpdateDefensive(sf::Time);
     void RandMoving();
+    void StartMovement(Orientation);
     void StopMovement();
+    void StartAttack(Unit*);
+    void StopAttack();
     void Respawn();
     void Unspawn();
     void SetHealth(const uint8 &);
@@ -20,5 +24,6 @@ private:
     uint64 m_DiffMovementTime;
     CreatureTemplate m_CreatureTemplate;
     uint16 m_RandMovementTime;
+    bool m_Evade;
 };
 

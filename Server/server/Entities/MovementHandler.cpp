@@ -104,6 +104,11 @@ bool MovementHandler::CheckNextMovement(uint32 p_PosX, uint32 p_PosY)
         return true;
 }
 
+bool MovementHandler::IsStopingAttack() const
+{
+    return m_StopAttack;
+}
+
 bool MovementHandler::IsDamageReady() const
 {
     return m_AttackDamage.m_DamageReady;

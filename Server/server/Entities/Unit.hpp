@@ -46,7 +46,6 @@ public:
     void SetInWorld(bool);
     TypeUnit GetType() const;
     bool IsInMovement() const;
-    Orientation GetOrientationToPoint(Position) const;
 
     Creature* ToCreature();
     Player* ToPlayer();
@@ -57,6 +56,9 @@ public:
     void UpdateDeathState(sf::Time);
 
     bool IsInCombat() const;
+    void EnterInEvade();
+    void OutOfEvade();
+    bool IsInEvade() const;
     void EnterInCombat(Unit*);
     void InCombat();
     void OutOfCombat();
@@ -85,6 +87,7 @@ protected:
     WorldPosition m_RespawnPosition;
     uint64 m_RespawnTime;
     uint64 m_ResTimer;
+    bool m_Evade;
 
 private:
     bool m_InCombat;

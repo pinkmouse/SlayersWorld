@@ -18,6 +18,7 @@ public:
     bool IsInAction() const;
     bool IsInMovement() const;
     bool IsInAttack() const;
+    bool IsStopingAttack() const;
     void SetMap(Map*);
     bool IsInColision(int64, int64) const;
     bool CheckNextMovement(uint32, uint32);

@@ -71,6 +71,46 @@ struct PacketStopMovement
     }
 };
 
+struct PacketStartAttack
+{
+    WorldPacket m_Packet;
+    uint8 m_PacketID;
+    uint8 m_TypeID;
+    uint16 m_ID;
+    Position m_Pos;
+    uint8 m_Oriection;
+
+    PacketStartAttack() :
+        m_PacketID(SMSG::S_UnitStartAttack) {}
+
+    void BuildPacket(uint8 p_TypeID, uint16 p_ID, Position p_Pos, uint8 p_Orientation)
+    {
+        m_Packet << m_PacketID << p_TypeID << p_ID << p_Pos.m_X << p_Pos.m_Y << p_Orientation;
+        m_TypeID = p_TypeID;
+        m_ID = p_ID;
+        m_Pos = p_Pos;
+        m_Oriection = p_Orientation;
+    }
+};
+
+struct PacketStopAttack
+{
+    WorldPacket m_Packet;
+    uint8 m_PacketID;
+    uint8 m_TypeID;
+    uint16 m_ID;
+
+    PacketStopAttack() :
+        m_PacketID(SMSG::S_UnitStopAttack) {}
+
+    void BuildPacket(uint8 p_TypeID, uint16 p_ID)
+    {
+        m_Packet << m_PacketID << p_TypeID << p_ID;
+        m_TypeID = p_TypeID;
+        m_ID = p_ID;
+    }
+};
+
 struct PacketUnitCreate
 {
     WorldPacket m_Packet;
