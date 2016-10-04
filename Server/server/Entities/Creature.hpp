@@ -15,6 +15,7 @@ public:
     void StopMovement();
     void StartAttack(Unit*);
     void StopAttack();
+    void UpdateOrientation(Orientation);
     void Respawn();
     void Unspawn();
     void SetHealth(const uint8 &);

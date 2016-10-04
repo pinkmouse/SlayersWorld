@@ -15,6 +15,7 @@ public:
     void StartMovement();
     void StopMovement();
     void StartAttack();
+    void StartAttack(Orientation);
     void StopAttack();
     uint8 GetMovementPosition();
     bool IsInColision(int64, int64) const;

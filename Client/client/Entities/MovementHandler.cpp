@@ -100,7 +100,7 @@ bool MovementHandler::CheckNextMovement(uint32 p_PosX, uint32 p_PosY)
     else if (l_MovementAction.m_ActionType == eActionType::Stop)
         StopMovement();
     else if (l_MovementAction.m_ActionType == eActionType::Attack)
-        StartAttack();
+        StartAttack((Orientation)l_MovementAction.m_Orientation);
     else if (l_MovementAction.m_ActionType == eActionType::StopAttack)
         StopAttack();
     return true;
@@ -231,6 +231,14 @@ void MovementHandler::StopMovement()
     m_MovementPosition = 1;
     m_DiffTime = 0;
     m_DiffTimeAnim = 0;
+}
+
+void MovementHandler::StartAttack(Orientation p_Orientation)
+{
+    if (m_InAttack)
+        return;
+    m_Orientation = p_Orientation;
+    StartAttack();
 }
 
 void MovementHandler::StartAttack()

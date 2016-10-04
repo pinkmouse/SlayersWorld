@@ -24,6 +24,7 @@ void PacketHandler::LoadPacketHandlerMap()
     m_PacketHandleMap[SMSG::S_UnitGoDirection] = &PacketHandler::HandleUnitGoDirection;
     m_PacketHandleMap[SMSG::S_UnitStopMovement] = &PacketHandler::HandleStopMovement;
     m_PacketHandleMap[SMSG::S_UnitUpdatePosition] = &PacketHandler::HandleUpdatePosition;
+    m_PacketHandleMap[SMSG::S_UnitUpdateOrientation] = &PacketHandler::HandleUpdateOrientation;
     m_PacketHandleMap[SMSG::S_UnitTalk] = &PacketHandler::HandleTalk;
     m_PacketHandleMap[SMSG::S_UnitStartAttack] = &PacketHandler::HandleUnitStartAttack;
     m_PacketHandleMap[SMSG::S_UnitStopAttack] = &PacketHandler::HandleUnitStopAttack;
@@ -143,7 +144,7 @@ void PacketHandler::HandleUnitStartAttack(WorldPacket &p_Packet)
             return;
         }
 
-        l_Unit->GetMovementHandler()->AddMovementToStack(eActionType::Attack, l_Pos, (Orientation)l_Unit->GetOrientation());
+        l_Unit->GetMovementHandler()->AddMovementToStack(eActionType::Attack, l_Pos, (Orientation)l_Orientation);
     }
 }
 
@@ -169,6 +170,30 @@ void PacketHandler::HandleUnitStopAttack(WorldPacket &p_Packet)
         }
 
         l_Unit->GetMovementHandler()->AddMovementToStack(eActionType::StopAttack);
+    }
+}
+
+void PacketHandler::HandleUpdateOrientation(WorldPacket &p_Packet)
+{
+    uint8 l_TypeID;
+    uint16 l_ID;
+    uint8 l_Orientation;
+
+    p_Packet >> l_TypeID;
+    p_Packet >> l_ID;
+    p_Packet >> l_Orientation;
+
+    if (Map* l_Map = m_MapManager->GetActualMap())
+    {
+        Unit* l_Unit = l_Map->GetUnit((TypeUnit)l_TypeID, l_ID);
+
+        if (l_Unit == nullptr)
+        {
+            g_Socket->SendUnitUnknow(l_TypeID, l_ID); ///< Ask for unknow unit to server
+            return;
+        }
+
+        l_Unit->SetOrientation((Orientation)l_Orientation);
     }
 }
 

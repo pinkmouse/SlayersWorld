@@ -75,7 +75,6 @@ void Creature::StopAttack()
     m_Map->SendToSet(l_Packet.m_Packet, this);
 }
 
-
 void Creature::UpdatePassive(sf::Time p_Diff)
 {
     if (!IsInCombat())
@@ -104,6 +103,12 @@ void Creature::UpdateDefensive(sf::Time p_Diff)
 {
     if (!IsInCombat())
     {
+        if (m_MovementHandler->IsInAttack() && !m_MovementHandler->IsStopingAttack()) ///< If in combat and still atacking
+            StopAttack();
+
+        if (m_MovementHandler->IsInAttack() || m_MovementHandler->IsStopingAttack())
+            return;
+
         while (m_DiffMovementTime > (1.5f * IN_MICROSECOND) + (((1.5f * IN_MICROSECOND) / 100.0f) * m_RandMovementTime)) ///< 1000 because microsecond
         {
             if (GetDistance(m_RespawnPosition.GetPosition()) > CaseToPixel(m_CreatureTemplate.m_MaxRay))
@@ -127,8 +132,6 @@ void Creature::UpdateDefensive(sf::Time p_Diff)
     {
         if (GetAttacker() == nullptr || GetAttacker()->IsDeath())
         {
-            if (m_MovementHandler->IsInAttack() && !m_MovementHandler->IsStopingAttack())
-                StopAttack();
             OutOfCombat();
             return;
         }
@@ -159,10 +162,24 @@ void Creature::UpdateDefensive(sf::Time p_Diff)
             if (m_MovementHandler->IsInMovement())
                 StopMovement();
 
+            if (m_MovementHandler->IsInAttack() && GetOrientationToPoint(GetVictim()) != GetOrientation())
+                UpdateOrientation(GetOrientationToPoint(GetVictim()));
+
             if (!m_MovementHandler->IsInAttack())
+            {
+                SetOrientation(GetOrientationToPoint(GetVictim()));
                 StartAttack(GetVictim());
+            }
         }
     }
+}
+
+void Creature::UpdateOrientation(Orientation p_Orientation)
+{
+    m_MovementHandler->SetOrientation(p_Orientation);
+    PacketUpdateOrientation l_Packet;
+    l_Packet.BuildPacket((uint8)TypeUnit::CREATURE, GetID(), GetOrientation());
+    m_Map->SendToSet(l_Packet.m_Packet, this);
 }
 
 void Creature::Update(sf::Time p_Diff)

@@ -22,9 +22,10 @@ enum SMSG : uint8
     S_UnitGoDirection = 20,
     S_UnitStopMovement = 21,
     S_UnitUpdatePosition = 22,
-    S_UnitTalk = 23,
-    S_UnitStartAttack = 24,
-    S_UnitStopAttack = 25,
+    S_UnitUpdateOrientation = 23,
+    S_UnitTalk = 24,
+    S_UnitStartAttack = 25,
+    S_UnitStopAttack = 26,
 };
 
 struct PacketGoDirection
@@ -106,6 +107,26 @@ struct PacketStopAttack
     void BuildPacket(uint8 p_TypeID, uint16 p_ID)
     {
         m_Packet << m_PacketID << p_TypeID << p_ID;
+        m_TypeID = p_TypeID;
+        m_ID = p_ID;
+    }
+};
+
+struct PacketUpdateOrientation
+{
+    WorldPacket m_Packet;
+    uint8 m_PacketID;
+    uint8 m_TypeID;
+    uint16 m_ID;
+    uint8 m_Orientation;
+
+    PacketUpdateOrientation() :
+        m_PacketID(SMSG::S_UnitUpdateOrientation) {}
+
+    void BuildPacket(uint8 p_TypeID, uint16 p_ID, uint8 p_Orientation)
+    {
+        m_Packet << m_PacketID << p_TypeID << p_ID << p_Orientation;
+        m_Orientation = p_Orientation;
         m_TypeID = p_TypeID;
         m_ID = p_ID;
     }

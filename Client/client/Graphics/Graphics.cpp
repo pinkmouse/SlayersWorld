@@ -119,11 +119,15 @@ void Graphics::DrawEntities()
                 sf::Text l_Text(l_Unit->GetTalk(), *g_Font, SIZE_TALK_FONT);
 
                 TileSprite l_Sprite = m_InterfaceManager->GetField(l_Text.getGlobalBounds().width, (float)g_Font->getLineSpacing(l_Text.getCharacterSize()));
-                l_Sprite.setPosition((float)l_Unit->GetPosX() + (l_Unit->GetRealSizeX() / 2) - (l_Text.getGlobalBounds().width / 2), (float)l_Unit->GetPosY() - l_Unit->GetRealSizeY() - l_Text.getGlobalBounds().height - (l_Unit->GetRealSizeY() * ZOOM_FACTOR / 2.0f));
+                sf::Vector2f v1(l_Unit->GetPosX() + (l_Unit->GetSizeX() / 2), l_Unit->GetPosY() - l_Unit->GetSizeY());
+                sf::Vector2i l_Coord = m_Window.mapCoordsToPixel(v1, m_View);
+                l_Sprite.setPosition((float)(l_Coord.x - (l_Text.getGlobalBounds().width / 2)), (float)l_Coord.y);
                 m_Window.draw(l_Sprite);
 
                 l_Text.setColor(sf::Color::White);
-                l_Text.setPosition((float)l_Unit->GetPosX() + (l_Unit->GetRealSizeX() / 2) - (l_Text.getGlobalBounds().width / 2), (float)l_Unit->GetPosY() - l_Unit->GetRealSizeY() - l_Text.getGlobalBounds().height - (l_Unit->GetRealSizeY() * ZOOM_FACTOR / 2.0f));
+                sf::Vector2f v12(l_Unit->GetPosX() + (l_Unit->GetSizeX() / 2), l_Unit->GetPosY() - l_Unit->GetSizeY());
+                l_Coord = m_Window.mapCoordsToPixel(v1, m_View);
+                l_Text.setPosition((float)(l_Coord.x - (l_Text.getGlobalBounds().width / 2)), (float)l_Coord.y);
                 m_Window.draw(l_Text);
             }
 
