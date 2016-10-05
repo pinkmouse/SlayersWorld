@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "Map/Map.hpp"
 #include "World/World.hpp"
 #include <SFML/Network.hpp>

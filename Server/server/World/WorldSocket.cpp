@@ -1,4 +1,3 @@
-#include "../stdafx.h"
 #include "WorldSocket.hpp"
 #include "../Map/Map.hpp"
 #include "PacketDefine.hpp"
