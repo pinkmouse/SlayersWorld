@@ -36,4 +36,7 @@
     start "" "D:\Projects\Build\Client\client.exe" test@test.fr test
     ```
 
+### Issues
+
+  - Add entry on CMAKE 'SFML_ROOT' with root directory
 **We roxx Yeah!**
