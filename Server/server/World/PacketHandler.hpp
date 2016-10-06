@@ -26,7 +26,7 @@ public:
     void HandleDisconnected(WorldSocket*);
 
 private:
-    using m_Func = void(PacketHandler::*)(WorldPacket &, WorldSocket*);
+    typedef void(PacketHandler::*m_Func)(WorldPacket &, WorldSocket*);
 
     std::map<uint8, m_Func> m_PacketHandleMap;
     SqlManager* m_SqlManager;
