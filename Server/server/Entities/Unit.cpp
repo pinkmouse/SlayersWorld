@@ -5,7 +5,7 @@
 
 Unit::Unit(uint16 p_ID)
 {
-    Unit::Unit(p_ID, TypeUnit::CREATURE);
+    Unit(p_ID, TypeUnit::CREATURE);
 }
 
 Unit::Unit(uint16 p_ID, TypeUnit p_Type)
