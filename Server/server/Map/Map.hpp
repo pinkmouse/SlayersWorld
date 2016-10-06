@@ -44,7 +44,7 @@ private:
 	uint16 m_SizeY;
 
 	std::vector<Case*>	m_ListCase;
-    std::map<TypeUnit, std::map<uint16, Unit*>> m_ListUnitZone;
+    std::map<TypeUnit, std::map<uint16, Unit*> > m_ListUnitZone;
 
     std::map<uint16, Square> m_ListSquare;
 

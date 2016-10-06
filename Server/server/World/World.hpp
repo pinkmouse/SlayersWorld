@@ -30,7 +30,7 @@ private:
 	SqlManager* m_SqlManager;
 
     /// PACKET
-    std::vector<std::pair<WorldSocket*, WorldPacket>> m_PaquetQueue;
+    std::vector<std::pair<WorldSocket*, WorldPacket> > m_PaquetQueue;
     PacketHandler* m_PacketHandler;
 
     /// CREATURE MANAGER
