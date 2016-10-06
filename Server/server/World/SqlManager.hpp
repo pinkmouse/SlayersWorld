@@ -5,7 +5,7 @@
 #else
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include <a pa/inet.h>
+#include <arpa/inet.h>
 #include <netdb.h>
 #endif
 
