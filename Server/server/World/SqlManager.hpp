@@ -1,6 +1,14 @@
 #pragma once
 
-#include <winsock.h>
+#ifdef WIN32
+#include <winsock2.h>
+#else
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <a pa/inet.h>
+#include <netdb.h>
+#endif
+
 #include <mysql.h>
 #include <string>
 #include "../Define.hpp"
