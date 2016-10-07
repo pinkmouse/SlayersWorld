@@ -80,11 +80,12 @@ Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
         l_PosX = atoi(l_Row[7]);
         l_PosY = atoi(l_Row[8]);
         l_Orientation = atoi(l_Row[9]);
-        l_Player = new Player(l_ID, l_Name, l_Lvl, l_Health, l_SkinID, l_MapID, l_PosX, l_PosY, (Orientation)l_Orientation);
-        l_Player->SetAlignment(l_Alignment);
-        l_Player->SetRespawnPosition(GetRespawnPositionForPlayer(l_ID));
     }
     mysql_free_result(l_Result);
+
+    l_Player = new Player(l_ID, l_Name, l_Lvl, l_Health, l_SkinID, l_MapID, l_PosX, l_PosY, (Orientation)l_Orientation);
+    l_Player->SetAlignment(l_Alignment);
+    l_Player->SetRespawnPosition(GetRespawnPositionForPlayer(l_ID));
 
     return l_Player;
 }
