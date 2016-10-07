@@ -2,7 +2,8 @@
 
 #include <cstdio>
 
-#define IP_SERVER "127.0.0.1"
+#define IP_SERVER "137.74.117.66"
+//#define IP_SERVER "127.0.0.1"
 #define PORT_SERVER 1234
 
 /// GRAPHICS

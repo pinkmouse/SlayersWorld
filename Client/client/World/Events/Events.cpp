@@ -37,6 +37,18 @@ void Events::Update()
     if (l_MovementHandler == nullptr)
         return;
 
+    /// If death, attack key will not be able to use, so we need to stop attack if player is attaking
+    if (g_Player->IsDeath() && l_MovementHandler->IsInAttack())
+    {
+        std::vector<sf::Keyboard::Key>::iterator l_It = std::find(m_KeyPressed.begin(), m_KeyPressed.end(), sf::Keyboard::Key::S);
+        if (l_It != m_KeyPressed.end())
+        {
+            m_KeyPressed.erase(l_It);
+            g_Socket->SendStopAttack();
+            l_MovementHandler->StopAttack();
+        }
+    }
+
     /// Need update to check if when attack is finish we have direction key press
     if (!l_MovementHandler->IsInMovement() && !l_MovementHandler->IsInAttack())
     {
