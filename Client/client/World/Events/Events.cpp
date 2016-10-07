@@ -71,6 +71,20 @@ void Events::Update()
     }
 }
 
+void Events::LostFocus()
+{
+    if (g_Player == nullptr)
+        return;
+
+    m_KeyPressed.clear();
+    MovementHandler* l_MovementHandler = g_Player->GetMovementHandler();
+    KeyRelease(sf::Keyboard::Key::Up);
+    KeyRelease(sf::Keyboard::Key::Down);
+    KeyRelease(sf::Keyboard::Key::Left);
+    KeyRelease(sf::Keyboard::Key::Right);
+    KeyRelease(sf::Keyboard::Key::S);
+}
+
 void Events::KeyRelease(sf::Keyboard::Key p_KeyRealease)
 {
     if (g_Player == nullptr)
@@ -129,6 +143,9 @@ void Events::NewKeyPressed(sf::Keyboard::Key p_NewKey)
     if (g_Player->IsDeath() && !IsKeyUsableWhileDeath(p_NewKey))
         return;
 
+    if (m_WritingField->IsFieldOpen() && p_NewKey != sf::Keyboard::Key::Return && !IsKeyUsableWhileDeath(p_NewKey))
+        return;
+
     switch (p_NewKey)
     {
         /// Direction
@@ -178,21 +195,6 @@ void Events::NewKeyPressed(sf::Keyboard::Key p_NewKey)
                 g_Socket->SendStartAttack(g_Player->GetPosX(), g_Player->GetPosY());
                 l_MovementHandler->StartAttack();
             }
-            break;
-        }
-        /// Reset KeyPress queue when lost focus
-        case sf::Event::LostFocus:
-        {
-            if (g_Player == nullptr)
-                return;
-
-            m_KeyPressed.clear();
-            MovementHandler* l_MovementHandler = g_Player->GetMovementHandler();
-            KeyRelease(sf::Keyboard::Key::Up);
-            KeyRelease(sf::Keyboard::Key::Down);
-            KeyRelease(sf::Keyboard::Key::Left);
-            KeyRelease(sf::Keyboard::Key::Right);
-            KeyRelease(sf::Keyboard::Key::S);
             break;
         }
         case sf::Keyboard::Key::Return:

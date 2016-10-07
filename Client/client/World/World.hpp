@@ -16,13 +16,15 @@ public:
 
 	void End();
 	bool Initialize();
-	void Login(const std::string& login, const std::string& password);
+	void Login(const std::string&, const std::string&);
 	bool InitializeConnection();
 	bool InitializeWindow();
+    void SetIp(const std::string &);
 
 private:
 	Graphics* m_Graphics;
 	MapManager* m_MapManager;
+    std::string m_Ip;
     Events* m_Events;
 	bool m_Run;
     ClockHandler m_Clock;

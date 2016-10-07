@@ -11,15 +11,21 @@ World::World()
 	m_Graphics = new Graphics(m_MapManager, m_Events);
 	m_PacketHandler = new PacketHandler(m_MapManager);
 	m_Run = true;
+    m_Ip = IP_SERVER;
 }
 
 World::~World()
 {
 }
 
+void World::SetIp(const std::string & p_Ip)
+{
+    m_Ip = p_Ip;
+}
+
 bool World::InitializeConnection()
 {
-	if (!g_Socket->Connection())
+	if (!g_Socket->Connection(m_Ip))
 	{
 		printf("Error Connection...\n");
 		return false;

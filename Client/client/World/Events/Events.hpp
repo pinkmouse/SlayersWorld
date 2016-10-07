@@ -17,6 +17,7 @@ public:
     void KeyRelease(sf::Keyboard::Key);
     void TextEntered(sf::Uint32);
     void SetWritingField(WritingField*);
+    void LostFocus();
 
 private:
     std::map<sf::Keyboard::Key, uint8> m_DirectionMap;

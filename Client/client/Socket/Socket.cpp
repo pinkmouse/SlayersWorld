@@ -15,9 +15,10 @@ Socket::~Socket()
 {
 }
 
-bool Socket::Connection()
+bool Socket::Connection(const std::string & p_Ip)
 {
-	sf::Socket::Status l_Status = this->connect(sf::IpAddress(IP_SERVER), PORT_SERVER);
+    printf("Ip = %s\n", p_Ip.c_str());
+	sf::Socket::Status l_Status = this->connect(sf::IpAddress(p_Ip), PORT_SERVER);
 
 	if (l_Status == sf::Socket::Status::Done)
 		return true;

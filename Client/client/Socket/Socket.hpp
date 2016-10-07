@@ -8,7 +8,7 @@ class Socket : public sf::TcpSocket
 public:
 	Socket();
 	~Socket();
-	bool Connection();
+	bool Connection(const std::string &);
 	void SendAuth(const std::string &, const std::string &);
     void SendGoDirection(const uint8&, const uint32&, const uint32&);
     void SendStopMovement(const uint32&, const uint32&);
