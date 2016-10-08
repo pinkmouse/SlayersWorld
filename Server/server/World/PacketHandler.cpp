@@ -132,6 +132,7 @@ void PacketHandler::HandleDisconnected(WorldSocket* p_WorldSocket)
 
 void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
 {
+    printf("Log connect 1\n");
     if (m_SqlManager == nullptr)
         return;
 
@@ -139,12 +140,14 @@ void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldS
     std::string l_Password;
     p_Packet >> l_Login;
     p_Packet >> l_Password;
+    printf("Log connect 2\n");
 
     if (g_Config->IsPositiveValue("LoginDebug"))
     {
         p_WorldSocket->SendAuthResponse(1);
         return;
     }
+    printf("Log connect 3\n");
 
     uint32 l_Id = m_SqlManager->GetIDLogin(l_Login, l_Password);
     if (!l_Id)
@@ -152,6 +155,8 @@ void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldS
         p_WorldSocket->SendAuthResponse(0); ///< Auth Failed
         return;
     }
+    printf("Log connect 4\n");
+
     if (m_MapManager->IsOnline(TypeUnit::PLAYER, l_Id))
     {
         p_WorldSocket->SendAuthResponse(2); ///< Already connected
@@ -159,10 +164,14 @@ void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldS
     }
     /// Auth Success
     p_WorldSocket->SendAuthResponse(1); ///< Auth Success
+    printf("Log connect 5\n");
 
     /// Creation Player
     Player* l_Player = m_SqlManager->GetNewPlayer(l_Id);
+    printf("Log connect 6\n");
+
     Map* l_Map = m_MapManager->GetMap(l_Player->GetMapID());
+    printf("Log connect 7\n");
 
     if (l_Player == nullptr || l_Map == nullptr)
     {
@@ -172,6 +181,8 @@ void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldS
         printf("\n");
         return;
     }
+    printf("Log connect 8\n");
+
     l_Player->SetSession(p_WorldSocket);
     printf("Load Player success\n");
 
