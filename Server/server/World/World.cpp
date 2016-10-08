@@ -91,6 +91,7 @@ void World::UpdatePacketQueue()
     for (std::vector<WorldSocket*>::iterator l_It = m_DisconnectedQueue.begin(); l_It != m_DisconnectedQueue.end();)
     {
         m_PacketHandler->HandleDisconnected(*l_It);
+        printf("Disco: %d\n", (*l_It)->GetPlayer()->GetName().c_str());
         delete (*l_It);
         l_It = m_DisconnectedQueue.erase(l_It);
     }
@@ -192,7 +193,6 @@ void World::NetworkLoop()
                             m_MutexPacketQueue.unlock();
                             l_It = m_Sessions.erase(l_It);
                             l_IncIt = false;
-                            printf("Disco\n");
                         }
 					}
                     if (l_IncIt)

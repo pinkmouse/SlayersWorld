@@ -180,7 +180,7 @@ void WorldSocket::SendToSet(WorldPacket p_Packet, bool p_ExcludePlayer /*= false
                 if (p_ExcludePlayer && l_Player->GetID() == GetPlayer()->GetID())
                     continue;
 
-                printf("Send to %s\n", l_Player->GetName().c_str());
+                ///printf("Send to %s\n", l_Player->GetName().c_str());
                 l_Player->GetSession()->send(p_Packet);
             }
         }

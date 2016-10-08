@@ -22,7 +22,7 @@ void Map::SendToSet(WorldPacket p_Packet, Unit* l_Unit)
 
             if (Player* l_Player = l_Unit->ToPlayer())
             {
-                printf("Send to %s\n", l_Player->GetName().c_str());
+                ///printf("Send to %s\n", l_Player->GetName().c_str());
                 l_Player->GetSession()->send(p_Packet);
             }
         }
