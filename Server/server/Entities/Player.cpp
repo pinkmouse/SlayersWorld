@@ -79,7 +79,7 @@ void Player::UpdateNewSquares(uint16 p_OldSquareID, uint16 p_NewSquareID, bool p
                     continue;
 
                 if (l_Unit->IsPlayer() && l_Unit->GetID() == GetID())
-                    return;
+                    continue;
 
                 GetSession()->SendUnitCreate(l_Unit->GetType(), l_Unit->GetID(), l_Unit->GetName(), l_Unit->GetLevel(), l_Unit->GetHealth(), l_Unit->GetSkinID(), l_Unit->GetMapID(), l_Unit->GetPosX(), l_Unit->GetPosY(), l_Unit->GetOrientation(), l_Unit->IsInMovement());
             }
