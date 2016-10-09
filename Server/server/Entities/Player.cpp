@@ -36,7 +36,7 @@ void Player::SetSession(WorldSocket* p_Session)
 
 Player::~Player()
 {
-    printf("Erase Player %d:%s", m_ID, m_Name.c_str());
+    printf("Erase Player %d:%s\n", m_ID, m_Name.c_str());
 }
 
 void Player::Update(sf::Time p_Diff)
