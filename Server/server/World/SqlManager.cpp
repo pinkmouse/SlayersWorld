@@ -20,6 +20,8 @@ bool SqlManager::InitializeCharacters(std::string p_Host, std::string p_User, st
 {
 	if (!mysql_real_connect(&m_MysqlCharacters, p_Host.c_str(), p_User.c_str(), p_PassWord.c_str(), p_DB.c_str(), std::stoi(p_Port), NULL, 0))
 		return false;
+    my_bool l_AutoRecoonect = true; ///< To auto reconnect if it get disconnected
+    mysql_options(&m_MysqlCharacters, MYSQL_OPT_RECONNECT, &l_AutoRecoonect);
 	return true;
 }
 
@@ -27,6 +29,8 @@ bool SqlManager::InitializeWorld(std::string p_Host, std::string p_User, std::st
 {
     if (!mysql_real_connect(&m_MysqlWorld, p_Host.c_str(), p_User.c_str(), p_PassWord.c_str(), p_DB.c_str(), std::stoi(p_Port), NULL, 0))
         return false;
+    my_bool l_AutoRecoonect = true; ///< To auto reconnect if it get disconnected
+    mysql_options(&m_MysqlWorld, MYSQL_OPT_RECONNECT, &l_AutoRecoonect);
     return true;
 }
 
