@@ -102,33 +102,36 @@ void World::UpdatePacketQueue()
 
 bool World::NetworkInitialize()
 {
-	int l_Port = std::stoi(g_Config->GetValue("Port"));
-	printf("Port: %d -> ", l_Port);
-	sf::Socket::Status l_ErrorListen = m_Listener.listen(l_Port);
-	switch (l_ErrorListen)
-	{
-	case sf::Socket::Done:
-		printf("OK\n");
-		break;
-	case sf::Socket::NotReady:
-		printf("Not Ready\n");
-		return false;
-		break;
-	case sf::Socket::Partial:
-		printf("Partial\n");
-		return false;
-		break;
-	case sf::Socket::Disconnected:
-		printf("Disconnected\n");
-		return false;
-		break;
-	case sf::Socket::Error:
-		printf("Error\n");
-		return false;
-		break;
-	default:
-		break;
-	}
+    int l_Port = std::stoi(g_Config->GetValue("Port"));
+    sf::Socket::Status l_ErrorListen;
+    bool l_PortLisening = false;
+
+    while (!l_PortLisening)
+    {
+        l_ErrorListen = m_Listener.listen(l_Port);
+        printf("Port: %d -> ", l_Port);
+        switch (l_ErrorListen)
+        {
+        case sf::Socket::Done:
+            printf("OK\n");
+            l_PortLisening = true;
+            break;
+        case sf::Socket::NotReady:
+            printf("Not Ready\n");
+            break;
+        case sf::Socket::Partial:
+            printf("Partial\n");
+            break;
+        case sf::Socket::Disconnected:
+            printf("Disconnected\n");
+            break;
+        case sf::Socket::Error:
+            printf("Error\n");
+            break;
+        default:
+            break;
+        }
+    }
 	m_Selector.add(m_Listener);
 	return true;
 }
