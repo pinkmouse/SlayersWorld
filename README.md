@@ -38,5 +38,6 @@
 
 ### Issues
 
-  - Add entry on CMAKE 'SFML_ROOT' with root directory
+  - Add entry on CMAKE(for windows only) 'SFML_ROOT' with root directory
+  
 **We roxx Yeah!**
