@@ -133,10 +133,19 @@ void WorldSocket::SendUnitStopAttack(uint8 p_TypeID, uint16 p_ID)
 void WorldSocket::SendUpdateUnitHealth(uint8 p_TypeID, uint16 p_ID, uint8 p_NewHealth)
 {
     WorldPacket l_Packet;
-    uint8 l_ID = SMSG::S_PlayerUpdateLife;
+    uint8 l_ID = SMSG::S_UnitUpdateLife;
 
     l_Packet << l_ID << p_TypeID << p_ID << p_NewHealth;
     SendToSet(l_Packet);
+}
+
+void WorldSocket::SendUpdateXpPct(float p_NewPct)
+{
+    WorldPacket l_Packet;
+    uint8 l_ID = SMSG::S_PlayerUpdateXp;
+
+    l_Packet << l_ID << p_NewPct;
+    send(l_Packet);
 }
 
 Player* WorldSocket::GetPlayer()

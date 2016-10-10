@@ -49,6 +49,10 @@
 #define FLASK_OFFSET_BOTTOM 2
 #define FLASK_SCALE 2.0f
 
+#define XP_BAR_SIZE_X 320
+#define XP_BAR_SIZE_Y 12
+#define XP_BAR_SCALE 2.0f
+
 
 /// EVENT
 #define MAX_KEY_SAVE 4

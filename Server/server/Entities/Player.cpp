@@ -2,7 +2,7 @@
 #include "../World/WorldSocket.hpp"
 #include "../Map/Map.hpp"
 
-Player::Player(int32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_Health, uint8 p_SkinID, uint16 p_MapID, uint32 p_PosX, uint32 p_PosY, Orientation p_Orientation) :
+Player::Player(int32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_Health, uint8 p_SkinID, uint16 p_MapID, uint32 p_PosX, uint32 p_PosY, Orientation p_Orientation, uint32 p_Xp) :
     Unit(p_ID, TypeUnit::PLAYER)
 {
     m_Name = p_Name;
@@ -16,6 +16,7 @@ Player::Player(int32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_Health, ui
     m_Alignment = 0;
     m_Initilize = false;
     m_Health = p_Health;
+    m_Xp = p_Xp;
     m_RespawnTime = PLAYER_TIME_RESPAWN * IN_MICROSECOND;
 }
 
@@ -97,12 +98,25 @@ uint8 Player::GetAlignment() const
     return m_Alignment;
 }
 
+uint32 Player::GetXp() const
+{
+    return m_Xp;
+}
+
 void Player::SetHealth(const uint8 & p_Health)
 {
     Unit::SetHealth(p_Health);
     if (m_Initilize)
         m_Session->SendUpdateUnitHealth(GetType(), GetID(), p_Health);
 }
+
+void Player::SetXp(const uint32 & p_Xp)
+{
+    m_Xp = p_Xp;
+    if (m_Initilize)
+        m_Session->SendUpdateXpPct(p_Xp);
+}
+
 
 void Player::Respawn()
 {

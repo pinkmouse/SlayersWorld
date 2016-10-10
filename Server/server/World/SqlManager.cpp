@@ -53,7 +53,7 @@ int32 SqlManager::GetIDLogin(std::string p_Login, std::string p_Password)
 
 Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
 {
-    std::string l_Query = "SELECT characterID, name, level, health, alignment, skinID, mapID, posX, posY, orientation FROM characters WHERE accountID = '" + std::to_string(p_AccountID) + "'";
+    std::string l_Query = "SELECT characterID, name, level, health, alignment, skinID, mapID, posX, posY, orientation, xp FROM characters WHERE accountID = '" + std::to_string(p_AccountID) + "'";
     mysql_query(&m_MysqlCharacters, l_Query.c_str());
 
     uint32 l_ID = 0;
@@ -66,6 +66,7 @@ Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
     uint32 l_PosX = 0;
     uint32 l_PosY = 0;
     uint8 l_Orientation = 0;
+    uint32 l_Xp = 0;
 
     MYSQL_RES *l_Result = NULL;
     MYSQL_ROW l_Row;
@@ -84,10 +85,11 @@ Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
         l_PosX = atoi(l_Row[7]);
         l_PosY = atoi(l_Row[8]);
         l_Orientation = atoi(l_Row[9]);
+        l_Xp = atoi(l_Row[10]);
     }
     mysql_free_result(l_Result);
 
-    l_Player = new Player(l_ID, l_Name, l_Lvl, l_Health, l_SkinID, l_MapID, l_PosX, l_PosY, (Orientation)l_Orientation);
+    l_Player = new Player(l_ID, l_Name, l_Lvl, l_Health, l_SkinID, l_MapID, l_PosX, l_PosY, (Orientation)l_Orientation, l_Xp);
     l_Player->SetAlignment(l_Alignment);
     l_Player->SetRespawnPosition(GetRespawnPositionForPlayer(l_ID));
 
@@ -122,7 +124,7 @@ WorldPosition SqlManager::GetRespawnPositionForPlayer(uint32 p_PlayerID)
 
 void SqlManager::SavePlayer(Player const* p_Player)
 {
-    std::string l_Query = "UPDATE characters SET posX = '" + std::to_string(p_Player->GetPosX())  + "', posY = '" + std::to_string(p_Player->GetPosY()) + "', mapID = '" + std::to_string(p_Player->GetMapID()) + "', orientation = '" + std::to_string(p_Player->GetOrientation()) + "', health = '" + std::to_string(p_Player->GetHealth()) + "', alignment = '" + std::to_string(p_Player->GetAlignment()) + "' WHERE characterID = '" + std::to_string(p_Player->GetID()) + "'";
+    std::string l_Query = "UPDATE characters SET posX = '" + std::to_string(p_Player->GetPosX())  + "', posY = '" + std::to_string(p_Player->GetPosY()) + "', mapID = '" + std::to_string(p_Player->GetMapID()) + "', orientation = '" + std::to_string(p_Player->GetOrientation()) + "', health = '" + std::to_string(p_Player->GetHealth()) + "', alignment = '" + std::to_string(p_Player->GetAlignment()) + "', xp = '" + std::to_string(p_Player->GetXp()) + "' WHERE characterID = '" + std::to_string(p_Player->GetID()) + "'";
     mysql_query(&m_MysqlCharacters, l_Query.c_str());
 }
 

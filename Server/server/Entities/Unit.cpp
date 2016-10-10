@@ -164,7 +164,13 @@ void Unit::DealDamage(Unit* p_Victim)
     }
 
     if (p_Victim->IsDeath())
+    {
+        if (IsPlayer() && p_Victim->IsCreature())
+        {
+            ToPlayer()->SetXp(ToPlayer()->GetXp() + p_Victim->ToCreature()->GetXpEarn());
+        }
         return;
+    }
 
     if (GetVictim() != p_Victim)
         EnterInCombat(p_Victim);
@@ -233,6 +239,11 @@ uint8 Unit::GetSkinID() const
 bool Unit::IsPlayer() const
 {
     return m_Type == TypeUnit::PLAYER;
+}
+
+bool Unit::IsCreature() const
+{
+    return m_Type == TypeUnit::CREATURE;
 }
 
 bool Unit::IsInMovement() const

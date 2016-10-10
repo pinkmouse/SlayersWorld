@@ -9,8 +9,11 @@ public:
     ~Player();
     void SetAlignment(const uint8 &);
     uint8 GetAlignment() const;
+    float GetXpPct();
+    void SetXpPct(float);
 
 private:
+    float m_XpPct;
     uint8 m_Alignment;
 };
 

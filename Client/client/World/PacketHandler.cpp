@@ -20,7 +20,8 @@ void PacketHandler::LoadPacketHandlerMap()
     m_PacketHandleMap[SMSG::S_PlayerCreate] = &PacketHandler::HandleCreateMainPlayer;
     m_PacketHandleMap[SMSG::S_UnitCreate] = &PacketHandler::HandleCreateUnit;
     m_PacketHandleMap[SMSG::S_UnitRemove] = &PacketHandler::HandleRemoveUnit;
-    m_PacketHandleMap[SMSG::S_PlayerUpdateLife] = &PacketHandler::HandleUpdateHealth;
+    m_PacketHandleMap[SMSG::S_UnitUpdateLife] = &PacketHandler::HandleUpdateHealth;
+    m_PacketHandleMap[SMSG::S_PlayerUpdateXp] = &PacketHandler::HandleUpdateXpPct;
     m_PacketHandleMap[SMSG::S_UnitGoDirection] = &PacketHandler::HandleUnitGoDirection;
     m_PacketHandleMap[SMSG::S_UnitStopMovement] = &PacketHandler::HandleStopMovement;
     m_PacketHandleMap[SMSG::S_UnitUpdatePosition] = &PacketHandler::HandleUpdatePosition;
@@ -69,6 +70,14 @@ void PacketHandler::HandleUpdateHealth(WorldPacket &p_Packet)
 
         l_Unit->SetHealth(l_NewHealth);
     }
+}
+
+void PacketHandler::HandleUpdateXpPct(WorldPacket &p_Packet)
+{
+    float l_XpPct;
+
+    p_Packet >> l_XpPct;
+    g_Player->SetXpPct(l_XpPct);
 }
 
 void PacketHandler::HandleTalk(WorldPacket &p_Packet)

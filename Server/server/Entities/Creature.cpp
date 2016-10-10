@@ -210,6 +210,11 @@ void Creature::SetHealth(const uint8 & p_Health)
         Unspawn();
 }
 
+uint32 Creature::GetXpEarn() const
+{
+    return m_CreatureTemplate.m_Xp;
+}
+
 void Creature::Unspawn()
 {
     m_MovementHandler->StopMovement();

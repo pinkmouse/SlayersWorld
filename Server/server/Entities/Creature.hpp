@@ -20,6 +20,8 @@ public:
     void Unspawn();
     void SetHealth(const uint8 &);
 
+    uint32 GetXpEarn() const;
+
 private:
     uint16 m_Entry;
     uint64 m_DiffMovementTime;

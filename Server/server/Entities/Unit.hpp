@@ -16,6 +16,7 @@ public:
     ~Unit();
 
     bool IsPlayer() const;
+    bool IsCreature() const;
     std::string GetName() const;
     uint8 GetSizeX() const;
     uint8 GetSizeY() const;

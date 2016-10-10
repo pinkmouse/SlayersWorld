@@ -15,11 +15,22 @@ Player::Player(int32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_Health, ui
     m_Health = p_Health;
     m_Alignment = 0;
     SetMapID(p_MapID);
+    m_XpPct = 0.0f;
 }
 
 Player::~Player()
 {
     printf("Erase Player %d:%s", m_ID, m_Name.c_str());
+}
+
+float Player::GetXpPct()
+{
+    return m_XpPct;
+}
+
+void Player::SetXpPct(float p_XpPct)
+{
+    m_XpPct = p_XpPct;
 }
 
 void Player::SetAlignment(const uint8 & p_Alignment)

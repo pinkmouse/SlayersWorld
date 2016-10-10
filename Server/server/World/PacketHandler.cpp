@@ -188,6 +188,7 @@ void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldS
 
     /// Send to Player
     p_WorldSocket->SendPlayerCreate(l_Player->GetID(), l_Player->GetName(), l_Player->GetLevel(), l_Player->GetHealth(), l_Player->GetAlignment(), l_Player->GetSkinID(), l_Player->GetMapID(), l_Player->GetPosX(), l_Player->GetPosY(), l_Player->GetOrientation());
+    p_WorldSocket->SendUpdateXpPct(l_Player->GetXp());
     p_WorldSocket->SetPlayer(l_Player);
     l_Map->AddUnit(l_Player);
     l_Player->HasBeenInitialize();

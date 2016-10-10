@@ -21,7 +21,11 @@ void InterfaceManager::Initialize()
 
     l_FileSystemName = "flask.png";
     if (!m_FlaskTexture.loadFromFile(IMG_FOLDER + l_FileSystemName))
-        printf("Load SystemImg Failed\n");
+        printf("Load SystemImg Flask Failed\n");
+
+    l_FileSystemName = "xp.png";
+    if (!m_XpTexture.loadFromFile(IMG_FOLDER + l_FileSystemName))
+        printf("Load SystemImg Xp Failed\n");
 }
 
 TileSprite InterfaceManager::GetField(uint16 p_SizeX, uint16 p_SizeY)
@@ -33,15 +37,27 @@ TileSprite InterfaceManager::GetField(uint16 p_SizeX, uint16 p_SizeY)
     return l_TileSprite;
 }
 
-TileSprite InterfaceManager::GetFlask(uint8 p_ID, bool p_full, uint8 p_Pct)
+TileSprite InterfaceManager::GetFlask(uint8 p_ID, bool p_Full, uint8 p_Pct)
 {
     uint8 l_Full = 0;
-    if (!p_full)
+    if (!p_Full)
         l_Full = 1;
 
     TileSprite l_TileSprite;
     l_TileSprite.setTexture(m_FlaskTexture);
     l_TileSprite.setTextureRect(sf::IntRect(FLASK_SIZE_X * ((p_ID * 2) + l_Full), 0, FLASK_SIZE_X, FLASK_SIZE_Y));
+    return l_TileSprite;
+}
+
+TileSprite InterfaceManager::GetXpBar(bool p_Full, uint8 p_Pct)
+{
+    uint8 l_Full = 0;
+    if (p_Full)
+        l_Full = 1;
+
+    TileSprite l_TileSprite;
+    l_TileSprite.setTexture(m_XpTexture);
+    l_TileSprite.setTextureRect(sf::IntRect(0, XP_BAR_SIZE_Y * l_Full, XP_BAR_SIZE_X, XP_BAR_SIZE_Y));
     return l_TileSprite;
 }
 
@@ -52,25 +68,36 @@ void InterfaceManager::Draw(Window & p_Window)
 
     /// Draw Flask Life
     TileSprite l_FlaskEmpty = GetFlask(0, false);
-    l_FlaskEmpty.setPosition(0, Y_WINDOW - (FLASK_SIZE_Y * FLASK_SCALE));
+    l_FlaskEmpty.setPosition(0, Y_WINDOW - (FLASK_SIZE_Y * FLASK_SCALE) - (XP_BAR_SIZE_Y * XP_BAR_SCALE));
     l_FlaskEmpty.setScale(FLASK_SCALE, FLASK_SCALE);
     p_Window.draw(l_FlaskEmpty);
     TileSprite l_Flask = GetFlask(0, true);
     l_Flask.setTextureRect(sf::IntRect(0, ((FLASK_SIZE_Y - FLASK_OFFSET_TOP - FLASK_OFFSET_BOTTOM) * (1.0f - ((float)g_Player->GetHealth() / 100.0f))) + FLASK_OFFSET_TOP, FLASK_SIZE_X, ((FLASK_SIZE_Y - FLASK_OFFSET_TOP - FLASK_OFFSET_BOTTOM) * ((float)g_Player->GetHealth() / 100.0f))));
-    l_Flask.setPosition(0, Y_WINDOW - (FLASK_OFFSET_BOTTOM * FLASK_SCALE) - (((FLASK_SIZE_Y - FLASK_OFFSET_TOP - FLASK_OFFSET_BOTTOM) * ((float)g_Player->GetHealth() / 100.0f)) * FLASK_SCALE));
+    l_Flask.setPosition(0, Y_WINDOW - (XP_BAR_SIZE_Y * XP_BAR_SCALE) - (FLASK_OFFSET_BOTTOM * FLASK_SCALE) - (((FLASK_SIZE_Y - FLASK_OFFSET_TOP - FLASK_OFFSET_BOTTOM) * ((float)g_Player->GetHealth() / 100.0f)) * FLASK_SCALE));
     l_Flask.setScale(FLASK_SCALE, FLASK_SCALE);
     p_Window.draw(l_Flask);
 
     /// Draw Flask Mana
     l_FlaskEmpty = GetFlask(1, false);
-    l_FlaskEmpty.setPosition(X_WINDOW - (FLASK_SIZE_X * FLASK_SCALE), Y_WINDOW - (FLASK_SIZE_Y * FLASK_SCALE));
+    l_FlaskEmpty.setPosition(X_WINDOW - (FLASK_SIZE_X * FLASK_SCALE), Y_WINDOW - (FLASK_SIZE_Y * FLASK_SCALE) - (XP_BAR_SIZE_Y * XP_BAR_SCALE));
     l_FlaskEmpty.setScale(FLASK_SCALE, FLASK_SCALE);
     p_Window.draw(l_FlaskEmpty);
     l_Flask = GetFlask(1, true);
     l_Flask.setTextureRect(sf::IntRect(FLASK_SIZE_X * 2, ((FLASK_SIZE_Y - FLASK_OFFSET_TOP - FLASK_OFFSET_BOTTOM) * (1.0f - ((float)g_Player->GetHealth() / 100.0f))) + FLASK_OFFSET_TOP, FLASK_SIZE_X, ((FLASK_SIZE_Y - FLASK_OFFSET_TOP - FLASK_OFFSET_BOTTOM) * ((float)g_Player->GetHealth() / 100.0f))));
-    l_Flask.setPosition(X_WINDOW - (FLASK_SIZE_X * FLASK_SCALE), Y_WINDOW - (FLASK_OFFSET_BOTTOM * FLASK_SCALE) - (((FLASK_SIZE_Y - FLASK_OFFSET_TOP - FLASK_OFFSET_BOTTOM) * ((float)g_Player->GetHealth() / 100.0f)) * FLASK_SCALE));
+    l_Flask.setPosition(X_WINDOW - (FLASK_SIZE_X * FLASK_SCALE), Y_WINDOW - (XP_BAR_SIZE_Y * XP_BAR_SCALE) - (FLASK_OFFSET_BOTTOM * FLASK_SCALE) - (((FLASK_SIZE_Y - FLASK_OFFSET_TOP - FLASK_OFFSET_BOTTOM) * ((float)g_Player->GetHealth() / 100.0f)) * FLASK_SCALE));
     l_Flask.setScale(FLASK_SCALE, FLASK_SCALE);
     p_Window.draw(l_Flask);
+
+    /// Draw XP bar
+    TileSprite l_XpBarEmpty = GetXpBar(false);
+    l_XpBarEmpty.setPosition(0, Y_WINDOW - (XP_BAR_SIZE_Y * XP_BAR_SCALE));
+    l_XpBarEmpty.setScale(XP_BAR_SCALE, XP_BAR_SCALE);
+    p_Window.draw(l_XpBarEmpty);
+    TileSprite l_XpBar = GetXpBar(true);
+    l_XpBar.setTextureRect(sf::IntRect(0, XP_BAR_SIZE_Y, (XP_BAR_SIZE_X / 100.0f) * g_Player->GetXpPct(), XP_BAR_SIZE_Y));
+    l_XpBar.setPosition(0, Y_WINDOW - (XP_BAR_SIZE_Y * XP_BAR_SCALE));
+    l_XpBar.setScale(XP_BAR_SCALE, XP_BAR_SCALE);
+    p_Window.draw(l_XpBar);
 
     /// Draw chat bar
     if (m_WritingField->IsFieldOpen())

@@ -20,6 +20,7 @@ public:
     void SendUnitStopAttack(uint8, uint16);
     void SendUpdatePosition(uint8, uint16, uint32, uint32, uint8);
     void SendUpdatePositionToSet(uint8, uint16, uint32, uint32, uint8);
+    void SendUpdateXpPct(float);
     void SendUpdateUnitHealth(uint8, uint16, uint8);
     void SendUnitTalk(uint8, uint16, const std::string &);
 	void SendAuthResponse(uint8);
