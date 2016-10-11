@@ -124,7 +124,7 @@ WorldPosition SqlManager::GetRespawnPositionForPlayer(uint32 p_PlayerID)
 
 void SqlManager::SavePlayer(Player const* p_Player)
 {
-    std::string l_Query = "UPDATE characters SET posX = '" + std::to_string(p_Player->GetPosX())  + "', posY = '" + std::to_string(p_Player->GetPosY()) + "', mapID = '" + std::to_string(p_Player->GetMapID()) + "', orientation = '" + std::to_string(p_Player->GetOrientation()) + "', health = '" + std::to_string(p_Player->GetHealth()) + "', alignment = '" + std::to_string(p_Player->GetAlignment()) + "', xp = '" + std::to_string(p_Player->GetXp()) + "' WHERE characterID = '" + std::to_string(p_Player->GetID()) + "'";
+    std::string l_Query = "UPDATE characters SET posX = '" + std::to_string(p_Player->GetPosX())  + "', posY = '" + std::to_string(p_Player->GetPosY()) + "', mapID = '" + std::to_string(p_Player->GetMapID()) + "', orientation = '" + std::to_string(p_Player->GetOrientation()) + "', health = '" + std::to_string(p_Player->GetHealth()) + "', alignment = '" + std::to_string(p_Player->GetAlignment()) + "', xp = '" + std::to_string(p_Player->GetXp()) + "', level = '" + std::to_string(p_Player->GetLevel()) + "' WHERE characterID = '" + std::to_string(p_Player->GetID()) + "'";
     mysql_query(&m_MysqlCharacters, l_Query.c_str());
 }
 
@@ -201,4 +201,29 @@ bool SqlManager::InitializeCreature(MapManager* p_MapManager, CreatureManager* p
     mysql_free_result(l_Result);
 
     return true;
+}
+
+std::map<uint8, uint16> SqlManager::GetXpLevel()
+{
+    std::map<uint8, uint16> l_XpLevel;
+
+    std::string l_Query = "SELECT `level`, `xp` FROM level_xp";
+    mysql_query(&m_MysqlWorld, l_Query.c_str());
+
+    uint8 l_Level = 0;
+    uint16 l_Xp = 0;
+
+    MYSQL_RES *l_Result = NULL;
+    MYSQL_ROW l_Row;
+    l_Result = mysql_use_result(&m_MysqlWorld);
+    while ((l_Row = mysql_fetch_row(l_Result)))
+    {
+        l_Level = atoi(l_Row[0]);
+        l_Xp = atoi(l_Row[1]);
+
+        l_XpLevel[l_Level] = l_Xp;
+    }
+    mysql_free_result(l_Result);
+
+    return l_XpLevel;
 }

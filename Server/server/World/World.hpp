@@ -7,7 +7,6 @@
 #include <vector>
 #include "WorldSocket.hpp"
 #include "PacketHandler.hpp"
-#include "SqlManager.hpp"
 #include "ClockHandler.hpp"
 #include "../Map/MapManager.hpp"
 #include "CreatureManager.hpp"
@@ -25,9 +24,6 @@ private:
 
 	/// MAP
 	MapManager* m_MapManager;
-
-	/// SQL
-	SqlManager* m_SqlManager;
 
     /// PACKET
     std::vector<std::pair<WorldSocket*, WorldPacket> > m_PaquetQueue;

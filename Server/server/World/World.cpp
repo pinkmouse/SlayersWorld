@@ -4,12 +4,13 @@
 World::World()
     : m_Thread(&World::NetworkLoop, this),
     m_Run(true),
-    m_SqlManager(new SqlManager()),
 	m_MapManager(new MapManager()),
-    m_PacketHandler(new PacketHandler(m_SqlManager, m_MapManager)),
+    m_PacketHandler(new PacketHandler(m_MapManager)),
     m_CreatureManager(new CreatureManager())
 {
 	g_Config = new ConfigHandler();
+    g_SqlManager = new SqlManager();
+    g_LevelManager = new LevelManager();
 }
 
 
@@ -34,19 +35,23 @@ bool World::Initialize()
     printf("Connection SQL...\n");
 
     std::vector<std::string> l_ConfigSQLWorld = g_Config->GetValueList(g_Config->GetValue("worldDB"));
-    if (!m_SqlManager->InitializeWorld(l_ConfigSQLWorld[0], l_ConfigSQLWorld[1], l_ConfigSQLWorld[2], l_ConfigSQLWorld[3], l_ConfigSQLWorld[4]))
+    if (!g_SqlManager->InitializeWorld(l_ConfigSQLWorld[0], l_ConfigSQLWorld[1], l_ConfigSQLWorld[2], l_ConfigSQLWorld[3], l_ConfigSQLWorld[4]))
         printf("Error connection world SQL...\n");
 
+    printf("Initialize XpLevel\n");
+    if (!g_LevelManager->Initialize())
+        printf("Error Initialize XpLevel...\n");
+
     printf("Initialize CreatureTemplate\n");
-    if (!m_SqlManager->InitializeCreatureTemplate(m_CreatureManager))
+    if (!g_SqlManager->InitializeCreatureTemplate(m_CreatureManager))
         printf("Error Initialize CreatureTemplate...\n");
 
     printf("Initialize Creature\n");
-    if (!m_SqlManager->InitializeCreature(m_MapManager, m_CreatureManager))
+    if (!g_SqlManager->InitializeCreature(m_MapManager, m_CreatureManager))
         printf("Error Initialize CreatureTemplate...\n");
 
     std::vector<std::string> l_ConfigSQLCharacters = g_Config->GetValueList(g_Config->GetValue("charactersDB"));
-    if (!m_SqlManager->InitializeCharacters(l_ConfigSQLCharacters[0], l_ConfigSQLCharacters[1], l_ConfigSQLCharacters[2], l_ConfigSQLCharacters[3], l_ConfigSQLCharacters[4]))
+    if (!g_SqlManager->InitializeCharacters(l_ConfigSQLCharacters[0], l_ConfigSQLCharacters[1], l_ConfigSQLCharacters[2], l_ConfigSQLCharacters[3], l_ConfigSQLCharacters[4]))
         printf("Error connection character SQL...\n");
 
 	printf("Launch Network...\n");

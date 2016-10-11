@@ -3,7 +3,9 @@
 #include <SFML/Network.hpp>
 #include <SFML/Graphics.hpp>
 
-ConfigHandler *g_Config;
+ConfigHandler* g_Config;
+SqlManager* g_SqlManager;
+LevelManager* g_LevelManager;
 
 int main()
 {

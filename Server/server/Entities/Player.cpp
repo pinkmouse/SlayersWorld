@@ -1,6 +1,7 @@
 #include "Player.hpp"
 #include "../World/WorldSocket.hpp"
 #include "../Map/Map.hpp"
+#include "../Global.hpp"
 
 Player::Player(int32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_Health, uint8 p_SkinID, uint16 p_MapID, uint32 p_PosX, uint32 p_PosY, Orientation p_Orientation, uint32 p_Xp) :
     Unit(p_ID, TypeUnit::PLAYER)
@@ -110,11 +111,22 @@ void Player::SetHealth(const uint8 & p_Health)
         m_Session->SendUpdateUnitHealth(GetType(), GetID(), p_Health);
 }
 
-void Player::SetXp(const uint32 & p_Xp)
+void Player::SetXp(uint32 p_Xp)
 {
-    m_Xp = p_Xp;
+    if (g_LevelManager->IsMaxLevel(GetLevel()))
+        return;
+
+    if (p_Xp > g_LevelManager->GetXpForLevel(GetLevel()))
+    {
+        /// Earn new level
+        p_Xp -= g_LevelManager->GetXpForLevel(GetLevel());
+        SetLevel(GetLevel() + 1);
+    }
+
+    float l_Pct = g_LevelManager->XpPct(GetLevel(), p_Xp);
     if (m_Initilize)
-        m_Session->SendUpdateXpPct(p_Xp);
+        m_Session->SendUpdateXpPct(l_Pct);
+    m_Xp = p_Xp;
 }
 
 

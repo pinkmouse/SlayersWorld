@@ -18,7 +18,7 @@ public:
     void Update(sf::Time);
     void UpdateNewSquares(uint16, uint16, bool p_UpdateAll = false);
     void SetHealth(const uint8 &);
-    void SetXp(const uint32 &);
+    void SetXp(uint32);
     void HasBeenInitialize();
 
     void Respawn();

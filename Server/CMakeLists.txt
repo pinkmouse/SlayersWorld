@@ -58,6 +58,8 @@ add_executable(${EXECUTABLE_NAME}
               server/Entities/Unit.hpp
               server/Entities/WorldObject.cpp
               server/Entities/WorldObject.hpp
+              server/Entities/LevelManager.cpp
+              server/Entities/LevelManager.hpp
               )
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})

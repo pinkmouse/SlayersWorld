@@ -31,6 +31,7 @@ public:
     void SavePlayer(Player const*);
     bool InitializeCreatureTemplate(CreatureManager*);
     bool InitializeCreature(MapManager*, CreatureManager*);
+    std::map<uint8, uint16> GetXpLevel();
 
 private:
 	MYSQL m_MysqlCharacters;
