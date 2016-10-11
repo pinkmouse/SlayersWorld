@@ -1,9 +1,5 @@
 cmake_minimum_required(VERSION 2.6)
 
-if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE Debug CACHE STRING "Choose the type of build (Debug or Release)" FORCE)
-endif()
-
 project(SWserver)
 
 set(myproject_VERSION_MAJOR 1)
@@ -70,6 +66,10 @@ find_package(MySQL REQUIRED)
 include_directories(${SFML_INCLUDE_DIR}
                     ${MYSQL_INCLUDE_DIR})
 target_link_libraries(${EXECUTABLE_NAME} ${MYSQL_LIBRARY} ${SFML_LIBRARIES})
+
+if(CMAKE_COMPILER_IS_GNUCXX)
+    add_definitions(-std=gnu++0x)
+endif()
 
 # Install target
 install(TARGETS ${EXECUTABLE_NAME} DESTINATION bin)
