@@ -42,7 +42,7 @@
 /// INTERFACE
 #define IMG_FOLDER "img/window/"
 #define FONT_FIELD_SIZE 128
-#define SIZE_FILED_TALK_Y 32
+#define SIZE_FILED_TALK_Y 24
 #define FLASK_SIZE_X 16
 #define FLASK_SIZE_Y 72
 #define FLASK_OFFSET_TOP 22
