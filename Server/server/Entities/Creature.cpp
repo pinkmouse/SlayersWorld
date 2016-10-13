@@ -103,33 +103,43 @@ void Creature::UpdateDefensive(sf::Time p_Diff)
 {
     if (!IsInCombat())
     {
+        printf("log1\n");
         if (m_MovementHandler->IsInAttack() && !m_MovementHandler->IsStopingAttack()) ///< If in combat and still atacking
             StopAttack();
+        printf("log2\n");
 
         if (m_MovementHandler->IsInAttack() || m_MovementHandler->IsStopingAttack())
             return;
+        printf("log3\n");
 
         while (m_DiffMovementTime > (1.5f * IN_MICROSECOND) + (((1.5f * IN_MICROSECOND) / 100.0f) * m_RandMovementTime)) ///< 1000 because microsecond
         {
+            printf("log4\n");
             if (GetDistance(m_RespawnPosition.GetPosition()) > CaseToPixel(m_CreatureTemplate.m_MaxRay))
             {
                 Orientation l_Orientation = GetOrientationToPoint(m_RespawnPosition.GetPosition());
                 if (GetOrientation() != l_Orientation || !IsInMovement())
                     StartMovement(l_Orientation);
+                printf("log5\n");
             }
             else if (m_MovementHandler->IsInMovement())
             {
                 OutOfEvade();
                 StopMovement();
+                printf("log6\n");
             }
             else
+            {
+                printf("log7\n");
                 RandMoving();
+            }
             m_DiffMovementTime = 0;
             m_RandMovementTime = rand() % 100;
         }
     }
     else
     {
+        printf("log8\n");
         if (GetAttacker() == nullptr || GetAttacker()->IsDeath())
         {
             OutOfCombat();
