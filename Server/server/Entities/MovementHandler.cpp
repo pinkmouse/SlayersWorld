@@ -7,6 +7,8 @@ MovementHandler::MovementHandler(uint8 p_SizeX, uint8 p_SizeY) :
 {
     m_Speed = 1.0f;
     m_InMovement = false;
+    m_InAttack = false;
+    m_StopAttack = false;
     m_Orientation = Orientation::Down;
     m_DiffTime = 0;
     m_Map = nullptr;
