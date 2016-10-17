@@ -91,8 +91,77 @@ void Graphics::DrawEntities()
 
     std::map<TypeUnit, std::map<uint16, Unit*>>* l_ListUnitZone = l_Map->GetListUnitZone();
 
-    /// Draw Entities
+    std::map<uint32, std::vector<Unit*> > m_ListUnitByZ;
     for (std::pair<TypeUnit, std::map<uint16, Unit*>> l_MapListUnit : (*l_ListUnitZone))
+    {
+        for (std::pair<uint16, Unit*> l_UnitPair : l_MapListUnit.second)
+        {
+            Unit* l_Unit = l_UnitPair.second;
+            m_ListUnitByZ[l_Unit->GetPosY()].push_back(l_Unit);
+        }
+    }
+
+
+    for (std::map<uint32, std::vector<Unit*> >::iterator l_It = m_ListUnitByZ.begin(); l_It != m_ListUnitByZ.end(); ++l_It)
+    {
+        for (auto l_Unit : (*l_It).second)
+        {
+           // Unit* l_Unit = l_UnitPair.second;
+
+            if (l_Unit == nullptr)
+                continue;
+
+            /// SKIN PART
+            MovementHandler* l_MovementHandler = l_Unit->GetMovementHandler();
+            uint8 l_SpriteNb = (l_Unit->GetOrientation() * MAX_MOVEMENT_POSITION) + l_MovementHandler->GetMovementPosition();
+            if (l_MovementHandler->IsInAttack())
+                l_SpriteNb += (MAX_MOVEMENT_POSITION * Orientation::MAX);
+
+            SkinSprite l_SkinSprite = (*m_SkinsManager->GetSkinSprite(l_Unit->GetSkinID(), l_SpriteNb));
+            l_SkinSprite.setScale(sf::Vector2f(l_Unit->GetSkinZoomFactor(), l_Unit->GetSkinZoomFactor()));
+            l_SkinSprite.setColor(sf::Color(255, 255, 255, l_Unit->GetOpacity()));
+            l_SkinSprite.setPosition((float)l_Unit->GetPosX(), (float)l_Unit->GetPosY() - l_Unit->GetRealSizeY());
+            m_Window.draw(l_SkinSprite);
+
+            /// Set view to don t have a zoom on text
+            m_Window.setView(m_ViewFont);
+
+            /// TALK
+            if (!l_Unit->GetTalk().empty())
+            {
+                sf::Text l_Text(l_Unit->GetTalk(), *g_Font, SIZE_TALK_FONT);
+
+                TileSprite l_Sprite = m_InterfaceManager->GetField(l_Text.getGlobalBounds().width + 8, (float)g_Font->getLineSpacing(l_Text.getCharacterSize()) + 8);
+                sf::Vector2f v1(l_Unit->GetPosX() + (l_Unit->GetSizeX() / 2), l_Unit->GetPosY() - l_Unit->GetSizeY() - 6 - 4);
+                sf::Vector2i l_Coord = m_Window.mapCoordsToPixel(v1, m_View);
+                l_Sprite.setPosition((float)(l_Coord.x - ((l_Text.getGlobalBounds().width + 8) / 2)), (float)l_Coord.y);
+                m_Window.draw(l_Sprite);
+
+                l_Text.setColor(sf::Color::White);
+                sf::Vector2f v12(l_Unit->GetPosX() + (l_Unit->GetSizeX() / 2), l_Unit->GetPosY() - l_Unit->GetSizeY());
+                l_Coord = m_Window.mapCoordsToPixel(v1, m_View);
+                l_Text.setPosition((float)(l_Coord.x - (l_Text.getGlobalBounds().width / 2)), (float)l_Coord.y);
+                m_Window.draw(l_Text);
+            }
+
+            /// NAME
+            if (l_Unit->IsPlayer())
+            {
+                sf::Text l_Name(l_Unit->GetName(), *g_Font, SIZE_NAME_FONT);
+                l_Name.setColor(sf::Color::White);
+                sf::Vector2f v1(l_Unit->GetPosX() + (l_Unit->GetSizeX() / 2), l_Unit->GetPosY());
+                sf::Vector2i l_Coord = m_Window.mapCoordsToPixel(v1, m_View);
+                l_Name.setPosition((float)(l_Coord.x - (l_Name.getGlobalBounds().width / 2)), (float)l_Coord.y);
+                m_Window.draw(l_Name);
+            }
+
+            /// Reset the view
+            m_Window.setView(m_View);
+        }
+    }
+
+    /// Draw Entities
+    /*for (std::pair<TypeUnit, std::map<uint16, Unit*>> l_MapListUnit : (*l_ListUnitZone))
     {
         for (std::pair<uint16, Unit*> l_UnitPair : l_MapListUnit.second)
         {
@@ -121,10 +190,10 @@ void Graphics::DrawEntities()
             {
                 sf::Text l_Text(l_Unit->GetTalk(), *g_Font, SIZE_TALK_FONT);
 
-                TileSprite l_Sprite = m_InterfaceManager->GetField(l_Text.getGlobalBounds().width, (float)g_Font->getLineSpacing(l_Text.getCharacterSize()));
-                sf::Vector2f v1(l_Unit->GetPosX() + (l_Unit->GetSizeX() / 2), l_Unit->GetPosY() - l_Unit->GetSizeY() - 6);
+                TileSprite l_Sprite = m_InterfaceManager->GetField(l_Text.getGlobalBounds().width + 8, (float)g_Font->getLineSpacing(l_Text.getCharacterSize()) + 8);
+                sf::Vector2f v1(l_Unit->GetPosX() + (l_Unit->GetSizeX() / 2), l_Unit->GetPosY() - l_Unit->GetSizeY() - 6 - 4);
                 sf::Vector2i l_Coord = m_Window.mapCoordsToPixel(v1, m_View);
-                l_Sprite.setPosition((float)(l_Coord.x - (l_Text.getGlobalBounds().width / 2)), (float)l_Coord.y);
+                l_Sprite.setPosition((float)(l_Coord.x - ((l_Text.getGlobalBounds().width + 8) / 2)), (float)l_Coord.y);
                 m_Window.draw(l_Sprite);
 
                 l_Text.setColor(sf::Color::White);
@@ -148,7 +217,7 @@ void Graphics::DrawEntities()
             /// Reset the view
             m_Window.setView(m_View);
         }
-    }
+    }*/
 }
 
 void Graphics::DrawMap()

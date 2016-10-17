@@ -3,6 +3,7 @@
 #include <SFML/System/Thread.hpp>
 #include <SFML/System/Mutex.hpp>
 #include <SFML/Graphics/Text.hpp>
+#include <SFML/Graphics/Drawable.hpp>
 #include "../Define.hpp"
 #include "Window.hpp"
 #include <SFML/Graphics/View.hpp>

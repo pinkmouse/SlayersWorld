@@ -6,9 +6,9 @@ WritingField::WritingField() :
     m_WritingString("")
 {
     m_Text.setFont(*g_Font);
-    m_Text.setCharacterSize(20);
+    m_Text.setCharacterSize(18);
     m_Text.setColor(sf::Color::White);
-    m_Text.setPosition(5, Y_WINDOW - SIZE_FILED_TALK_Y + 3);
+    m_Text.setPosition(5, Y_WINDOW - SIZE_FILED_TALK_Y);
 }
 
 
