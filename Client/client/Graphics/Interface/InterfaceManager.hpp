@@ -5,6 +5,7 @@
 #include "../Window.hpp"
 #include "../../World/Events/Events.hpp"
 #include "WritingField.hpp"
+#include "HistoryField.hpp"
 
 class InterfaceManager
 {
@@ -17,6 +18,7 @@ public:
     TileSprite GetFlask(uint8, bool, uint8 p_Pct = 100);
     TileSprite GetXpBar(bool, uint8 p_Pct = 100);
     void Draw(Window &);
+    HistoryField* GetHistoryField() const;
 
 private:
     sf::Texture     m_SystemTexture;
@@ -24,5 +26,6 @@ private:
     sf::Texture     m_XpTexture;
     Events*         m_Events;
     WritingField*   m_WritingField;
+    HistoryField*   m_HistoryField;
 };
 

@@ -3,11 +3,12 @@
 #include "WorldPacket.hpp"
 #include "../Map/MapManager.hpp"
 #include "../Socket/Socket.hpp"
+#include "../Graphics/Interface/InterfaceManager.hpp"
 
 class PacketHandler
 {
 public:
-	PacketHandler(MapManager*);
+	PacketHandler(MapManager*, InterfaceManager*);
 	~PacketHandler();
 	void LoadPacketHandlerMap();
     bool HasMinimalRequiered() const;
@@ -29,6 +30,7 @@ public:
 
 private:
 	MapManager* m_MapManager;
+    InterfaceManager* m_InterfaceManager;
 	using m_Func = void(PacketHandler::*)(WorldPacket &);
 
 	std::map<uint8, m_Func> m_PacketHandleMap;

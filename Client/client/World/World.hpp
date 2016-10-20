@@ -2,6 +2,7 @@
 
 #include "../Graphics/Graphics.hpp"
 #include "../Map/MapManager.hpp"
+#include "../Graphics/Interface/InterfaceManager.hpp"
 #include "Events/Events.hpp"
 #include "PacketHandler.hpp"
 #include "ClockHandler.hpp"
@@ -30,6 +31,7 @@ private:
     ClockHandler m_Clock;
 
 	PacketHandler* m_PacketHandler;
+    InterfaceManager* m_InterfaceManager;
 	Window m_Window;
 };
 

@@ -209,6 +209,18 @@ void Events::NewKeyPressed(sf::Keyboard::Key p_NewKey)
 
             break;
         }
+        case sf::Keyboard::Key::F12:
+        {
+            if (m_HistoryField == nullptr)
+                return;
+
+            if (m_HistoryField->IsFieldOpen())
+                m_HistoryField->Close();
+            else
+                m_HistoryField->Open();
+
+            break;
+        }
         default:
             break;
     }
@@ -240,4 +252,9 @@ void Events::TextEntered(sf::Uint32 p_Letter)
 void Events::SetWritingField(WritingField* p_WritingField)
 {
     m_WritingField = p_WritingField;
+}
+
+void Events::SetHistoryField(HistoryField* p_HistoryField)
+{
+    m_HistoryField = p_HistoryField;
 }

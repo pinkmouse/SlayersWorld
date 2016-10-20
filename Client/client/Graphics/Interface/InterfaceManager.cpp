@@ -3,9 +3,11 @@
 
 InterfaceManager::InterfaceManager(Events* p_Events) :
     m_Events(p_Events),
-    m_WritingField(new WritingField())
+    m_WritingField(new WritingField()),
+    m_HistoryField(new HistoryField())
 {
     m_Events->SetWritingField(m_WritingField);
+    m_Events->SetHistoryField(m_HistoryField);
 }
 
 
@@ -61,6 +63,11 @@ TileSprite InterfaceManager::GetXpBar(bool p_Full, uint8 p_Pct)
     return l_TileSprite;
 }
 
+HistoryField* InterfaceManager::GetHistoryField() const
+{
+    return m_HistoryField;
+}
+
 void InterfaceManager::Draw(Window & p_Window)
 {
     if (m_Events == nullptr)
@@ -106,5 +113,21 @@ void InterfaceManager::Draw(Window & p_Window)
         l_Sprite.setPosition(0, Y_WINDOW - SIZE_FILED_TALK_Y);
         p_Window.draw(l_Sprite);
         p_Window.draw(m_WritingField->GetText());
+    }
+    /// Draw history
+    if (m_HistoryField->IsFieldOpen())
+    {
+        TileSprite l_Sprite = GetField(X_WINDOW - (FLASK_SIZE_X * 2 * FLASK_SCALE), SIZE_FILED_TALK_Y * 5);
+        l_Sprite.setPosition(FLASK_SIZE_X * FLASK_SCALE, Y_WINDOW - SIZE_FILED_TALK_Y - (SIZE_FILED_TALK_Y * 5));
+        p_Window.draw(l_Sprite);
+        for (uint8 i = 0; i < m_HistoryField->GetHistory().size(); ++i)
+        {
+            sf::Text l_Text = m_HistoryField->GetText();
+            l_Text.setFont(*g_Font);
+            l_Text.setPosition(FLASK_SIZE_X * FLASK_SCALE, Y_WINDOW - SIZE_FILED_TALK_Y - (SIZE_FILED_TALK_Y * (5 - i)));
+            l_Text.setString(m_HistoryField->GetHistory()[i]);
+            p_Window.draw(l_Text);
+        }
+        //p_Window.draw(m_WritingField->GetText());
     }
 }

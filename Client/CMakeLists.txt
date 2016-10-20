@@ -46,6 +46,8 @@ add_executable(${EXECUTABLE_NAME}
               client/Graphics/Interface/InterfaceManager.hpp
               client/Graphics/Interface/WritingField.cpp
               client/Graphics/Interface/WritingField.hpp
+              client/Graphics/Interface/HistoryField.cpp
+              client/Graphics/Interface/HistoryField.hpp
               client/Graphics/Graphics.cpp
               client/Graphics/Graphics.hpp
               client/Graphics/Skin.cpp

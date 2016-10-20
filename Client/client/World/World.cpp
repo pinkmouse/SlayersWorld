@@ -8,8 +8,9 @@ World::World()
 	g_Socket = new Socket();
     m_Events = new Events();
 	m_MapManager = new MapManager(m_Events);
-	m_Graphics = new Graphics(m_MapManager, m_Events);
-	m_PacketHandler = new PacketHandler(m_MapManager);
+    m_InterfaceManager = new InterfaceManager(m_Events);
+	m_Graphics = new Graphics(m_MapManager, m_InterfaceManager, m_Events);
+	m_PacketHandler = new PacketHandler(m_MapManager, m_InterfaceManager);
 	m_Run = true;
     m_Ip = IP_SERVER;
 }
@@ -36,6 +37,7 @@ bool World::InitializeConnection()
 
 bool World::InitializeWindow()
 {
+    m_InterfaceManager->Initialize();
 	m_Graphics->CreateWindow(X_WINDOW, Y_WINDOW, ZOOM_FACTOR);
     if (!m_Graphics->LoadFont())
         return false;

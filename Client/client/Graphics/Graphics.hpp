@@ -17,7 +17,7 @@
 class Graphics
 {
 public:
-	Graphics(MapManager*, Events*);
+	Graphics(MapManager*, InterfaceManager*, Events*);
 	~Graphics();
     bool LoadFont();
 	void CreateWindow(uint32, uint32, float);

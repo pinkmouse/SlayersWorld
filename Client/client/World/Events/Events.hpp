@@ -3,6 +3,7 @@
 #include <SFML/Window/Event.hpp>
 #include "../../Define.hpp"
 #include "../../Graphics/Interface/WritingField.hpp"
+#include "../../Graphics/Interface/HistoryField.hpp"
 #include <map>
 #include <string>
 
@@ -17,6 +18,7 @@ public:
     void KeyRelease(sf::Keyboard::Key);
     void TextEntered(sf::Uint32);
     void SetWritingField(WritingField*);
+    void SetHistoryField(HistoryField*);
     void LostFocus();
 
 private:
@@ -26,5 +28,6 @@ private:
     bool m_IsInMouvement;
 
     WritingField* m_WritingField;
+    HistoryField* m_HistoryField;
 };
 

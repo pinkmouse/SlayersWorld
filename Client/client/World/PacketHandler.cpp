@@ -4,8 +4,9 @@
 #include "../Global.hpp"
 #include "PacketDefine.hpp"
 
-PacketHandler::PacketHandler(MapManager *p_MapManager) :
-	m_MapManager(p_MapManager)
+PacketHandler::PacketHandler(MapManager* p_MapManager, InterfaceManager* p_InterfaceManager) :
+	m_MapManager(p_MapManager),
+    m_InterfaceManager(p_InterfaceManager)
 {
     p_HasMinimalRequiered = false;
 }
@@ -99,6 +100,7 @@ void PacketHandler::HandleTalk(WorldPacket &p_Packet)
             return;
 
         l_Unit->SetTalk(l_String);
+        m_InterfaceManager->GetHistoryField()->AddHistoryLine(l_Unit->GetName() + ": " + l_String);
     }
 }
 

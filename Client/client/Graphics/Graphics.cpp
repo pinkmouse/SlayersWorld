@@ -1,16 +1,15 @@
 #include "Graphics.hpp"
 #include "../Global.hpp"
 
-Graphics::Graphics(MapManager* p_MapManager, Events* p_Events) :
-	m_MapManager(p_MapManager),
+Graphics::Graphics(MapManager* p_MapManager, InterfaceManager* p_InterfaceManager, Events* p_Events) :
+    m_MapManager(p_MapManager),
+    m_InterfaceManager(p_InterfaceManager),
     m_Events(p_Events)
 {
 	m_TileSet = nullptr;
     m_SkinsManager = nullptr;
-    m_InterfaceManager = nullptr;
     m_Clock = new ClockHandler();
 }
-
 
 Graphics::~Graphics()
 {
@@ -34,9 +33,6 @@ void Graphics::CreateWindow(uint32 p_X, uint32 p_Y, float p_Zoom)
 	m_View.zoom(p_Zoom);
 	m_Window.setView(m_View);
     m_Window.setFramerateLimit(40);
-
-    m_InterfaceManager = new InterfaceManager(m_Events);
-    m_InterfaceManager->Initialize();
 
 	m_TileSet = new TileSet();
 	m_TileSet->BuildSprites();
@@ -97,6 +93,10 @@ void Graphics::DrawEntities()
         for (std::pair<uint16, Unit*> l_UnitPair : l_MapListUnit.second)
         {
             Unit* l_Unit = l_UnitPair.second;
+
+            if (l_Unit == nullptr)
+                continue;
+
             m_ListUnitByZ[l_Unit->GetPosY()].push_back(l_Unit);
         }
     }
