@@ -215,7 +215,15 @@ void Events::NewKeyPressed(sf::Keyboard::Key p_NewKey)
                 return;
 
             if (m_HistoryField->IsFieldOpen())
-                m_HistoryField->Close();
+            {
+                if (m_HistoryField->GetLineHistory() == MIN_HISTORY_LINE)
+                    m_HistoryField->SetLineHistory(MAX_HISTORY_LINE);
+                else
+                {
+                    m_HistoryField->SetLineHistory(MIN_HISTORY_LINE);
+                    m_HistoryField->Close();
+                }
+            }
             else
                 m_HistoryField->Open();
 

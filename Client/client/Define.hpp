@@ -53,6 +53,8 @@
 #define XP_BAR_SIZE_Y 12
 #define XP_BAR_SCALE 2.0f
 
+#define MIN_HISTORY_LINE 5
+#define MAX_HISTORY_LINE 19
 
 /// EVENT
 #define MAX_KEY_SAVE 4

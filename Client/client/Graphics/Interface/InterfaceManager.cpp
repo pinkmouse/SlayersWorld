@@ -117,15 +117,17 @@ void InterfaceManager::Draw(Window & p_Window)
     /// Draw history
     if (m_HistoryField->IsFieldOpen())
     {
-        TileSprite l_Sprite = GetField(X_WINDOW - (FLASK_SIZE_X * 2 * FLASK_SCALE), SIZE_FILED_TALK_Y * 5);
-        l_Sprite.setPosition(FLASK_SIZE_X * FLASK_SCALE, Y_WINDOW - SIZE_FILED_TALK_Y - (SIZE_FILED_TALK_Y * 5));
+        TileSprite l_Sprite = GetField(X_WINDOW - (FLASK_SIZE_X * 2 * FLASK_SCALE), SIZE_FILED_TALK_Y * m_HistoryField->GetLineHistory());
+        l_Sprite.setPosition(FLASK_SIZE_X * FLASK_SCALE, Y_WINDOW - SIZE_FILED_TALK_Y - (SIZE_FILED_TALK_Y * m_HistoryField->GetLineHistory()));
         p_Window.draw(l_Sprite);
-        for (uint8 i = 0; i < m_HistoryField->GetHistory().size(); ++i)
+        uint8 l_HistorySize = m_HistoryField->GetHistory().size();
+        uint8 m_LineMax = std::min(m_HistoryField->GetLineHistory(), l_HistorySize);
+        for (uint8 i = 0; i < m_LineMax; ++i)
         {
             sf::Text l_Text = m_HistoryField->GetText();
             l_Text.setFont(*g_Font);
-            l_Text.setPosition(FLASK_SIZE_X * FLASK_SCALE, Y_WINDOW - SIZE_FILED_TALK_Y - (SIZE_FILED_TALK_Y * (5 - i)));
-            l_Text.setString(m_HistoryField->GetHistory()[i]);
+            l_Text.setPosition(FLASK_SIZE_X * FLASK_SCALE + 10, Y_WINDOW - SIZE_FILED_TALK_Y - (SIZE_FILED_TALK_Y * (i + 1)));
+            l_Text.setString(m_HistoryField->GetHistory()[l_HistorySize - 1- i]);
             p_Window.draw(l_Text);
         }
         //p_Window.draw(m_WritingField->GetText());

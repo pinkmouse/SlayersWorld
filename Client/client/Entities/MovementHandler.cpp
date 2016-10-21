@@ -254,7 +254,6 @@ void MovementHandler::StartAttack()
 
 void MovementHandler::StopAttack()
 {
-    printf("STOPPPPPPPPPPPPPP\n");
     m_StopAttack = true;
 }
 

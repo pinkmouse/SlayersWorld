@@ -7,7 +7,7 @@ HistoryField::HistoryField() :
     m_Text.setFont(*g_Font);
     m_Text.setCharacterSize(18);
     m_Text.setColor(sf::Color::White);
-    m_Text.setPosition(5, Y_WINDOW - SIZE_FILED_TALK_Y);
+    m_HistoryMaxLine = MIN_HISTORY_LINE;
 }
 
 
@@ -35,9 +35,19 @@ bool HistoryField::IsFieldOpen()
     return m_IsOpen;
 }
 
-sf::Text HistoryField::GetText()
+sf::Text HistoryField::GetText() const
 {
     return m_Text;
+}
+
+void HistoryField::SetLineHistory(uint8 p_HistoryMaxLineineNb)
+{
+    m_HistoryMaxLine = p_HistoryMaxLineineNb;
+}
+
+uint8 HistoryField::GetLineHistory() const
+{
+    return m_HistoryMaxLine;
 }
 
 void HistoryField::AddHistoryLine(const std::string & p_String)
