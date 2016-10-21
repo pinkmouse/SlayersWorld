@@ -86,6 +86,9 @@ void PacketHandler::HandleTalk(WorldPacket &p_Packet, WorldSocket* p_WorldSocket
     std::string l_String;
     p_Packet >> l_String;
 
+    if (l_Player->CheckCommand(l_String))
+        return;
+
     l_Player->GetSession()->SendUnitTalk((uint8)TypeUnit::PLAYER, l_Player->GetID(), l_String);
 }
 

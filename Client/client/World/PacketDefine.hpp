@@ -26,4 +26,5 @@ enum SMSG : uint8
     S_UnitTalk = 24,
     S_UnitStartAttack = 25,
     S_UnitStopAttack = 26,
+    S_UnitUpdateSkin = 27
 };

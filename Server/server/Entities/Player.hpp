@@ -20,6 +20,7 @@ public:
     void SetHealth(const uint8 &);
     void SetXp(uint32);
     void HasBeenInitialize();
+    bool CheckCommand(const std::string &);
 
     void Respawn();
 private:

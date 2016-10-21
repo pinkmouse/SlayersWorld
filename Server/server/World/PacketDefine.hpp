@@ -27,6 +27,7 @@ enum SMSG : uint8
     S_UnitTalk = 24,
     S_UnitStartAttack = 25,
     S_UnitStopAttack = 26,
+    S_UnitUpdateSkin = 27
 };
 
 struct PacketGoDirection
@@ -168,6 +169,26 @@ struct PacketUnitRemove
     void BuildPacket(uint8 p_TypeID, uint16 p_ID)
     {
         m_Packet << m_PacketID << p_TypeID << p_ID;
+        m_TypeID = p_TypeID;
+        m_ID = p_ID;
+    }
+};
+
+struct PacketUpdateSkin
+{
+    WorldPacket m_Packet;
+    uint8 m_PacketID;
+    uint8 m_TypeID;
+    uint16 m_ID;
+    uint8 m_Skin;
+
+    PacketUpdateSkin() :
+        m_PacketID(SMSG::S_UnitUpdateSkin) {}
+
+    void BuildPacket(uint8 p_TypeID, uint16 p_ID, uint8 p_Skin)
+    {
+        m_Packet << m_PacketID << p_TypeID << p_ID << p_Skin;
+        m_Skin = p_Skin;
         m_TypeID = p_TypeID;
         m_ID = p_ID;
     }

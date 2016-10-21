@@ -111,6 +111,40 @@ void Player::SetHealth(const uint8 & p_Health)
         m_Session->SendUpdateUnitHealth(GetType(), GetID(), p_Health);
 }
 
+bool Player::CheckCommand(const std::string & p_String)
+{
+    if (p_String.empty())
+        return false;
+
+    if (p_String[0] == '/')
+    {
+        std::string l_Cmd = p_String;
+        std::vector<std::string> l_CmdList;
+
+        l_Cmd.erase(0, (size_t)1);
+
+        size_t l_Pos = 0;
+        std::string l_Token;
+        while ((l_Pos = l_Cmd.find(' ')) != std::string::npos) 
+        {
+            l_Token = l_Cmd.substr(0, l_Pos);
+            l_CmdList.push_back(l_Token);
+            l_Cmd.erase(0, l_Pos + 1);
+        }
+        l_CmdList.push_back(l_Cmd.c_str());
+
+        if (l_CmdList[0] == "skin" && l_CmdList.size() > 1)
+        {
+            uint8 l_SkinID = atoi(l_CmdList[1].c_str());
+            if (l_SkinID < 10)
+                SetSkinID(l_SkinID);
+        }
+        return true;
+    }
+    return false;
+}
+
+
 void Player::SetXp(uint32 p_Xp)
 {
     if (g_LevelManager->IsMaxLevel(GetLevel()))

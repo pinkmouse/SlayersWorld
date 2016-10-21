@@ -1,5 +1,6 @@
 #include "Unit.hpp"
 #include "../Map/Map.hpp"
+#include "../World/PacketDefine.hpp"
 #include <cstdlib>
 
 
@@ -286,6 +287,10 @@ void Unit::SetLevel(const uint8 & p_Level)
 void Unit::SetSkinID(const uint8 & p_SkinID)
 {
     m_SkinID = p_SkinID;
+
+    PacketUpdateSkin l_Packet;
+    l_Packet.BuildPacket(GetType(), GetID(), p_SkinID);
+    m_Map->SendToSet(l_Packet.m_Packet, this);
 }
 
 void Unit::SetPosX(const uint32 & p_PosX)

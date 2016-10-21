@@ -27,6 +27,7 @@ public:
     void HandleUnitStartAttack(WorldPacket &);
     void HandleUnitStopAttack(WorldPacket &);
     void HandleTalk(WorldPacket &);
+    void HandleUpdateSkin(WorldPacket &);
 
 private:
 	MapManager* m_MapManager;
