@@ -11,7 +11,7 @@
 class PacketHandler
 {
 public:
-    PacketHandler(MapManager*);
+    PacketHandler();
     ~PacketHandler();
     void LoadPacketHandlerMap();
 
@@ -29,6 +29,5 @@ private:
     typedef void(PacketHandler::*m_Func)(WorldPacket &, WorldSocket*);
 
     std::map<uint8, m_Func> m_PacketHandleMap;
-    MapManager* m_MapManager;
 };
 

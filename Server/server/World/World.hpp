@@ -22,9 +22,6 @@ public:
 private:
 	bool m_Run;
 
-	/// MAP
-	MapManager* m_MapManager;
-
     /// PACKET
     std::vector<std::pair<WorldSocket*, WorldPacket> > m_PaquetQueue;
     PacketHandler* m_PacketHandler;

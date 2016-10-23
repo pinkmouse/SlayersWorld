@@ -1,11 +1,13 @@
 #include "Player.hpp"
 #include "../World/WorldSocket.hpp"
+#include "../World/PacketDefine.hpp"
 #include "../Map/Map.hpp"
 #include "../Global.hpp"
 
 Player::Player(int32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_Health, uint8 p_SkinID, uint16 p_MapID, uint32 p_PosX, uint32 p_PosY, Orientation p_Orientation, uint32 p_Xp) :
     Unit(p_ID, TypeUnit::PLAYER)
 {
+    InitializeCommands();
     m_Name = p_Name;
     m_Level = p_Level;
     m_SkinID = p_SkinID;
@@ -133,13 +135,14 @@ bool Player::CheckCommand(const std::string & p_String)
         }
         l_CmdList.push_back(l_Cmd.c_str());
 
-        if (l_CmdList[0] == "skin" && l_CmdList.size() > 1)
+        m_Func l_Fun = m_CmdHandleMap[l_CmdList[0]];
+        if (l_Fun != nullptr)
         {
-            uint8 l_SkinID = atoi(l_CmdList[1].c_str());
-            if (l_SkinID < 10)
-                SetSkinID(l_SkinID);
+            l_CmdList.erase(l_CmdList.begin());
+            return (this->*(l_Fun))(l_CmdList);
         }
-        return true;
+
+        return false;
     }
     return false;
 }
@@ -163,6 +166,13 @@ void Player::SetXp(uint32 p_Xp)
     m_Xp = p_Xp;
 }
 
+void Player::SendMsg(const std::string & p_Msg)
+{
+    PacketSrvPlayerMsg l_Packet;
+    l_Packet.BuildPacket(p_Msg);
+    WorldSocket* l_Session = GetSession();
+    l_Session->SendMsg(l_Packet.m_Packet);
+}
 
 void Player::Respawn()
 {

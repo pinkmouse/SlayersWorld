@@ -4,10 +4,10 @@
 World::World()
     : m_Thread(&World::NetworkLoop, this),
     m_Run(true),
-	m_MapManager(new MapManager()),
-    m_PacketHandler(new PacketHandler(m_MapManager)),
+    m_PacketHandler(new PacketHandler()),
     m_CreatureManager(new CreatureManager())
 {
+    g_MapManager = new MapManager();
 	g_Config = new ConfigHandler();
     g_SqlManager = new SqlManager();
     g_LevelManager = new LevelManager();
@@ -27,7 +27,7 @@ bool World::Initialize()
 		return false;
 	}
 	printf("Load Maps...\n");
-	if (!m_MapManager->InitializeMaps())
+	if (!g_MapManager->InitializeMaps())
 	{
 		printf("Load Maps Error\n");
 		return false;
@@ -47,7 +47,7 @@ bool World::Initialize()
         printf("Error Initialize CreatureTemplate...\n");
 
     printf("Initialize Creature\n");
-    if (!g_SqlManager->InitializeCreature(m_MapManager, m_CreatureManager))
+    if (!g_SqlManager->InitializeCreature(m_CreatureManager))
         printf("Error Initialize CreatureTemplate...\n");
 
     std::vector<std::string> l_ConfigSQLCharacters = g_Config->GetValueList(g_Config->GetValue("charactersDB"));
@@ -80,7 +80,7 @@ void World::Run()
 	{
 		UpdatePacketQueue();
         sf::Time l_Diff = m_Clock.restart();
-        m_MapManager->Update(l_Diff);
+        g_MapManager->Update(l_Diff);
 	}
 }
 

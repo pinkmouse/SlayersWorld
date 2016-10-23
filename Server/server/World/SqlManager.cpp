@@ -1,6 +1,7 @@
 #include "SqlManager.hpp"
 #include "../Define.hpp"
 #include "../Entities/Creature.hpp"
+#include "../Global.hpp"
 #include <cstdlib>
 
 SqlManager::SqlManager()
@@ -172,7 +173,7 @@ bool SqlManager::InitializeCreatureTemplate(CreatureManager* p_CreatureManager)
     return true;
 }
 
-bool SqlManager::InitializeCreature(MapManager* p_MapManager, CreatureManager* p_CreatureManager)
+bool SqlManager::InitializeCreature(CreatureManager* p_CreatureManager)
 {
     std::string l_Query = "SELECT `id`, `entry`, `mapID`, `posX`, `posY` FROM creature";
     mysql_query(&m_MysqlWorld, l_Query.c_str());
@@ -195,7 +196,7 @@ bool SqlManager::InitializeCreature(MapManager* p_MapManager, CreatureManager* p
         l_PosY = atoi(l_Row[4]);
 
         Creature* l_Creature = new Creature(l_Id, l_Entry, p_CreatureManager->GetCreatureTemplate(l_Entry), l_MapID, l_PosX, l_PosY);
-        Map* l_Map = p_MapManager->GetMap(l_MapID);
+        Map* l_Map = g_MapManager->GetMap(l_MapID);
         l_Map->AddUnit(l_Creature);
     }
     mysql_free_result(l_Result);
@@ -226,4 +227,67 @@ std::map<uint8, uint16> SqlManager::GetXpLevel()
     mysql_free_result(l_Result);
 
     return l_XpLevel;
+}
+
+int16 SqlManager::GetLevel(const std::string & p_PlayerName)
+{
+    std::string l_Query = "SELECT `level` FROM characters WHERE `name` = '" + p_PlayerName + "'";
+    mysql_query(&m_MysqlCharacters, l_Query.c_str());
+
+    int16 l_Level = -1;
+
+    MYSQL_RES *l_Result = NULL;
+    MYSQL_ROW l_Row;
+    l_Result = mysql_use_result(&m_MysqlCharacters);
+    while ((l_Row = mysql_fetch_row(l_Result)))
+    {
+        l_Level = atoi(l_Row[0]);
+    }
+    mysql_free_result(l_Result);
+
+    return l_Level;
+}
+
+WorldPosition SqlManager::GetPosition(const std::string & p_PlayerName)
+{
+    std::string l_Query = "SELECT `mapID`, `posX`, `posY` FROM characters WHERE `name` = '" + p_PlayerName + "'";
+    mysql_query(&m_MysqlCharacters, l_Query.c_str());
+
+    uint16 l_MapID = 0;
+    uint32 l_PosX = 0;
+    uint32 l_PosY = 0;
+
+    MYSQL_RES *l_Result = NULL;
+    MYSQL_ROW l_Row;
+    l_Result = mysql_use_result(&m_MysqlCharacters);
+    while ((l_Row = mysql_fetch_row(l_Result)))
+    {
+        l_MapID = atoi(l_Row[0]);
+        l_PosX = atoi(l_Row[1]);
+        l_PosY = atoi(l_Row[2]);
+    }
+    mysql_free_result(l_Result);
+
+    WorldPosition l_Position(l_PosX, l_PosY, l_MapID, Orientation::Up);
+    return l_Position;
+}
+
+
+int32 SqlManager::GetPlayerID(const std::string & p_PlayerName)
+{
+    std::string l_Query = "SELECT `characterID` FROM characters WHERE `name` = '" + p_PlayerName + "'";
+    mysql_query(&m_MysqlCharacters, l_Query.c_str());
+
+    int32 l_PlayerID = -1;
+
+    MYSQL_RES *l_Result = NULL;
+    MYSQL_ROW l_Row;
+    l_Result = mysql_use_result(&m_MysqlCharacters);
+    while ((l_Row = mysql_fetch_row(l_Result)))
+    {
+        l_PlayerID = atoi(l_Row[0]);
+    }
+    mysql_free_result(l_Result);
+
+    return l_PlayerID;
 }

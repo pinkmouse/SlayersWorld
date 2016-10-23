@@ -53,3 +53,17 @@ void MapManager::Update(sf::Time p_Diff)
         l_Map->Update(p_Diff);
     }
 }
+
+Player* MapManager::GetPlayer(uint16 p_IdPlayer)
+{
+    for (std::pair<uint16, Map*> l_MapPair : m_MapList)
+    {
+        Map* l_Map = l_MapPair.second;
+
+        if (l_Map == nullptr)
+            continue;
+
+        return l_Map->GetUnit(TypeUnit::PLAYER, p_IdPlayer)->ToPlayer();
+    }
+    return nullptr;
+}

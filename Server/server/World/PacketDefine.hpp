@@ -25,9 +25,10 @@ enum SMSG : uint8
     S_UnitUpdatePosition = 22,
     S_UnitUpdateOrientation = 23,
     S_UnitTalk = 24,
-    S_UnitStartAttack = 25,
-    S_UnitStopAttack = 26,
-    S_UnitUpdateSkin = 27
+    S_SrvPlayerMsg = 25,
+    S_UnitStartAttack = 26,
+    S_UnitStopAttack = 27,
+    S_UnitUpdateSkin = 28
 };
 
 struct PacketGoDirection
@@ -191,5 +192,21 @@ struct PacketUpdateSkin
         m_Skin = p_Skin;
         m_TypeID = p_TypeID;
         m_ID = p_ID;
+    }
+};
+
+struct PacketSrvPlayerMsg
+{
+    WorldPacket m_Packet;
+    uint8 m_PacketID;
+    std::string m_Msg;
+
+    PacketSrvPlayerMsg() :
+        m_PacketID(SMSG::S_SrvPlayerMsg) {}
+
+    void BuildPacket(const std::string & p_Msg)
+    {
+        m_Packet << m_PacketID << p_Msg;
+        m_Msg = p_Msg;
     }
 };

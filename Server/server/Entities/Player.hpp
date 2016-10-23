@@ -1,5 +1,6 @@
 #pragma once
 #include "Unit.hpp"
+#include <map>
 
 class WorldSocket;
 
@@ -23,11 +24,22 @@ public:
     bool CheckCommand(const std::string &);
 
     void Respawn();
+    void SendMsg(const std::string &);
+
+    /// Commands
+    void InitializeCommands();
+    bool HandleCommandSkin(std::vector<std::string>);
+    bool HandleCommandWhere(std::vector<std::string>);
+    bool HandleCommandLevel(std::vector<std::string>);
+
 private:
     WorldSocket* m_Session;
 
     uint8 m_Alignment;
     uint32 m_Xp;
     bool m_Initilize;
+
+    typedef bool(Player::*m_Func)(std::vector<std::string>);
+    std::map<std::string, m_Func> m_CmdHandleMap;
 };
 

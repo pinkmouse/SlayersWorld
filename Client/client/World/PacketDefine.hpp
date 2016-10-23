@@ -24,7 +24,8 @@ enum SMSG : uint8
     S_UnitUpdatePosition = 22,
     S_UnitUpdateOrientation = 23,
     S_UnitTalk = 24,
-    S_UnitStartAttack = 25,
-    S_UnitStopAttack = 26,
-    S_UnitUpdateSkin = 27
+    S_SrvPlayerMsg = 25,
+    S_UnitStartAttack = 26,
+    S_UnitStopAttack = 27,
+    S_UnitUpdateSkin = 28
 };

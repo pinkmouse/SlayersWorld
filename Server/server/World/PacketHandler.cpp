@@ -1,8 +1,8 @@
 #include "PacketHandler.hpp"
 #include "PacketDefine.hpp"
+#include "../Global.hpp"
 
-PacketHandler::PacketHandler(MapManager* p_MapManager) :
-    m_MapManager(p_MapManager)
+PacketHandler::PacketHandler()
 {
 }
 
@@ -155,7 +155,7 @@ void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldS
         return;
     }
 
-    if (m_MapManager->IsOnline(TypeUnit::PLAYER, l_Id))
+    if (g_MapManager->IsOnline(TypeUnit::PLAYER, l_Id))
     {
         p_WorldSocket->SendAuthResponse(2); ///< Already connected
         return;
@@ -166,7 +166,7 @@ void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldS
     /// Creation Player
     Player* l_Player = g_SqlManager->GetNewPlayer(l_Id);
 
-    Map* l_Map = m_MapManager->GetMap(l_Player->GetMapID());
+    Map* l_Map = g_MapManager->GetMap(l_Player->GetMapID());
 
     if (l_Player == nullptr || l_Map == nullptr)
     {

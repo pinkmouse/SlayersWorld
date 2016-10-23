@@ -12,6 +12,7 @@ public:
     Map* GetMap(uint16);
     void Update(sf::Time);
     bool IsOnline(TypeUnit, uint16);
+    Player* GetPlayer(uint16);
 
 private:
     std::map<uint16, Map*> m_MapList;

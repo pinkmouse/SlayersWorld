@@ -33,6 +33,7 @@ add_executable(${EXECUTABLE_NAME}
 
               server/System/WorldPosition.cpp
               server/System/WorldPosition.hpp
+	      server/System/Commands.cpp
 
               server/Map/Case.cpp
               server/Map/Case.hpp

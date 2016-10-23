@@ -28,6 +28,7 @@ void PacketHandler::LoadPacketHandlerMap()
     m_PacketHandleMap[SMSG::S_UnitUpdatePosition] = &PacketHandler::HandleUpdatePosition;
     m_PacketHandleMap[SMSG::S_UnitUpdateOrientation] = &PacketHandler::HandleUpdateOrientation;
     m_PacketHandleMap[SMSG::S_UnitTalk] = &PacketHandler::HandleTalk;
+    m_PacketHandleMap[SMSG::S_SrvPlayerMsg] = &PacketHandler::HandleSrvPlayerMsg;
     m_PacketHandleMap[SMSG::S_UnitStartAttack] = &PacketHandler::HandleUnitStartAttack;
     m_PacketHandleMap[SMSG::S_UnitStopAttack] = &PacketHandler::HandleUnitStopAttack;
     m_PacketHandleMap[SMSG::S_UnitUpdateSkin] = &PacketHandler::HandleUpdateSkin;
@@ -406,4 +407,14 @@ void PacketHandler::HandleUpdateSkin(WorldPacket &p_Packet)
 
         l_Unit->SetSkinID(l_Skin);
     }
+}
+
+void PacketHandler::HandleSrvPlayerMsg(WorldPacket &p_Packet)
+{
+    std::string l_Msg;
+
+    p_Packet >> l_Msg;
+    
+    m_InterfaceManager->GetHistoryField()->AddHistoryLine(l_Msg);
+
 }

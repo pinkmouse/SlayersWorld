@@ -27,11 +27,14 @@ public:
 
     int32 GetIDLogin(std::string, std::string);
     Player* GetNewPlayer(uint32);
+    int16 GetLevel(const std::string &);
+    WorldPosition GetPosition(const std::string &);
     WorldPosition GetRespawnPositionForPlayer(uint32);
     void SavePlayer(Player const*);
     bool InitializeCreatureTemplate(CreatureManager*);
-    bool InitializeCreature(MapManager*, CreatureManager*);
+    bool InitializeCreature(CreatureManager*);
     std::map<uint8, uint16> GetXpLevel();
+    int32 GetPlayerID(const std::string &);
 
 private:
 	MYSQL m_MysqlCharacters;
