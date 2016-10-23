@@ -26,6 +26,7 @@ Unit::Unit(uint16 p_ID, TypeUnit p_Type)
     m_CombatTimer = 0;
     m_ResTimer = 0;
     m_RespawnTime = 0;
+    m_RegenTimer = 0;
     
     m_Victim = nullptr;
     m_Attacker = nullptr;
@@ -92,10 +93,40 @@ void Unit::UpdateCombat(sf::Time p_Diff)
     }
 }
 
+void Unit::UpdateRegen(sf::Time p_Diff)
+{
+    if (!IsInWorld())
+        return;
+
+    if (IsDeath())
+        return;
+
+    if (GetHealth() >= MAX_HEALTH)
+        return;
+
+    m_RegenTimer += p_Diff.asMicroseconds();
+    if (m_RegenTimer >= REGEN_HEALTH_TIMER * 1000)
+    {
+        switch (m_Type)
+        {
+        case TypeUnit::PLAYER:
+            ToPlayer()->SetHealth(GetHealth() + 5);
+            break;
+        case TypeUnit::CREATURE:
+            SetHealth(GetHealth() + 5);
+            break;
+        default:
+            break;
+        }
+        m_RegenTimer -= REGEN_HEALTH_TIMER * 1000;
+    }
+}
+
 void Unit::Update(sf::Time p_Diff)
 {
     UpdateDeathState(p_Diff);
     UpdateCombat(p_Diff);
+    UpdateRegen(p_Diff);
 
     if (m_MovementHandler == nullptr)
         return;

@@ -12,6 +12,7 @@
 
 #define PLAYER_TIME_RESPAWN 9
 #define MAX_HEALTH 100
+#define REGEN_HEALTH_TIMER 5000
 
 #define UPDATE_TIME_MOVEMENT 250
 #define STEP_SIZE 8 /// In pixel

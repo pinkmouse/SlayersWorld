@@ -55,6 +55,7 @@ public:
     void Update(sf::Time);
     void UpdateCombat(sf::Time);
     void UpdateDeathState(sf::Time);
+    void UpdateRegen(sf::Time);
 
     bool IsInCombat() const;
     void EnterInEvade();
@@ -88,6 +89,7 @@ protected:
     WorldPosition m_RespawnPosition;
     uint64 m_RespawnTime;
     uint64 m_ResTimer;
+    uint64 m_RegenTimer;
     bool m_Evade;
 
 private:
