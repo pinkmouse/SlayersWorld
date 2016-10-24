@@ -162,7 +162,9 @@ void MovementHandler::UpdateAnimationWalk(sf::Time p_Diff)
     while (m_DiffTimeAnim > (UPDATE_TIME_MOVEMENT * 1000 * (2.0f - m_Speed))) ///< 1000 because microsecond
     {
         /// UPDATE ANIMATION
-        if (m_MovementPosition <= 1)
+        if (m_MovementPosition <= 0)
+            m_MovementPosition = 1;
+        else if (m_MovementPosition == 1)
             m_MovementPosition = 2;
         else
             m_MovementPosition = 0;
