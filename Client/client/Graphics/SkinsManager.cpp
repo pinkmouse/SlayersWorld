@@ -23,14 +23,14 @@ Skin* SkinsManager::GetSkin(uint8 p_SkinID)
 bool SkinsManager::LoadSkins()
 {
     sf::Texture *l_Texture = nullptr;
-    for (uint8 i = 0; i < 5; ++i)
+    for (uint8 i = 0; i < 67; ++i)
     {
         l_Texture = new sf::Texture();
         std::string l_FileName = std::to_string(i) + ".png";
         if (!l_Texture->loadFromFile(SKINS_FOLDER + l_FileName))
         {
             printf("Load Skin %s Failed\n", l_FileName.c_str());
-            return false;
+            continue;
         }
         m_TextureSkinsMap[i] = l_Texture;
 
@@ -38,9 +38,9 @@ bool SkinsManager::LoadSkins()
         uint32 l_NbSkinY = l_Texture->getSize().y / SKIN_SIZE_Y;
         Skin* l_Skin = new Skin(l_NbSkinX, l_NbSkinY);
 
-        for (int j = 0; j < l_NbSkinX / MAX_MOVEMENT_POSITION; ++j)
+        for (uint8 j = 0; j < l_NbSkinX / MAX_MOVEMENT_POSITION; ++j)
         {
-            for (int i = 0; i < MAX_MOVEMENT_POSITION * Orientation::MAX; ++i)
+            for (uint8 i = 0; i < MAX_MOVEMENT_POSITION * Orientation::MAX; ++i)
             {
                 SkinSprite* l_SkinSprite = new SkinSprite(l_NbSkinX, l_NbSkinY);
                 l_SkinSprite->setTexture(*l_Texture);
