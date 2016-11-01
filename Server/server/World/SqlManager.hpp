@@ -32,6 +32,7 @@ public:
     int16 GetLevel(const std::string &);
     WorldPosition GetPosition(const std::string &);
     WorldPosition GetRespawnPositionForPlayer(uint32);
+    void AddNewRespawnPositionForPlayer(uint32);
     void SavePlayer(Player const*);
     bool InitializeCreatureTemplate(CreatureManager*);
     bool InitializeCreature(CreatureManager*);

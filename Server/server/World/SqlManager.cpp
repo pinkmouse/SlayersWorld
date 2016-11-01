@@ -128,6 +128,12 @@ Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
     return l_Player;
 }
 
+void SqlManager::AddNewRespawnPositionForPlayer(uint32 p_PlayerID)
+{
+    std::string l_Query = "insert into `characters_respawn` (`characterID`, `posX`, `posY`, `mapID`, `orientation`) values('" + std::to_string(p_PlayerID) + "', '300', '200', '0', '0');";
+    mysql_query(&m_MysqlCharacters, l_Query.c_str());
+}
+
 WorldPosition SqlManager::GetRespawnPositionForPlayer(uint32 p_PlayerID)
 {
     std::string l_Query = "SELECT posX, posY, mapID, orientation FROM characters_respawn WHERE characterID = '" + std::to_string(p_PlayerID) + "'";
@@ -140,15 +146,23 @@ WorldPosition SqlManager::GetRespawnPositionForPlayer(uint32 p_PlayerID)
 
     MYSQL_RES *l_Result = NULL;
     MYSQL_ROW l_Row;
+    bool l_Exist = false;
     l_Result = mysql_use_result(&m_MysqlCharacters);
     while ((l_Row = mysql_fetch_row(l_Result)))
     {
+        l_Exist = true;
         l_PosX = atoi(l_Row[0]);
         l_PosY = atoi(l_Row[1]);
         l_MapID = atoi(l_Row[2]);
         l_Orientation = atoi(l_Row[3]);
     }
     mysql_free_result(l_Result);
+
+    if (!l_Exist)
+    {
+        AddNewRespawnPositionForPlayer(p_PlayerID);
+        return GetRespawnPositionForPlayer(p_PlayerID);
+    }
 
     WorldPosition l_Position(l_PosX, l_PosY, l_MapID, (Orientation)l_Orientation);
     return l_Position;
