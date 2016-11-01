@@ -52,6 +52,29 @@ int32 SqlManager::GetIDLogin(std::string p_Login, std::string p_Password)
     return l_ID;
 }
 
+std::string SqlManager::GetLoginName(uint32 p_AccountID)
+{
+    std::string l_Query = "SELECT `login` FROM `login` WHERE `id` = '" + std::to_string(p_AccountID) + "';";
+    mysql_query(&m_MysqlCharacters, l_Query.c_str());
+
+    std::string l_Name = "";
+    MYSQL_RES *l_Result = NULL;
+    MYSQL_ROW l_Row;
+
+    l_Result = mysql_use_result(&m_MysqlCharacters);
+    while ((l_Row = mysql_fetch_row(l_Result)))
+        l_Name = std::string(l_Row[0]);
+
+    mysql_free_result(l_Result);
+    return l_Name;
+}
+
+void SqlManager::AddNewPlayer(uint32 p_AccountID)
+{
+    std::string l_Query = "insert into `characters` (`accountID`, `name`, `skinID`, `level`, `health`, `alignment`, `mapID`, `posX`, `posY`, `orientation`, `xp`) values('" + std::to_string(p_AccountID) + "', '" + GetLoginName(p_AccountID) + "','0','1','100','0','0','200','200','0','0');";
+    mysql_query(&m_MysqlCharacters, l_Query.c_str());
+}
+
 Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
 {
     std::string l_Query = "SELECT characterID, name, level, health, alignment, skinID, mapID, posX, posY, orientation, xp FROM characters WHERE accountID = '" + std::to_string(p_AccountID) + "'";
@@ -73,9 +96,11 @@ Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
     MYSQL_ROW l_Row;
     Player* l_Player = nullptr;
 
+    bool l_Exist = false;
     l_Result = mysql_use_result(&m_MysqlCharacters);
     while ((l_Row = mysql_fetch_row(l_Result)))
     {
+        l_Exist = true;
         l_ID = atoi(l_Row[0]);
         l_Name = std::string(l_Row[1]);
         l_Lvl = atoi(l_Row[2]);
@@ -89,6 +114,12 @@ Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
         l_Xp = atoi(l_Row[10]);
     }
     mysql_free_result(l_Result);
+
+    if (!l_Exist)
+    {
+        AddNewPlayer(p_AccountID);
+        return GetNewPlayer(p_AccountID);
+    }
 
     l_Player = new Player(l_ID, l_Name, l_Lvl, l_Health, l_SkinID, l_MapID, l_PosX, l_PosY, (Orientation)l_Orientation, l_Xp);
     l_Player->SetAlignment(l_Alignment);

@@ -27,6 +27,8 @@ public:
 
     int32 GetIDLogin(std::string, std::string);
     Player* GetNewPlayer(uint32);
+    void AddNewPlayer(uint32);
+    std::string GetLoginName(uint32);
     int16 GetLevel(const std::string &);
     WorldPosition GetPosition(const std::string &);
     WorldPosition GetRespawnPositionForPlayer(uint32);
