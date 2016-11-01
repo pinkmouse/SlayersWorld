@@ -26,6 +26,7 @@ public:
     bool InitializeWorld(std::string, std::string, std::string, std::string, std::string);
 
     int32 GetIDLogin(std::string, std::string);
+    void AddNewAccount(std::string, std::string);
     Player* GetNewPlayer(uint32);
     void AddNewPlayer(uint32);
     std::string GetLoginName(uint32);

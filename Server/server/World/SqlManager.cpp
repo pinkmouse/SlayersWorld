@@ -35,6 +35,12 @@ bool SqlManager::InitializeWorld(std::string p_Host, std::string p_User, std::st
     return true;
 }
 
+void SqlManager::AddNewAccount(std::string p_Login, std::string p_Password)
+{
+    std::string l_Query = "INSERT INTO `login` (login, password) VALUES ('" + p_Login + "', MD5('" + p_Password + "'));";
+    mysql_query(&m_MysqlCharacters, l_Query.c_str());
+}
+
 int32 SqlManager::GetIDLogin(std::string p_Login, std::string p_Password)
 {
     std::string l_Query = "SELECT `id` FROM `login` WHERE `login` = '" + p_Login + "' AND `password` = MD5('" + p_Password + "')";

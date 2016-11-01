@@ -142,16 +142,17 @@ void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldS
     p_Packet >> l_Login;
     p_Packet >> l_Password;
 
-    if (g_Config->IsPositiveValue("LoginDebug"))
-    {
-        p_WorldSocket->SendAuthResponse(1);
-        return;
-    }
-
     uint32 l_Id = g_SqlManager->GetIDLogin(l_Login, l_Password);
+
     if (!l_Id)
     {
-        p_WorldSocket->SendAuthResponse(0); ///< Auth Failed
+        if (g_Config->IsPositiveValue("LoginDebug"))
+        {
+            g_SqlManager->AddNewAccount(l_Login, l_Password);
+            HandleConnexion(p_Packet, p_WorldSocket);
+        }
+        else
+            p_WorldSocket->SendAuthResponse(0); ///< Auth Failed
         return;
     }
 
