@@ -398,6 +398,9 @@ void Unit::InCombat()
 
 void Unit::OutOfCombat()
 {
+    m_MovementHandler->StopMovement();
+    m_MovementHandler->StopAttack();
+
     m_InCombat = false;
     m_Attacker = nullptr;
     m_Victim = nullptr;
