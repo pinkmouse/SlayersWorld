@@ -50,14 +50,8 @@ uint16 Map::GetSquareID(uint16 p_X, uint16 p_Y) const
 
 Unit* Map::GetUnit(TypeUnit p_TypeID, uint16 p_UnitID)
 {
-    for (auto l_Player : m_ListUnitZone[p_TypeID])
-    {
-        printf("-> id:%d, %d\n", l_Player.first, l_Player.second->GetID());
-    }
     if (m_ListUnitZone[p_TypeID].find(p_UnitID) != m_ListUnitZone[p_TypeID].end())
-    {
         return m_ListUnitZone[p_TypeID][p_UnitID];
-    }
     return nullptr;
 }
 
