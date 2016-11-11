@@ -46,7 +46,24 @@ int32 SqlManager::GetIDLogin(std::string p_Login, std::string p_Password)
     std::string l_Query = "SELECT `id` FROM `login` WHERE `login` = '" + p_Login + "' AND `password` = MD5('" + p_Password + "')";
     mysql_query(&m_MysqlCharacters, l_Query.c_str());
 
-    int32 l_ID = 0;
+    int32 l_ID = -1;
+    MYSQL_RES *l_Result = NULL;
+    MYSQL_ROW l_Row;
+
+    l_Result = mysql_use_result(&m_MysqlCharacters);
+    while ((l_Row = mysql_fetch_row(l_Result)))
+        l_ID = atoi(l_Row[0]);
+
+    mysql_free_result(l_Result);
+    return l_ID;
+}
+
+int32 SqlManager::GetIDCharacter(uint16 p_AccountID)
+{
+    std::string l_Query = "SELECT `characterID` FROM `characters` WHERE `accountID` = '" + std::to_string(p_AccountID) + "'";
+    mysql_query(&m_MysqlCharacters, l_Query.c_str());
+
+    int32 l_ID = -1;
     MYSQL_RES *l_Result = NULL;
     MYSQL_ROW l_Row;
 

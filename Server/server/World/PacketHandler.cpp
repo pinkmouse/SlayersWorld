@@ -142,11 +142,11 @@ void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldS
     p_Packet >> l_Login;
     p_Packet >> l_Password;
 
-    uint32 l_Id = g_SqlManager->GetIDLogin(l_Login, l_Password);
+    int32 l_Id = g_SqlManager->GetIDLogin(l_Login, l_Password);
 
-    if (!l_Id)
+    if (l_Id < 0)
     {
-        if (1/*g_Config->IsPositiveValue("LoginDebug")*/)
+        if (g_Config->IsPositiveValue("LoginDebug"))
         {
             g_SqlManager->AddNewAccount(l_Login, l_Password);
             HandleConnexion(p_Packet, p_WorldSocket);
@@ -155,11 +155,16 @@ void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldS
             p_WorldSocket->SendAuthResponse(0); ///< Auth Failed
         return;
     }
+    int32 l_IdCharacter = g_SqlManager->GetIDCharacter(l_Id);
 
-    printf("Check is Already online -> \n");
-    if (g_MapManager->IsOnline(TypeUnit::PLAYER, l_Id))
+    if (l_IdCharacter < 0)
     {
-        printf("Yep it is\n");
+        p_WorldSocket->SendAuthResponse(0); ///< Auth Failed
+        return;
+    }
+
+    if (g_MapManager->IsOnline(TypeUnit::PLAYER, l_IdCharacter))
+    {
         p_WorldSocket->SendAuthResponse(2); ///< Already connected
         return;
     }
