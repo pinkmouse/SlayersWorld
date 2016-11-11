@@ -156,8 +156,10 @@ void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldS
         return;
     }
 
+    printf("Check is Already online -> \n");
     if (g_MapManager->IsOnline(TypeUnit::PLAYER, l_Id))
     {
+        printf("Yep it is\n");
         p_WorldSocket->SendAuthResponse(2); ///< Already connected
         return;
     }
