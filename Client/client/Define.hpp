@@ -65,6 +65,7 @@
 
 /// GENERAL
 #define STEP_SIZE 8 /// In pixel
+#define IN_MILLISECOND 1000
 
 typedef char int8;
 typedef short int16;

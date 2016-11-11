@@ -415,6 +415,6 @@ void PacketHandler::HandleSrvPlayerMsg(WorldPacket &p_Packet)
 
     p_Packet >> l_Msg;
     
+    m_InterfaceManager->GetHistoryField()->OpenTemporary(5000);
     m_InterfaceManager->GetHistoryField()->AddHistoryLine(l_Msg);
-
 }

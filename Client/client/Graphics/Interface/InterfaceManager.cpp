@@ -68,6 +68,11 @@ HistoryField* InterfaceManager::GetHistoryField() const
     return m_HistoryField;
 }
 
+void InterfaceManager::Update(sf::Time p_Diff)
+{
+    m_HistoryField->Update(p_Diff);
+}
+
 void InterfaceManager::Draw(Window & p_Window)
 {
     if (m_Events == nullptr)

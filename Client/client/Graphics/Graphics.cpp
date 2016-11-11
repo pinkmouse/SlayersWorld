@@ -283,8 +283,15 @@ void Graphics::DrawInterface()
     m_InterfaceManager->Draw(m_Window);
 }
 
+void Graphics::UpdateInterface(sf::Time p_Diff)
+{
+    if (!m_Window.isOpen() || !m_MapManager->HasMap() || g_Player == nullptr)
+        return;
 
-void Graphics::UpdateWindow()
+    m_InterfaceManager->Update(p_Diff);
+}
+
+void Graphics::UpdateWindow(sf::Time p_Diff)
 {
     Clear();
     if (g_Player != nullptr)
@@ -292,6 +299,7 @@ void Graphics::UpdateWindow()
     m_Window.setView(m_View);
     DrawMap();
     m_Window.setView(m_ViewInterface);
+    UpdateInterface(p_Diff);
     DrawInterface();
     Display();
 }

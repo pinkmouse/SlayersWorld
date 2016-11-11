@@ -8,6 +8,7 @@ HistoryField::HistoryField() :
     m_Text.setCharacterSize(18);
     m_Text.setColor(sf::Color::White);
     m_HistoryMaxLine = MIN_HISTORY_LINE;
+    m_DiffTimeOpen = 0;
 }
 
 
@@ -23,6 +24,7 @@ void HistoryField::Open()
 void HistoryField::Close()
 {
     m_IsOpen = false;
+    m_DiffTimeOpen = 0;
 }
 
 std::vector<std::string> HistoryField::GetHistory() const
@@ -30,9 +32,28 @@ std::vector<std::string> HistoryField::GetHistory() const
     return m_History;
 }
 
+void HistoryField::Update(sf::Time p_Diff)
+{
+    if (m_DiffTimeOpen <= 0)
+        return;
+
+    if (m_DiffTimeOpen - p_Diff.asMicroseconds() > 0)
+        m_DiffTimeOpen -= p_Diff.asMicroseconds();
+    else
+        m_DiffTimeOpen = 0;
+}
+
+void HistoryField::OpenTemporary(uint32 p_Time)
+{
+    if (m_IsOpen && m_DiffTimeOpen <= 0)
+        return;
+
+    m_DiffTimeOpen += p_Time * IN_MILLISECOND;
+}
+
 bool HistoryField::IsFieldOpen()
 {
-    return m_IsOpen;
+    return m_IsOpen || m_DiffTimeOpen > 0;
 }
 
 sf::Text HistoryField::GetText() const

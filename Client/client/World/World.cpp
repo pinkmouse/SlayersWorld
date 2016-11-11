@@ -70,12 +70,10 @@ void World::Run()
             End();
             continue;
         }
+        sf::Time l_Diff = m_Clock.restart();
         if (m_PacketHandler->HasMinimalRequiered())
-        {
-            sf::Time l_Diff = m_Clock.restart();
             m_MapManager->Update(l_Diff);
-        }
-        m_Graphics->UpdateWindow();
+        m_Graphics->UpdateWindow(l_Diff);
         m_Graphics->CheckEvent();
 		if (!m_Graphics->WindowIsOpen())
 			End();

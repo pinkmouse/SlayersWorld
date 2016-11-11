@@ -4,12 +4,15 @@
 #include <string>
 #include <vector>
 #include <SFML/Graphics/Text.hpp>
+#include <SFML/System/Time.hpp>
 
 class HistoryField
 {
 public:
     HistoryField();
     ~HistoryField();
+    void Update(sf::Time);
+    void OpenTemporary(uint32);
     void Open();
     void Close();
     bool IsFieldOpen();
@@ -24,4 +27,5 @@ private:
     bool m_IsOpen;
     std::vector<std::string> m_History;
     uint8 m_HistoryMaxLine;
+    int64 m_DiffTimeOpen;
 };

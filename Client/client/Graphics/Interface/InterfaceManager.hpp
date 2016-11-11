@@ -14,6 +14,7 @@ public:
     ~InterfaceManager();
 
     void Initialize();
+    void Update(sf::Time);
     TileSprite GetField(uint16, uint16);
     TileSprite GetFlask(uint8, bool, uint8 p_Pct = 100);
     TileSprite GetXpBar(bool, uint8 p_Pct = 100);

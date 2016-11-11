@@ -195,6 +195,7 @@ void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldS
     l_Map->AddUnit(l_Player);
     l_Player->HasBeenInitialize();
 
+    l_Player->SendMsg("- Bienvenue sur SlayersWorld V0.1 -");
     l_Player->UpdateNewSquares(0, l_Player->GetSquareID(), true);
 }
 

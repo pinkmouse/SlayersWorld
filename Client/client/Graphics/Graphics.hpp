@@ -21,7 +21,8 @@ public:
 	~Graphics();
     bool LoadFont();
 	void CreateWindow(uint32, uint32, float);
-	void UpdateWindow();
+	void UpdateWindow(sf::Time);
+    void UpdateInterface(sf::Time);
 	void DrawMap();
     void DrawEntities();
     void DrawInterface();
