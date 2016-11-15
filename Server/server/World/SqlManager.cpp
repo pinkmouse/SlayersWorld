@@ -45,7 +45,7 @@ int32 SqlManager::GetIDLogin(std::string p_Login, std::string p_Password)
 {
     std::string l_Query = "SELECT `id` FROM `login` WHERE `login` = '" + p_Login + "' AND `password` = MD5('" + p_Password + "')";
     mysql_query(&m_MysqlCharacters, l_Query.c_str());
-
+    printf("Query = %s\n");
     int32 l_ID = -1;
     MYSQL_RES *l_Result = NULL;
     MYSQL_ROW l_Row;
