@@ -160,16 +160,13 @@ void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldS
     }
     int32 l_IdCharacter = g_SqlManager->GetIDCharacter(l_Id);
 
-    if (l_IdCharacter < 0)
+    if (l_IdCharacter >= 0)
     {
-        p_WorldSocket->SendAuthResponse(0); ///< Auth Failed
-        return;
-    }
-
-    if (g_MapManager->IsOnline(TypeUnit::PLAYER, l_IdCharacter))
-    {
-        p_WorldSocket->SendAuthResponse(2); ///< Already connected
-        return;
+        if (g_MapManager->IsOnline(TypeUnit::PLAYER, l_IdCharacter))
+        {
+            p_WorldSocket->SendAuthResponse(2); ///< Already connected
+            return;
+        }
     }
     /// Auth Success
     p_WorldSocket->SendAuthResponse(1); ///< Auth Success
