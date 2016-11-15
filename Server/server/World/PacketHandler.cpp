@@ -146,7 +146,7 @@ void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldS
 
     if (l_Id < 0)
     {
-        if (g_Config->IsPositiveValue("LoginDebug"))
+        if (1/*g_Config->IsPositiveValue("LoginDebug")*/)
         {
             g_SqlManager->AddNewAccount(l_Login, l_Password);
             HandleConnexion(p_Packet, p_WorldSocket);
