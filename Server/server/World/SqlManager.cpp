@@ -54,7 +54,6 @@ int32 SqlManager::GetIDLogin(std::string p_Login, std::string p_Password)
     while ((l_Row = mysql_fetch_row(l_Result)))
         l_ID = atoi(l_Row[0]);
 
-    printf("Quesry = %s\n", l_Query.c_str());
     mysql_free_result(l_Result);
     return l_ID;
 }
