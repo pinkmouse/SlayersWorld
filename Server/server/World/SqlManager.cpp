@@ -95,12 +95,15 @@ std::string SqlManager::GetLoginName(uint32 p_AccountID)
 void SqlManager::AddNewPlayer(uint32 p_AccountID)
 {
     std::string l_Query = "insert into `characters` (`accountID`, `name`, `skinID`, `level`, `health`, `alignment`, `mapID`, `posX`, `posY`, `orientation`, `xp`) values('" + std::to_string(p_AccountID) + "', '" + GetLoginName(p_AccountID) + "','0','1','100','0','0','200','200','0','0');";
+    printf("Query = %s\n", l_Query.c_str());
+
     mysql_query(&m_MysqlCharacters, l_Query.c_str());
 }
 
 Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
 {
     std::string l_Query = "SELECT characterID, name, level, health, alignment, skinID, mapID, posX, posY, orientation, xp FROM characters WHERE accountID = '" + std::to_string(p_AccountID) + "'";
+    printf("Query = %s\n", l_Query.c_str());
     mysql_query(&m_MysqlCharacters, l_Query.c_str());
 
     uint32 l_ID = 0;
@@ -140,6 +143,7 @@ Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
 
     if (!l_Exist)
     {
+        printf("Add New Player %d", p_AccountID);
         AddNewPlayer(p_AccountID);
         return GetNewPlayer(p_AccountID);
     }
