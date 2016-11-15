@@ -152,7 +152,7 @@ void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldS
             WorldPacket l_Packet;
             l_Packet << l_Login;
             l_Packet << l_Password;
-            HandleConnexion(p_Packet, p_WorldSocket);
+            HandleConnexion(l_Packet, p_WorldSocket);
         }
         else
             p_WorldSocket->SendAuthResponse(0); ///< Auth Failed
