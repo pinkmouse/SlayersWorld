@@ -41,6 +41,22 @@ void SqlManager::AddNewAccount(std::string p_Login, std::string p_Password)
     mysql_query(&m_MysqlCharacters, l_Query.c_str());
 }
 
+bool SqlManager::IsExistingAccound(std::string p_Login)
+{
+    std::string l_Query = "SELECT `id` FROM `login` WHERE `login` = '" + p_Login + "'";
+    mysql_query(&m_MysqlCharacters, l_Query.c_str());
+    bool l_Existing = false;
+    MYSQL_RES *l_Result = NULL;
+    MYSQL_ROW l_Row;
+
+    l_Result = mysql_use_result(&m_MysqlCharacters);
+    while ((l_Row = mysql_fetch_row(l_Result)))
+        l_Existing = true;
+
+    mysql_free_result(l_Result);
+    return l_Existing;
+}
+
 int32 SqlManager::GetIDLogin(std::string p_Login, std::string p_Password)
 {
     std::string l_Query = "SELECT `id` FROM `login` WHERE `login` = '" + p_Login + "' AND `password` = MD5('" + p_Password + "')";

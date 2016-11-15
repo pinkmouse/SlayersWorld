@@ -28,6 +28,7 @@ public:
     int32 GetIDLogin(std::string, std::string);
     int32 GetIDCharacter(uint16 p_AccountID);
     void AddNewAccount(std::string, std::string);
+    bool IsExistingAccound(std::string);
     Player* GetNewPlayer(uint32);
     void AddNewPlayer(uint32);
     std::string GetLoginName(uint32);
