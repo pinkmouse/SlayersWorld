@@ -66,6 +66,7 @@ public:
     void OutOfCombat();
     void SetAttacker(Unit*);
     void SetVictim(Unit*);
+    void TeleportTo(const WorldPosition&);
     Unit* GetAttacker() const;
     Unit* GetVictim() const;
 

@@ -379,9 +379,19 @@ void Unit::SetRespawnPosition(const WorldPosition & p_RespawnPosition)
 
 void Unit::Respawn()
 {
-    SetPosX(m_RespawnPosition.GetPosX());
-    SetPosY(m_RespawnPosition.GetPosY());
-    SetOrientation(m_RespawnPosition.GetOrientation());
+    TeleportTo(m_RespawnPosition);
+}
+
+void Unit::TeleportTo(const WorldPosition& p_WorldPosition)
+{
+    GetMovementHandler()->ClearMovementStack();
+    GetMovementHandler()->StopMovement();
+    GetMovementHandler()->StopAttack();
+
+    SetPosX(p_WorldPosition.GetPosX());
+    SetPosY(p_WorldPosition.GetPosY());
+    SetOrientation(p_WorldPosition.GetOrientation());
+    //GetMovementHandler()->AddMovementToStack(eActionType::Stop, p_WorldPosition.GetPosition(), p_WorldPosition.GetOrientation());
 }
 
 /// COMBAT
@@ -398,8 +408,7 @@ void Unit::InCombat()
 
 void Unit::OutOfCombat()
 {
-    m_MovementHandler->StopMovement();
-    m_MovementHandler->StopAttack();
+    //m_MovementHandler->StopAttack();
 
     m_InCombat = false;
     m_Attacker = nullptr;

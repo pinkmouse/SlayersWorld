@@ -41,6 +41,7 @@ public:
 
     void AddMovementToStack(eActionType, Position, Orientation);
     void AddMovementToStack(eActionType);
+    void ClearMovementStack();
 
 private:
     bool m_InMovement;

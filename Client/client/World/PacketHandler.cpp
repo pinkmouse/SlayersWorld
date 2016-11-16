@@ -233,6 +233,8 @@ void PacketHandler::HandleUpdatePosition(WorldPacket &p_Packet)
             g_Socket->SendUnitUnknow(l_TypeID, l_UnitID); ///< Ask for unknow unit to server
             return;
         }
+        l_Unit->GetMovementHandler()->StopMovement();
+        l_Unit->GetMovementHandler()->StopAttack();
         l_Unit->SetPosX(l_PosX);
         l_Unit->SetPosY(l_PosY);
         l_Unit->SetOrientation((Orientation)l_Orientation);
