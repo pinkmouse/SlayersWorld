@@ -9,6 +9,14 @@ WorldPosition::WorldPosition()
     m_Orientation = Orientation::Down;
 }
 
+WorldPosition::WorldPosition(uint32 p_PosX, uint32 p_PosY, uint16 p_MapID, Orientation p_Orientation) :
+    m_MapID(p_MapID),
+    m_Orientation(p_Orientation)
+{
+    m_Position.x = p_PosX;
+    m_Position.y = p_PosY;
+}
+
 
 WorldPosition::~WorldPosition()
 {

@@ -232,7 +232,10 @@ void MovementHandler::StartAttack()
 
 void MovementHandler::StopAttack()
 {
-    m_StopAttack = true;
+    if (m_InAttack)
+        m_StopAttack = true;
+    else
+        m_StopAttack = false;
 }
 
 void MovementHandler::SetOrientation(Orientation p_Orientation)
@@ -291,4 +294,10 @@ void MovementHandler::AddMovementToStack(eActionType p_Action, Position p_Pos, O
     l_Act.m_Pos = p_Pos;
     l_Act.m_Orientation = p_Orientation;
     m_MovementStack.push(l_Act);
+}
+
+void MovementHandler::ClearMovementStack()
+{
+    while (!m_MovementStack.empty())
+        m_MovementStack.pop();
 }

@@ -43,6 +43,7 @@ public:
     
     void StartMovement();
     bool IsInRayVisible(Unit*);
+    void TeleportTo(const WorldPosition&);
 
     MovementHandler* GetMovementHandler();
     Player* ToPlayer();
