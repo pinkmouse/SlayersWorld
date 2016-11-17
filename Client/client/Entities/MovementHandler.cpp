@@ -324,3 +324,9 @@ void MovementHandler::AddMovementToStack(eActionType p_Action, Position p_Pos, O
     l_Act.m_Orientation = p_Orientation;
     m_MovementStack.push(l_Act);
 }
+
+void MovementHandler::ClearMovementStack()
+{
+    while (!m_MovementStack.empty())
+        m_MovementStack.pop();
+}

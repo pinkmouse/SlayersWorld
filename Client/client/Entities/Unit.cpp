@@ -252,3 +252,14 @@ void Unit::SetSkinZoomFactor(const float & p_SkinZoomFactor)
 {
     m_SkinZoomFactor = p_SkinZoomFactor;
 }
+
+void Unit::TeleportTo(const WorldPosition& p_WorldPosition)
+{
+    GetMovementHandler()->ClearMovementStack();
+    GetMovementHandler()->StopMovement();
+    GetMovementHandler()->StopAttack();
+
+    SetPosX(p_WorldPosition.GetPosX());
+    SetPosY(p_WorldPosition.GetPosY());
+    SetOrientation(p_WorldPosition.GetOrientation());
+}

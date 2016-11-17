@@ -391,7 +391,6 @@ void Unit::TeleportTo(const WorldPosition& p_WorldPosition)
     SetPosX(p_WorldPosition.GetPosX());
     SetPosY(p_WorldPosition.GetPosY());
     SetOrientation(p_WorldPosition.GetOrientation());
-    //GetMovementHandler()->AddMovementToStack(eActionType::Stop, p_WorldPosition.GetPosition(), p_WorldPosition.GetOrientation());
 }
 
 /// COMBAT
