@@ -56,6 +56,8 @@
 #define MIN_HISTORY_LINE 5
 #define MAX_HISTORY_LINE 19
 
+#define MAX_HISTORY_LOG_TIME 2000000
+
 /// EVENT
 #define MAX_KEY_SAVE 4
 

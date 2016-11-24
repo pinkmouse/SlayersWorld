@@ -64,12 +64,23 @@ void Unit::Update(sf::Time p_Diff)
     if (!m_Talk.empty())
     {
         m_DiffTimeTalk += p_Diff.asMicroseconds();
-        if (m_DiffTimeTalk > (uint64)(TALK_TIME_SHOW * 1000)) ///< 1000 because microsecon
+        if (m_DiffTimeTalk > (uint64)(TALK_TIME_SHOW * 1000)) ///< 1000 because microsecond
         {
             m_Talk.clear();
             m_DiffTimeTalk = 0;
         }
     }
+
+	for (std::vector<std::pair<uint8, uint32>>::iterator l_It = m_HistoryDamage.begin(); l_It != m_HistoryDamage.end();)
+	{
+		if ((*l_It).second <= p_Diff.asMicroseconds())
+			l_It = m_HistoryDamage.erase(l_It);
+		else
+		{
+			(*l_It).second -= p_Diff.asMicroseconds();
+			++l_It;
+		}
+	}
 }
 
 uint8 Unit::GetOpacity() const
@@ -262,4 +273,14 @@ void Unit::TeleportTo(const WorldPosition& p_WorldPosition)
     SetPosX(p_WorldPosition.GetPosX());
     SetPosY(p_WorldPosition.GetPosY());
     SetOrientation(p_WorldPosition.GetOrientation());
+}
+
+void Unit::AddDamageLog(uint32 p_Damage)
+{
+	m_HistoryDamage.push_back(std::pair<uint8, uint32>(p_Damage, MAX_HISTORY_LOG_TIME));
+}
+
+std::vector<std::pair<uint8, uint32>>& Unit::GetDamageLog()
+{
+	return m_HistoryDamage;
 }
