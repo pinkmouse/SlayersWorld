@@ -424,12 +424,13 @@ void PacketHandler::HandleLogDamage(WorldPacket &p_Packet)
 	uint8 l_TypeID;
 	uint16 l_ID;
 	uint8 l_Damage;
+	bool l_Miss;
 
 	p_Packet >> l_TypeID;
 	p_Packet >> l_ID;
 	p_Packet >> l_Damage;
+	p_Packet >> l_Miss;
 
-	printf("Receive-----------");
 	if (Map* l_Map = m_MapManager->GetActualMap())
 	{
 		Unit* l_Unit = l_Map->GetUnit((TypeUnit)l_TypeID, l_ID);
@@ -439,6 +440,6 @@ void PacketHandler::HandleLogDamage(WorldPacket &p_Packet)
 			g_Socket->SendUnitUnknow(l_TypeID, l_ID); ///< Ask for unknow unit to server
 			return;
 		}
-		l_Unit->AddDamageLog(l_Damage);
+		l_Unit->AddDamageLog(DamageInfo(l_Damage, l_Miss));
 	}
 }

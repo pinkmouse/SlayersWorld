@@ -239,7 +239,7 @@ void Events::TextEntered(sf::Uint32 p_Letter)
     if (!m_WritingField->IsFieldOpen())
         return;
 
-    if (p_Letter >= 128) ///< ASCII
+    if (p_Letter >= 254) ///< ASCII
         return;
 
     switch (p_Letter)
@@ -250,7 +250,7 @@ void Events::TextEntered(sf::Uint32 p_Letter)
             break;
         }
         default:
-            if (p_Letter > 31 && p_Letter < 127)
+            if (p_Letter > 31 && p_Letter < 254)
                 m_WritingField->AddLetter(p_Letter);
             break;
     }

@@ -28,6 +28,8 @@ public:
     uint16 GetID() const;
     uint8 GetHealth() const;
     bool IsDeath() const;
+	PointsSet GetPointsSet() const;
+
 
     void SetName(const std::string &);
     void SetLevel(const uint8 &);
@@ -39,6 +41,7 @@ public:
     void SetMap(Map*);
     void SetSquareID(uint16);
     void SetRespawnPosition(const WorldPosition &);
+	void SetPointsSet(const PointsSet &);
     bool IsInFront(const Position &) const;
     bool IsInFront(Unit const*) const;
     void DealDamage(Unit*);
@@ -88,6 +91,7 @@ protected:
     uint16 m_ID;
 
     WorldPosition m_RespawnPosition;
+	PointsSet m_PointsSet;
     uint64 m_RespawnTime;
     uint64 m_ResTimer;
     uint64 m_RegenTimer;

@@ -102,6 +102,22 @@ struct Position
     uint32 y;
 };
 
+struct DamageInfo
+{
+	uint8 m_Damage;
+	bool m_Miss;
+
+	DamageInfo() :
+		m_Damage(0), m_Miss(false) {}
+
+	DamageInfo(uint8 p_Damage, bool p_Miss) :
+		m_Damage(p_Damage), m_Miss(p_Miss) {}
+
+	DamageInfo(const DamageInfo & p_DamageInfo) :
+		m_Damage(p_DamageInfo.m_Damage), m_Miss(p_DamageInfo.m_Miss) {}
+};
+
+
 enum eActionType
 {
     Go = 0,

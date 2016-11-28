@@ -178,20 +178,35 @@ bool Unit::IsInFront(const Position & p_Position) const
 
 void Unit::DealDamage(Unit* p_Victim)
 {
-    uint8 l_Damage = rand() %  8 + 8;
-    int8 l_NewHealth = std::max(p_Victim->GetHealth() - l_Damage, 0);
+	/// DAMAGE
+	uint16 l_ForceAttacker = m_PointsSet.m_Force;
+	uint16 l_StaminaDefenser = p_Victim->GetPointsSet().m_Stamina;
+	int16 l_Balance = l_ForceAttacker - l_StaminaDefenser;
+    int8 l_Damage = rand() %  2 + 10;
+	l_Damage += (l_Balance * 2);
+	l_Damage = std::max(l_Damage, (int8)0);
 
-    if (!l_Damage)
-        return;
+	/// MISS CHANCE
+	uint16 l_DexterityAttacker = m_PointsSet.m_Dexterity;
+	uint16 l_DexterityDefenser = p_Victim->GetPointsSet().m_Dexterity;
+	l_Balance = l_DexterityDefenser - l_DexterityAttacker;
+	int8 l_MissChance = 20 + (l_Balance * 4);
+	l_MissChance = std::max(l_MissChance, (int8)0);
+	l_MissChance = std::min(l_MissChance, (int8)100);
+	bool l_Miss = (rand() % 100) <= l_MissChance;
+	if (l_Miss)
+		l_Damage = 0;
+
+	int8 l_NewHealth = std::max(p_Victim->GetHealth() - l_Damage, 0);
 
 	if (IsPlayer())
-		ToPlayer()->GetSession()->SendLogDamage(p_Victim->GetType(), p_Victim->GetID(), l_Damage);;
+		ToPlayer()->GetSession()->SendLogDamage(p_Victim->GetType(), p_Victim->GetID(), l_Damage, l_Miss);
 
     switch (p_Victim->GetType())
     {
         case TypeUnit::PLAYER:
 			p_Victim->ToPlayer()->SetHealth((uint8)l_NewHealth);
-			p_Victim->ToPlayer()->GetSession()->SendLogDamage(p_Victim->GetType(), p_Victim->GetID(), l_Damage);
+			p_Victim->ToPlayer()->GetSession()->SendLogDamage(p_Victim->GetType(), p_Victim->GetID(), l_Damage, l_Miss);
         break;
         case TypeUnit::CREATURE:
             p_Victim->ToCreature()->SetHealth((uint8)l_NewHealth);
@@ -271,6 +286,11 @@ uint8 Unit::GetHealth() const
 uint8 Unit::GetSkinID() const
 {
     return m_SkinID;
+}
+
+PointsSet Unit::GetPointsSet() const
+{
+	return m_PointsSet;
 }
 
 bool Unit::IsPlayer() const
@@ -380,6 +400,11 @@ void Unit::SetSquareID(uint16 p_SquareID)
 void Unit::SetRespawnPosition(const WorldPosition & p_RespawnPosition)
 {
     m_RespawnPosition = p_RespawnPosition;
+}
+
+void Unit::SetPointsSet(const PointsSet & p_PointsSet)
+{
+	m_PointsSet = p_PointsSet;
 }
 
 void Unit::Respawn()

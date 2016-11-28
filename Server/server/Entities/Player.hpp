@@ -31,6 +31,7 @@ public:
     bool HandleCommandSkin(std::vector<std::string>);
     bool HandleCommandWhere(std::vector<std::string>);
     bool HandleCommandLevel(std::vector<std::string>);
+	bool HandleCommandAddPoint(std::vector<std::string>);
 
 private:
     WorldSocket* m_Session;

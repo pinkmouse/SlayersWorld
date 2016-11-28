@@ -7,6 +7,7 @@ void Player::InitializeCommands()
     m_CmdHandleMap["skin"] = &Player::HandleCommandSkin;
     m_CmdHandleMap["where"] = &Player::HandleCommandWhere;
     m_CmdHandleMap["level"] = &Player::HandleCommandLevel;
+	m_CmdHandleMap["points"] = &Player::HandleCommandAddPoint;
 }
 
 bool Player::HandleCommandSkin(std::vector<std::string> p_ListCmd)
@@ -55,4 +56,14 @@ bool Player::HandleCommandLevel(std::vector<std::string> p_ListCmd)
     SendMsg(l_Name + " est de niveau " + std::to_string(l_Player->GetLevel()));
 
     return true;
+}
+
+bool Player::HandleCommandAddPoint(std::vector<std::string> p_ListCmd)
+{
+	if (p_ListCmd.empty())
+	{
+		SendMsg("Vos points-> " + std::to_string(GetPointsSet().m_FreePoints) + "|" + std::to_string(GetPointsSet().m_Force) + "|" + std::to_string(GetPointsSet().m_Stamina) + "|" + std::to_string(GetPointsSet().m_Dexterity));
+		return true;
+	}
+	return true;
 }

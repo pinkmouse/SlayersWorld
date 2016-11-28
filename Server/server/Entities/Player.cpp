@@ -158,6 +158,11 @@ void Player::SetXp(uint32 p_Xp)
         /// Earn new level
         p_Xp -= g_LevelManager->GetXpForLevel(GetLevel());
         SetLevel(GetLevel() + 1);
+
+		/// Earn new point
+		m_PointsSet.SetFreePoints(m_PointsSet.m_FreePoints + 1);
+
+		SendMsg("Level UP : " + std::to_string(GetLevel()));
     }
 
     float l_Pct = g_LevelManager->XpPct(GetLevel(), p_Xp);

@@ -163,6 +163,7 @@ Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
 
     l_Player = new Player(l_ID, l_Name, l_Lvl, l_Health, l_SkinID, l_MapID, l_PosX, l_PosY, (Orientation)l_Orientation, l_Xp);
     l_Player->SetAlignment(l_Alignment);
+	l_Player->SetPointsSet(GetPointsSetForPlayer(l_ID));
     l_Player->SetRespawnPosition(GetRespawnPositionForPlayer(l_ID));
 
     return l_Player;
@@ -208,10 +209,57 @@ WorldPosition SqlManager::GetRespawnPositionForPlayer(uint32 p_PlayerID)
     return l_Position;
 }
 
+void SqlManager::AddNewPointsSetForPlayer(uint32 p_PlayerID)
+{
+	std::string l_Query = "insert into `characters_point` (`characterID`, `free_point`, `force`, `stamina`, `dexterity`) values('" + std::to_string(p_PlayerID) + "', '0', '0', '0', '0');";
+	mysql_query(&m_MysqlCharacters, l_Query.c_str());
+}
+
+PointsSet SqlManager::GetPointsSetForPlayer(uint32 p_PlayerID)
+{
+	std::string l_Query = "SELECT `free_point`, `force`, `stamina`, `dexterity` FROM characters_point WHERE characterID = '" + std::to_string(p_PlayerID) + "'";
+	mysql_query(&m_MysqlCharacters, l_Query.c_str());
+
+	uint16 l_FreePoints = 0;
+	uint16 l_Force = 0;
+	uint16 l_Stamina = 0;
+	uint16 l_Dexterity = 0;
+
+	MYSQL_RES *l_Result = NULL;
+	MYSQL_ROW l_Row;
+	bool l_Exist = false;
+	l_Result = mysql_use_result(&m_MysqlCharacters);
+	while ((l_Row = mysql_fetch_row(l_Result)))
+	{
+		l_Exist = true;
+		l_FreePoints = atoi(l_Row[0]);
+		l_Force = atoi(l_Row[1]);
+		l_Stamina = atoi(l_Row[2]);
+		l_Dexterity = atoi(l_Row[3]);
+	}
+	mysql_free_result(l_Result);
+
+	if (!l_Exist)
+	{
+		AddNewPointsSetForPlayer(p_PlayerID);
+		return GetPointsSetForPlayer(p_PlayerID);
+	}
+
+	PointsSet l_PointsSet(l_FreePoints, l_Force, l_Stamina, l_Dexterity);
+	return l_PointsSet;
+}
+
 void SqlManager::SavePlayer(Player const* p_Player)
 {
-    std::string l_Query = "UPDATE characters SET posX = '" + std::to_string(p_Player->GetPosX())  + "', posY = '" + std::to_string(p_Player->GetPosY()) + "', mapID = '" + std::to_string(p_Player->GetMapID()) + "', orientation = '" + std::to_string(p_Player->GetOrientation()) + "', health = '" + std::to_string(p_Player->GetHealth()) + "', alignment = '" + std::to_string(p_Player->GetAlignment()) + "', xp = '" + std::to_string(p_Player->GetXp()) + "', level = '" + std::to_string(p_Player->GetLevel()) + "', skinID = '" + std::to_string(p_Player->GetSkinID()) + "' WHERE characterID = '" + std::to_string(p_Player->GetID()) + "'";
+	std::string l_Query = "UPDATE characters SET posX = '" + std::to_string(p_Player->GetPosX()) + "', posY = '" + std::to_string(p_Player->GetPosY()) + "', mapID = '" + std::to_string(p_Player->GetMapID()) + "', orientation = '" + std::to_string(p_Player->GetOrientation()) + "', health = '" + std::to_string(p_Player->GetHealth()) + "', alignment = '" + std::to_string(p_Player->GetAlignment()) + "', xp = '" + std::to_string(p_Player->GetXp()) + "', level = '" + std::to_string(p_Player->GetLevel()) + "', skinID = '" + std::to_string(p_Player->GetSkinID()) + "' WHERE characterID = '" + std::to_string(p_Player->GetID()) + "';";
+	l_Query += "UPDATE `characters_point` SET `free_point` = '" + std::to_string(p_Player->GetPointsSet().m_FreePoints) + "', `force` = '" + std::to_string(p_Player->GetPointsSet().m_Force) + "', `stamina` = '" + std::to_string(p_Player->GetPointsSet().m_Stamina) + "', `dexterity` = '" + std::to_string(p_Player->GetPointsSet().m_Dexterity) + "' WHERE characterID = '" + std::to_string(p_Player->GetID()) + "';";
     mysql_query(&m_MysqlCharacters, l_Query.c_str());
+}
+
+void SqlManager::UpdatePointsSet(Player const* p_Player)
+{
+	std::string l_Query = "UPDATE `characters_point` SET `free_point` = '" + std::to_string(p_Player->GetPointsSet().m_FreePoints) + "', `force` = '" + std::to_string(p_Player->GetPointsSet().m_Force) + "', `stamina` = '" + std::to_string(p_Player->GetPointsSet().m_Stamina) + "', `dexterity` = '" + std::to_string(p_Player->GetPointsSet().m_Dexterity) + "' WHERE characterID = '" + std::to_string(p_Player->GetID()) + "';";
+	mysql_query(&m_MysqlCharacters, l_Query.c_str());
 }
 
 bool SqlManager::InitializeCreatureTemplate(CreatureManager* p_CreatureManager)

@@ -51,8 +51,8 @@ public:
 
     void SetTalk(const std::string &);
     std::string GetTalk() const;
-	void AddDamageLog(uint32);
-	std::vector<std::pair<uint8, uint32>>& GetDamageLog();
+	void AddDamageLog(const DamageInfo &);
+	std::vector<std::pair<DamageInfo, uint32>>& GetDamageLog();
     void Update(sf::Time);
 
 protected:
@@ -70,7 +70,7 @@ protected:
     TypeUnit m_Type;
     uint8 m_Opacity;
     uint64 m_DiffTimeOpactiy;
-	std::vector<std::pair<uint8, uint32>> m_HistoryDamage;
+	std::vector<std::pair<DamageInfo, uint32>> m_HistoryDamage;
 
     Map* m_Map;
 

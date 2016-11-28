@@ -21,6 +21,7 @@ Creature::Creature(uint16 p_ID, uint16 p_Entry, CreatureTemplate p_CreatureTempl
     m_MovementHandler->SetSpeed(0.5f);
     m_RandMovementTime = rand() % 100;
 
+	SetPointsSet(PointsSet(m_CreatureTemplate.m_Force, m_CreatureTemplate.m_Stamina, m_CreatureTemplate.m_Dexterity));
     m_RespawnTime = m_CreatureTemplate.m_RespawnTime * IN_MILLISECOND;
 }
 

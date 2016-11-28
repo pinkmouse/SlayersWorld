@@ -36,7 +36,11 @@ public:
     WorldPosition GetPosition(const std::string &);
     WorldPosition GetRespawnPositionForPlayer(uint32);
     void AddNewRespawnPositionForPlayer(uint32);
+	PointsSet GetPointsSetForPlayer(uint32);
+	void AddNewPointsSetForPlayer(uint32);
     void SavePlayer(Player const*);
+	void UpdatePointsSet(Player const*);
+
     bool InitializeCreatureTemplate(CreatureManager*);
     bool InitializeCreature(CreatureManager*);
     std::map<uint8, uint16> GetXpLevel();

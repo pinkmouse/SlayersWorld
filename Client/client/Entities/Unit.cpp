@@ -71,13 +71,13 @@ void Unit::Update(sf::Time p_Diff)
         }
     }
 
-	for (std::vector<std::pair<uint8, uint32>>::iterator l_It = m_HistoryDamage.begin(); l_It != m_HistoryDamage.end();)
+	for (std::vector<std::pair<DamageInfo, uint32>>::iterator l_It = m_HistoryDamage.begin(); l_It != m_HistoryDamage.end();)
 	{
-		if ((*l_It).second <= p_Diff.asMicroseconds())
+		if ((*l_It).second <= (p_Diff.asMicroseconds() * 2))
 			l_It = m_HistoryDamage.erase(l_It);
 		else
 		{
-			(*l_It).second -= p_Diff.asMicroseconds();
+			(*l_It).second -= (p_Diff.asMicroseconds() * 2);
 			++l_It;
 		}
 	}
@@ -275,12 +275,12 @@ void Unit::TeleportTo(const WorldPosition& p_WorldPosition)
     SetOrientation(p_WorldPosition.GetOrientation());
 }
 
-void Unit::AddDamageLog(uint32 p_Damage)
+void Unit::AddDamageLog(const DamageInfo & p_Damage)
 {
-	m_HistoryDamage.push_back(std::pair<uint8, uint32>(p_Damage, MAX_HISTORY_LOG_TIME));
+	m_HistoryDamage.push_back(std::pair<DamageInfo, uint32>(p_Damage, MAX_HISTORY_LOG_TIME));
 }
 
-std::vector<std::pair<uint8, uint32>>& Unit::GetDamageLog()
+std::vector<std::pair<DamageInfo, uint32>>& Unit::GetDamageLog()
 {
 	return m_HistoryDamage;
 }

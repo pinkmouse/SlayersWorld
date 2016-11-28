@@ -99,6 +99,28 @@ struct CreatureTemplate
     m_Entry(p_Entry), m_SkinID(p_SkinID), m_Name(p_Name), m_Level(p_Level), m_Force(p_Force), m_Stamina(p_Stamina), m_Dexterity(p_Dexterity), m_Xp(p_Xp), m_State(p_State), m_MaxRay(p_MaxRay), m_RespawnTime(p_RespawnTime), m_Rank(p_Rank), m_AiType(p_AiType){}
 };
 
+struct PointsSet
+{
+	uint16 m_FreePoints;
+	uint16 m_Force;
+	uint16 m_Stamina;
+	uint16 m_Dexterity;
+
+	PointsSet() :
+		m_FreePoints(0), m_Force(0), m_Stamina(0), m_Dexterity(0){}
+
+	PointsSet(uint16 p_FreePoints, uint16 p_Force, uint16 p_Stamina, uint16 p_Dexterity) :
+		m_FreePoints(p_FreePoints), m_Force(p_Force), m_Stamina(p_Stamina), m_Dexterity(p_Dexterity) {}
+
+	PointsSet(uint16 p_Force, uint16 p_Stamina, uint16 p_Dexterity) :
+		m_FreePoints(0), m_Force(p_Force), m_Stamina(p_Stamina), m_Dexterity(p_Dexterity) {}
+
+	void SetFreePoints(uint16 p_FreePoints) { m_FreePoints = p_FreePoints; };
+	void SetForce(uint16 p_Force) { m_Force = p_Force; };
+	void SetStamina(uint16 p_Stamina) { m_Stamina = p_Stamina; };
+	void SetDexterity(uint16 p_Dexterity) { m_Dexterity = p_Dexterity; };
+};
+
 
 static uint32 PixelToCase(uint32 p_NbPixel) { return p_NbPixel / TILE_SIZE; }
 static uint32 CaseToPixel(uint32 p_NbCase) { return p_NbCase * TILE_SIZE; }
