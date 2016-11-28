@@ -7,12 +7,12 @@ World::World()
 {
 	g_Socket = new Socket();
     m_Events = new Events();
+    g_Config = new ConfigHandler();
 	m_MapManager = new MapManager(m_Events);
     m_InterfaceManager = new InterfaceManager(m_Events);
 	m_Graphics = new Graphics(m_MapManager, m_InterfaceManager, m_Events);
 	m_PacketHandler = new PacketHandler(m_MapManager, m_InterfaceManager);
 	m_Run = true;
-    m_Ip = IP_SERVER;
 }
 
 World::~World()
@@ -46,6 +46,13 @@ bool World::InitializeWindow()
 
 bool World::Initialize()
 {
+    if (!g_Config->Initialize())
+    {
+        printf("Config error\n");
+        return false;
+    }
+    m_Ip = g_Config->GetValue("IPserver");
+
     if (!InitializeWindow())
         return false;
     while (!InitializeConnection()) ///< While not connected, wait for connection

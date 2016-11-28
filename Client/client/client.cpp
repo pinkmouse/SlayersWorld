@@ -4,9 +4,10 @@
 #include "World/World.hpp"
 #include <iostream>
 
-Player      *g_Player;
-Socket      *g_Socket;
-sf::Font    *g_Font;
+ConfigHandler   *g_Config;
+Player          *g_Player;
+Socket          *g_Socket;
+sf::Font        *g_Font;
 
 int main(int argc, char** argv)
 {

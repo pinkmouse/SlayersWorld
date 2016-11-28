@@ -19,6 +19,8 @@ add_executable(${EXECUTABLE_NAME}
 
               client/World/ClockHandler.cpp
               client/World/ClockHandler.hpp
+              client/World/ConfigHandler.cpp
+              client/World/ConfigHandler.hpp
               client/World/PacketDefine.hpp
               client/World/PacketHandler.cpp
               client/World/PacketHandler.hpp

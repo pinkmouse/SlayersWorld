@@ -6,6 +6,7 @@
 #include "Events/Events.hpp"
 #include "PacketHandler.hpp"
 #include "ClockHandler.hpp"
+#include "ConfigHandler.hpp"
 
 class World
 {
