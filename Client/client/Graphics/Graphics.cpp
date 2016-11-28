@@ -126,6 +126,18 @@ void Graphics::DrawEntities()
             /// Set view to don t have a zoom on text
             m_Window.setView(m_ViewFont);
 
+			std::vector<std::pair<uint8, uint32>> l_DamageLogHistory = l_Unit->GetDamageLog();
+
+			for (std::pair<uint8, uint32> l_DamageLog : l_DamageLogHistory)
+			{
+				sf::Text l_Text(std::to_string(l_DamageLog.first), *g_Font, SIZE_TALK_FONT);
+
+				l_Text.setColor(sf::Color::White);
+				sf::Vector2f v1(l_Unit->GetPosX() + (l_Unit->GetSizeX() / 2), l_Unit->GetPosY() - l_Unit->GetSizeY() - 6 - 4 - ((MAX_HISTORY_LOG_TIME - l_DamageLog.second) / 100000));
+				sf::Vector2i l_Coord = m_Window.mapCoordsToPixel(v1, m_View);
+				l_Text.setPosition((float)(l_Coord.x - (l_Text.getGlobalBounds().width / 2)), (float)l_Coord.y);
+				m_Window.draw(l_Text);
+			}
             /// TALK
             if (!l_Unit->GetTalk().empty())
             {

@@ -1,5 +1,6 @@
 #include "Unit.hpp"
 #include "../Map/Map.hpp"
+#include "../World/WorldSocket.hpp"
 #include "../World/PacketDefine.hpp"
 #include <cstdlib>
 
@@ -183,10 +184,14 @@ void Unit::DealDamage(Unit* p_Victim)
     if (!l_Damage)
         return;
 
+	if (IsPlayer())
+		ToPlayer()->GetSession()->SendLogDamage(p_Victim->GetType(), p_Victim->GetID(), l_Damage);;
+
     switch (p_Victim->GetType())
     {
         case TypeUnit::PLAYER:
-            p_Victim->ToPlayer()->SetHealth((uint8)l_NewHealth);
+			p_Victim->ToPlayer()->SetHealth((uint8)l_NewHealth);
+			p_Victim->ToPlayer()->GetSession()->SendLogDamage(p_Victim->GetType(), p_Victim->GetID(), l_Damage);
         break;
         case TypeUnit::CREATURE:
             p_Victim->ToCreature()->SetHealth((uint8)l_NewHealth);

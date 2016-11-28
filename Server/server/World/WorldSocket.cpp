@@ -130,6 +130,13 @@ void WorldSocket::SendUnitStopAttack(uint8 p_TypeID, uint16 p_ID)
     SendToSet(l_Packet, true);
 }
 
+void WorldSocket::SendLogDamage(uint8 p_TypeID, uint16 p_ID, uint8 p_Damage)
+{
+	PacketLogDamage l_Packet;
+	l_Packet.BuildPacket(p_TypeID, p_ID, p_Damage);
+	SendMsg(l_Packet.m_Packet);
+}
+
 void WorldSocket::SendUpdateUnitHealth(uint8 p_TypeID, uint16 p_ID, uint8 p_NewHealth)
 {
     WorldPacket l_Packet;

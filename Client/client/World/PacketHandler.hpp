@@ -29,6 +29,7 @@ public:
     void HandleTalk(WorldPacket &);
     void HandleSrvPlayerMsg(WorldPacket &);
     void HandleUpdateSkin(WorldPacket &);
+	void HandleLogDamage(WorldPacket &);
 
 private:
 	MapManager* m_MapManager;

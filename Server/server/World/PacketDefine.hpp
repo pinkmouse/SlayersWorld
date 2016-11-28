@@ -20,6 +20,7 @@ enum SMSG : uint8
     S_UnitRemove = 12,
     S_UnitUpdateLife = 13,
     S_PlayerUpdateXp = 14,
+	S_LogDamage = 15,
     S_UnitGoDirection = 20,
     S_UnitStopMovement = 21,
     S_UnitUpdatePosition = 22,
@@ -209,4 +210,24 @@ struct PacketSrvPlayerMsg
         m_Packet << m_PacketID << p_Msg;
         m_Msg = p_Msg;
     }
+};
+
+struct PacketLogDamage
+{
+	WorldPacket m_Packet;
+	uint8 m_PacketID;
+	uint8 m_TypeID;
+	uint16 m_ID;
+	uint8 m_Damage;
+
+	PacketLogDamage() :
+		m_PacketID(SMSG::S_LogDamage) {}
+
+	void BuildPacket(uint8 p_TypeID, uint16 p_ID, uint8 p_Damage)
+	{
+		m_Packet << m_PacketID << p_TypeID << p_ID << p_Damage;
+		m_Damage = p_Damage;
+		m_TypeID = p_TypeID;
+		m_ID = p_ID;
+	}
 };

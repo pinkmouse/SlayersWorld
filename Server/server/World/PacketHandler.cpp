@@ -105,7 +105,6 @@ void PacketHandler::HandleStartAttack(WorldPacket &p_Packet, WorldSocket* p_Worl
         return;
 
     l_Player->GetMovementHandler()->AddMovementToStack(eActionType::Attack, l_Pos, (Orientation)l_Player->GetOrientation());
-    printf("---->%d\n", l_Player->GetOrientation());
     l_Player->GetSession()->SendUnitStartAttack((uint8)TypeUnit::PLAYER, l_Player->GetID(), l_Pos, l_Player->GetOrientation());
 }
 
