@@ -251,9 +251,9 @@ PointsSet SqlManager::GetPointsSetForPlayer(uint32 p_PlayerID)
 
 void SqlManager::SavePlayer(Player const* p_Player)
 {
-	std::string l_Query = "UPDATE characters SET posX = '" + std::to_string(p_Player->GetPosX()) + "', posY = '" + std::to_string(p_Player->GetPosY()) + "', mapID = '" + std::to_string(p_Player->GetMapID()) + "', orientation = '" + std::to_string(p_Player->GetOrientation()) + "', health = '" + std::to_string(p_Player->GetHealth()) + "', alignment = '" + std::to_string(p_Player->GetAlignment()) + "', xp = '" + std::to_string(p_Player->GetXp()) + "', level = '" + std::to_string(p_Player->GetLevel()) + "', skinID = '" + std::to_string(p_Player->GetSkinID()) + "' WHERE characterID = '" + std::to_string(p_Player->GetID()) + "';";
-	l_Query += "UPDATE `characters_point` SET `free_point` = '" + std::to_string(p_Player->GetPointsSet().m_FreePoints) + "', `force` = '" + std::to_string(p_Player->GetPointsSet().m_Force) + "', `stamina` = '" + std::to_string(p_Player->GetPointsSet().m_Stamina) + "', `dexterity` = '" + std::to_string(p_Player->GetPointsSet().m_Dexterity) + "' WHERE characterID = '" + std::to_string(p_Player->GetID()) + "';";
+	std::string l_Query = "UPDATE characters SET `posX` = '" + std::to_string(p_Player->GetPosX()) + "', `posY` = '" + std::to_string(p_Player->GetPosY()) + "', `mapID` = '" + std::to_string(p_Player->GetMapID()) + "', `orientation` = '" + std::to_string(p_Player->GetOrientation()) + "', `health` = '" + std::to_string(p_Player->GetHealth()) + "', `alignment` = '" + std::to_string(p_Player->GetAlignment()) + "', `xp` = '" + std::to_string(p_Player->GetXp()) + "', `level` = '" + std::to_string(p_Player->GetLevel()) + "', skinID = '" + std::to_string(p_Player->GetSkinID()) + "' WHERE characterID = '" + std::to_string(p_Player->GetID()) + "';";
     mysql_query(&m_MysqlCharacters, l_Query.c_str());
+	UpdatePointsSet(p_Player);
 }
 
 void SqlManager::UpdatePointsSet(Player const* p_Player)
