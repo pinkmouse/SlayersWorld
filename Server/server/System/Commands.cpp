@@ -65,5 +65,103 @@ bool Player::HandleCommandAddPoint(std::vector<std::string> p_ListCmd)
 		SendMsg("Vos points-> " + std::to_string(GetPointsSet().m_FreePoints) + "|" + std::to_string(GetPointsSet().m_Force) + "|" + std::to_string(GetPointsSet().m_Stamina) + "|" + std::to_string(GetPointsSet().m_Dexterity));
 		return true;
 	}
+	if (p_ListCmd.size() < 2)
+	{
+		SendMsg("/point add|sub force|stamina|dexterity");
+		return true;
+	}
+
+	int8 l_IndexCmd = -1;
+	if (p_ListCmd[0] == "add")
+		l_IndexCmd = 0;
+	else if (p_ListCmd[0] == "sub")
+		l_IndexCmd = 1;
+
+	int8 l_IndexPoint = -1;
+	if (p_ListCmd[1] == "force")
+		l_IndexPoint = 0;
+	else if (p_ListCmd[1] == "stamina")
+		l_IndexPoint = 1;
+	else if (p_ListCmd[1] == "dexterity")
+		l_IndexPoint = 2;
+
+	int8 l_NbPoints = 1;
+	if (p_ListCmd.size() >= 3)
+		l_NbPoints = atoi(p_ListCmd[2].c_str());
+
+	l_NbPoints = std::max((int8)1, l_NbPoints);
+
+	if (l_IndexCmd < 0 || l_IndexPoint < 0)
+	{
+		SendMsg("/point add|sub force|stamina|dexterity");
+		return true;
+	}
+
+	if (l_IndexCmd == 0)
+	{
+		if (l_NbPoints > m_PointsSet.m_FreePoints)
+		{
+			SendMsg("Vous n'avez pas assez de points");
+			return true;
+		}
+		switch (l_IndexPoint)
+		{
+			case 0:
+			{
+				m_PointsSet.m_Force += l_NbPoints;
+				break;
+			}
+			case 1:
+			{
+				m_PointsSet.m_Stamina += l_NbPoints;
+				break;
+			}
+			case 2:
+			{
+				m_PointsSet.m_Dexterity += l_NbPoints;
+				break;
+			}
+		}
+		m_PointsSet.m_FreePoints -= l_NbPoints;
+	}
+
+	if (l_IndexCmd == 1)
+	{
+		switch (l_IndexPoint)
+		{
+			case 0:
+			{
+				if (l_NbPoints > m_PointsSet.m_Force)
+				{
+					SendMsg("Vous n'avez pas assez de points en force");
+					return true;
+				}
+				m_PointsSet.m_Force -= l_NbPoints;
+				break;
+			}
+			case 1:
+			{
+				if (l_NbPoints > m_PointsSet.m_Stamina)
+				{
+					SendMsg("Vous n'avez pas assez de points en stamina");
+					return true;
+				}
+				m_PointsSet.m_Stamina -= l_NbPoints;
+				break;
+			}
+			case 2:
+			{
+				if (l_NbPoints > m_PointsSet.m_Dexterity)
+				{
+					SendMsg("Vous n'avez pas assez de points en dexterity");
+					return true;
+				}
+				m_PointsSet.m_Dexterity -= l_NbPoints;
+				break;
+			}
+		}
+		m_PointsSet.m_FreePoints += l_NbPoints;
+	}
+
 	return true;
 }
