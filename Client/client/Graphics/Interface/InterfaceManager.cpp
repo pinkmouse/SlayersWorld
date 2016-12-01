@@ -39,6 +39,15 @@ TileSprite InterfaceManager::GetField(uint16 p_SizeX, uint16 p_SizeY)
     return l_TileSprite;
 }
 
+TileSprite InterfaceManager::GetBorderField(uint16 p_SizeX, uint16 p_SizeY)
+{
+    TileSprite l_TileSprite;
+    l_TileSprite.setTexture(m_SystemTexture);
+    l_TileSprite.setTextureRect(sf::IntRect(FONT_FIELD_SIZE, 0, FONT_FIELD_BORDER_SIZE, FONT_FIELD_BORDER_SIZE));
+    l_TileSprite.setScale((float)p_SizeX / FONT_FIELD_BORDER_SIZE, (float)p_SizeY / FONT_FIELD_BORDER_SIZE);
+    return l_TileSprite;
+}
+
 TileSprite InterfaceManager::GetFlask(uint8 p_ID, bool p_Full, uint8 p_Pct)
 {
     uint8 l_Full = 0;
