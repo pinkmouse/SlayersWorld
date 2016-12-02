@@ -8,4 +8,6 @@ class Window : public sf::RenderWindow
 public:
 	Window();
 	~Window();
+
+	sf::Vector2f mapCoordsToPixelFloat(const sf::Vector2f& point, const sf::View& view) const;
 };
