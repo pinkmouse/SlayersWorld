@@ -165,6 +165,19 @@ void Graphics::DrawEntities()
                 sf::Vector2f v1(l_Unit->GetPosX() + (l_Unit->GetSizeX() / 2), l_Unit->GetPosY());
                 sf::Vector2i l_Coord = m_Window.mapCoordsToPixel(v1, m_View);
                 l_Name.setPosition((float)(l_Coord.x - (l_Name.getGlobalBounds().width / 2)), (float)l_Coord.y);
+
+                // First, transform the point by the view matrix
+                sf::Vector2f normalized = m_View.getTransform().transformPoint(v1);
+
+                // Then convert to viewport coordinates
+                sf::Vector2f pixel;
+                sf::IntRect viewport = m_Window.getViewport(m_View);
+                pixel.x = ((normalized.x + 1.f) / 2.f * viewport.width + viewport.left);
+                pixel.y = ((-normalized.y + 1.f) / 2.f * viewport.height + viewport.top);
+
+                /*l_Name.setPosition((float)(l_Coord.x - (l_Name.getGlobalBounds().width / 2)), (float)l_Coord.y);*/
+                l_Name.setPosition(pixel.x, pixel.y);
+
                 m_Window.draw(l_Name);
             }
 
