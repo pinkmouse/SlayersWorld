@@ -11,7 +11,12 @@ set(myproject_VERSION_MINOR 0)
 
 include_directories("${PROJECT_BINARY_DIR}")
 
-set(EXECUTABLE_NAME "SlayersWorld")
+set(EXECUTABLE_NAME "Client")
+
+if( WIN32 )
+  set(RC client/resource.rc)
+endif()
+
 add_executable(${EXECUTABLE_NAME}
               client/client.cpp
               client/Define.hpp
@@ -75,7 +80,7 @@ add_executable(${EXECUTABLE_NAME}
               client/Entities/Unit.hpp
               client/Entities/WorldObject.cpp
               client/Entities/WorldObject.hpp
-              )
+              ${RC})
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})
 
