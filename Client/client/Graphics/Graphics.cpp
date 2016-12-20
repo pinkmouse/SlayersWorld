@@ -81,96 +81,77 @@ bool Graphics::WindowIsOpen() const
 	return m_Window.isOpen();
 }
 
-void Graphics::DrawEntities()
+void Graphics::DrawWorldObjects(std::map<uint32, std::vector<WorldObject*> > *p_ListWorldObjectsByZ)
 {
     Map* l_Map = m_MapManager->GetActualMap();
 
-    std::map<TypeUnit, std::map<uint16, Unit*>>* l_ListUnitZone = l_Map->GetListUnitZone();
-
-    std::map<uint32, std::vector<Unit*> > m_ListUnitByZ;
-    for (std::pair<TypeUnit, std::map<uint16, Unit*>> l_MapListUnit : (*l_ListUnitZone))
+    for (std::map<uint32, std::vector<WorldObject*> >::iterator l_It = p_ListWorldObjectsByZ->begin(); l_It != p_ListWorldObjectsByZ->end(); ++l_It)
     {
-        for (std::pair<uint16, Unit*> l_UnitPair : l_MapListUnit.second)
-        {
-            Unit* l_Unit = l_UnitPair.second;
-
-            if (l_Unit == nullptr)
-                continue;
-
-            m_ListUnitByZ[l_Unit->GetPosY()].push_back(l_Unit);
-        }
-    }
-
-
-    for (std::map<uint32, std::vector<Unit*> >::iterator l_It = m_ListUnitByZ.begin(); l_It != m_ListUnitByZ.end(); ++l_It)
-    {
-        for (auto l_Unit : (*l_It).second)
+        for (auto l_WorldObject : (*l_It).second)
         {
            // Unit* l_Unit = l_UnitPair.second;
 
-            if (l_Unit == nullptr)
+            if (l_WorldObject == nullptr)
                 continue;
 
-            /// SKIN PART
-            MovementHandler* l_MovementHandler = l_Unit->GetMovementHandler();
-            uint8 l_SpriteNb = (l_Unit->GetOrientation() * MAX_MOVEMENT_POSITION) + l_MovementHandler->GetMovementPosition();
-            if (l_MovementHandler->IsInAttack())
-                l_SpriteNb += (MAX_MOVEMENT_POSITION * Orientation::MAX);
-
-            SkinSprite l_SkinSprite = (*m_SkinsManager->GetSkinSprite(l_Unit->GetSkinID(), l_SpriteNb));
-            l_SkinSprite.setScale(sf::Vector2f(l_Unit->GetSkinZoomFactor(), l_Unit->GetSkinZoomFactor()));
-            l_SkinSprite.setColor(sf::Color(255, 255, 255, l_Unit->GetOpacity()));
-            l_SkinSprite.setPosition((float)l_Unit->GetPosX(), (float)l_Unit->GetPosY() - l_Unit->GetRealSizeY());
-            m_Window.draw(l_SkinSprite);
+            /// SPRITE PART
+            l_WorldObject->GetSprite()->setPosition((float)l_WorldObject->GetPosX(), (float)l_WorldObject->GetPosY() - l_WorldObject->GetSizeY());
+            m_Window.draw(*l_WorldObject->GetSprite());
 
             /// Set view to don t have a zoom on text
-            m_Window.setView(m_ViewFont);
-
-			std::vector<std::pair<DamageInfo, uint32>> l_DamageLogHistory = l_Unit->GetDamageLog();
-
-			for (std::pair<DamageInfo, uint32> l_DamageLog : l_DamageLogHistory)
-			{
-				std::string l_DmgStr = l_DamageLog.first.m_Miss ? "Miss" :std::to_string(l_DamageLog.first.m_Damage);
-				sf::Text l_Text(l_DmgStr, *g_Font, SIZE_TALK_FONT);
-
-				l_Text.setColor(sf::Color::White);
-				sf::Vector2f v1(l_Unit->GetPosX() + (l_Unit->GetSizeX() / 2), l_Unit->GetPosY() - l_Unit->GetSizeY() - 6 - 4 - ((MAX_HISTORY_LOG_TIME - l_DamageLog.second) / 100000));
-				sf::Vector2f l_Coord = m_Window.mapCoordsToPixelFloat(v1, m_View);
-				l_Text.setPosition((l_Coord.x - (l_Text.getGlobalBounds().width / 2)), l_Coord.y);
-				m_Window.draw(l_Text);
-			}
-            /// TALK
-            if (!l_Unit->GetTalk().empty())
+            if (l_WorldObject->GetType() == TypeWorldObject::UNIT)
             {
-                sf::Text l_Text(l_Unit->GetTalk(), *g_Font, SIZE_TALK_FONT);
+                Unit* l_Unit = l_WorldObject->ToUnit();
+                if (l_Unit == nullptr)
+                    continue;
+                m_Window.setView(m_ViewFont);
 
-                TileSprite l_Sprite = m_InterfaceManager->GetField(l_Text.getGlobalBounds().width + 8, (float)g_Font->getLineSpacing(l_Text.getCharacterSize()) + 8);
-                sf::Vector2f v1(l_Unit->GetPosX() + (l_Unit->GetSizeX() / 2), l_Unit->GetPosY() - l_Unit->GetSizeY() - 6 - 4);
-                sf::Vector2f l_Coord = m_Window.mapCoordsToPixelFloat(v1, m_View);
-                l_Sprite.setPosition((l_Coord.x - ((l_Text.getGlobalBounds().width + 8) / 2)), l_Coord.y);
-                m_Window.draw(l_Sprite);
+			    std::vector<std::pair<DamageInfo, uint32>> l_DamageLogHistory = l_Unit->GetDamageLog();
 
-                l_Text.setColor(sf::Color::White);
-                sf::Vector2f v12(l_Unit->GetPosX() + (l_Unit->GetSizeX() / 2), l_Unit->GetPosY() - l_Unit->GetSizeY());
-                l_Coord = m_Window.mapCoordsToPixelFloat(v1, m_View);
-                l_Text.setPosition((l_Coord.x - (l_Text.getGlobalBounds().width / 2)), l_Coord.y);
-                m_Window.draw(l_Text);
+			    for (std::pair<DamageInfo, uint32> l_DamageLog : l_DamageLogHistory)
+			    {
+				    std::string l_DmgStr = l_DamageLog.first.m_Miss ? "Miss" :std::to_string(l_DamageLog.first.m_Damage);
+				    sf::Text l_Text(l_DmgStr, *g_Font, SIZE_TALK_FONT);
+
+				    l_Text.setColor(sf::Color::White);
+				    sf::Vector2f v1(l_Unit->GetPosX() + (l_Unit->GetSizeX() / 2), l_Unit->GetPosY() - l_Unit->GetSizeY() - 6 - 4 - ((MAX_HISTORY_LOG_TIME - l_DamageLog.second) / 100000));
+				    sf::Vector2f l_Coord = m_Window.mapCoordsToPixelFloat(v1, m_View);
+				    l_Text.setPosition((l_Coord.x - (l_Text.getGlobalBounds().width / 2)), l_Coord.y);
+				    m_Window.draw(l_Text);
+			    }
+                /// TALK
+                if (!l_Unit->GetTalk().empty())
+                {
+                    sf::Text l_Text(l_Unit->GetTalk(), *g_Font, SIZE_TALK_FONT);
+
+                    TileSprite l_Sprite = m_InterfaceManager->GetField(l_Text.getGlobalBounds().width + 8, (float)g_Font->getLineSpacing(l_Text.getCharacterSize()) + 8);
+                    sf::Vector2f v1(l_Unit->GetPosX() + (l_Unit->GetSizeX() / 2), l_Unit->GetPosY() - l_Unit->GetSizeY() - 6 - 4);
+                    sf::Vector2f l_Coord = m_Window.mapCoordsToPixelFloat(v1, m_View);
+                    l_Sprite.setPosition((l_Coord.x - ((l_Text.getGlobalBounds().width + 8) / 2)), l_Coord.y);
+                    m_Window.draw(l_Sprite);
+
+                    l_Text.setColor(sf::Color::White);
+                    sf::Vector2f v12(l_Unit->GetPosX() + (l_Unit->GetSizeX() / 2), l_Unit->GetPosY() - l_Unit->GetSizeY());
+                    l_Coord = m_Window.mapCoordsToPixelFloat(v1, m_View);
+                    l_Text.setPosition((l_Coord.x - (l_Text.getGlobalBounds().width / 2)), l_Coord.y);
+                    m_Window.draw(l_Text);
+                }
+
+                /// NAME
+                if (l_Unit->IsPlayer())
+                {
+                    sf::Text l_Name(l_Unit->GetName(), *g_Font, SIZE_NAME_FONT);
+                    l_Name.setColor(sf::Color::White);
+                    sf::Vector2f l_View(l_Unit->GetPosX() + (l_Unit->GetSizeX() / 2), l_Unit->GetPosY());
+                    sf::Vector2f l_Coord = m_Window.mapCoordsToPixelFloat(l_View, m_View);
+                    l_Name.setPosition((l_Coord.x - (l_Name.getGlobalBounds().width / 2.0f)), l_Coord.y);
+
+                    m_Window.draw(l_Name);
+                }
+
+                /// Reset the view
+                m_Window.setView(m_View);
             }
-
-            /// NAME
-            if (l_Unit->IsPlayer())
-            {
-                sf::Text l_Name(l_Unit->GetName(), *g_Font, SIZE_NAME_FONT);
-                l_Name.setColor(sf::Color::White);
-                sf::Vector2f l_View(l_Unit->GetPosX() + (l_Unit->GetSizeX() / 2), l_Unit->GetPosY());
-                sf::Vector2f l_Coord = m_Window.mapCoordsToPixelFloat(l_View, m_View);
-                l_Name.setPosition((l_Coord.x - (l_Name.getGlobalBounds().width / 2.0f)), l_Coord.y);
-
-                m_Window.draw(l_Name);
-            }
-
-            /// Reset the view
-            m_Window.setView(m_View);
         }
     }
 
@@ -240,6 +221,8 @@ void Graphics::DrawMap()
 		return;
 
 	Map* l_Map = m_MapManager->GetActualMap();
+    std::map<TypeUnit, std::map<uint16, Unit*> >* l_ListUnitZone = l_Map->GetListUnitZone();
+    std::map<uint32, std::vector<WorldObject*> > l_ListWorldObjectByZ;
 
 	std::vector<std::vector<Case*>> l_SquareZone = l_Map->GetSquareZone(l_Map->GetSquareID(g_Player->GetCasePosX(), g_Player->GetCasePosY()));
 	//printf("Square Acutal = %d\n", l_Map->GetSquareID(m_MapManager->GetPosX() / TILE_SIZE, m_MapManager->GetPosY() / TILE_SIZE));
@@ -247,6 +230,7 @@ void Graphics::DrawMap()
 		return;
 
     /// Level 1 and 2
+    /// Level 5 and 6
 	for (std::vector<std::vector<Case*>>::iterator l_It = l_SquareZone.begin(); l_It != l_SquareZone.end(); ++l_It)
 	{
 		std::vector<Case*> l_Square = (*l_It);
@@ -263,10 +247,49 @@ void Graphics::DrawMap()
                 l_TileSprite->setPosition((float)(*l_It2)->GetPosX() * TILE_SIZE, (float)(*l_It2)->GetPosY() * TILE_SIZE);
                 m_Window.draw(*l_TileSprite);
             }
+            for (uint8 l_LevelNb = 4; l_LevelNb < 6; ++l_LevelNb)
+            {
+                int16 l_TileID = (*l_It2)->GetTile(l_LevelNb);
+
+                if (l_TileID < 0)
+                    continue;
+
+                TileSprite* l_TileSprite = m_TileSet->GetTileSprite(l_TileID);
+                l_TileSprite->setPosition((float)(*l_It2)->GetPosX() * TILE_SIZE, (float)(*l_It2)->GetPosY() * TILE_SIZE);
+                (*l_It2)->SetSprite(l_TileSprite);
+                if (l_LevelNb == 4)
+                    l_ListWorldObjectByZ[(*l_It2)->GetPosY() - (*l_It2)->GetSizeY()].push_back((*l_It2));
+                else
+                    l_ListWorldObjectByZ[(*l_It2)->GetPosY()].push_back((*l_It2));
+            }
 		}
 	}
+    
+    std::map<uint32, std::vector<WorldObject*> > l_ListUnitByZ;
+    for (std::pair<TypeUnit, std::map<uint16, Unit*>> l_MapListUnit : (*l_ListUnitZone))
+    {
+        for (std::pair<uint16, Unit*> l_UnitPair : l_MapListUnit.second)
+        {
+            Unit* l_Unit = l_UnitPair.second;
 
-    DrawEntities();
+            if (l_Unit == nullptr)
+                continue;
+
+            MovementHandler* l_MovementHandler = l_Unit->GetMovementHandler();
+            uint8 l_SpriteNb = (l_Unit->GetOrientation() * MAX_MOVEMENT_POSITION) + l_MovementHandler->GetMovementPosition();
+            if (l_MovementHandler->IsInAttack())
+                l_SpriteNb += (MAX_MOVEMENT_POSITION * Orientation::MAX);
+
+            SkinSprite* l_SkinSprite = m_SkinsManager->GetSkinSprite(l_Unit->GetSkinID(), l_SpriteNb);
+            l_SkinSprite->setScale(sf::Vector2f(l_Unit->GetSkinZoomFactor(), l_Unit->GetSkinZoomFactor()));
+            l_SkinSprite->setColor(sf::Color(255, 255, 255, l_Unit->GetOpacity()));
+            l_Unit->SetSprite(l_SkinSprite);
+
+            l_ListWorldObjectByZ[l_Unit->GetPosY()].push_back(l_Unit);
+        }
+    }
+
+    DrawWorldObjects(&l_ListWorldObjectByZ);
 
     /// Level 3 and 4
     for (std::vector<std::vector<Case*>>::iterator l_It = l_SquareZone.begin(); l_It != l_SquareZone.end(); ++l_It)
@@ -309,7 +332,7 @@ void Graphics::UpdateWindow(sf::Time p_Diff)
 {
     Clear();
     if (g_Player != nullptr)
-        m_View.setCenter((float)g_Player->GetPosX() + (g_Player->GetRealSizeX() / 2), (float)g_Player->GetPosY() - (g_Player->GetRealSizeY() / 2));
+        m_View.setCenter((float)g_Player->GetPosX() + (g_Player->GetSizeX() / 2), (float)g_Player->GetPosY() - (g_Player->GetSizeY() / 2));
     m_Window.setView(m_View);
     DrawMap();
     m_Window.setView(m_ViewInterface);

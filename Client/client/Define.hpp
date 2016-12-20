@@ -91,6 +91,12 @@ enum Orientation
     MAX     = 4
 };
 
+enum TypeWorldObject
+{
+    UNIT = 0,
+    CASE = 1
+};
+
 enum TypeUnit
 {
     CREATURE = 0,

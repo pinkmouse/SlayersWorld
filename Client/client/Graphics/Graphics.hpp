@@ -24,7 +24,7 @@ public:
 	void UpdateWindow(sf::Time);
     void UpdateInterface(sf::Time);
 	void DrawMap();
-    void DrawEntities();
+    void DrawWorldObjects(std::map<uint32, std::vector<WorldObject*> >*);
     void DrawInterface();
 	void Display();
 	void Clear();

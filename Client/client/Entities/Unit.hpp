@@ -18,10 +18,6 @@ public:
     std::string GetName() const;
     uint16 GetCasePosX() const;
     uint16 GetCasePosY() const;
-    uint8 GetSizeX() const;
-    uint8 GetSizeY() const;
-    uint8 GetRealSizeX() const;
-    uint8 GetRealSizeY() const;
     uint8 GetLevel() const;
     uint8 GetSkinID() const;
     uint16 GetID() const;
@@ -62,9 +58,6 @@ protected:
     uint8 m_Health;
     uint8 m_SkinID;
     float m_SkinZoomFactor;
-
-    uint8 m_SizeX;
-    uint8 m_SizeY;
 
     MovementHandler* m_MovementHandler;
     TypeUnit m_Type;

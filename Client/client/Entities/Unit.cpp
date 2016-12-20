@@ -1,21 +1,21 @@
 #include "Unit.hpp"
 #include "../Map/Map.hpp"
 
-Unit::Unit(uint16 p_ID)
+Unit::Unit(uint16 p_ID) :
+    WorldObject(TypeWorldObject::UNIT, 24, 32)
 {
     Unit(p_ID, TypeUnit::CREATURE);
 }
 
-Unit::Unit(uint16 p_ID, TypeUnit p_Type)
+Unit::Unit(uint16 p_ID, TypeUnit p_Type) :
+    WorldObject(TypeWorldObject::UNIT, 24, 32)
 {
     m_Name = "";
     m_Type = p_Type;
     m_ID = p_ID;
     m_Opacity = 0;
     m_DiffTimeOpactiy = 0;
-    m_SizeX = 24;
-    m_SizeY = 32;
-    m_MovementHandler = new MovementHandler(m_SizeX, m_SizeY);
+    m_MovementHandler = new MovementHandler(GetSizeX(), GetSizeY());
     m_SkinZoomFactor = SKIN_ZOOM_FACTOR_DEFAULT;
 }
 
@@ -102,26 +102,6 @@ uint8 Unit::GetOpacity() const
 std::string Unit::GetName() const
 {
     return m_Name;
-}
-
-uint8 Unit::GetSizeX() const
-{
-    return m_SizeX;
-}
-
-uint8 Unit::GetSizeY() const
-{
-    return m_SizeY;
-}
-
-uint8 Unit::GetRealSizeX() const
-{
-    return m_SizeX * m_SkinZoomFactor;
-}
-
-uint8 Unit::GetRealSizeY() const
-{
-    return m_SizeY * m_SkinZoomFactor;
 }
 
 uint8 Unit::GetLevel() const
