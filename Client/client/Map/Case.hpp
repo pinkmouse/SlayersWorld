@@ -1,8 +1,9 @@
 #pragma once
 #include "../Define.hpp"
+#include "../Entities/WorldObject.hpp"
 #include <array>
 
-class Case
+class Case : public WorldObject
 {
 public:
 	Case(uint16, uint16, uint16);
@@ -11,15 +12,11 @@ public:
 	uint8 GetMaxTileLevel();
 	void SetTile(uint8, int16);
 	int16 GetTile(uint8) const;
-	uint16 GetPosX() const;
-	uint16 GetPosY() const;
     bool IsBlocking() const;
 
 private:
 	bool m_Block;
 	uint16 m_ID;
-	uint16 m_X;
-	uint16 m_Y;
 	std::array<int16, MAX_TILE_LEVEL> m_TileList;
 };
 

@@ -13,7 +13,7 @@
 #define ZOOM_FACTOR 0.5f
 
 /// TILES
-#define MAX_TILE_LEVEL 4
+#define MAX_TILE_LEVEL 6
 #define TILE_SIZE 16
 #define TILE_FOLDER "img/tiles/"
 #define GRID_SIZE 12

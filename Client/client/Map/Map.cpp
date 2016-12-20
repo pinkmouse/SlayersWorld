@@ -205,6 +205,8 @@ bool Map::InitializeMap(const std::string & p_FileName)
 		t_Case l_FluxCase;
 		fread(&l_FluxCase, sizeof(l_FluxCase), 1, l_File);
 		Case* l_Case = new Case(i, i % m_SizeX, i / m_SizeX);
+        l_Case->SetMapID(m_ID);
+
 		for (int j = 0; j < l_Case->GetMaxTileLevel(); ++j)
 			l_Case->SetTile(j, l_FluxCase.l_TabTileNb[j]);
 		l_Case->SetBlock(l_FluxCase.l_Block);

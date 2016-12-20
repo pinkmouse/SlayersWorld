@@ -249,6 +249,7 @@ bool Map::InitializeMap(const std::string & p_FileName)
 		t_Case l_FluxCase;
 		fread(&l_FluxCase, sizeof(l_FluxCase), 1, l_File);
 		Case* l_Case = new Case(i, i % m_SizeX, i / m_SizeX);
+        l_Case->SetMapID(m_ID);
 
 		bool l_Block = l_FluxCase.l_Block;
 		if (l_Block)

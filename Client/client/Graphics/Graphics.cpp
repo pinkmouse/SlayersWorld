@@ -246,7 +246,7 @@ void Graphics::DrawMap()
 	if (l_SquareZone.empty())
 		return;
 
-    /// First two Level
+    /// Level 1 and 2
 	for (std::vector<std::vector<Case*>>::iterator l_It = l_SquareZone.begin(); l_It != l_SquareZone.end(); ++l_It)
 	{
 		std::vector<Case*> l_Square = (*l_It);
@@ -268,7 +268,7 @@ void Graphics::DrawMap()
 
     DrawEntities();
 
-    /// Level 2 to 4
+    /// Level 3 and 4
     for (std::vector<std::vector<Case*>>::iterator l_It = l_SquareZone.begin(); l_It != l_SquareZone.end(); ++l_It)
     {
         std::vector<Case*> l_Square = (*l_It);

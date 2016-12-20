@@ -2,26 +2,16 @@
 
 Case::Case(uint16 p_ID, uint16 p_X, uint16 p_Y) :
 	m_ID(p_ID),
-	m_X(p_X),
-	m_Y(p_Y),
 	m_Block(false)
 {
+    SetPosX(p_X);
+    SetPosY(p_Y);
 	for (uint8 i = 0; i < m_TileList.size(); ++i)
 		m_TileList[i] = -1;
 }
 
 Case::~Case()
 {
-}
-
-uint16 Case::GetPosX() const
-{
-	return m_X;
-}
-
-uint16 Case::GetPosY() const
-{
-	return m_Y;
 }
 
 int16 Case::GetTile(uint8 p_Level) const

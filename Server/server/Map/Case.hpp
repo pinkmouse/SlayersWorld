@@ -1,7 +1,8 @@
 #pragma once
 #include "../Define.hpp"
+#include "../Entities/WorldObject.hpp"
 
-class Case
+class Case : public WorldObject
 {
 public:
 	Case(uint16, uint16, uint16);
@@ -12,7 +13,5 @@ public:
 private:
 	bool m_Block;
 	uint16 m_ID;
-	uint16 m_X;
-	uint16 m_Y;
 };
 
