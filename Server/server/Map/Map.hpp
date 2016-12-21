@@ -56,7 +56,7 @@ private:
 
 	struct          t_Case
 	{
-		int l_TabTileNb[4];
+		int l_TabTileNb[6];
 		bool l_Block;
 	};
 };

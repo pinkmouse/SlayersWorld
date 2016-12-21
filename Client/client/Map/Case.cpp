@@ -5,8 +5,8 @@ Case::Case(uint16 p_ID, uint16 p_X, uint16 p_Y) :
 	m_ID(p_ID),
 	m_Block(false)
 {
-    SetPosX(p_X);
-    SetPosY(p_Y);
+    SetPosX(p_X * TILE_SIZE);
+    SetPosY(p_Y * TILE_SIZE);
 	for (uint8 i = 0; i < m_TileList.size(); ++i)
 		m_TileList[i] = -1;
 }

@@ -211,7 +211,7 @@ bool Map::InitializeMap(const std::string & p_FileName)
 			l_Case->SetTile(j, l_FluxCase.l_TabTileNb[j]);
 		l_Case->SetBlock(l_FluxCase.l_Block);
 
-		uint16 l_DrawingSquareID = GetSquareID(l_Case->GetPosX(), l_Case->GetPosY());
+		uint16 l_DrawingSquareID = GetSquareID(l_Case->GetPosXCase(), l_Case->GetPosYCase());
 		m_ListCase.push_back(l_Case);
 		m_MapListCase[l_DrawingSquareID].push_back(l_Case);
 	}

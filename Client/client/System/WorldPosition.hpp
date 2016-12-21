@@ -10,6 +10,8 @@ public:
 
     uint32 GetPosX() const;
     uint32 GetPosY() const;
+    uint32 GetPosXCase() const;
+    uint32 GetPosYCase() const;
     Position GetPosition() const;
     uint16 GetMapID() const;
     Orientation GetOrientation() const;

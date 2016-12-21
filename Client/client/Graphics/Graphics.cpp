@@ -200,7 +200,7 @@ void Graphics::DrawMap()
                 l_TileSprite->setPosition((float)(*l_It2)->GetPosX() * TILE_SIZE, (float)(*l_It2)->GetPosY() * TILE_SIZE);
                 (*l_It2)->SetSprite(l_TileSprite);
                 if (l_LevelNb == 4)
-                    l_ListWorldObjectByZ[(*l_It2)->GetPosY() - (*l_It2)->GetSizeY()].push_back((*l_It2));
+                    l_ListWorldObjectByZ[(*l_It2)->GetPosY()].push_back(*l_It2);
                 else
                     l_ListWorldObjectByZ[(*l_It2)->GetPosY()].push_back((*l_It2));
             }

@@ -32,6 +32,16 @@ uint32 WorldPosition::GetPosY() const
     return m_Position.y;
 }
 
+uint32 WorldPosition::GetPosXCase() const
+{
+    return m_Position.x / TILE_SIZE;
+}
+
+uint32 WorldPosition::GetPosYCase() const
+{
+    return m_Position.y / TILE_SIZE;
+}
+
 Position WorldPosition::GetPosition() const
 {
     return m_Position;
