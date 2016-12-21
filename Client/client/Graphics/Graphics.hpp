@@ -23,13 +23,16 @@ public:
 	void CreateWindow(uint32, uint32, float);
 	void UpdateWindow(sf::Time);
     void UpdateInterface(sf::Time);
-	void DrawMap();
-    void DrawWorldObjects(std::map<uint32, std::vector<WorldObject*> >*);
-    void DrawInterface();
 	void Display();
 	void Clear();
 	void CheckEvent();
 	bool WindowIsOpen() const;
+
+    /// Draw Methods
+    void DrawMap();
+    void DrawWorldObjects(std::map<uint32, std::vector<WorldObject*> >*);
+    void DrawUnitDetails(Unit*);
+    void DrawInterface();
 
 private:
 	Window              m_Window;

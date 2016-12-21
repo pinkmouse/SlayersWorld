@@ -81,6 +81,61 @@ bool Graphics::WindowIsOpen() const
 	return m_Window.isOpen();
 }
 
+void Graphics::DrawUnitDetails(Unit* p_Unit)
+{
+    if (p_Unit == nullptr)
+        return;
+
+    /// Set view to don t have a zoom on text
+    m_Window.setView(m_ViewFont);
+
+    std::vector<std::pair<DamageInfo, uint32>> l_DamageLogHistory = p_Unit->GetDamageLog();
+
+    for (std::pair<DamageInfo, uint32> l_DamageLog : l_DamageLogHistory)
+    {
+        std::string l_DmgStr = l_DamageLog.first.m_Miss ? "Miss" : std::to_string(l_DamageLog.first.m_Damage);
+        sf::Text l_Text(l_DmgStr, *g_Font, SIZE_TALK_FONT);
+
+        l_Text.setColor(sf::Color::White);
+        sf::Vector2f v1(p_Unit->GetPosX() + (p_Unit->GetSizeX() / 2), p_Unit->GetPosY() - p_Unit->GetSizeY() - 6 - 4 - ((MAX_HISTORY_LOG_TIME - l_DamageLog.second) / 100000));
+        sf::Vector2f l_Coord = m_Window.mapCoordsToPixelFloat(v1, m_View);
+        l_Text.setPosition((l_Coord.x - (l_Text.getGlobalBounds().width / 2)), l_Coord.y);
+        m_Window.draw(l_Text);
+    }
+    /// TALK
+    if (!p_Unit->GetTalk().empty())
+    {
+        sf::Text l_Text(p_Unit->GetTalk(), *g_Font, SIZE_TALK_FONT);
+
+        TileSprite l_Sprite = m_InterfaceManager->GetField(l_Text.getGlobalBounds().width + 8, (float)g_Font->getLineSpacing(l_Text.getCharacterSize()) + 8);
+        sf::Vector2f v1(p_Unit->GetPosX() + (p_Unit->GetSizeX() / 2), p_Unit->GetPosY() - p_Unit->GetSizeY() - 6 - 4);
+        sf::Vector2f l_Coord = m_Window.mapCoordsToPixelFloat(v1, m_View);
+        l_Sprite.setPosition((l_Coord.x - ((l_Text.getGlobalBounds().width + 8) / 2)), l_Coord.y);
+        m_Window.draw(l_Sprite);
+
+        l_Text.setColor(sf::Color::White);
+        sf::Vector2f v12(p_Unit->GetPosX() + (p_Unit->GetSizeX() / 2), p_Unit->GetPosY() - p_Unit->GetSizeY());
+        l_Coord = m_Window.mapCoordsToPixelFloat(v1, m_View);
+        l_Text.setPosition((l_Coord.x - (l_Text.getGlobalBounds().width / 2)), l_Coord.y);
+        m_Window.draw(l_Text);
+    }
+
+    /// NAME
+    if (p_Unit->IsPlayer())
+    {
+        sf::Text l_Name(p_Unit->GetName(), *g_Font, SIZE_NAME_FONT);
+        l_Name.setColor(sf::Color::White);
+        sf::Vector2f l_View(p_Unit->GetPosX() + (p_Unit->GetSizeX() / 2), p_Unit->GetPosY());
+        sf::Vector2f l_Coord = m_Window.mapCoordsToPixelFloat(l_View, m_View);
+        l_Name.setPosition((l_Coord.x - (l_Name.getGlobalBounds().width / 2.0f)), l_Coord.y);
+
+        m_Window.draw(l_Name);
+    }
+
+    /// Reset the view
+    m_Window.setView(m_View);
+}
+
 void Graphics::DrawWorldObjects(std::map<uint32, std::vector<WorldObject*> > *p_ListWorldObjectsByZ)
 {
     Map* l_Map = m_MapManager->GetActualMap();
@@ -89,130 +144,17 @@ void Graphics::DrawWorldObjects(std::map<uint32, std::vector<WorldObject*> > *p_
     {
         for (auto l_WorldObject : (*l_It).second)
         {
-           // Unit* l_Unit = l_UnitPair.second;
-
             if (l_WorldObject == nullptr)
                 continue;
 
-            /// SPRITE PART
             l_WorldObject->GetSprite()->setPosition((float)l_WorldObject->GetPosX(), (float)l_WorldObject->GetPosY() - l_WorldObject->GetSizeY());
             m_Window.draw(*l_WorldObject->GetSprite());
 
-            /// Set view to don t have a zoom on text
+            /// Draw specificity of Unit (name, text, dmg ...)
             if (l_WorldObject->GetType() == TypeWorldObject::UNIT)
-            {
-                Unit* l_Unit = l_WorldObject->ToUnit();
-                if (l_Unit == nullptr)
-                    continue;
-                m_Window.setView(m_ViewFont);
-
-			    std::vector<std::pair<DamageInfo, uint32>> l_DamageLogHistory = l_Unit->GetDamageLog();
-
-			    for (std::pair<DamageInfo, uint32> l_DamageLog : l_DamageLogHistory)
-			    {
-				    std::string l_DmgStr = l_DamageLog.first.m_Miss ? "Miss" :std::to_string(l_DamageLog.first.m_Damage);
-				    sf::Text l_Text(l_DmgStr, *g_Font, SIZE_TALK_FONT);
-
-				    l_Text.setColor(sf::Color::White);
-				    sf::Vector2f v1(l_Unit->GetPosX() + (l_Unit->GetSizeX() / 2), l_Unit->GetPosY() - l_Unit->GetSizeY() - 6 - 4 - ((MAX_HISTORY_LOG_TIME - l_DamageLog.second) / 100000));
-				    sf::Vector2f l_Coord = m_Window.mapCoordsToPixelFloat(v1, m_View);
-				    l_Text.setPosition((l_Coord.x - (l_Text.getGlobalBounds().width / 2)), l_Coord.y);
-				    m_Window.draw(l_Text);
-			    }
-                /// TALK
-                if (!l_Unit->GetTalk().empty())
-                {
-                    sf::Text l_Text(l_Unit->GetTalk(), *g_Font, SIZE_TALK_FONT);
-
-                    TileSprite l_Sprite = m_InterfaceManager->GetField(l_Text.getGlobalBounds().width + 8, (float)g_Font->getLineSpacing(l_Text.getCharacterSize()) + 8);
-                    sf::Vector2f v1(l_Unit->GetPosX() + (l_Unit->GetSizeX() / 2), l_Unit->GetPosY() - l_Unit->GetSizeY() - 6 - 4);
-                    sf::Vector2f l_Coord = m_Window.mapCoordsToPixelFloat(v1, m_View);
-                    l_Sprite.setPosition((l_Coord.x - ((l_Text.getGlobalBounds().width + 8) / 2)), l_Coord.y);
-                    m_Window.draw(l_Sprite);
-
-                    l_Text.setColor(sf::Color::White);
-                    sf::Vector2f v12(l_Unit->GetPosX() + (l_Unit->GetSizeX() / 2), l_Unit->GetPosY() - l_Unit->GetSizeY());
-                    l_Coord = m_Window.mapCoordsToPixelFloat(v1, m_View);
-                    l_Text.setPosition((l_Coord.x - (l_Text.getGlobalBounds().width / 2)), l_Coord.y);
-                    m_Window.draw(l_Text);
-                }
-
-                /// NAME
-                if (l_Unit->IsPlayer())
-                {
-                    sf::Text l_Name(l_Unit->GetName(), *g_Font, SIZE_NAME_FONT);
-                    l_Name.setColor(sf::Color::White);
-                    sf::Vector2f l_View(l_Unit->GetPosX() + (l_Unit->GetSizeX() / 2), l_Unit->GetPosY());
-                    sf::Vector2f l_Coord = m_Window.mapCoordsToPixelFloat(l_View, m_View);
-                    l_Name.setPosition((l_Coord.x - (l_Name.getGlobalBounds().width / 2.0f)), l_Coord.y);
-
-                    m_Window.draw(l_Name);
-                }
-
-                /// Reset the view
-                m_Window.setView(m_View);
-            }
+                DrawUnitDetails(l_WorldObject->ToUnit());
         }
     }
-
-    /// Draw Entities
-    /*for (std::pair<TypeUnit, std::map<uint16, Unit*>> l_MapListUnit : (*l_ListUnitZone))
-    {
-        for (std::pair<uint16, Unit*> l_UnitPair : l_MapListUnit.second)
-        {
-            Unit* l_Unit = l_UnitPair.second;
-
-            if (l_Unit == nullptr)
-                continue;
-
-            /// SKIN PART
-            MovementHandler* l_MovementHandler = l_Unit->GetMovementHandler();
-            uint8 l_SpriteNb = (l_Unit->GetOrientation() * MAX_MOVEMENT_POSITION) + l_MovementHandler->GetMovementPosition();
-            if (l_MovementHandler->IsInAttack())
-                l_SpriteNb += (MAX_MOVEMENT_POSITION * Orientation::MAX);
-
-            SkinSprite l_SkinSprite = (*m_SkinsManager->GetSkinSprite(l_Unit->GetSkinID(), l_SpriteNb));
-            l_SkinSprite.setScale(sf::Vector2f(l_Unit->GetSkinZoomFactor(), l_Unit->GetSkinZoomFactor()));
-            l_SkinSprite.setColor(sf::Color(255, 255, 255, l_Unit->GetOpacity()));
-            l_SkinSprite.setPosition((float)l_Unit->GetPosX(), (float)l_Unit->GetPosY() - l_Unit->GetRealSizeY());
-            m_Window.draw(l_SkinSprite);
-
-            /// Set view to don t have a zoom on text
-            m_Window.setView(m_ViewFont);
-
-            /// TALK
-            if (!l_Unit->GetTalk().empty())
-            {
-                sf::Text l_Text(l_Unit->GetTalk(), *g_Font, SIZE_TALK_FONT);
-
-                TileSprite l_Sprite = m_InterfaceManager->GetField(l_Text.getGlobalBounds().width + 8, (float)g_Font->getLineSpacing(l_Text.getCharacterSize()) + 8);
-                sf::Vector2f v1(l_Unit->GetPosX() + (l_Unit->GetSizeX() / 2), l_Unit->GetPosY() - l_Unit->GetSizeY() - 6 - 4);
-                sf::Vector2i l_Coord = m_Window.mapCoordsToPixel(v1, m_View);
-                l_Sprite.setPosition((float)(l_Coord.x - ((l_Text.getGlobalBounds().width + 8) / 2)), (float)l_Coord.y);
-                m_Window.draw(l_Sprite);
-
-                l_Text.setColor(sf::Color::White);
-                sf::Vector2f v12(l_Unit->GetPosX() + (l_Unit->GetSizeX() / 2), l_Unit->GetPosY() - l_Unit->GetSizeY());
-                l_Coord = m_Window.mapCoordsToPixel(v1, m_View);
-                l_Text.setPosition((float)(l_Coord.x - (l_Text.getGlobalBounds().width / 2)), (float)l_Coord.y);
-                m_Window.draw(l_Text);
-            }
-
-            /// NAME
-            if (l_Unit->IsPlayer())
-            {
-                sf::Text l_Name(l_Unit->GetName(), *g_Font, SIZE_NAME_FONT);
-                l_Name.setColor(sf::Color::White);
-                sf::Vector2f v1(l_Unit->GetPosX() + (l_Unit->GetSizeX() / 2), l_Unit->GetPosY());
-                sf::Vector2i l_Coord = m_Window.mapCoordsToPixel(v1, m_View);
-                l_Name.setPosition((float)(l_Coord.x - (l_Name.getGlobalBounds().width / 2)), (float)l_Coord.y);
-                m_Window.draw(l_Name);
-            }
-
-            /// Reset the view
-            m_Window.setView(m_View);
-        }
-    }*/
 }
 
 void Graphics::DrawMap()
