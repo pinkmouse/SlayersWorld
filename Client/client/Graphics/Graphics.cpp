@@ -186,10 +186,10 @@ void Graphics::DrawMap()
                     continue;
 
                 TileSprite* l_TileSprite = m_TileSet->GetTileSprite(l_TileID);
-                l_TileSprite->setPosition((float)(*l_It2)->GetPosX() * TILE_SIZE, (float)(*l_It2)->GetPosY() * TILE_SIZE);
+                l_TileSprite->setPosition((float)(*l_It2)->GetPosX(), (float)(*l_It2)->GetPosY());
                 m_Window.draw(*l_TileSprite);
             }
-            for (uint8 l_LevelNb = 4; l_LevelNb < 6; ++l_LevelNb)
+            for (uint8 l_LevelNb = 4; l_LevelNb < 6; ++l_LevelNb) ///< Couches specials
             {
                 int16 l_TileID = (*l_It2)->GetTile(l_LevelNb);
 
@@ -197,12 +197,12 @@ void Graphics::DrawMap()
                     continue;
 
                 TileSprite* l_TileSprite = m_TileSet->GetTileSprite(l_TileID);
-                l_TileSprite->setPosition((float)(*l_It2)->GetPosX() * TILE_SIZE, (float)(*l_It2)->GetPosY() * TILE_SIZE);
+                l_TileSprite->setPosition((float)(*l_It2)->GetPosX(), (float)(*l_It2)->GetPosY());
                 (*l_It2)->SetSprite(l_TileSprite);
                 if (l_LevelNb == 4)
                     l_ListWorldObjectByZ[(*l_It2)->GetPosY()].push_back(*l_It2);
                 else
-                    l_ListWorldObjectByZ[(*l_It2)->GetPosY()].push_back((*l_It2));
+                    l_ListWorldObjectByZ[(*l_It2)->GetPosY() + (*l_It2)->GetSizeY()].push_back(*l_It2);
             }
 		}
 	}
@@ -247,7 +247,7 @@ void Graphics::DrawMap()
                     continue;
 
                 TileSprite* l_TileSprite = m_TileSet->GetTileSprite(l_TileID);
-                l_TileSprite->setPosition((float)(*l_It2)->GetPosX() * TILE_SIZE, (float)(*l_It2)->GetPosY() * TILE_SIZE);
+                l_TileSprite->setPosition((float)(*l_It2)->GetPosX(), (float)(*l_It2)->GetPosY());
                 m_Window.draw(*l_TileSprite);
             }
         }
