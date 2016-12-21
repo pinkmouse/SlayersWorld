@@ -1,6 +1,6 @@
 /*
-SQLyog Community v11.52 (32 bit)
-MySQL - 5.7.16-log : Database - characters
+SQLyog Community v12.3.2 (32 bit)
+MySQL - 5.7.17-log : Database - characters
 *********************************************************************
 */
 
@@ -33,8 +33,10 @@ CREATE TABLE `characters` (
   `posY` int(10) unsigned NOT NULL DEFAULT '0',
   `orientation` smallint(5) unsigned NOT NULL DEFAULT '0',
   `xp` int(10) unsigned NOT NULL DEFAULT '0',
+  `creationDate` datetime DEFAULT NULL,
+  `lastConnection` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`characterID`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
 
 /*Table structure for table `characters_point` */
 
@@ -61,6 +63,15 @@ CREATE TABLE `characters_respawn` (
   UNIQUE KEY `characterID` (`characterID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+/*Table structure for table `connection_logs` */
+
+DROP TABLE IF EXISTS `connection_logs`;
+
+CREATE TABLE `connection_logs` (
+  `accountID` int(10) unsigned DEFAULT NULL,
+  `connectionDate` datetime DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 /*Table structure for table `login` */
 
 DROP TABLE IF EXISTS `login`;
@@ -70,7 +81,7 @@ CREATE TABLE `login` (
   `login` varchar(50) NOT NULL,
   `password` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
