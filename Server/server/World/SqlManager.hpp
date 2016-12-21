@@ -40,6 +40,7 @@ public:
 	void AddNewPointsSetForPlayer(uint32);
     void SavePlayer(Player const*);
 	void UpdatePointsSet(Player const*);
+    void AddConnectionLogin(uint32);
 
     bool InitializeCreatureTemplate(CreatureManager*);
     bool InitializeCreature(CreatureManager*);

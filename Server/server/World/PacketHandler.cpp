@@ -171,6 +171,9 @@ void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldS
     /// Auth Success
     p_WorldSocket->SendAuthResponse(1); ///< Auth Success
 
+    /// Keep Log of Connection
+    g_SqlManager->AddConnectionLogin(l_Id);
+
     /// Creation Player
     Player* l_Player = g_SqlManager->GetNewPlayer(l_Id);
 

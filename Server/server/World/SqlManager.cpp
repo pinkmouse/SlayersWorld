@@ -90,6 +90,14 @@ int32 SqlManager::GetIDCharacter(uint16 p_AccountID)
     return l_ID;
 }
 
+void SqlManager::AddConnectionLogin(uint32 p_AccountID)
+{
+    std::string l_Query = "insert into `connection_logs` (`accountID`) values('" + std::to_string(p_AccountID) + "');";
+    mysql_query(&m_MysqlCharacters, l_Query.c_str());
+    l_Query = "UPDATE `characters` SET `lastConnection` = NOW();";
+    mysql_query(&m_MysqlCharacters, l_Query.c_str());
+}
+
 std::string SqlManager::GetLoginName(uint32 p_AccountID)
 {
     std::string l_Query = "SELECT `login` FROM `login` WHERE `id` = '" + std::to_string(p_AccountID) + "';";
@@ -211,7 +219,7 @@ WorldPosition SqlManager::GetRespawnPositionForPlayer(uint32 p_PlayerID)
 
 void SqlManager::AddNewPointsSetForPlayer(uint32 p_PlayerID)
 {
-	std::string l_Query = "insert into `characters_point` (`characterID`, `free_point`, `force`, `stamina`, `dexterity`) values('" + std::to_string(p_PlayerID) + "', '0', '0', '0', '0');";
+	std::string l_Query = "INSERT INTO `characters_point` (`characterID`, `free_point`, `force`, `stamina`, `dexterity`) values('" + std::to_string(p_PlayerID) + "', '0', '0', '0', '0');";
 	mysql_query(&m_MysqlCharacters, l_Query.c_str());
 }
 
