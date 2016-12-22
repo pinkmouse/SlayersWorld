@@ -8,6 +8,7 @@ void Player::InitializeCommands()
     m_CmdHandleMap["where"] = &Player::HandleCommandWhere;
     m_CmdHandleMap["level"] = &Player::HandleCommandLevel;
 	m_CmdHandleMap["points"] = &Player::HandleCommandAddPoint;
+    m_CmdHandleMap["npc"] = &Player::HandleCommandCreature;
 }
 
 bool Player::HandleCommandSkin(std::vector<std::string> p_ListCmd)
@@ -56,6 +57,22 @@ bool Player::HandleCommandLevel(std::vector<std::string> p_ListCmd)
     SendMsg(l_Name + " est de niveau " + std::to_string(l_Player->GetLevel()));
 
     return true;
+}
+
+bool Player::HandleCommandCreature(std::vector<std::string> p_ListCmd)
+{
+    if (p_ListCmd.empty())
+        return false;
+
+    if (p_ListCmd[0] == "add" && p_ListCmd.size() < 3)
+    {
+        uint8 l_CreatureEntry = atoi(p_ListCmd[1].c_str());
+
+        uint16 l_Id = g_SqlManager->AddNewCreature(GetMapID(), l_CreatureEntry, GetPosX(), GetPosY());
+        Creature* l_Creature = new Creature(l_Id, l_CreatureEntry, g_SqlManager->GetCreatureTemplate(l_CreatureEntry), GetMapID(), GetPosX(), GetPosY());
+        Map* l_Map = g_MapManager->GetMap(GetMapID());
+        l_Map->AddUnit(l_Creature);
+    }
 }
 
 bool Player::HandleCommandAddPoint(std::vector<std::string> p_ListCmd)

@@ -270,6 +270,67 @@ void SqlManager::UpdatePointsSet(Player const* p_Player)
 	mysql_query(&m_MysqlCharacters, l_Query.c_str());
 }
 
+CreatureTemplate SqlManager::GetCreatureTemplate(uint16 p_Entry)
+{
+    std::string l_Query = "SELECT `skinID`, `name`, `level`, `force`, `stamina`, `dexterity`, `xp`, `state`, `maxRay`, `respawnTime`, `rank`, `aiType` FROM creature_template WHERE `entry` = '" + std::to_string(p_Entry) + "'";
+    mysql_query(&m_MysqlWorld, l_Query.c_str());
+
+    uint8 l_SkinID = 0;
+    std::string l_Name = "";
+    uint8 l_Lvl = 0;
+    uint8 l_Force = 0;
+    uint8 l_Stamina = 0;
+    uint8 l_Dexterity = 0;
+    uint8 l_Xp = 0;
+    uint8 l_State = 0;
+    uint16 l_MaxRay = 0;
+    uint16 l_RespawnTime = 0;
+    uint8 l_Rank = 0;
+    uint8 l_AiType = 0;
+
+    MYSQL_RES *l_Result = NULL;
+    MYSQL_ROW l_Row;
+    l_Result = mysql_use_result(&m_MysqlWorld);
+    while ((l_Row = mysql_fetch_row(l_Result)))
+    {
+        l_SkinID = atoi(l_Row[0]);
+        l_Name = std::string(l_Row[1]);
+        l_Lvl = atoi(l_Row[2]);
+        l_Force = atoi(l_Row[3]);
+        l_Stamina = atoi(l_Row[4]);
+        l_Dexterity = atoi(l_Row[5]);
+        l_Xp = atoi(l_Row[6]);
+        l_State = atoi(l_Row[7]);
+        l_MaxRay = atoi(l_Row[8]);
+        l_RespawnTime = atoi(l_Row[9]);
+        l_Rank = atoi(l_Row[10]);
+        l_AiType = atoi(l_Row[11]);
+        mysql_free_result(l_Result);
+        return CreatureTemplate(p_Entry, l_SkinID, l_Name, l_Lvl, l_Force, l_Stamina, l_Dexterity, l_Xp, l_State, l_MaxRay, l_RespawnTime, l_Rank, l_AiType);
+    }
+    mysql_free_result(l_Result);
+
+    return CreatureTemplate();
+}
+
+uint16 SqlManager::AddNewCreature(uint16 p_Map, uint16 p_Entry, uint32 p_PosX, uint32 p_PosY)
+{
+    std::string l_Query = "insert  into `creature`(`mapID`,`entry`,`posX`,`posY`) values('" + std::to_string(p_Map) + "', '" + std::to_string(p_Entry) + "', '" + std::to_string(p_PosX) + "', '" + std::to_string(p_PosY) + "')";
+    mysql_query(&m_MysqlWorld, l_Query.c_str());
+    l_Query = "SELECT MAX(`id`) FROM `creature`";
+    mysql_query(&m_MysqlWorld, l_Query.c_str());
+
+    uint16 l_Id = 0;
+    MYSQL_RES *l_Result = NULL;
+    MYSQL_ROW l_Row;
+    l_Result = mysql_use_result(&m_MysqlWorld);
+    while ((l_Row = mysql_fetch_row(l_Result)))
+    {
+        l_Id = atoi(l_Row[0]);
+    }
+    mysql_free_result(l_Result);
+    return l_Id;
+}
 bool SqlManager::InitializeCreatureTemplate(CreatureManager* p_CreatureManager)
 {
     std::string l_Query = "SELECT `entry`, `skinID`, `name`, `level`, `force`, `stamina`, `dexterity`, `xp`, `state`, `maxRay`, `respawnTime`, `rank`, `aiType` FROM creature_template";

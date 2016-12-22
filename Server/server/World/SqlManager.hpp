@@ -43,6 +43,8 @@ public:
     void AddConnectionLogin(uint32);
 
     bool InitializeCreatureTemplate(CreatureManager*);
+    CreatureTemplate GetCreatureTemplate(uint16);
+    uint16 AddNewCreature(uint16, uint16, uint32, uint32);
     bool InitializeCreature(CreatureManager*);
     std::map<uint8, uint16> GetXpLevel();
     int32 GetPlayerID(const std::string &);
