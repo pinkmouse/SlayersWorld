@@ -148,7 +148,10 @@ void Graphics::DrawWorldObjects(std::map<uint32, std::vector<WorldObject*> > *p_
             if (l_WorldObject == nullptr)
                 continue;
 
-            l_WorldObject->GetSprite()->setPosition((float)l_WorldObject->GetPosX(), (float)l_WorldObject->GetPosY() - l_WorldObject->GetSizeY());
+            if (l_WorldObject->GetType() == TypeWorldObject::UNIT)
+                l_WorldObject->GetSprite()->setPosition((float)l_WorldObject->GetPosX(), (float)l_WorldObject->GetPosY() - l_WorldObject->GetSizeY());
+            else
+                l_WorldObject->GetSprite()->setPosition((float)l_WorldObject->GetPosX(), (float)l_WorldObject->GetPosY());
             m_Window.draw(*l_WorldObject->GetSprite());
 
             /// Draw specificity of Unit (name, text, dmg ...)
@@ -186,6 +189,10 @@ void Graphics::DrawMap()
                 if (l_TileID < 0)
                     continue;
 
+                //if ((*l_It2)->GetPosXCase() == 37 && (*l_It2)->GetPosYCase() == 177)
+                  //  printf("------> 2 TileID = %d\n", l_TileID);
+                //if ((*l_It2)->GetPosXCase() == 37 && (*l_It2)->GetPosYCase() == 178)
+                  //  printf("------> TileID = %d\n", l_TileID);
                 TileSprite* l_TileSprite = m_TileSet->GetTileSprite(l_TileID);
                 l_TileSprite->setPosition((float)(*l_It2)->GetPosX(), (float)(*l_It2)->GetPosY());
                 m_Window.draw(*l_TileSprite);

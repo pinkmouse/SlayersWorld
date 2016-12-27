@@ -187,7 +187,7 @@ bool Map::InitializeMap(const std::string & p_FileName)
 	std::string l_MapPath = MAP_FOLDER + p_FileName;
 
 	l_File = fopen(l_MapPath.c_str(), "r");
-	if (l_File == nullptr)
+    if (l_File == nullptr)
 	{
 		printf("Map File %s not open", l_MapPath.c_str());
 		return false;
@@ -199,22 +199,47 @@ bool Map::InitializeMap(const std::string & p_FileName)
 	m_SizeX = l_Param.l_Size[0];
 	m_SizeY = l_Param.l_Size[1];
 
-	/// Read Map
-	for (uint16 i = 0; i < (m_SizeX * m_SizeY); ++i)
+    /// Read Map
+    int l_NbCase = m_SizeX * m_SizeY;
+    t_Case *Buffer = (t_Case*)malloc(sizeof(t_Case) * l_NbCase);
+    fread(Buffer, sizeof(*Buffer), l_NbCase, l_File);
+
+    for (uint16 i = 0; i < (m_SizeX * m_SizeY); ++i)
+    {
+        Case* l_Case = new Case(i, i % m_SizeX, i / m_SizeX);
+        l_Case->SetMapID(m_ID);
+
+        for (int j = 0; j < l_Case->GetMaxTileLevel(); ++j)
+            l_Case->SetTile(j, Buffer[i].l_TabTileNb[j]);
+        l_Case->SetBlock(Buffer[i].l_Block);
+
+        uint16 l_DrawingSquareID = GetSquareID(l_Case->GetPosXCase(), l_Case->GetPosYCase());
+
+        m_ListCase.push_back(l_Case);
+        m_MapListCase[l_DrawingSquareID].push_back(l_Case);
+    }
+
+    /// Following code are not working for big map because of buffer
+	/*for (uint16 i = 0; i < (m_SizeX * m_SizeY); ++i)
 	{
 		t_Case l_FluxCase;
+        int l_NbCase = m_SizeX * m_SizeY;
 		fread(&l_FluxCase, sizeof(l_FluxCase), 1, l_File);
+
 		Case* l_Case = new Case(i, i % m_SizeX, i / m_SizeX);
         l_Case->SetMapID(m_ID);
+        if (i > 35550)
+            printf("----- Case %d tile = %i\n", i, l_FluxCase.l_TabTileNb[0]);
 
 		for (int j = 0; j < l_Case->GetMaxTileLevel(); ++j)
 			l_Case->SetTile(j, l_FluxCase.l_TabTileNb[j]);
 		l_Case->SetBlock(l_FluxCase.l_Block);
 
 		uint16 l_DrawingSquareID = GetSquareID(l_Case->GetPosXCase(), l_Case->GetPosYCase());
+
 		m_ListCase.push_back(l_Case);
 		m_MapListCase[l_DrawingSquareID].push_back(l_Case);
-	}
+	}*/
 	fclose(l_File);
 
 	return true;
