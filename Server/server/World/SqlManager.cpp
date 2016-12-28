@@ -73,7 +73,7 @@ int32 SqlManager::GetIDLogin(std::string p_Login, std::string p_Password)
     return l_ID;
 }
 
-int32 SqlManager::GetIDCharacter(uint16 p_AccountID)
+int32 SqlManager::GetIDCharacter(uint32 p_AccountID)
 {
     std::string l_Query = "SELECT `characterID` FROM `characters` WHERE `accountID` = '" + std::to_string(p_AccountID) + "'";
     mysql_query(&m_MysqlCharacters, l_Query.c_str());
@@ -117,7 +117,7 @@ std::string SqlManager::GetLoginName(uint32 p_AccountID)
 
 void SqlManager::AddNewPlayer(uint32 p_AccountID)
 {
-    std::string l_Query = "insert into `characters` (`accountID`, `name`, `skinID`, `level`, `health`, `alignment`, `mapID`, `posX`, `posY`, `orientation`, `xp`) values('" + std::to_string(p_AccountID) + "', '" + GetLoginName(p_AccountID) + "','0','1','100','0','0','200','200','0','0');";
+    std::string l_Query = "insert into `characters` (`accountID`, `name`, `skinID`, `level`, `health`, `alignment`, `mapID`, `posX`, `posY`, `orientation`, `xp`) values('" + std::to_string(p_AccountID) + "', '" + GetLoginName(p_AccountID) + "','0','1','100','0','0','256','296','0','0');";
 
     mysql_query(&m_MysqlCharacters, l_Query.c_str());
 }
@@ -169,7 +169,8 @@ Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
         return GetNewPlayer(p_AccountID);
     }
 
-    l_Player = new Player(l_ID, l_Name, l_Lvl, l_Health, l_SkinID, l_MapID, l_PosX, l_PosY, (Orientation)l_Orientation, l_Xp);
+    eAccessType l_PlayerAccessType = GetAccessType(p_AccountID);
+    l_Player = new Player(l_ID, l_Name, l_Lvl, l_Health, l_SkinID, l_MapID, l_PosX, l_PosY, (Orientation)l_Orientation, l_Xp, l_PlayerAccessType);
     l_Player->SetAlignment(l_Alignment);
 	l_Player->SetPointsSet(GetPointsSetForPlayer(l_ID));
     l_Player->SetRespawnPosition(GetRespawnPositionForPlayer(l_ID));
@@ -179,7 +180,7 @@ Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
 
 void SqlManager::AddNewRespawnPositionForPlayer(uint32 p_PlayerID)
 {
-    std::string l_Query = "insert into `characters_respawn` (`characterID`, `posX`, `posY`, `mapID`, `orientation`) values('" + std::to_string(p_PlayerID) + "', '300', '200', '0', '0');";
+    std::string l_Query = "insert into `characters_respawn` (`characterID`, `posX`, `posY`, `mapID`, `orientation`) values('" + std::to_string(p_PlayerID) + "', '256', '296', '0', '0');";
     mysql_query(&m_MysqlCharacters, l_Query.c_str());
 }
 
@@ -492,4 +493,21 @@ int32 SqlManager::GetPlayerID(const std::string & p_PlayerName)
     mysql_free_result(l_Result);
 
     return l_PlayerID;
+}
+
+eAccessType SqlManager::GetAccessType(uint32 p_AccountID)
+{
+    std::string l_Query = "SELECT `accessType` FROM `login_access` WHERE `accountID` = '" + std::to_string(p_AccountID) + "'";
+    mysql_query(&m_MysqlCharacters, l_Query.c_str());
+
+    int8 l_ID = 0;
+    MYSQL_RES *l_Result = NULL;
+    MYSQL_ROW l_Row;
+
+    l_Result = mysql_use_result(&m_MysqlCharacters);
+    while ((l_Row = mysql_fetch_row(l_Result)))
+        l_ID = atoi(l_Row[0]);
+
+    mysql_free_result(l_Result);
+    return (eAccessType)l_ID;
 }

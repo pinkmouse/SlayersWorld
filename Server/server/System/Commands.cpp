@@ -4,11 +4,16 @@
 
 void Player::InitializeCommands()
 {
-    m_CmdHandleMap["skin"] = &Player::HandleCommandSkin;
-    m_CmdHandleMap["where"] = &Player::HandleCommandWhere;
-    m_CmdHandleMap["level"] = &Player::HandleCommandLevel;
-	m_CmdHandleMap["points"] = &Player::HandleCommandAddPoint;
-    m_CmdHandleMap["npc"] = &Player::HandleCommandCreature;
+    m_CmdHandleMap["skin"].first = eAccessType::Dummy;
+    m_CmdHandleMap["skin"].second = &Player::HandleCommandSkin;
+    m_CmdHandleMap["where"].first = eAccessType::Dummy;
+    m_CmdHandleMap["where"].second = &Player::HandleCommandWhere;
+    m_CmdHandleMap["level"].first = eAccessType::Dummy;
+    m_CmdHandleMap["level"].second = &Player::HandleCommandLevel;
+    m_CmdHandleMap["points"].first = eAccessType::Dummy;
+	m_CmdHandleMap["points"].second = &Player::HandleCommandAddPoint;
+    m_CmdHandleMap["npc"].first = eAccessType::Moderator;
+    m_CmdHandleMap["npc"].second = &Player::HandleCommandCreature;
 }
 
 bool Player::HandleCommandSkin(std::vector<std::string> p_ListCmd)
@@ -73,6 +78,7 @@ bool Player::HandleCommandCreature(std::vector<std::string> p_ListCmd)
         Map* l_Map = g_MapManager->GetMap(GetMapID());
         l_Map->AddUnit(l_Creature);
     }
+    return true;
 }
 
 bool Player::HandleCommandAddPoint(std::vector<std::string> p_ListCmd)

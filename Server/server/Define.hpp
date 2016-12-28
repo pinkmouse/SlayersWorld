@@ -61,6 +61,13 @@ enum eActionType
     StopAttack = 3
 };
 
+enum eAccessType
+{
+    Dummy = 0,
+    Moderator = 1,
+    Administrator = 2
+};
+
 struct Position 
 {
     uint32 m_X;

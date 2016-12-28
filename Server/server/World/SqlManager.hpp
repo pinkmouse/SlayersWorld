@@ -26,7 +26,7 @@ public:
     bool InitializeWorld(std::string, std::string, std::string, std::string, std::string);
 
     int32 GetIDLogin(std::string, std::string);
-    int32 GetIDCharacter(uint16 p_AccountID);
+    int32 GetIDCharacter(uint32);
     void AddNewAccount(std::string, std::string);
     bool IsExistingAccound(std::string);
     Player* GetNewPlayer(uint32);
@@ -35,6 +35,8 @@ public:
     int16 GetLevel(const std::string &);
     WorldPosition GetPosition(const std::string &);
     WorldPosition GetRespawnPositionForPlayer(uint32);
+    eAccessType GetAccessType(uint32);
+
     void AddNewRespawnPositionForPlayer(uint32);
 	PointsSet GetPointsSetForPlayer(uint32);
 	void AddNewPointsSetForPlayer(uint32);

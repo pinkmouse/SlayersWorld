@@ -7,7 +7,7 @@ class WorldSocket;
 class Player : public Unit
 {
 public:
-    Player(int32, std::string, uint8, uint8, uint8, uint16, uint32, uint32, Orientation, uint32);
+    Player(int32, std::string, uint8, uint8, uint8, uint16, uint32, uint32, Orientation, uint32, eAccessType);
     ~Player();
     WorldSocket* GetSession() const;
     void SetSession(WorldSocket*);
@@ -15,6 +15,7 @@ public:
     void SetAlignment(const uint8 &);
     uint8 GetAlignment() const;
     uint32 GetXp() const;
+    eAccessType GetAccessType() const;
 
     void Update(sf::Time);
     void UpdateNewSquares(uint16, uint16, bool p_UpdateAll = false);
@@ -40,8 +41,9 @@ private:
     uint8 m_Alignment;
     uint32 m_Xp;
     bool m_Initilize;
+    eAccessType m_AccessType;
 
     typedef bool(Player::*m_Func)(std::vector<std::string>);
-    std::map<std::string, m_Func> m_CmdHandleMap;
+    std::map < std::string, std::pair < eAccessType,  m_Func > > m_CmdHandleMap;
 };
 

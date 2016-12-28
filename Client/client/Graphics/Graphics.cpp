@@ -32,8 +32,8 @@ void Graphics::CreateWindow(uint32 p_X, uint32 p_Y, float p_Zoom)
     m_ViewInterface = m_Window.getDefaultView();
 	m_View.zoom(p_Zoom);
 	m_Window.setView(m_View);
-    //m_Window.setFramerateLimit(40);
-    m_Window.setVerticalSyncEnabled(true);
+    m_Window.setFramerateLimit(40);
+    //m_Window.setVerticalSyncEnabled(true);
 
 	m_TileSet = new TileSet();
 	m_TileSet->BuildSprites();
@@ -189,10 +189,6 @@ void Graphics::DrawMap()
                 if (l_TileID < 0)
                     continue;
 
-                //if ((*l_It2)->GetPosXCase() == 37 && (*l_It2)->GetPosYCase() == 177)
-                  //  printf("------> 2 TileID = %d\n", l_TileID);
-                //if ((*l_It2)->GetPosXCase() == 37 && (*l_It2)->GetPosYCase() == 178)
-                  //  printf("------> TileID = %d\n", l_TileID);
                 TileSprite* l_TileSprite = m_TileSet->GetTileSprite(l_TileID);
                 l_TileSprite->setPosition((float)(*l_It2)->GetPosX(), (float)(*l_It2)->GetPosY());
                 m_Window.draw(*l_TileSprite);
@@ -207,10 +203,10 @@ void Graphics::DrawMap()
                 TileSprite* l_TileSprite = m_TileSet->GetTileSprite(l_TileID);
                 l_TileSprite->setPosition((float)(*l_It2)->GetPosX(), (float)(*l_It2)->GetPosY());
                 (*l_It2)->SetSprite(l_TileSprite);
-                if (l_LevelNb == 4)
-                    l_ListWorldObjectByZ[(*l_It2)->GetPosY()].push_back(*l_It2);
-                else
+                if (l_LevelNb == 4) ///< + GetSizeY because tile of Unit are set to be 0 at foot cf : DrawWorldObjects UNIT
                     l_ListWorldObjectByZ[(*l_It2)->GetPosY() + (*l_It2)->GetSizeY()].push_back(*l_It2);
+                else
+                    l_ListWorldObjectByZ[(*l_It2)->GetPosY() + ((*l_It2)->GetSizeY() * 2)].push_back(*l_It2);
             }
 		}
 	}

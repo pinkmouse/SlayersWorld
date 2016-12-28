@@ -4,8 +4,9 @@
 #include "../Map/Map.hpp"
 #include "../Global.hpp"
 
-Player::Player(int32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_Health, uint8 p_SkinID, uint16 p_MapID, uint32 p_PosX, uint32 p_PosY, Orientation p_Orientation, uint32 p_Xp) :
-    Unit(p_ID, TypeUnit::PLAYER)
+Player::Player(int32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_Health, uint8 p_SkinID, uint16 p_MapID, uint32 p_PosX, uint32 p_PosY, Orientation p_Orientation, uint32 p_Xp, eAccessType p_AccessType) :
+    Unit(p_ID, TypeUnit::PLAYER),
+    m_AccessType(p_AccessType)
 {
     InitializeCommands();
     m_Name = p_Name;
@@ -135,7 +136,10 @@ bool Player::CheckCommand(const std::string & p_String)
         }
         l_CmdList.push_back(l_Cmd.c_str());
 
-        m_Func l_Fun = m_CmdHandleMap[l_CmdList[0]];
+        if (GetAccessType() < m_CmdHandleMap[l_CmdList[0]].first)
+            return false;
+
+        m_Func l_Fun = m_CmdHandleMap[l_CmdList[0]].second;
         if (l_Fun != nullptr)
         {
             l_CmdList.erase(l_CmdList.begin());
@@ -186,4 +190,9 @@ void Player::Respawn()
 
     SetHealth(MAX_HEALTH);
     m_ResTimer = 0;
+}
+
+eAccessType Player::GetAccessType() const
+{
+    return m_AccessType;
 }
