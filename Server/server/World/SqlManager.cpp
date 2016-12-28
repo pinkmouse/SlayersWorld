@@ -94,7 +94,7 @@ void SqlManager::AddConnectionLogin(uint32 p_AccountID)
 {
     std::string l_Query = "insert into `connection_logs` (`accountID`) values('" + std::to_string(p_AccountID) + "');";
     mysql_query(&m_MysqlCharacters, l_Query.c_str());
-    l_Query = "UPDATE `characters` SET `lastConnection` = NOW();";
+    l_Query = "UPDATE `characters` SET `lastConnection` = NOW() WHERE accountID = " + std::to_string(p_AccountID) + ";";
     mysql_query(&m_MysqlCharacters, l_Query.c_str());
 }
 
