@@ -109,7 +109,7 @@ void Unit::UpdateGossip(sf::Time p_Diff)
         if (l_Gossip->m_GossipTimer >= l_Gossip->m_Data1 * IN_MICROSECOND)
         {
             Talk(l_Gossip->m_Msg);
-            l_Gossip->m_GossipTimer -= REGEN_HEALTH_TIMER * 1000;
+            l_Gossip->m_GossipTimer -= l_Gossip->m_Data1 * IN_MICROSECOND;
         }
     }
 }
@@ -529,8 +529,8 @@ void Unit::SetGossipList(std::vector<Gossip>* p_GossipList)
 {
    for (Gossip l_Gossip : *p_GossipList)
     {
-        Gossip* l_NewGossip = new Gossip(l_Gossip.m_ID, l_Gossip.m_TypeUnit, l_Gossip.m_UnitEntry, l_Gossip.m_GossipType, l_Gossip.m_Data1, l_Gossip.m_Msg);
-        m_ListGossip[l_Gossip.m_GossipType].push_back(l_NewGossip);
+       /// TODO Free on delete Unit
+        m_ListGossip[l_Gossip.m_GossipType].push_back(new Gossip(l_Gossip.m_ID, l_Gossip.m_TypeUnit, l_Gossip.m_UnitEntry, l_Gossip.m_GossipType, l_Gossip.m_Data1, l_Gossip.m_Msg));
     }
 
 }

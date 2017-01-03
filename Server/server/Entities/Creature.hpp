@@ -19,14 +19,14 @@ public:
     void Respawn();
     void Unspawn();
     void SetHealth(const uint8 &);
-
+    void ResetRandMovementTime(bool);
     uint32 GetXpEarn() const;
 
 private:
     uint16 m_Entry;
     uint64 m_DiffMovementTime;
     CreatureTemplate m_CreatureTemplate;
-    uint16 m_RandMovementTime;
+    float m_RandMovementTime;
     bool m_Evade;
 };
 

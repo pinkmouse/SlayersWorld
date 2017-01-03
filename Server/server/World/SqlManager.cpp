@@ -273,7 +273,7 @@ void SqlManager::UpdatePointsSet(Player const* p_Player)
 
 CreatureTemplate SqlManager::GetCreatureTemplate(uint16 p_Entry)
 {
-    std::string l_Query = "SELECT `skinID`, `name`, `level`, `force`, `stamina`, `dexterity`, `xp`, `state`, `maxRay`, `respawnTime`, `rank`, `aiType`, `faction` FROM creature_template WHERE `entry` = '" + std::to_string(p_Entry) + "'";
+    std::string l_Query = "SELECT `skinID`, `name`, `level`, `force`, `stamina`, `dexterity`, `xp`, `state`, `maxRay`, `movingTimeMin`, `movingTimeMax`, `stopTimeMin`, `stopTimeMax`, `respawnTime`, `rank`, `aiType`, `faction` FROM creature_template WHERE `entry` = '" + std::to_string(p_Entry) + "'";
     mysql_query(&m_MysqlWorld, l_Query.c_str());
 
     uint8 l_SkinID = 0;
@@ -285,6 +285,10 @@ CreatureTemplate SqlManager::GetCreatureTemplate(uint16 p_Entry)
     uint8 l_Xp = 0;
     uint8 l_State = 0;
     uint16 l_MaxRay = 0;
+    float l_MovingTimeMin = 0.0f;
+    float l_MovingTimeMax = 0.0f;
+    float l_StopTimeMin = 0.0f;
+    float l_StopTimeMax = 0.0f;
     uint16 l_RespawnTime = 0;
     uint8 l_Rank = 0;
     uint8 l_AiType = 0;
@@ -305,11 +309,15 @@ CreatureTemplate SqlManager::GetCreatureTemplate(uint16 p_Entry)
         l_State = atoi(l_Row[7]);
         l_MaxRay = atoi(l_Row[8]);
         l_RespawnTime = atoi(l_Row[9]);
-        l_Rank = atoi(l_Row[10]);
-        l_AiType = atoi(l_Row[11]);
-        l_Faction = atoi(l_Row[12]);
-        mysql_free_result(l_Result);
-        return CreatureTemplate(p_Entry, l_SkinID, l_Name, l_Lvl, l_Force, l_Stamina, l_Dexterity, l_Xp, l_State, l_MaxRay, l_RespawnTime, l_Rank, l_AiType, (eFactionType)l_Faction);
+        l_MovingTimeMin = atof(l_Row[10]);
+        l_MovingTimeMax = atof(l_Row[11]);
+        l_StopTimeMin = atof(l_Row[12]);
+        l_StopTimeMax = atof(l_Row[13]);
+        l_RespawnTime = atoi(l_Row[14]);
+        l_Rank = atoi(l_Row[15]);
+        l_AiType = atoi(l_Row[16]);
+        l_Faction = atoi(l_Row[17]);
+        return CreatureTemplate(p_Entry, l_SkinID, l_Name, l_Lvl, l_Force, l_Stamina, l_Dexterity, l_Xp, l_State, l_MaxRay, l_MovingTimeMin, l_MovingTimeMax, l_StopTimeMin, l_StopTimeMax, l_RespawnTime, l_Rank, l_AiType, (eFactionType)l_Faction);
     }
     mysql_free_result(l_Result);
 
@@ -337,7 +345,7 @@ uint16 SqlManager::AddNewCreature(uint16 p_Map, uint16 p_Entry, uint32 p_PosX, u
 
 bool SqlManager::InitializeCreatureTemplate(UnitManager* p_CreatureManager)
 {
-    std::string l_Query = "SELECT `entry`, `skinID`, `name`, `level`, `force`, `stamina`, `dexterity`, `xp`, `state`, `maxRay`, `respawnTime`, `rank`, `aiType`, `faction` FROM creature_template";
+    std::string l_Query = "SELECT `entry`, `skinID`, `name`, `level`, `force`, `stamina`, `dexterity`, `xp`, `state`, `maxRay`, `movingTimeMin`, `movingTimeMax`, `stopTimeMin`, `stopTimeMax`, `respawnTime`, `rank`, `aiType`, `faction` FROM creature_template";
     mysql_query(&m_MysqlWorld, l_Query.c_str());
 
     uint32 l_Entry = 0;
@@ -350,6 +358,10 @@ bool SqlManager::InitializeCreatureTemplate(UnitManager* p_CreatureManager)
     uint8 l_Xp = 0;
     uint8 l_State = 0;
     uint16 l_MaxRay = 0;
+    float l_MovingTimeMin = 0.0f;
+    float l_MovingTimeMax = 0.0f;
+    float l_StopTimeMin = 0.0f;
+    float l_StopTimeMax = 0.0f;
     uint16 l_RespawnTime = 0;
     uint8 l_Rank = 0;
     uint8 l_AiType = 0;
@@ -370,11 +382,15 @@ bool SqlManager::InitializeCreatureTemplate(UnitManager* p_CreatureManager)
         l_Xp = atoi(l_Row[7]);
         l_State = atoi(l_Row[8]);
         l_MaxRay = atoi(l_Row[9]);
-        l_RespawnTime = atoi(l_Row[10]);
-        l_Rank = atoi(l_Row[11]);
-        l_AiType = atoi(l_Row[12]);
-        l_Faction = atoi(l_Row[13]);
-        p_CreatureManager->AddCreatureTemplate(CreatureTemplate(l_Entry, l_SkinID, l_Name, l_Lvl, l_Force, l_Stamina, l_Dexterity, l_Xp, l_State, l_MaxRay, l_RespawnTime, l_Rank, l_AiType, (eFactionType)l_Faction));
+        l_MovingTimeMin = atof(l_Row[10]);
+        l_MovingTimeMax = atof(l_Row[11]);
+        l_StopTimeMin = atof(l_Row[12]);
+        l_StopTimeMax = atof(l_Row[13]);
+        l_RespawnTime = atoi(l_Row[14]);
+        l_Rank = atoi(l_Row[15]);
+        l_AiType = atoi(l_Row[16]);
+        l_Faction = atoi(l_Row[17]);
+        p_CreatureManager->AddCreatureTemplate(CreatureTemplate(l_Entry, l_SkinID, l_Name, l_Lvl, l_Force, l_Stamina, l_Dexterity, l_Xp, l_State, l_MaxRay, l_MovingTimeMin, l_MovingTimeMax, l_StopTimeMin, l_StopTimeMax, l_RespawnTime, l_Rank, l_AiType, (eFactionType)l_Faction));
     }
     mysql_free_result(l_Result);
 
@@ -404,8 +420,7 @@ bool SqlManager::InitializeGossip(UnitManager* p_CreatureManager)
         l_GossipType = atoi(l_Row[3]);
         l_Data1 = atoi(l_Row[4]);
         l_Msg = std::string(l_Row[5]);
-        Gossip l_Gossip(l_ID, (TypeUnit)l_TypeUnit, l_UnitEntry, (eGossipType)l_GossipType, l_Data1, l_Msg);
-        p_CreatureManager->AddGossip(l_Gossip);
+        p_CreatureManager->AddGossip(Gossip(l_ID, (TypeUnit)l_TypeUnit, l_UnitEntry, (eGossipType)l_GossipType, l_Data1, l_Msg));
     }
     mysql_free_result(l_Result);
 

@@ -201,14 +201,6 @@ bool Unit::IsInRayVisible(Unit* p_Unit)
         if (l_Id == l_UnitSquareID)
             return true;
     }
-    printf("----> Square Set = \n");
-    for (uint16 l_Id : l_SquareSetID)
-    {
-        printf(" %d ", l_Id);
-    }
-    printf("\n");
-    printf("----> Unit Square = %d\n", l_UnitSquareID);
-
     return false;
 }
 

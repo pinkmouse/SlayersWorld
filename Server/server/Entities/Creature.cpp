@@ -13,13 +13,12 @@ Creature::Creature(uint16 p_ID, uint16 p_Entry, CreatureTemplate p_CreatureTempl
     m_Level = p_CreatureTemplate.m_Level;
     m_Name = p_CreatureTemplate.m_Name;
     m_CreatureTemplate = p_CreatureTemplate;
-    m_DiffMovementTime = 0;
 
     m_RespawnPosition.SetMapID(p_MapID);
     m_RespawnPosition.SetPosX(p_PosX);
     m_RespawnPosition.SetPosY(p_PosY);
     m_MovementHandler->SetSpeed(0.5f);
-    m_RandMovementTime = rand() % 100;
+    ResetRandMovementTime(false);
 
 	SetPointsSet(PointsSet(m_CreatureTemplate.m_Force, m_CreatureTemplate.m_Stamina, m_CreatureTemplate.m_Dexterity));
     m_RespawnTime = m_CreatureTemplate.m_RespawnTime * IN_MILLISECOND;
@@ -32,6 +31,11 @@ Creature::~Creature()
 
 void Creature::RandMoving()
 {
+    ResetRandMovementTime(true);
+
+    if (m_RandMovementTime <= 0)
+        return;
+
     uint8 l_Orientation = rand() % 4;
     if (GetDistance(m_RespawnPosition.GetPosition()) > CaseToPixel(m_CreatureTemplate.m_MaxRay))
         l_Orientation = GetOrientationToPoint(m_RespawnPosition.GetPosition());
@@ -80,23 +84,21 @@ void Creature::UpdatePassive(sf::Time p_Diff)
 {
     if (!IsInCombat())
     {
-        while (m_DiffMovementTime > (1.5f * IN_MICROSECOND) + (((1.5f * IN_MICROSECOND) / 100.0f) * m_RandMovementTime)) ///< 1000 because microsecond
+        while (m_DiffMovementTime > m_RandMovementTime * IN_MICROSECOND) ///< 1000 because microsecond
         {
             if (m_MovementHandler->IsInMovement())
+            {
+                ResetRandMovementTime(false);
                 StopMovement();
+            }
             else
                 RandMoving();
-            m_DiffMovementTime = 0;
-            m_RandMovementTime = rand() % 100;
         }
     }
     else
     {
-        while (m_DiffMovementTime > (1.5f * IN_MICROSECOND)) ///< 1000 because microsecond
-        {
+        while (m_DiffMovementTime > m_RandMovementTime * IN_MICROSECOND) ///< 1000 because microsecond
             RandMoving();
-            m_DiffMovementTime = 0;
-        }
     }
 }
 
@@ -110,10 +112,11 @@ void Creature::UpdateDefensive(sf::Time p_Diff)
         if (m_MovementHandler->IsInAttack() || m_MovementHandler->IsStopingAttack())
             return;
 
-        while (m_DiffMovementTime > (1.5f * IN_MICROSECOND) + (((1.5f * IN_MICROSECOND) / 100.0f) * m_RandMovementTime)) ///< 1000 because microsecond
+        while (m_DiffMovementTime > m_RandMovementTime * IN_MICROSECOND) ///< 1000 because microsecond
         {
             if (GetDistance(m_RespawnPosition.GetPosition()) > CaseToPixel(m_CreatureTemplate.m_MaxRay))
             {
+                ResetRandMovementTime(true);
                 Orientation l_Orientation = GetOrientationToPoint(m_RespawnPosition.GetPosition());
                 if (GetOrientation() != l_Orientation || !IsInMovement())
                     StartMovement(l_Orientation);
@@ -121,12 +124,11 @@ void Creature::UpdateDefensive(sf::Time p_Diff)
             else if (m_MovementHandler->IsInMovement())
             {
                 OutOfEvade();
+                ResetRandMovementTime(false);
                 StopMovement();
             }
             else
                 RandMoving();
-            m_DiffMovementTime = 0;
-            m_RandMovementTime = rand() % 100;
         }
     }
     else
@@ -216,12 +218,30 @@ uint32 Creature::GetXpEarn() const
     return m_CreatureTemplate.m_Xp;
 }
 
+void Creature::ResetRandMovementTime(bool ForMoving)
+{
+    m_DiffMovementTime = 0;
+    if (ForMoving)
+    {
+        if (m_CreatureTemplate.m_MovingTimeMax - m_CreatureTemplate.m_MovingTimeMin <= 0)
+            m_RandMovementTime = m_CreatureTemplate.m_MovingTimeMax;
+        else
+            m_RandMovementTime = m_CreatureTemplate.m_MovingTimeMin + ((float)(rand() % (uint16)((float)(m_CreatureTemplate.m_MovingTimeMax - m_CreatureTemplate.m_MovingTimeMin) * 100.0f)) / 100.0f);
+    }
+    else
+    {
+        if (m_CreatureTemplate.m_StopTimeMax - m_CreatureTemplate.m_StopTimeMin <= 0)
+            m_RandMovementTime = m_CreatureTemplate.m_StopTimeMax;
+        else
+            m_RandMovementTime = m_CreatureTemplate.m_StopTimeMin + ((float)(rand() % (uint16)((float)(m_CreatureTemplate.m_StopTimeMax - m_CreatureTemplate.m_StopTimeMin) * 100.0f)) / 100.0f);
+    }
+}
+
 void Creature::Unspawn()
 {
     m_MovementHandler->StopMovement();
     m_MovementHandler->StopAttack();
-    m_DiffMovementTime = 0;
-    m_RandMovementTime = rand() % 100;
+    ResetRandMovementTime(false);
 
     /// Unspawn for players
     PacketUnitRemove l_Packet;
