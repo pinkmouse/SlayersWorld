@@ -5,7 +5,7 @@
 #include "../Global.hpp"
 
 Player::Player(int32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_Health, uint8 p_SkinID, uint16 p_MapID, uint32 p_PosX, uint32 p_PosY, Orientation p_Orientation, uint32 p_Xp, eAccessType p_AccessType) :
-    Unit(p_ID, TypeUnit::PLAYER),
+    Unit(p_ID, TypeUnit::PLAYER, eFactionType::Ally),
     m_AccessType(p_AccessType)
 {
     InitializeCommands();
@@ -195,4 +195,13 @@ void Player::Respawn()
 eAccessType Player::GetAccessType() const
 {
     return m_AccessType;
+}
+
+void Player::EventAction()
+{
+    Unit* l_Unit = m_Map->GetCloserUnit(this, MELEE_RANGE, true);
+    if (l_Unit == nullptr)
+        return;
+
+    l_Unit->GossipTo(this);
 }

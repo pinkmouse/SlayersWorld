@@ -372,7 +372,7 @@ void PacketHandler::OperatePacket(WorldPacket &p_Packet)
 {
 	uint8 l_PacketID;
 	p_Packet >> l_PacketID;
-	printf("Receive Packet %d\n", l_PacketID);
+	//printf("Receive Packet %d\n", l_PacketID);
 	m_Func l_Fun = m_PacketHandleMap[l_PacketID];
 	if (l_Fun != nullptr)
 		(this->*(l_Fun))(p_Packet);

@@ -9,6 +9,7 @@ enum CMSG : uint8
     C_UnitTalk = 23,
     C_UnitStartAttack = 24,
     C_UnitStopAttack = 25,
+    C_UnitEventAction = 26
 };
 
 enum SMSG : uint8

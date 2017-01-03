@@ -94,3 +94,13 @@ void Socket::SendTalk(const std::string & p_TalkString)
 
     send(packet);
 }
+
+void Socket::SendEventAction()
+{
+    WorldPacket packet;
+    uint8 l_ID = CMSG::C_UnitEventAction;
+
+    packet << l_ID;
+
+    send(packet);
+}

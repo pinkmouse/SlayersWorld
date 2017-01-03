@@ -32,8 +32,8 @@ void Graphics::CreateWindow(uint32 p_X, uint32 p_Y, float p_Zoom)
     m_ViewInterface = m_Window.getDefaultView();
 	m_View.zoom(p_Zoom);
 	m_Window.setView(m_View);
-    m_Window.setFramerateLimit(40);
-    //m_Window.setVerticalSyncEnabled(true);
+    //m_Window.setFramerateLimit(40);
+    m_Window.setVerticalSyncEnabled(true);
 
 	m_TileSet = new TileSet();
 	m_TileSet->BuildSprites();
@@ -228,7 +228,7 @@ void Graphics::DrawMap()
 
             SkinSprite* l_SkinSprite = m_SkinsManager->GetSkinSprite(l_Unit->GetSkinID(), l_SpriteNb);
             l_SkinSprite->setScale(sf::Vector2f(l_Unit->GetSkinZoomFactor(), l_Unit->GetSkinZoomFactor()));
-            l_SkinSprite->setColor(sf::Color(255, 255, 255, l_Unit->GetOpacity()));
+            l_SkinSprite->setColor(sf::Color(255, 255, 255, 255/*l_Unit->GetOpacity()*/));
             l_Unit->SetSprite(l_SkinSprite);
 
             l_ListWorldObjectByZ[l_Unit->GetPosY()].push_back(l_Unit);

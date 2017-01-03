@@ -15,7 +15,7 @@
 #include "../Entities/Player.hpp"
 #include "../System/WorldPosition.hpp"
 #include "../Map/MapManager.hpp"
-#include "CreatureManager.hpp"
+#include "UnitManager.hpp"
 
 class SqlManager
 {
@@ -44,10 +44,11 @@ public:
 	void UpdatePointsSet(Player const*);
     void AddConnectionLogin(uint32);
 
-    bool InitializeCreatureTemplate(CreatureManager*);
+    bool InitializeCreatureTemplate(UnitManager*);
+    bool InitializeGossip(UnitManager*);
     CreatureTemplate GetCreatureTemplate(uint16);
     uint16 AddNewCreature(uint16, uint16, uint32, uint32);
-    bool InitializeCreature(CreatureManager*);
+    bool InitializeCreature(UnitManager*);
     std::map<uint8, uint16> GetXpLevel();
     int32 GetPlayerID(const std::string &);
 

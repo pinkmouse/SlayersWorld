@@ -197,6 +197,12 @@ void Events::NewKeyPressed(sf::Keyboard::Key p_NewKey)
             }
             break;
         }
+        /// Action
+        case sf::Keyboard::Key::Space:
+        {
+            g_Socket->SendEventAction();
+            break;
+        }
         case sf::Keyboard::Key::Return:
         {
             if (m_WritingField == nullptr)

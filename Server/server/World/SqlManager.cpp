@@ -273,7 +273,7 @@ void SqlManager::UpdatePointsSet(Player const* p_Player)
 
 CreatureTemplate SqlManager::GetCreatureTemplate(uint16 p_Entry)
 {
-    std::string l_Query = "SELECT `skinID`, `name`, `level`, `force`, `stamina`, `dexterity`, `xp`, `state`, `maxRay`, `respawnTime`, `rank`, `aiType` FROM creature_template WHERE `entry` = '" + std::to_string(p_Entry) + "'";
+    std::string l_Query = "SELECT `skinID`, `name`, `level`, `force`, `stamina`, `dexterity`, `xp`, `state`, `maxRay`, `respawnTime`, `rank`, `aiType`, `faction` FROM creature_template WHERE `entry` = '" + std::to_string(p_Entry) + "'";
     mysql_query(&m_MysqlWorld, l_Query.c_str());
 
     uint8 l_SkinID = 0;
@@ -288,6 +288,7 @@ CreatureTemplate SqlManager::GetCreatureTemplate(uint16 p_Entry)
     uint16 l_RespawnTime = 0;
     uint8 l_Rank = 0;
     uint8 l_AiType = 0;
+    uint8 l_Faction = 0;
 
     MYSQL_RES *l_Result = NULL;
     MYSQL_ROW l_Row;
@@ -306,8 +307,9 @@ CreatureTemplate SqlManager::GetCreatureTemplate(uint16 p_Entry)
         l_RespawnTime = atoi(l_Row[9]);
         l_Rank = atoi(l_Row[10]);
         l_AiType = atoi(l_Row[11]);
+        l_Faction = atoi(l_Row[12]);
         mysql_free_result(l_Result);
-        return CreatureTemplate(p_Entry, l_SkinID, l_Name, l_Lvl, l_Force, l_Stamina, l_Dexterity, l_Xp, l_State, l_MaxRay, l_RespawnTime, l_Rank, l_AiType);
+        return CreatureTemplate(p_Entry, l_SkinID, l_Name, l_Lvl, l_Force, l_Stamina, l_Dexterity, l_Xp, l_State, l_MaxRay, l_RespawnTime, l_Rank, l_AiType, (eFactionType)l_Faction);
     }
     mysql_free_result(l_Result);
 
@@ -332,9 +334,10 @@ uint16 SqlManager::AddNewCreature(uint16 p_Map, uint16 p_Entry, uint32 p_PosX, u
     mysql_free_result(l_Result);
     return l_Id;
 }
-bool SqlManager::InitializeCreatureTemplate(CreatureManager* p_CreatureManager)
+
+bool SqlManager::InitializeCreatureTemplate(UnitManager* p_CreatureManager)
 {
-    std::string l_Query = "SELECT `entry`, `skinID`, `name`, `level`, `force`, `stamina`, `dexterity`, `xp`, `state`, `maxRay`, `respawnTime`, `rank`, `aiType` FROM creature_template";
+    std::string l_Query = "SELECT `entry`, `skinID`, `name`, `level`, `force`, `stamina`, `dexterity`, `xp`, `state`, `maxRay`, `respawnTime`, `rank`, `aiType`, `faction` FROM creature_template";
     mysql_query(&m_MysqlWorld, l_Query.c_str());
 
     uint32 l_Entry = 0;
@@ -350,6 +353,7 @@ bool SqlManager::InitializeCreatureTemplate(CreatureManager* p_CreatureManager)
     uint16 l_RespawnTime = 0;
     uint8 l_Rank = 0;
     uint8 l_AiType = 0;
+    uint8 l_Faction = 0;
 
     MYSQL_RES *l_Result = NULL;
     MYSQL_ROW l_Row;
@@ -369,14 +373,46 @@ bool SqlManager::InitializeCreatureTemplate(CreatureManager* p_CreatureManager)
         l_RespawnTime = atoi(l_Row[10]);
         l_Rank = atoi(l_Row[11]);
         l_AiType = atoi(l_Row[12]);
-        p_CreatureManager->AddCreatureTemplate(CreatureTemplate(l_Entry, l_SkinID, l_Name, l_Lvl, l_Force, l_Stamina, l_Dexterity, l_Xp, l_State, l_MaxRay, l_RespawnTime, l_Rank, l_AiType));
+        l_Faction = atoi(l_Row[13]);
+        p_CreatureManager->AddCreatureTemplate(CreatureTemplate(l_Entry, l_SkinID, l_Name, l_Lvl, l_Force, l_Stamina, l_Dexterity, l_Xp, l_State, l_MaxRay, l_RespawnTime, l_Rank, l_AiType, (eFactionType)l_Faction));
     }
     mysql_free_result(l_Result);
 
     return true;
 }
 
-bool SqlManager::InitializeCreature(CreatureManager* p_CreatureManager)
+bool SqlManager::InitializeGossip(UnitManager* p_CreatureManager)
+{
+    std::string l_Query = "SELECT `id`, `typeUnit`, `unitEntry`, `type`, `data1`, `msg` FROM gossip";
+    mysql_query(&m_MysqlWorld, l_Query.c_str());
+
+    uint16 l_ID;
+    uint8 l_TypeUnit;
+    uint16 l_UnitEntry;
+    uint8 l_GossipType;
+    uint32 l_Data1;
+    std::string l_Msg;
+
+    MYSQL_RES *l_Result = NULL;
+    MYSQL_ROW l_Row;
+    l_Result = mysql_use_result(&m_MysqlWorld);
+    while ((l_Row = mysql_fetch_row(l_Result)))
+    {
+        l_ID = atoi(l_Row[0]);
+        l_TypeUnit = atoi(l_Row[1]);
+        l_UnitEntry = atoi(l_Row[2]);
+        l_GossipType = atoi(l_Row[3]);
+        l_Data1 = atoi(l_Row[4]);
+        l_Msg = std::string(l_Row[5]);
+        Gossip l_Gossip(l_ID, (TypeUnit)l_TypeUnit, l_UnitEntry, (eGossipType)l_GossipType, l_Data1, l_Msg);
+        p_CreatureManager->AddGossip(l_Gossip);
+    }
+    mysql_free_result(l_Result);
+
+    return true;
+}
+
+bool SqlManager::InitializeCreature(UnitManager* p_CreatureManager)
 {
     std::string l_Query = "SELECT `id`, `entry`, `mapID`, `posX`, `posY` FROM creature";
     mysql_query(&m_MysqlWorld, l_Query.c_str());
@@ -399,6 +435,8 @@ bool SqlManager::InitializeCreature(CreatureManager* p_CreatureManager)
         l_PosY = atoi(l_Row[4]);
 
         Creature* l_Creature = new Creature(l_Id, l_Entry, p_CreatureManager->GetCreatureTemplate(l_Entry), l_MapID, l_PosX, l_PosY);
+        if (p_CreatureManager->GetGossipListFor(TypeUnit::CREATURE, l_Entry) != nullptr)
+            l_Creature->SetGossipList(p_CreatureManager->GetGossipListFor(TypeUnit::CREATURE, l_Entry));
         Map* l_Map = g_MapManager->GetMap(l_MapID);
         l_Map->AddUnit(l_Creature);
     }

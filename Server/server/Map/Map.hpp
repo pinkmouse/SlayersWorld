@@ -29,7 +29,7 @@ public:
     std::vector<Square*> GetSquareSet(uint16);
     Square* GetSquare(uint16);
     std::vector<uint16> GetSquareSetID(uint16);
-    Unit* GetCloserUnit(Unit const*, float p_Range = 2.0f, bool p_OnlyInLife = false, bool p_InFront = true);
+    Unit* GetCloserUnit(Unit const*, float p_Range = 2.0f, bool p_OnlyInLife = false, bool p_InFront = true, bool p_Attackable = false);
     uint16 GetSizeX() const;
     uint16 GetSizeY() const;
     void UpdateForPlayersInNewSquare(Unit*, bool p_UpdateAll = false);

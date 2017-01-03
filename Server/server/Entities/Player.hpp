@@ -23,6 +23,7 @@ public:
     void SetXp(uint32);
     void HasBeenInitialize();
     bool CheckCommand(const std::string &);
+    void EventAction();
 
     void Respawn();
     void SendMsg(const std::string &);

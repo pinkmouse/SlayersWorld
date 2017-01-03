@@ -140,7 +140,7 @@ void Map::UpdateForPlayersInNewSquare(Unit* p_Unit, bool p_UpdateAll)
     }
 }
 
-Unit* Map::GetCloserUnit(Unit const* p_Unit, float p_Range /*= 2.0f*/, bool p_OnlyInLife /*= flase*/, bool p_InFront /*= true*/)
+Unit* Map::GetCloserUnit(Unit const* p_Unit, float p_Range /*= 2.0f*/, bool p_OnlyInLife /*= flase*/, bool p_InFront /*= true*/, bool p_Attackable /*= false*/)
 {
     /// TODO : QuadTree
     std::vector<Square*> l_Grid = GetSquareSet(p_Unit->GetSquareID());
@@ -165,6 +165,9 @@ Unit* Map::GetCloserUnit(Unit const* p_Unit, float p_Range /*= 2.0f*/, bool p_On
                     continue;
 
                 if (p_OnlyInLife && l_Unit->IsDeath())
+                    continue;
+
+                if (p_Attackable && !p_Unit->CanAttack(l_Unit))
                     continue;
 
                 float l_Dist = p_Unit->GetDistance(l_Unit);

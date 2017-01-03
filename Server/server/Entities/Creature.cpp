@@ -3,7 +3,7 @@
 #include "../World/PacketDefine.hpp"
 
 Creature::Creature(uint16 p_ID, uint16 p_Entry, CreatureTemplate p_CreatureTemplate, uint16 p_MapID, uint32 p_PosX, uint32 p_PosY) :
-    Unit(p_ID, TypeUnit::CREATURE)
+    Unit(p_ID, TypeUnit::CREATURE, p_CreatureTemplate.m_FactionType)
 {
     m_Entry = p_Entry;
     m_MapID = p_MapID;

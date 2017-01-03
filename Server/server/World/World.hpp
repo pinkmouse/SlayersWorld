@@ -9,7 +9,7 @@
 #include "PacketHandler.hpp"
 #include "ClockHandler.hpp"
 #include "../Map/MapManager.hpp"
-#include "CreatureManager.hpp"
+#include "UnitManager.hpp"
 
 class World
 {
@@ -27,7 +27,7 @@ private:
     PacketHandler* m_PacketHandler;
 
     /// CREATURE MANAGER
-    CreatureManager* m_CreatureManager;
+    UnitManager* m_CreatureManager;
 
 	/// NETWORK
 	void NetworkLoop();

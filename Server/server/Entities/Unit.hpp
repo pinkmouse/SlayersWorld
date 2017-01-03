@@ -3,6 +3,7 @@
 #include "MovementHandler.hpp"
 #include "../Define.hpp"
 #include <string>
+#include <map>
 
 class Map;
 class Player;
@@ -12,7 +13,7 @@ class Unit : public WorldObject
 {
 public:
     Unit(uint16);
-    Unit(uint16, TypeUnit);
+    Unit(uint16, TypeUnit, eFactionType);
     ~Unit();
 
     bool IsPlayer() const;
@@ -36,6 +37,7 @@ public:
     void SetPosX(const uint32 &);
     void SetPosY(const uint32 &);
     void SetSkinID(const uint8 &);
+    void Talk(const std::string &);
     void SetHealth(const uint8 &);
     void SetOrientation(const Orientation &);
     void SetMap(Map*);
@@ -72,6 +74,14 @@ public:
     void TeleportTo(const WorldPosition&);
     Unit* GetAttacker() const;
     Unit* GetVictim() const;
+    bool CanAttack(Unit*) const;
+    bool IsHostileTo(Unit*);
+    eFactionType GetFaction() const;
+
+    /// GOSSIP
+    void SetGossipList(std::vector<Gossip>*);
+    void GossipTo(Player *);
+    void UpdateGossip(sf::Time);
 
 protected:
     std::string m_Name;
@@ -102,4 +112,7 @@ private:
     uint64 m_CombatTimer;
     Unit* m_Victim;
     Unit* m_Attacker;
+    eFactionType m_FactionType;
+
+    std::map< eGossipType, std::vector<Gossip*> > m_ListGossip;
 };

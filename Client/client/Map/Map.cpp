@@ -30,7 +30,10 @@ void Map::Update(sf::Time p_Diff)
                 return;
 
             if (!g_Player->IsInRayVisible(l_Unit))
+            {
+                printf("----> REMOVE UNIT out of range %d\n", l_Unit->GetID());
                 m_ListUnitZone[l_Unit->GetType()].erase(l_Unit->GetID());
+            }
             else
                 l_Unit->Update(p_Diff);
         }
@@ -176,7 +179,6 @@ uint16 Map::GetSquareID(uint16 p_X, uint16 p_Y) const
 
 	uint16 l_XSquare = ceil(p_X / GRID_SIZE);
 	uint16 l_YSquare = ceil(p_Y / GRID_SIZE);
-
 	//printf("Calc %d %d %d", l_TotalSquareWidth, l_YSquare, l_XSquare);
 	return (l_TotalSquareWidth * l_YSquare) + l_XSquare;
 }

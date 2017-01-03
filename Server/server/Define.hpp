@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <vector>
 
 #define MAP_PATH "map/"
 #define CONF_FILE "server.conf"
@@ -68,6 +69,19 @@ enum eAccessType
     Administrator = 2
 };
 
+enum eFactionType
+{
+    Ally = 0,
+    Enemy = 1,
+    Neutral = 2
+};
+
+enum eGossipType
+{
+    Whisp = 0,
+    Yell = 1
+};
+
 struct Position 
 {
     uint32 m_X;
@@ -81,6 +95,26 @@ struct Position
 
     Position(const Position & p_Position) :
     m_X(p_Position.m_X), m_Y(p_Position.m_Y) {}
+};
+
+struct Gossip
+{
+    uint16 m_ID;
+    TypeUnit m_TypeUnit;
+    uint16 m_UnitEntry;
+    eGossipType m_GossipType;
+    uint32 m_Data1;
+    std::string m_Msg;
+    uint64 m_GossipTimer;
+
+    Gossip() :
+        m_ID(0), m_TypeUnit(TypeUnit::CREATURE), m_UnitEntry(0), m_GossipType(eGossipType::Whisp), m_Data1(0), m_Msg(""), m_GossipTimer(0) {}
+
+    Gossip(const Gossip & p_Gossip) :
+        m_ID(p_Gossip.m_ID), m_TypeUnit(p_Gossip.m_TypeUnit), m_UnitEntry(p_Gossip.m_UnitEntry), m_GossipType(p_Gossip.m_GossipType), m_Data1(p_Gossip.m_Data1), m_Msg(p_Gossip.m_Msg), m_GossipTimer(p_Gossip.m_GossipTimer){}
+        
+    Gossip(uint16 p_ID, TypeUnit p_TypeUnit, uint16 p_UnitEntry, eGossipType p_GossipType, uint32 p_Data1, std::string p_Msg) :
+        m_ID(p_ID), m_TypeUnit(p_TypeUnit), m_UnitEntry(p_UnitEntry), m_GossipType(p_GossipType), m_Data1(p_Data1), m_Msg(p_Msg), m_GossipTimer(0){}
 };
 
 struct CreatureTemplate
@@ -98,12 +132,13 @@ struct CreatureTemplate
     uint16 m_RespawnTime;
     uint8 m_Rank;
     uint8 m_AiType;
+    eFactionType m_FactionType;
 
     CreatureTemplate() :
-    m_Entry(0), m_SkinID(0), m_Name(""), m_Level(0), m_Force(0), m_Stamina(0), m_Dexterity(0), m_Xp(0), m_State(0), m_MaxRay(0), m_RespawnTime(0), m_Rank(0), m_AiType(0) {}
+    m_Entry(0), m_SkinID(0), m_Name(""), m_Level(0), m_Force(0), m_Stamina(0), m_Dexterity(0), m_Xp(0), m_State(0), m_MaxRay(0), m_RespawnTime(0), m_Rank(0), m_AiType(0), m_FactionType(eFactionType::Ally){}
 
-    CreatureTemplate(uint32 p_Entry, uint8 p_SkinID, std::string p_Name, uint8 p_Level, uint8 p_Force, uint8 p_Stamina, uint8 p_Dexterity, uint8 p_Xp, uint8 p_State, uint16 p_MaxRay, uint16 p_RespawnTime, uint8 p_Rank, uint8 p_AiType) :
-    m_Entry(p_Entry), m_SkinID(p_SkinID), m_Name(p_Name), m_Level(p_Level), m_Force(p_Force), m_Stamina(p_Stamina), m_Dexterity(p_Dexterity), m_Xp(p_Xp), m_State(p_State), m_MaxRay(p_MaxRay), m_RespawnTime(p_RespawnTime), m_Rank(p_Rank), m_AiType(p_AiType){}
+    CreatureTemplate(uint32 p_Entry, uint8 p_SkinID, std::string p_Name, uint8 p_Level, uint8 p_Force, uint8 p_Stamina, uint8 p_Dexterity, uint8 p_Xp, uint8 p_State, uint16 p_MaxRay, uint16 p_RespawnTime, uint8 p_Rank, uint8 p_AiType, eFactionType p_FactionType) :
+    m_Entry(p_Entry), m_SkinID(p_SkinID), m_Name(p_Name), m_Level(p_Level), m_Force(p_Force), m_Stamina(p_Stamina), m_Dexterity(p_Dexterity), m_Xp(p_Xp), m_State(p_State), m_MaxRay(p_MaxRay), m_RespawnTime(p_RespawnTime), m_Rank(p_Rank), m_AiType(p_AiType), m_FactionType(p_FactionType){}
 };
 
 struct PointsSet

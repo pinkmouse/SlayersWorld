@@ -10,6 +10,7 @@ enum CMSG : uint8
     C_UnitTalk = 23,
     C_UnitStartAttack = 24,
     C_UnitStopAttack = 25,
+    C_UnitEventAction = 26
 };
 
 enum SMSG : uint8
@@ -193,6 +194,26 @@ struct PacketUpdateSkin
         m_Skin = p_Skin;
         m_TypeID = p_TypeID;
         m_ID = p_ID;
+    }
+};
+
+struct PacketTalk
+{
+    WorldPacket m_Packet;
+    uint8 m_PacketID;
+    uint8 m_TypeID;
+    uint16 m_ID;
+    std::string m_TalkString;
+
+    PacketTalk() :
+        m_PacketID(SMSG::S_UnitTalk) {}
+
+    void BuildPacket(uint8 p_TypeID, uint16 p_ID, std::string p_TalkString)
+    {
+        m_Packet << m_PacketID << p_TypeID << p_ID << p_TalkString;
+        m_ID = p_ID;
+        m_TypeID = p_TypeID;
+        m_TalkString = p_TalkString;
     }
 };
 

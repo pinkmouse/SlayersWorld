@@ -17,8 +17,8 @@ add_executable(${EXECUTABLE_NAME}
               server/World/ClockHandler.hpp
               server/World/ConfigHandler.cpp
               server/World/ConfigHandler.hpp
-              server/World/CreatureManager.cpp
-              server/World/CreatureManager.hpp
+              server/World/UnitManager.cpp
+              server/World/UnitManager.hpp
               server/World/PacketDefine.hpp
               server/World/PacketHandler.cpp
               server/World/PacketHandler.hpp

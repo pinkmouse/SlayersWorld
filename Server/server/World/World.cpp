@@ -5,7 +5,7 @@ World::World()
     : m_Thread(&World::NetworkLoop, this),
     m_Run(true),
     m_PacketHandler(new PacketHandler()),
-    m_CreatureManager(new CreatureManager())
+    m_CreatureManager(new UnitManager())
 {
     g_MapManager = new MapManager();
 	g_Config = new ConfigHandler();
@@ -45,6 +45,10 @@ bool World::Initialize()
     printf("Initialize CreatureTemplate\n");
     if (!g_SqlManager->InitializeCreatureTemplate(m_CreatureManager))
         printf("Error Initialize CreatureTemplate...\n");
+
+    printf("Initialize Gossip\n");
+    if (!g_SqlManager->InitializeGossip(m_CreatureManager))
+        printf("Error Initialize Gossip...\n");
 
     printf("Initialize Creature\n");
     if (!g_SqlManager->InitializeCreature(m_CreatureManager))

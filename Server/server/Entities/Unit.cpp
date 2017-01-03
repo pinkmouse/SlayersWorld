@@ -7,12 +7,13 @@
 
 Unit::Unit(uint16 p_ID)
 {
-    Unit(p_ID, TypeUnit::CREATURE);
+    Unit(p_ID, TypeUnit::CREATURE, eFactionType::Neutral);
 }
 
-Unit::Unit(uint16 p_ID, TypeUnit p_Type)
+Unit::Unit(uint16 p_ID, TypeUnit p_Type, eFactionType p_FactionType)
 {
     m_Type = p_Type;
+    m_FactionType = p_FactionType;
     m_Name = "";
     m_MapID = 0;
     m_ID = p_ID;
@@ -94,6 +95,26 @@ void Unit::UpdateCombat(sf::Time p_Diff)
     }
 }
 
+void Unit::UpdateGossip(sf::Time p_Diff)
+{
+    if (!IsInWorld())
+        return;
+
+    if (IsDeath())
+        return;
+
+    for (Gossip *l_Gossip : m_ListGossip[eGossipType::Yell])
+    {
+        l_Gossip->m_GossipTimer += p_Diff.asMicroseconds();
+        if (l_Gossip->m_GossipTimer >= l_Gossip->m_Data1 * IN_MICROSECOND)
+        {
+            Talk(l_Gossip->m_Msg);
+            l_Gossip->m_GossipTimer -= REGEN_HEALTH_TIMER * 1000;
+        }
+    }
+}
+
+
 void Unit::UpdateRegen(sf::Time p_Diff)
 {
     if (!IsInWorld())
@@ -128,6 +149,7 @@ void Unit::Update(sf::Time p_Diff)
     UpdateDeathState(p_Diff);
     UpdateCombat(p_Diff);
     UpdateRegen(p_Diff);
+    UpdateGossip(p_Diff);
 
     if (m_MovementHandler == nullptr)
         return;
@@ -141,7 +163,7 @@ void Unit::Update(sf::Time p_Diff)
 
     if (m_MovementHandler->IsDamageReady())
     {
-        Unit* l_Unit = m_Map->GetCloserUnit(this, MELEE_RANGE, true);
+        Unit* l_Unit = m_Map->GetCloserUnit(this, MELEE_RANGE, true, true ,true);
 
         if (l_Unit != nullptr)
             DealDamage(l_Unit);
@@ -288,6 +310,12 @@ uint8 Unit::GetSkinID() const
     return m_SkinID;
 }
 
+eFactionType Unit::GetFaction() const
+{
+    return m_FactionType;
+}
+
+
 PointsSet Unit::GetPointsSet() const
 {
 	return m_PointsSet;
@@ -346,6 +374,13 @@ void Unit::SetSkinID(const uint8 & p_SkinID)
 
     PacketUpdateSkin l_Packet;
     l_Packet.BuildPacket(GetType(), GetID(), p_SkinID);
+    m_Map->SendToSet(l_Packet.m_Packet, this);
+}
+
+void Unit::Talk(const std::string & p_Talk)
+{
+    PacketTalk l_Packet;
+    l_Packet.BuildPacket(GetType(), GetID(), p_Talk);
     m_Map->SendToSet(l_Packet.m_Packet, this);
 }
 
@@ -465,6 +500,45 @@ void Unit::OutOfEvade()
 bool Unit::IsInEvade() const
 {
     return m_Evade;
+}
+
+bool Unit::CanAttack(Unit* p_Unit) const
+{
+    if (GetFaction() == eFactionType::Neutral || p_Unit->GetFaction() == eFactionType::Neutral)
+        return false;
+
+    if (this == p_Unit)
+        return false;
+
+    if (IsPlayer() && p_Unit->IsPlayer())
+        return true;
+
+    if (GetFaction() != p_Unit->GetFaction())
+        return true;
+
+    return false;
+}
+
+bool Unit::IsHostileTo(Unit* p_Unit)
+{
+    /// TODO
+    return false;
+}
+
+void Unit::SetGossipList(std::vector<Gossip>* p_GossipList)
+{
+   for (Gossip l_Gossip : *p_GossipList)
+    {
+        Gossip* l_NewGossip = new Gossip(l_Gossip.m_ID, l_Gossip.m_TypeUnit, l_Gossip.m_UnitEntry, l_Gossip.m_GossipType, l_Gossip.m_Data1, l_Gossip.m_Msg);
+        m_ListGossip[l_Gossip.m_GossipType].push_back(l_NewGossip);
+    }
+
+}
+
+void Unit::GossipTo(Player* p_Player)
+{
+    for (Gossip* l_Gossip : m_ListGossip[eGossipType::Whisp])
+        p_Player->SendMsg(GetName() + ": " + l_Gossip->m_Msg);
 }
 
 void Unit::SetAttacker(Unit* p_Attacker) { m_Attacker = p_Attacker; }

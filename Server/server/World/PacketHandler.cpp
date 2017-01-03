@@ -18,6 +18,7 @@ void PacketHandler::LoadPacketHandlerMap()
     m_PacketHandleMap[CMSG::C_UnitStopMovement] = &PacketHandler::HandleStopMovement;
     m_PacketHandleMap[CMSG::C_UnitTalk] = &PacketHandler::HandleTalk;
     m_PacketHandleMap[CMSG::C_UnitStartAttack] = &PacketHandler::HandleStartAttack;
+    m_PacketHandleMap[CMSG::C_UnitEventAction] = &PacketHandler::HandleEventAction;
     m_PacketHandleMap[CMSG::C_UnitStopAttack] = &PacketHandler::HandleStopAttack;
 }
 
@@ -119,6 +120,16 @@ void PacketHandler::HandleStopAttack(WorldPacket &p_Packet, WorldSocket* p_World
     l_Player->GetSession()->SendUnitStopAttack((uint8)TypeUnit::PLAYER, l_Player->GetID());
 }
 
+void PacketHandler::HandleEventAction(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
+{
+    Player* l_Player = p_WorldSocket->GetPlayer();
+
+    if (l_Player == nullptr)
+        return;
+
+    l_Player->EventAction();
+}
+
 void PacketHandler::HandleDisconnected(WorldSocket* p_WorldSocket)
 {
     if (g_SqlManager == nullptr)
@@ -206,7 +217,7 @@ void PacketHandler::OperatePacket(WorldPacket &p_Packet, WorldSocket* p_WorldSoc
 {
     uint8 l_PacketID;
     p_Packet >> l_PacketID;
-    ///printf("Receive Packet %d\n", l_PacketID);
+    printf("Receive Packet %d\n", l_PacketID);
     m_Func l_Fun = m_PacketHandleMap[l_PacketID];
     if (l_Fun != nullptr)
         (this->*(l_Fun))(p_Packet, p_WorldSocket);
