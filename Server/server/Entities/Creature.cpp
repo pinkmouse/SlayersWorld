@@ -97,6 +97,12 @@ void Creature::UpdatePassive(sf::Time p_Diff)
     }
     else
     {
+        if (!IsInMovement()) ///< Go Run
+        {
+            RandMoving();
+            return;
+        }
+
         while (m_DiffMovementTime > m_RandMovementTime * IN_MICROSECOND) ///< 1000 because microsecond
             RandMoving();
     }
