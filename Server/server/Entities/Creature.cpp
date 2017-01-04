@@ -148,7 +148,7 @@ void Creature::UpdateDefensive(sf::Time p_Diff)
         if (GetVictim() == nullptr)
             SetVictim(GetAttacker());
 
-        if (GetDistance(m_RespawnPosition.GetPosition()) > CaseToPixel(m_CreatureTemplate.m_MaxRay) * 2)
+        if (GetDistance(m_RespawnPosition.GetPosition()) > CaseToPixel(m_CreatureTemplate.m_MaxVision))
         {
             EnterInEvade();
             OutOfCombat();
@@ -161,6 +161,88 @@ void Creature::UpdateDefensive(sf::Time p_Diff)
                 StopAttack();
             if (!m_MovementHandler->IsInAttack())
             {
+                Orientation l_Orientation = GetOrientationToPoint(GetVictim());
+                if (GetOrientation() != l_Orientation || !IsInMovement())
+                    StartMovement(l_Orientation);
+            }
+        }
+        else
+        {
+            if (m_MovementHandler->IsInMovement())
+                StopMovement();
+
+            if (m_MovementHandler->IsInAttack() && GetOrientationToPoint(GetVictim()) != GetOrientation())
+                UpdateOrientation(GetOrientationToPoint(GetVictim()));
+
+            if (!m_MovementHandler->IsInAttack())
+            {
+                SetOrientation(GetOrientationToPoint(GetVictim()));
+                StartAttack(GetVictim());
+            }
+        }
+    }
+}
+
+
+void Creature::UpdateAgresive(sf::Time p_Diff)
+{
+    if (!IsInCombat())
+    {
+        if (m_MovementHandler->IsInAttack() && !m_MovementHandler->IsStopingAttack()) ///< If in combat and still atacking
+            StopAttack();
+
+        if (m_MovementHandler->IsInAttack() || m_MovementHandler->IsStopingAttack())
+            return;
+
+        Unit* l_Victim = m_Map->GetCloserUnit(this, CaseToPixel(m_CreatureTemplate.m_MaxVision), true, false, true);
+        if (GetDistance(m_RespawnPosition.GetPosition()) > CaseToPixel(m_CreatureTemplate.m_MaxRay))
+        {
+            Orientation l_Orientation = GetOrientationToPoint(m_RespawnPosition.GetPosition());
+            if (GetOrientation() != l_Orientation || !IsInMovement())
+                StartMovement(l_Orientation);
+        }
+        else if (l_Victim != nullptr)
+        {
+            l_Victim->EnterInCombat(this);
+            return;
+        }
+        while (m_DiffMovementTime > m_RandMovementTime * IN_MICROSECOND) ///< 1000 because microsecond
+        {
+            if (m_MovementHandler->IsInMovement())
+            {
+                OutOfEvade();
+                ResetRandMovementTime(false);
+                StopMovement();
+            }
+            else
+                RandMoving();
+        }
+    }
+    else
+    {
+        if (GetAttacker() == nullptr || GetAttacker()->IsDeath())
+        {
+            OutOfCombat();
+            return;
+        }
+
+        if (GetVictim() == nullptr)
+            SetVictim(GetAttacker());
+
+        if (GetDistance(m_RespawnPosition.GetPosition()) > CaseToPixel(m_CreatureTemplate.m_MaxVision))
+        {
+            EnterInEvade();
+            OutOfCombat();
+            return;
+        }
+
+        if (GetDistance(GetVictim()) > MELEE_RANGE)
+        {
+            if (m_MovementHandler->IsInAttack() && !m_MovementHandler->IsStopingAttack())
+                StopAttack();
+            if (!m_MovementHandler->IsInAttack())
+            {
+                m_RandMovementTime = 0;
                 Orientation l_Orientation = GetOrientationToPoint(GetVictim());
                 if (GetOrientation() != l_Orientation || !IsInMovement())
                     StartMovement(l_Orientation);
@@ -205,6 +287,9 @@ void Creature::Update(sf::Time p_Diff)
             break;
         case eAiType::DEFENSIVE:
             UpdateDefensive(p_Diff);
+            break;
+        case eAiType::AGRESIVE:
+            UpdateAgresive(p_Diff);
             break;
         default:
             break;

@@ -129,6 +129,7 @@ struct CreatureTemplate
     uint8 m_Xp;
     uint8 m_State;
     uint16 m_MaxRay;
+    uint16 m_MaxVision;
     float m_MovingTimeMin;
     float m_MovingTimeMax;
     float m_StopTimeMin;
@@ -139,10 +140,10 @@ struct CreatureTemplate
     eFactionType m_FactionType;
 
     CreatureTemplate() :
-        m_Entry(0), m_SkinID(0), m_Name(""), m_Level(0), m_Force(0), m_Stamina(0), m_Dexterity(0), m_Xp(0), m_State(0), m_MaxRay(0), m_MovingTimeMin(0.0f), m_MovingTimeMax(0.0f), m_StopTimeMin(0.0f), m_StopTimeMax(0.0f), m_RespawnTime(0), m_Rank(0), m_AiType(0), m_FactionType(eFactionType::Ally) {}
+        m_Entry(0), m_SkinID(0), m_Name(""), m_Level(0), m_Force(0), m_Stamina(0), m_Dexterity(0), m_Xp(0), m_State(0), m_MaxRay(0), m_MaxVision(0), m_MovingTimeMin(0.0f), m_MovingTimeMax(0.0f), m_StopTimeMin(0.0f), m_StopTimeMax(0.0f), m_RespawnTime(0), m_Rank(0), m_AiType(0), m_FactionType(eFactionType::Ally) {}
 
-    CreatureTemplate(uint32 p_Entry, uint8 p_SkinID, std::string p_Name, uint8 p_Level, uint8 p_Force, uint8 p_Stamina, uint8 p_Dexterity, uint8 p_Xp, uint8 p_State, uint16 p_MaxRay , float p_MovingTimeMin, float p_MovingTimeMax, float p_StopTimeMin, float p_StopTimeMax, uint16 p_RespawnTime, uint8 p_Rank, uint8 p_AiType, eFactionType p_FactionType) :
-    m_Entry(p_Entry), m_SkinID(p_SkinID), m_Name(p_Name), m_Level(p_Level), m_Force(p_Force), m_Stamina(p_Stamina), m_Dexterity(p_Dexterity), m_Xp(p_Xp), m_State(p_State), m_MaxRay(p_MaxRay), m_MovingTimeMin(p_MovingTimeMin), m_MovingTimeMax(p_MovingTimeMax), m_StopTimeMin(p_StopTimeMin), m_StopTimeMax(p_StopTimeMax), m_RespawnTime(p_RespawnTime), m_Rank(p_Rank), m_AiType(p_AiType), m_FactionType(p_FactionType){}
+    CreatureTemplate(uint32 p_Entry, uint8 p_SkinID, std::string p_Name, uint8 p_Level, uint8 p_Force, uint8 p_Stamina, uint8 p_Dexterity, uint8 p_Xp, uint8 p_State, uint16 p_MaxRay , uint16 p_MaxVision, float p_MovingTimeMin, float p_MovingTimeMax, float p_StopTimeMin, float p_StopTimeMax, uint16 p_RespawnTime, uint8 p_Rank, uint8 p_AiType, eFactionType p_FactionType) :
+    m_Entry(p_Entry), m_SkinID(p_SkinID), m_Name(p_Name), m_Level(p_Level), m_Force(p_Force), m_Stamina(p_Stamina), m_Dexterity(p_Dexterity), m_Xp(p_Xp), m_State(p_State), m_MaxRay(p_MaxRay), m_MaxVision(p_MaxVision), m_MovingTimeMin(p_MovingTimeMin), m_MovingTimeMax(p_MovingTimeMax), m_StopTimeMin(p_StopTimeMin), m_StopTimeMax(p_StopTimeMax), m_RespawnTime(p_RespawnTime), m_Rank(p_Rank), m_AiType(p_AiType), m_FactionType(p_FactionType){}
 };
 
 struct PointsSet

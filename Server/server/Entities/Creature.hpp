@@ -10,6 +10,7 @@ public:
     void Update(sf::Time);
     void UpdatePassive(sf::Time);
     void UpdateDefensive(sf::Time);
+    void UpdateAgresive(sf::Time);
     void RandMoving();
     void StartMovement(Orientation);
     void StopMovement();
