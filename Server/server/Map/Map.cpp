@@ -8,7 +8,6 @@ Map::Map()
     m_SizeY = 0;
 }
 
-
 Map::~Map()
 {
 }
