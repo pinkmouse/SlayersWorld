@@ -10,6 +10,8 @@
 #include "Square.hpp"
 #include "../World/WorldPacket.hpp"
 
+typedef std::pair<int16, int16> PFNodePosition;
+
 class Map
 {
 public:
@@ -59,5 +61,35 @@ private:
 		int l_TabTileNb[6];
 		bool l_Block;
 	};
+
+    /// PATHFINDING
+    struct PFNode
+    {
+        uint32 m_CostG; ///< Cost to go from start to Node
+        uint32 m_CostH; ///< Cost to go from Node to end
+        uint32 m_CostF; ///< Total of Node parents cost
+        PFNodePosition m_PosParent; ///< Postion of parent
+
+        PFNode() :
+            m_CostG(0), m_CostH(0), m_CostF(0) 
+        {
+            m_PosParent.first = 0, m_PosParent.second = 0;
+        }
+    };
+
+public:
+    std::vector<Position> LaunchPathFinding(const Position &, const Position &);
+    PFNodePosition m_StartPosition;
+    PFNodePosition m_EndPosition;
+    typedef std::map< PFNodePosition, PFNode > ListNode;
+    ListNode m_CloseList;
+    ListNode m_OpenList;
+    float GetDistanceCase(const PFNodePosition &, const PFNodePosition &);
+    bool AlreadyInList(const PFNodePosition &, const ListNode &);
+    void AddAdjacentCases(const PFNodePosition &);
+    const PFNodePosition BestNode(ListNode &);
+    void AddToCloseList(const PFNodePosition &);
+    std::vector<Position> GetPath();
 };
+
 
