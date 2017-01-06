@@ -38,6 +38,7 @@ add_executable(${EXECUTABLE_NAME}
               server/Map/Case.cpp
               server/Map/Case.hpp
               server/Map/Map.cpp
+	      server/Map/PathFinding.cpp
               server/Map/Map.hpp
               server/Map/MapManager.cpp
               server/Map/MapManager.hpp
