@@ -22,6 +22,8 @@ public:
     void SetHealth(const uint8 &);
     void ResetRandMovementTime(bool);
     uint32 GetXpEarn() const;
+    Orientation GetOrientationByPath(Path &);
+    bool IsFollowingPath() const;
 
 private:
     uint16 m_Entry;
@@ -29,5 +31,7 @@ private:
     CreatureTemplate m_CreatureTemplate;
     float m_RandMovementTime;
     bool m_Evade;
+
+    Path m_PathToTargetPosition;
 };
 

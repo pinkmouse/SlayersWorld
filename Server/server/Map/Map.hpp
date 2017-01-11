@@ -10,8 +10,6 @@
 #include "Square.hpp"
 #include "../World/WorldPacket.hpp"
 
-typedef std::pair<int16, int16> PFNodePosition;
-
 class Map
 {
 public:
@@ -39,6 +37,8 @@ public:
     /// Network
     void SendToSet(WorldPacket, Unit*);
 
+    /// Pathfinding
+    Path LaunchPathFinding(const Position &, const Position &);
 
 private:
 	uint16 m_ID;
@@ -62,34 +62,33 @@ private:
 		bool l_Block;
 	};
 
-    /// PATHFINDING
+    ///*****************************
+    /// --------- PATHFINDING*******
     struct PFNode
     {
         uint32 m_CostG; ///< Cost to go from start to Node
         uint32 m_CostH; ///< Cost to go from Node to end
         uint32 m_CostF; ///< Total of Node parents cost
-        PFNodePosition m_PosParent; ///< Postion of parent
+        Position m_PosParent; ///< Postion of parent
 
         PFNode() :
             m_CostG(0), m_CostH(0), m_CostF(0) 
         {
-            m_PosParent.first = 0, m_PosParent.second = 0;
+            m_PosParent.m_X = 0, m_PosParent.m_Y = 0;
         }
     };
 
-public:
-    std::vector<Position> LaunchPathFinding(const Position &, const Position &);
-    PFNodePosition m_StartPosition;
-    PFNodePosition m_EndPosition;
-    typedef std::map< PFNodePosition, PFNode > ListNode;
+    typedef std::map< Position, PFNode > ListNode;
+    Position m_StartPosition;
+    Position m_EndPosition;
     ListNode m_CloseList;
     ListNode m_OpenList;
-    float GetDistanceCase(const PFNodePosition &, const PFNodePosition &);
-    bool AlreadyInList(const PFNodePosition &, const ListNode &);
-    void AddAdjacentCases(const PFNodePosition &);
-    const PFNodePosition BestNode(ListNode &);
-    void AddToCloseList(const PFNodePosition &);
-    std::vector<Position> GetPath();
+    bool AlreadyInList(const Position &, const ListNode &);
+    void AddAdjacentCases(const Position &);
+    const Position BestNode(ListNode &);
+    void AddToCloseList(const Position &);
+    Path GetPath();
+    ///*******************************
 };
 
 

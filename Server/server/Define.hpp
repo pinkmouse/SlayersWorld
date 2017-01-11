@@ -33,6 +33,8 @@ typedef unsigned short uint16;
 typedef unsigned int uint32;
 typedef unsigned long long uint64;
 
+typedef std::pair<int16, int16> PFNodePosition;
+
 enum Orientation
 {
     Up = 0,
@@ -82,7 +84,7 @@ enum eGossipType
     Yell = 1
 };
 
-struct Position 
+struct Position
 {
     uint32 m_X;
     uint32 m_Y;
@@ -95,7 +97,13 @@ struct Position
 
     Position(const Position & p_Position) :
     m_X(p_Position.m_X), m_Y(p_Position.m_Y) {}
+
+    bool operator==(Position const& a) const { return m_X == a.m_X && m_Y == a.m_Y; }
+    bool operator!=(Position const& a) const { return m_X != a.m_X || m_Y != a.m_Y; }
+    bool operator<(Position const& a) const { return m_X < a.m_X || (!(a.m_X < m_X) && m_Y < a.m_Y); }
 };
+
+typedef std::vector<Position> Path;
 
 struct Gossip
 {

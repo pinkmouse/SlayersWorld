@@ -183,7 +183,6 @@ void Creature::UpdateDefensive(sf::Time p_Diff)
     }
 }
 
-
 void Creature::UpdateAgresive(sf::Time p_Diff)
 {
     if (!IsInCombat())
@@ -196,10 +195,24 @@ void Creature::UpdateAgresive(sf::Time p_Diff)
 
         Unit* l_Victim = m_Map->GetCloserUnit(this, CaseToPixel(m_CreatureTemplate.m_MaxVision), true, false, true);
         if (GetDistance(m_RespawnPosition.GetPosition()) > CaseToPixel(m_CreatureTemplate.m_MaxRay))
+        {            
+            if (!IsFollowingPath() && PositionToCasePosition(GetPosition()) != PositionToCasePosition(m_RespawnPosition.GetPosition()))
+            {
+                m_PathToTargetPosition = m_Map->LaunchPathFinding(PositionToCasePosition(GetPosition()), PositionToCasePosition(m_RespawnPosition.GetPosition()));
+            }
+            else if (!IsFollowingPath() && PositionToCasePosition(GetPosition()) == PositionToCasePosition(m_RespawnPosition.GetPosition()))
+            {
+                Orientation l_Orientation = GetOrientationToPoint(m_RespawnPosition.GetPosition());
+                if (GetOrientation() != l_Orientation || !IsInMovement())
+                    StartMovement(l_Orientation);
+            }
+           // printf("HERE 0.1 %d %d\n", m_RespawnPosition.GetPosition().m_X, CaseToPixel(m_CreatureTemplate.m_MaxRay));
+        }
+        else if (m_MovementHandler->IsInMovement())
         {
-            Orientation l_Orientation = GetOrientationToPoint(m_RespawnPosition.GetPosition());
-            if (GetOrientation() != l_Orientation || !IsInMovement())
-                StartMovement(l_Orientation);
+            OutOfEvade();
+            ResetRandMovementTime(false);
+            StopMovement();
         }
         else if (l_Victim != nullptr)
         {
@@ -243,9 +256,12 @@ void Creature::UpdateAgresive(sf::Time p_Diff)
             if (!m_MovementHandler->IsInAttack())
             {
                 m_RandMovementTime = 0;
-                Orientation l_Orientation = GetOrientationToPoint(GetVictim());
-                if (GetOrientation() != l_Orientation || !IsInMovement())
-                    StartMovement(l_Orientation);
+                if (!IsValidOrientationToPoint((Orientation)GetOrientation(), GetVictim()) || !IsInMovement())
+                {
+                    Orientation l_Orientation = GetOrientationToPoint(GetVictim());
+                    if (GetOrientation() != l_Orientation || !IsInMovement())
+                        StartMovement(l_Orientation);
+                }
             }
         }
         else
@@ -280,6 +296,12 @@ void Creature::Update(sf::Time p_Diff)
     if (!IsInWorld())
         return;
 
+    if (IsFollowingPath())
+    {
+        Orientation l_Orientation = GetOrientationByPath(m_PathToTargetPosition);
+        if (GetOrientation() != l_Orientation || !IsInMovement())
+            StartMovement(l_Orientation);
+    }
     switch (m_CreatureTemplate.m_AiType)
     {
         case eAiType::PASSIVE:
@@ -355,4 +377,33 @@ void Creature::Respawn()
     PacketUnitCreate l_Packet;
     l_Packet.BuildPacket((uint8)TypeUnit::CREATURE, GetID(), GetName(), GetLevel(), GetHealth(), GetSkinID(), GetMapID(), GetPosition(), GetOrientation(), m_MovementHandler->IsInMovement());
     m_Map->SendToSet(l_Packet.m_Packet, this);
+}
+
+bool Creature::IsFollowingPath() const
+{
+    return !m_PathToTargetPosition.empty();
+}
+
+Orientation Creature::GetOrientationByPath(Path & p_Path)
+{
+    if (p_Path.empty())
+    {
+        StopMovement();
+        return m_MovementHandler->GetOrientation();
+    }
+    Position p_NextPos = p_Path[p_Path.size() - 1];
+    while (GetPosX() / TILE_SIZE == p_NextPos.m_X && GetPosY() / TILE_SIZE == p_NextPos.m_Y)
+    {
+        p_Path.pop_back();
+        printf("-------> remove %d id:%d - size : %d\n", p_NextPos.m_X, p_NextPos.m_Y, p_Path.size());
+
+        if (p_Path.empty())
+        {
+            printf("EMPTY\n", p_NextPos.m_X, p_NextPos.m_Y);
+            StopMovement();
+            return m_MovementHandler->GetOrientation();
+        }
+        p_NextPos = p_Path[p_Path.size() - 1];
+    }
+    return GetOrientationToCase(p_NextPos);
 }

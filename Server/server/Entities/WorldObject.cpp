@@ -64,3 +64,59 @@ Orientation  WorldObject::GetOrientationToPoint(const WorldObject* p_Object) con
     Position l_Posistion = p_Object->GetPosition();
     return GetOrientationToPoint(l_Posistion);
 }
+
+bool WorldObject::IsValidOrientationToPoint(const Orientation & p_Orientation, const Position & p_Position) const
+{
+    switch (p_Orientation)
+    {
+    case Orientation::Down:
+        if (p_Position.m_Y > GetPosY())
+            return true;
+        break;
+    case Orientation::Up:
+        if (p_Position.m_Y < GetPosY())
+            return true;
+        break;
+    case Orientation::Right:
+        if (p_Position.m_X > GetPosX())
+            return true;
+        break;
+    case Orientation::Left:
+        if (p_Position.m_X < GetPosX())
+            return true;
+        break;
+    }
+    return false;
+}
+
+bool WorldObject::IsValidOrientationToPoint(const Orientation & p_Orientation, const WorldObject* p_Object) const
+{
+    Position l_Posistion = p_Object->GetPosition();
+    return IsValidOrientationToPoint(p_Orientation, l_Posistion);
+}
+
+Orientation  WorldObject::GetOrientationToCase(const Position & p_Position) const
+{
+    int32 l_X = GetPosX() / TILE_SIZE - p_Position.m_X;
+    int32 l_Y = GetPosY() / TILE_SIZE - p_Position.m_Y;
+
+    if (l_X < 0)
+        l_X *= -1;
+    if (l_Y < 0)
+        l_Y *= -1;
+
+    if (l_X > l_Y)
+    {
+        if (GetPosX() / TILE_SIZE < p_Position.m_X)
+            return Orientation::Right;
+        else
+            return Orientation::Left;
+    }
+    else
+    {
+        if (GetPosY() / TILE_SIZE < p_Position.m_Y)
+            return Orientation::Down;
+        else
+            return Orientation::Up;
+    }
+}
