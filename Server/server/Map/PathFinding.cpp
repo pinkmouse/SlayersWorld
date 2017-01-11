@@ -11,21 +11,20 @@ void Map::AddAdjacentCases(const Position & p_Pos)
 {
     PFNode l_NodeTmp;
 
-    for (int32 i = p_Pos.m_X - 1; i <= p_Pos.m_X + 1; i++)
+    for (int64 i = p_Pos.m_X - 1; i <= p_Pos.m_X + 1; i++)
     {
         if ((i < 0) || (i >= m_SizeX))
             continue;
 
-        for (int32 j = p_Pos.m_Y - 1; j <= p_Pos.m_Y + 1; j++)
+        for (int64 j = p_Pos.m_Y - 1; j <= p_Pos.m_Y + 1; j++)
         {
             if ((j < 0) || (j >= m_SizeY))
                 continue;
 
-            Case* l_Case = GetCase(i * TILE_SIZE, j * TILE_SIZE);
+            Position l_Pos((uint32)i, (uint32)j);
+            Case* l_Case = GetCase(l_Pos.m_X * TILE_SIZE, l_Pos.m_Y * TILE_SIZE);
             if (l_Case == nullptr || l_Case->IsBlocking())
                 continue;
-
-            Position l_Pos(i, j);
 
             if (!AlreadyInList(l_Pos, m_CloseList))
             {
@@ -48,7 +47,7 @@ void Map::AddAdjacentCases(const Position & p_Pos)
 
 const Position Map::BestNode(ListNode & p_ListNode)
 {
-    float l_CostF = p_ListNode.begin()->second.m_CostF;
+    uint32 l_CostF = p_ListNode.begin()->second.m_CostF;
     Position l_Pos = p_ListNode.begin()->first;
 
     for (ListNode::iterator l_It = p_ListNode.begin(); l_It != p_ListNode.end(); l_It++)

@@ -8,9 +8,6 @@ public:
     ~Creature();
 
     void Update(sf::Time);
-    void UpdatePassive(sf::Time);
-    void UpdateDefensive(sf::Time);
-    void UpdateAgresive(sf::Time);
     void RandMoving();
     void StartMovement(Orientation);
     void StopMovement();
@@ -24,6 +21,13 @@ public:
     uint32 GetXpEarn() const;
     Orientation GetOrientationByPath(Path &);
     bool IsFollowingPath() const;
+    void ReturnToRespawnPoint();
+
+    /// CREATURE AI
+    void UpdateAI(sf::Time);
+    void UpdatePassive(sf::Time);
+    void UpdateDefensive(sf::Time);
+    void UpdateAgresive(sf::Time);
 
 private:
     uint16 m_Entry;

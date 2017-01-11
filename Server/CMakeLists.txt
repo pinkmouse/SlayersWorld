@@ -47,6 +47,7 @@ add_executable(${EXECUTABLE_NAME}
               server/Map/Square.hpp
 
               server/Entities/Creature.cpp
+	      server/Entities/CreatureAI.cpp
               server/Entities/Creature.hpp
               server/Entities/MovementHandler.cpp
               server/Entities/MovementHandler.hpp

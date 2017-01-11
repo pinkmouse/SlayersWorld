@@ -11,9 +11,11 @@ class Creature;
 
 class Unit : public WorldObject
 {
-public:
+protected:
     Unit(uint16);
     Unit(uint16, TypeUnit, eFactionType);
+
+public:
     ~Unit();
 
     bool IsPlayer() const;
