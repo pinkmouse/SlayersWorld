@@ -22,6 +22,8 @@ public:
     Orientation GetOrientationByPath(Path &);
     bool IsFollowingPath() const;
     void ReturnToRespawnPoint();
+    void ReturnInRay();
+    void GoToCase(Position &);
 
     /// CREATURE AI
     void UpdateAI(sf::Time);

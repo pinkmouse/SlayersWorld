@@ -453,6 +453,9 @@ bool SqlManager::InitializeCreature(UnitManager* p_CreatureManager)
         l_PosX = atoi(l_Row[3]);
         l_PosY = atoi(l_Row[4]);
 
+        /*if (l_Entry != 5)
+            continue;*/
+
         Creature* l_Creature = new Creature(l_Id, l_Entry, p_CreatureManager->GetCreatureTemplate(l_Entry), l_MapID, l_PosX, l_PosY);
         if (p_CreatureManager->GetGossipListFor(TypeUnit::CREATURE, l_Entry) != nullptr)
             l_Creature->SetGossipList(p_CreatureManager->GetGossipListFor(TypeUnit::CREATURE, l_Entry));

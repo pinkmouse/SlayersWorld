@@ -1,6 +1,7 @@
 #pragma once
 #include "WorldObject.hpp"
 #include "MovementHandler.hpp"
+#include "MovementHandlerCreature.hpp"
 #include "../Define.hpp"
 #include <string>
 #include <map>
@@ -59,7 +60,7 @@ public:
     Player* ToPlayer();
     MovementHandler* GetMovementHandler();
 
-    void Update(sf::Time);
+    virtual void Update(sf::Time);
     void UpdateCombat(sf::Time);
     void UpdateDeathState(sf::Time);
     void UpdateRegen(sf::Time);

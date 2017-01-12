@@ -11,10 +11,11 @@ class MovementHandler
 public:
     MovementHandler(uint8, uint8);
     ~MovementHandler();
-    void StartMovement(Orientation p_Orientation);
-    void StopMovement();
-    void StartAttack();
-    void StopAttack();
+    virtual void StartMovement(Orientation p_Orientation);
+    virtual void StopMovement();
+    virtual void StartAttack();
+    virtual void StopAttack();
+
     bool IsInAction() const;
     bool IsInMovement() const;
     bool IsInAttack() const;
@@ -43,7 +44,9 @@ public:
     void AddMovementToStack(eActionType);
     void ClearMovementStack();
 
-private:
+    void SetStopPoint(bool, Position p_Position = Position(0, 0));
+
+protected:
     bool m_InMovement;
     bool m_InAttack;
     bool m_StopAttack;
@@ -73,5 +76,14 @@ private:
         bool m_DamageReady;
         bool m_DamageDone;
     };
+
     AttackDamageState m_AttackDamage;
+
+    struct StopPoint
+    {
+        bool m_Active;
+        Position m_Position;
+    };
+
+    StopPoint m_StopPoint;
 };

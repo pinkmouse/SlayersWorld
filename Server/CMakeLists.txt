@@ -51,6 +51,8 @@ add_executable(${EXECUTABLE_NAME}
               server/Entities/Creature.hpp
               server/Entities/MovementHandler.cpp
               server/Entities/MovementHandler.hpp
+              server/Entities/MovementHandlerCreature.cpp
+              server/Entities/MovementHandlerCreature.hpp
               server/Entities/Player.cpp
               server/Entities/Player.hpp
               server/Entities/Unit.cpp

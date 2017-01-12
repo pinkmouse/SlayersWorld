@@ -14,6 +14,7 @@ MovementHandler::MovementHandler(uint8 p_SizeX, uint8 p_SizeY) :
     m_Map = nullptr;
     m_AttackDamage.m_DamageDone = false;
     m_AttackDamage.m_DamageReady = false;
+    m_StopPoint.m_Active = false;
 }
 
 MovementHandler::~MovementHandler()
@@ -148,6 +149,12 @@ void MovementHandler::UpdateAttack(sf::Time p_Diff)
     }
 }
 
+void MovementHandler::SetStopPoint(bool p_Active, Position p_Position)
+{
+    m_StopPoint.m_Active = p_Active;
+    m_StopPoint.m_Position = p_Position;
+}
+
 void MovementHandler::Update(sf::Time p_Diff)
 {
     CheckNextMovement(m_Pos.m_X, m_Pos.m_Y);
@@ -182,13 +189,17 @@ void MovementHandler::Update(sf::Time p_Diff)
         }
         m_DiffTime -= (uint64)((UPDATE_TIME_MOVEMENT / STEP_SIZE) * 1000 * (2.0f - m_Speed));
 
-        if (!IsInColision(l_PosX, l_PosY))
+        if (!IsInColision(l_PosX, l_PosY) && !(m_StopPoint.m_Active && m_StopPoint.m_Position == m_Pos))
         {
             m_Pos.m_X = (uint32)l_PosX;
             m_Pos.m_Y = (uint32)l_PosY;
         }
         else
+        {
             StopMovement();
+            if (m_StopPoint.m_Active && m_StopPoint.m_Position == m_Pos)
+                SetStopPoint(false);
+        }
     }
 }
 
@@ -211,7 +222,6 @@ bool MovementHandler::IsInAction() const
 {
     return m_InMovement || m_InAttack;
 }
-
 
 void MovementHandler::StartMovement(Orientation p_Orientation)
 {

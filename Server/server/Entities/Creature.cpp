@@ -48,9 +48,6 @@ void Creature::StartMovement(Orientation p_Orientation)
         return;
 
     m_MovementHandler->StartMovement(p_Orientation);
-    PacketGoDirection l_Packet;
-    l_Packet.BuildPacket((uint8)TypeUnit::CREATURE, GetID(), GetPosition(), GetOrientation());
-    m_Map->SendToSet(l_Packet.m_Packet, this);
 }
 
 void Creature::StopMovement()
@@ -59,25 +56,18 @@ void Creature::StopMovement()
         return;
 
     m_MovementHandler->StopMovement();
-    PacketStopMovement l_Packet;
-    l_Packet.BuildPacket((uint8)TypeUnit::CREATURE, GetID(), GetPosition(), GetOrientation());
-    m_Map->SendToSet(l_Packet.m_Packet, this);
 }
 
 void Creature::StartAttack(Unit* p_Victim)
 {
+    printf("Start Attack\n");
     m_MovementHandler->StartAttack();
-    PacketStartAttack l_Packet;
-    l_Packet.BuildPacket((uint8)TypeUnit::CREATURE, GetID(), GetPosition(), GetOrientation());
-    m_Map->SendToSet(l_Packet.m_Packet, this);
 }
 
 void Creature::StopAttack()
 {
+    printf("Stop Attack\n");
     m_MovementHandler->StopAttack();
-    PacketStopAttack l_Packet;
-    l_Packet.BuildPacket((uint8)TypeUnit::CREATURE, GetID());
-    m_Map->SendToSet(l_Packet.m_Packet, this);
 }
 
 void Creature::UpdateOrientation(Orientation p_Orientation)
@@ -108,16 +98,50 @@ uint32 Creature::GetXpEarn() const
 
 void Creature::ReturnToRespawnPoint()
 {
+    if (GetPosition() == m_RespawnPosition.GetPosition() && IsInMovement())
+    {
+        StopMovement();
+        return;
+    }
+
     if (!IsFollowingPath() && PositionToCasePosition(GetPosition()) != PositionToCasePosition(m_RespawnPosition.GetPosition()))
     {
         m_PathToTargetPosition = m_Map->LaunchPathFinding(PositionToCasePosition(GetPosition()), PositionToCasePosition(m_RespawnPosition.GetPosition()));
     }
-    else if (!IsFollowingPath() && PositionToCasePosition(GetPosition()) == PositionToCasePosition(m_RespawnPosition.GetPosition()))
+    else if (!IsFollowingPath() && PositionToCasePosition(GetPosition()) == PositionToCasePosition(m_RespawnPosition.GetPosition())) ///< WHEN IN GOOD CASE
     {
+        m_MovementHandler->SetStopPoint(true, m_RespawnPosition.GetPosition());
         Orientation l_Orientation = GetOrientationToPoint(m_RespawnPosition.GetPosition());
         if (GetOrientation() != l_Orientation || !IsInMovement())
             StartMovement(l_Orientation);
     }
+}
+
+void Creature::ReturnInRay()
+{
+    if (IsFollowingPath() && GetDistance(m_RespawnPosition.GetPosition()) <= CaseToPixel(m_CreatureTemplate.m_MaxRay))
+    {
+        m_PathToTargetPosition.clear();
+    }
+    else if (!IsFollowingPath() && GetDistance(m_RespawnPosition.GetPosition()) > CaseToPixel(m_CreatureTemplate.m_MaxRay)) ///< WHEN IN GOOD CASE
+    {
+        if (PositionToCasePosition(GetPosition()) == PositionToCasePosition(m_RespawnPosition.GetPosition()))
+        {
+            m_MovementHandler->SetStopPoint(true, m_RespawnPosition.GetPosition());
+
+            Orientation l_Orientation = GetOrientationToPoint(m_RespawnPosition.GetPosition());
+            if (GetOrientation() != l_Orientation || !IsInMovement())
+                StartMovement(l_Orientation);
+        }
+        else
+            m_PathToTargetPosition = m_Map->LaunchPathFinding(PositionToCasePosition(GetPosition()), PositionToCasePosition(m_RespawnPosition.GetPosition()));
+    }
+}
+
+void Creature::GoToCase(Position & p_Position)
+{
+    if (m_PathToTargetPosition.empty() || (*m_PathToTargetPosition.begin()) != p_Position)
+        m_PathToTargetPosition = m_Map->LaunchPathFinding(PositionToCasePosition(GetPosition()), PositionToCasePosition(p_Position));
 }
 
 void Creature::ResetRandMovementTime(bool ForMoving)
@@ -184,7 +208,6 @@ Orientation Creature::GetOrientationByPath(Path & p_Path)
     while (GetPosX() / TILE_SIZE == p_NextPos.m_X && GetPosY() / TILE_SIZE == p_NextPos.m_Y)
     {
         p_Path.pop_back();
-        printf("-------> remove %d id:%d - size : %d\n", p_NextPos.m_X, p_NextPos.m_Y, p_Path.size());
 
         if (p_Path.empty())
         {

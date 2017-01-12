@@ -32,7 +32,10 @@ Unit::Unit(uint16 p_ID, TypeUnit p_Type, eFactionType p_FactionType)
     
     m_Victim = nullptr;
     m_Attacker = nullptr;
-    m_MovementHandler = new MovementHandler(m_SizeX, m_SizeY);
+    if (m_Type == TypeUnit::CREATURE)
+        m_MovementHandler = new MovementHandlerCreature(this, m_SizeX, m_SizeY);
+    else
+        m_MovementHandler = new MovementHandler(m_SizeX, m_SizeY);
 }
 
 Player* Unit::ToPlayer()
@@ -495,6 +498,7 @@ void Unit::EnterInEvade()
 void Unit::OutOfEvade()
 {
     m_Evade = false;
+  //  m_MovementHandler->SetStopPoint(false);
 }
 
 bool Unit::IsInEvade() const
