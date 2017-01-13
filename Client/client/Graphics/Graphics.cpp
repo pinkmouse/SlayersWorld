@@ -149,7 +149,7 @@ void Graphics::DrawWorldObjects(std::map<uint32, std::vector<WorldObject*> > *p_
                 continue;
 
             if (l_WorldObject->GetType() == TypeWorldObject::UNIT)
-                l_WorldObject->GetSprite()->setPosition((float)l_WorldObject->GetPosX(), (float)l_WorldObject->GetPosY() - l_WorldObject->GetSizeY());
+                l_WorldObject->GetSprite()->setPosition((float)l_WorldObject->GetPosX(), (float)l_WorldObject->GetPosY() - l_WorldObject->GetSizeY() + 4);
             else
                 l_WorldObject->GetSprite()->setPosition((float)l_WorldObject->GetPosX(), (float)l_WorldObject->GetPosY());
             m_Window.draw(*l_WorldObject->GetSprite());

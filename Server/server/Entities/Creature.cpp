@@ -60,13 +60,11 @@ void Creature::StopMovement()
 
 void Creature::StartAttack(Unit* p_Victim)
 {
-    printf("Start Attack\n");
     m_MovementHandler->StartAttack();
 }
 
 void Creature::StopAttack()
 {
-    printf("Stop Attack\n");
     m_MovementHandler->StopAttack();
 }
 

@@ -91,9 +91,9 @@ void Creature::UpdateDefensive(sf::Time p_Diff)
     }
     else
     {
-        //printf("IN COMBAT\n");
         if (GetAttacker() == nullptr || GetAttacker()->IsDeath())
         {
+            printf("IS DEATH\n");
             OutOfCombat();
             return;
         }
@@ -101,8 +101,9 @@ void Creature::UpdateDefensive(sf::Time p_Diff)
         if (GetVictim() == nullptr)
             SetVictim(GetAttacker());
 
-        if (GetDistance(m_RespawnPosition.GetPosition()) > CaseToPixel(m_CreatureTemplate.m_MaxVision))
+        if (GetDistance(m_RespawnPosition.GetPosition()) > CaseToPixel(m_CreatureTemplate.m_MaxVision + m_CreatureTemplate.m_MaxRay))
         {
+            printf("Ou of range %f %d\n", GetDistance(m_RespawnPosition.GetPosition()), CaseToPixel(m_CreatureTemplate.m_MaxVision));
             EnterInEvade();
             OutOfCombat();
             return;
@@ -115,7 +116,14 @@ void Creature::UpdateDefensive(sf::Time p_Diff)
             if (!m_MovementHandler->IsInAttack())
             {
                 m_RandMovementTime = 0;
-                GoToCase(GetVictim()->GetPosition());
+                if (PositionToCasePosition(GetVictim()->GetPosition()) != PositionToCasePosition(GetPosition()))
+                    GoToCase(GetVictim()->GetPosition());
+                else
+                {
+                    Orientation l_Orientation = GetOrientationToPoint(m_RespawnPosition.GetPosition());
+                    if (GetOrientation() != l_Orientation || !IsInMovement())
+                        StartMovement(l_Orientation);
+                }
                 printf("GO TO CASE\n");
             }
         }
@@ -179,7 +187,6 @@ void Creature::UpdateAgresive(sf::Time p_Diff)
     }
     else
     {
-        //printf("IN COMBAT\n");
         if (GetAttacker() == nullptr || GetAttacker()->IsDeath())
         {
             OutOfCombat();
@@ -189,7 +196,7 @@ void Creature::UpdateAgresive(sf::Time p_Diff)
         if (GetVictim() == nullptr)
             SetVictim(GetAttacker());
 
-        if (GetDistance(m_RespawnPosition.GetPosition()) > CaseToPixel(m_CreatureTemplate.m_MaxVision))
+        if (GetDistance(m_RespawnPosition.GetPosition()) > CaseToPixel(m_CreatureTemplate.m_MaxVision + m_CreatureTemplate.m_MaxRay))
         {
             EnterInEvade();
             OutOfCombat();
