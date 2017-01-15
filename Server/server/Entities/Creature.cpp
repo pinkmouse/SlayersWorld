@@ -47,6 +47,8 @@ void Creature::StartMovement(Orientation p_Orientation)
     if (m_MovementHandler == nullptr)
         return;
 
+    if (m_Entry == 5)
+        printf("Go To direction %d\n", (int)p_Orientation);
     m_MovementHandler->StartMovement(p_Orientation);
 }
 
@@ -104,6 +106,7 @@ void Creature::ReturnToRespawnPoint()
 
     if (!IsFollowingPath() && PositionToCasePosition(GetPosition()) != PositionToCasePosition(m_RespawnPosition.GetPosition()))
     {
+        printf("Launch Path Resapwn\n");
         m_PathToTargetPosition = m_Map->LaunchPathFinding(PositionToCasePosition(GetPosition()), PositionToCasePosition(m_RespawnPosition.GetPosition()));
     }
     else if (!IsFollowingPath() && PositionToCasePosition(GetPosition()) == PositionToCasePosition(m_RespawnPosition.GetPosition())) ///< WHEN IN GOOD CASE
@@ -123,6 +126,7 @@ void Creature::ReturnInRay()
     }
     else if (!IsFollowingPath() && GetDistance(m_RespawnPosition.GetPosition()) > CaseToPixel(m_CreatureTemplate.m_MaxRay)) ///< WHEN IN GOOD CASE
     {
+        printf("Return in ray\n");
         if (PositionToCasePosition(GetPosition()) == PositionToCasePosition(m_RespawnPosition.GetPosition()))
         {
             m_MovementHandler->SetStopPoint(true, m_RespawnPosition.GetPosition());
@@ -138,8 +142,8 @@ void Creature::ReturnInRay()
 
 void Creature::GoToCase(Position & p_Position)
 {
-    if (m_PathToTargetPosition.empty() || (*m_PathToTargetPosition.begin()) != p_Position)
-        m_PathToTargetPosition = m_Map->LaunchPathFinding(PositionToCasePosition(GetPosition()), PositionToCasePosition(p_Position));
+    if (m_PathToTargetPosition.empty() || m_PathToTargetPosition[0] != PositionToCasePosition(p_Position))
+            m_PathToTargetPosition = m_Map->LaunchPathFinding(PositionToCasePosition(GetPosition()), PositionToCasePosition(p_Position));
 }
 
 void Creature::ResetRandMovementTime(bool ForMoving)
@@ -209,7 +213,6 @@ Orientation Creature::GetOrientationByPath(Path & p_Path)
 
         if (p_Path.empty())
         {
-            printf("EMPTY\n", p_NextPos.m_X, p_NextPos.m_Y);
             StopMovement();
             return m_MovementHandler->GetOrientation();
         }

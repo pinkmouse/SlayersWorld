@@ -91,19 +91,22 @@ void Creature::UpdateDefensive(sf::Time p_Diff)
     }
     else
     {
-        if (GetAttacker() == nullptr || GetAttacker()->IsDeath())
+        if (GetNbAttacker() == 0)
         {
-            printf("IS DEATH\n");
             OutOfCombat();
             return;
         }
 
-        if (GetVictim() == nullptr)
-            SetVictim(GetAttacker());
+        SetVictim(GetMaxThreatAttacker());
+
+        if (GetVictim() == nullptr || !GetVictim()->IsInWorld())
+        {
+            OutOfCombat();
+            return;
+        }
 
         if (GetDistance(m_RespawnPosition.GetPosition()) > CaseToPixel(m_CreatureTemplate.m_MaxVision + m_CreatureTemplate.m_MaxRay))
         {
-            printf("Ou of range %f %d\n", GetDistance(m_RespawnPosition.GetPosition()), CaseToPixel(m_CreatureTemplate.m_MaxVision));
             EnterInEvade();
             OutOfCombat();
             return;
@@ -124,7 +127,6 @@ void Creature::UpdateDefensive(sf::Time p_Diff)
                     if (GetOrientation() != l_Orientation || !IsInMovement())
                         StartMovement(l_Orientation);
                 }
-                printf("GO TO CASE\n");
             }
         }
         else
@@ -132,7 +134,6 @@ void Creature::UpdateDefensive(sf::Time p_Diff)
             m_PathToTargetPosition.clear();
             if (m_MovementHandler->IsInMovement())
             {
-                printf("STOP COMBAT\n");
                 StopMovement();
             }
 
@@ -169,7 +170,7 @@ void Creature::UpdateAgresive(sf::Time p_Diff)
             }
             if (Unit* l_Victim = m_Map->GetCloserUnit(this, (float)CaseToPixel(m_CreatureTemplate.m_MaxVision), true, false, true))
             {
-                l_Victim->EnterInCombat(this);
+                EnterInCombat(l_Victim);
                 return;
             }
         }
@@ -187,16 +188,16 @@ void Creature::UpdateAgresive(sf::Time p_Diff)
     }
     else
     {
-        if (GetAttacker() == nullptr || GetAttacker()->IsDeath())
+        if (GetDistance(m_RespawnPosition.GetPosition()) > CaseToPixel(m_CreatureTemplate.m_MaxVision + m_CreatureTemplate.m_MaxRay))
         {
+            EnterInEvade();
             OutOfCombat();
             return;
         }
 
-        if (GetVictim() == nullptr)
-            SetVictim(GetAttacker());
+        SetVictim(GetMaxThreatAttacker());
 
-        if (GetDistance(m_RespawnPosition.GetPosition()) > CaseToPixel(m_CreatureTemplate.m_MaxVision + m_CreatureTemplate.m_MaxRay))
+        if (GetVictim() == nullptr || !GetVictim()->IsInWorld())
         {
             EnterInEvade();
             OutOfCombat();
@@ -224,7 +225,6 @@ void Creature::UpdateAgresive(sf::Time p_Diff)
             m_PathToTargetPosition.clear();
             if (m_MovementHandler->IsInMovement())
             {
-                printf("STOP\n");
                 StopMovement();
             }
 

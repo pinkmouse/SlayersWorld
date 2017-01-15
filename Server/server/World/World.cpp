@@ -103,6 +103,7 @@ void World::UpdatePacketQueue()
         if ((*l_It)->GetPlayer() != nullptr)
             printf("Disco: %s\n", (*l_It)->GetPlayer()->GetName().c_str());
         delete (*l_It);
+        (*l_It) = nullptr;
         l_It = m_DisconnectedQueue.erase(l_It);
     }
 

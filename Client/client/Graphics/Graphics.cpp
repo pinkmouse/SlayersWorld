@@ -126,7 +126,7 @@ void Graphics::DrawUnitDetails(Unit* p_Unit)
     {
         sf::Text l_Name(p_Unit->GetName(), *g_Font, SIZE_NAME_FONT);
         l_Name.setColor(sf::Color::White);
-        sf::Vector2f l_View(p_Unit->GetPosX() + (p_Unit->GetSizeX() / 2), p_Unit->GetPosY());
+        sf::Vector2f l_View(p_Unit->GetPosX() + (p_Unit->GetSizeX() / 2), p_Unit->GetPosY() + 4);
         sf::Vector2f l_Coord = m_Window.mapCoordsToPixelFloat(l_View, m_View);
         l_Name.setPosition((l_Coord.x - (l_Name.getGlobalBounds().width / 2.0f)), l_Coord.y);
 

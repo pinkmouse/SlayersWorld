@@ -18,8 +18,18 @@ void Map::AddAdjacentCases(const Position & p_Pos)
 
         for (int64 j = p_Pos.m_Y - 1; j <= p_Pos.m_Y + 1; j++)
         {
+            /* Revome diagonal */
+            if (i == p_Pos.m_X - 1 && j == p_Pos.m_Y - 1) /// Top Left
+                continue;
+            if (i == p_Pos.m_X + 1 && j == p_Pos.m_Y + 1) /// Bottom Right
+                continue;
+            if (i == p_Pos.m_X + 1 && j == p_Pos.m_Y - 1) /// Top Right
+                continue;
+            if (i == p_Pos.m_X - 1 && j == p_Pos.m_Y + 1) /// Bottom Left
+                continue;
             if ((j < 0) || (j >= m_SizeY))
                 continue;
+            /******************/
 
             Position l_Pos((uint32)i, (uint32)j);
             Case* l_Case = GetCase(l_Pos.m_X * TILE_SIZE, l_Pos.m_Y * TILE_SIZE);
@@ -58,7 +68,7 @@ const Position Map::BestNode(ListNode & p_ListNode)
             l_Pos = l_It->first;
         }
     }
-
+    printf("Best Node %d %d\n", l_Pos.m_X, l_Pos.m_Y);
     return l_Pos;
 }
 
@@ -103,6 +113,7 @@ Path Map::LaunchPathFinding(const Position & p_PosStart, const Position & p_PosE
     AddToCloseList(l_Current);
     AddAdjacentCases(l_Current);
 
+    //printf("Launch Path Finding from %d %d to %d %d\n", p_PosStart.m_X, p_PosStart.m_Y, p_PosEnd.m_X, p_PosEnd.m_Y);
     while ((l_Current != m_EndPosition) && (!m_OpenList.empty()))
     {
         l_Current = BestNode(m_OpenList);

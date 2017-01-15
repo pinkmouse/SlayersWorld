@@ -72,10 +72,13 @@ public:
     void EnterInCombat(Unit*);
     void InCombat();
     void OutOfCombat();
-    void SetAttacker(Unit*);
+    void AddAttacker(Unit*);
+    void RemoveAttacker(Unit*);
+    uint8 GetNbAttacker() const;
     void SetVictim(Unit*);
     void TeleportTo(const WorldPosition&);
-    Unit* GetAttacker() const;
+    Unit* GetMaxThreatAttacker();
+    void AddThreadFromAttacker(Unit*, uint16);
     Unit* GetVictim() const;
     bool CanAttack(Unit*) const;
     bool IsHostileTo(Unit*);
@@ -111,10 +114,12 @@ protected:
     bool m_Evade;
 
 private:
+    void CleanAttackers();
+
     bool m_InCombat;
     uint64 m_CombatTimer;
     Unit* m_Victim;
-    Unit* m_Attacker;
+    std::map<Unit*, uint16> m_Attackers;
     eFactionType m_FactionType;
 
     std::map< eGossipType, std::vector<Gossip*> > m_ListGossip;
