@@ -50,7 +50,7 @@ void Events::Update()
     }
 
     /// Need update to check if when attack is finish we have direction key press
-    if (!l_MovementHandler->IsInMovement() && !l_MovementHandler->IsInAttack())
+    if (!l_MovementHandler->IsInMovement() && !l_MovementHandler->IsInAttack() && !l_MovementHandler->GetInColision())
     {
         if (m_KeyPressed.size() > 0) ///< Check the others action
         {

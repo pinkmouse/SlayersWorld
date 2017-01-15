@@ -18,8 +18,8 @@ public:
     void StartAttack(Orientation);
     void StopAttack();
     uint8 GetMovementPosition();
-    bool IsInColision(int64, int64) const;
     bool CheckNextMovement(uint32, uint32);
+    bool GetInColision() const;
 
     bool IsInMovement() const;
     bool IsInAttack() const;
@@ -44,9 +44,12 @@ public:
     void ClearMovementStack();
 
 private:
+    bool IsInColision(int64, int64) const;
+
     bool m_InMovement;
     bool m_InAttack;
     bool m_StopAttack;
+    bool m_InColision;
 
     float m_Speed;
     uint8 m_MovementPosition;

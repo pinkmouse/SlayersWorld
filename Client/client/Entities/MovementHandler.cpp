@@ -9,6 +9,7 @@ MovementHandler::MovementHandler(uint8 p_SizeX, uint8 p_SizeY) :
     m_InMovement = false;
     m_InAttack = false;
     m_StopAttack = false;
+    m_InColision = false;
     m_Orientation = Orientation::Down;
     m_Pos.x = 0;
     m_Pos.y = 0;
@@ -146,9 +147,13 @@ void MovementHandler::Update(sf::Time p_Diff)
         {
             m_Pos.x = (uint32)l_PosX;
             m_Pos.y = (uint32)l_PosY;
+            m_InColision = false;
         }
         else
+        {
             StopMovement();
+            m_InColision = true;
+        }
     }
 }
 
@@ -280,6 +285,11 @@ uint8 MovementHandler::GetMovementPosition()
         return m_MovementPosition;
 
     return m_MovementPosition;
+}
+
+bool MovementHandler::GetInColision() const
+{
+    return m_InColision;
 }
 
 void MovementHandler::SetPosX(uint32 p_PosX)
