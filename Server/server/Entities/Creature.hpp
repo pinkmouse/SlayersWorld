@@ -23,7 +23,7 @@ public:
     bool IsFollowingPath() const;
     void ReturnToRespawnPoint();
     void ReturnInRay();
-    void GoToCase(Position &);
+    void GoToCase(const Position &);
     void OutOfCombat();
 
     /// CREATURE AI
