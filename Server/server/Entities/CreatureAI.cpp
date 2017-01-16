@@ -2,6 +2,11 @@
 #include "../Map/Map.hpp"
 #include "../World/PacketDefine.hpp"
 
+void Creature::OutOfCombat()
+{
+    Unit::OutOfCombat();
+    m_PathToTargetPosition.clear();
+}
 
 void Creature::UpdateAI(sf::Time p_Diff)
 {
@@ -151,7 +156,7 @@ void Creature::UpdateDefensive(sf::Time p_Diff)
 
 void Creature::UpdateAgresive(sf::Time p_Diff)
 {
-    if (!IsInCombat())
+    if (GetVictim() == nullptr/*!IsInCombat()*/)
     {
         if (m_MovementHandler->IsInAttack() && !m_MovementHandler->IsStopingAttack()) ///< If in combat and still atacking
             StopAttack();
@@ -170,7 +175,8 @@ void Creature::UpdateAgresive(sf::Time p_Diff)
             }
             if (Unit* l_Victim = m_Map->GetCloserUnit(this, (float)CaseToPixel(m_CreatureTemplate.m_MaxVision), true, false, true))
             {
-                EnterInCombat(l_Victim);
+                SetVictim(l_Victim);
+                //EnterInCombat(l_Victim);
                 return;
             }
         }
@@ -222,6 +228,8 @@ void Creature::UpdateAgresive(sf::Time p_Diff)
         }
         else
         {
+            if (!IsInCombat())
+                EnterInCombat(GetVictim());
             m_PathToTargetPosition.clear();
             if (m_MovementHandler->IsInMovement())
             {

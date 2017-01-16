@@ -66,13 +66,13 @@ public:
     void UpdateRegen(sf::Time);
     void UpdateVictims();
 
+    virtual void OutOfCombat();
     bool IsInCombat() const;
     void EnterInEvade();
     void OutOfEvade();
     bool IsInEvade() const;
     void EnterInCombat(Unit*);
     void InCombat();
-    void OutOfCombat();
     void AddAttacker(Unit*);
     void AddVictim(Unit*);
     void RemoveAttacker(Unit*);

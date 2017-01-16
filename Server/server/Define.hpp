@@ -19,7 +19,7 @@
 #define STEP_SIZE 8 /// In pixel
 #define MAX_MOVEMENT_POSITION 3
 
-#define OUT_OF_COMBAT_TIME 5
+#define OUT_OF_COMBAT_TIME 7
 #define MELEE_RANGE TILE_SIZE
 
 typedef char int8;

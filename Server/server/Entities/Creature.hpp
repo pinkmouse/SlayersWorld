@@ -24,6 +24,7 @@ public:
     void ReturnToRespawnPoint();
     void ReturnInRay();
     void GoToCase(Position &);
+    void OutOfCombat();
 
     /// CREATURE AI
     void UpdateAI(sf::Time);
