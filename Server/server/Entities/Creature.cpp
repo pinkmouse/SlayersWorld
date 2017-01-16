@@ -47,8 +47,6 @@ void Creature::StartMovement(Orientation p_Orientation)
     if (m_MovementHandler == nullptr)
         return;
 
-    if (m_Entry == 5)
-        printf("Go To direction %d\n", (int)p_Orientation);
     m_MovementHandler->StartMovement(p_Orientation);
 }
 
