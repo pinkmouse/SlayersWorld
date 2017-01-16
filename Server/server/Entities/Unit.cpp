@@ -57,6 +57,7 @@ Unit::~Unit()
 {
     m_InWorld = false;
     CleanAttackers();
+    CleanVictims();
     m_MovementHandler->StopMovement();
     m_MovementHandler->StopAttack();
     m_Map->RemoveUnit(this);
@@ -71,7 +72,8 @@ void Unit::UpdateDeathState(sf::Time p_Diff)
         m_ResTimer += p_Diff.asMicroseconds();
         if (m_ResTimer >= m_RespawnTime)
         {
-            switch (m_Type)
+            Respawn();
+            /*switch (m_Type)
             {
             case TypeUnit::PLAYER:
                 ToPlayer()->Respawn();
@@ -81,7 +83,7 @@ void Unit::UpdateDeathState(sf::Time p_Diff)
                 break;
             default:
                 break;
-            }
+            }*/
         }
     }
 }
@@ -134,7 +136,9 @@ void Unit::UpdateRegen(sf::Time p_Diff)
     m_RegenTimer += p_Diff.asMicroseconds();
     if (m_RegenTimer >= REGEN_HEALTH_TIMER * 1000)
     {
-        switch (m_Type)
+     
+        SetHealth(GetHealth() + 5);
+        /*switch (m_Type)
         {
         case TypeUnit::PLAYER:
             ToPlayer()->SetHealth(GetHealth() + 5);
@@ -144,7 +148,7 @@ void Unit::UpdateRegen(sf::Time p_Diff)
             break;
         default:
             break;
-        }
+        }*/
         m_RegenTimer -= REGEN_HEALTH_TIMER * 1000;
     }
 }
@@ -155,6 +159,7 @@ void Unit::Update(sf::Time p_Diff)
     UpdateCombat(p_Diff);
     UpdateRegen(p_Diff);
     UpdateGossip(p_Diff);
+    UpdateVictims();
 
     if (m_MovementHandler == nullptr)
         return;
@@ -229,15 +234,16 @@ void Unit::DealDamage(Unit* p_Victim)
 	if (IsPlayer())
 		ToPlayer()->GetSession()->SendLogDamage(p_Victim->GetType(), p_Victim->GetID(), l_Damage, l_Miss);
 
+    p_Victim->SetHealth((uint8)l_NewHealth);
     switch (p_Victim->GetType())
     {
         case TypeUnit::PLAYER:
-			p_Victim->ToPlayer()->SetHealth((uint8)l_NewHealth);
+			//p_Victim->ToPlayer()->SetHealth((uint8)l_NewHealth);
 			p_Victim->ToPlayer()->GetSession()->SendLogDamage(p_Victim->GetType(), p_Victim->GetID(), l_Damage, l_Miss);
         break;
-        case TypeUnit::CREATURE:
+        /*case TypeUnit::CREATURE:
             p_Victim->ToCreature()->SetHealth((uint8)l_NewHealth);
-            break;
+            break;*/
         default:
             break;
     }
@@ -278,7 +284,10 @@ void Unit::SetInWorld(bool p_InWorld)
 {
     m_InWorld = p_InWorld;
     if (!p_InWorld)
+    {
         CleanAttackers();
+        CleanVictims();
+    }
 }
 
 TypeUnit Unit::GetType() const
@@ -484,17 +493,17 @@ void Unit::InCombat()
 void Unit::OutOfCombat()
 {
     //m_MovementHandler->StopAttack();
-
     m_InCombat = false;
     m_Victim = nullptr;
     CleanAttackers();
+    CleanVictims();
 }
 
 void Unit::EnterInCombat(Unit* p_Victim)
 {
     p_Victim->AddAttacker(this);
     SetVictim(p_Victim);
-    AddAttacker(p_Victim);
+    AddVictim(p_Victim);
     InCombat();
     p_Victim->InCombat();
 }
@@ -517,6 +526,9 @@ bool Unit::IsInEvade() const
 
 bool Unit::CanAttack(Unit* p_Unit) const
 {
+    if (!p_Unit->IsInWorld() || p_Unit->IsDeath() || !p_Unit->IsInWorld())
+        return false;
+
     if (GetFaction() == eFactionType::Neutral || p_Unit->GetFaction() == eFactionType::Neutral)
         return false;
 
@@ -560,6 +572,12 @@ void Unit::AddAttacker(Unit* p_Attacker)
         m_Attackers[p_Attacker] = 0;
 }
 
+void Unit::AddVictim(Unit* p_Victim)
+{
+    if (m_Victims.find(p_Victim) == m_Victims.end())
+        m_Victims[p_Victim] = 0;
+}
+
 void Unit::AddThreadFromAttacker(Unit* p_Attacker, uint16 l_Damage)
 {
     if (l_Damage <= 0)
@@ -574,6 +592,13 @@ void Unit::RemoveAttacker(Unit* p_Attacker)
     if (m_Attackers.find(p_Attacker) != m_Attackers.end())
         m_Attackers.erase(p_Attacker);
 }
+
+void Unit::RemoveVictim(Unit* p_Victim)
+{
+    if (m_Victims.find(p_Victim) != m_Victims.end())
+        m_Victims.erase(p_Victim);
+}
+
 void Unit::SetVictim(Unit* p_Victim) { m_Victim = p_Victim; }
 
 Unit* Unit::GetMaxThreatAttacker()
@@ -582,7 +607,7 @@ Unit* Unit::GetMaxThreatAttacker()
     uint16 l_Thread = 0;
     for (std::map<Unit*, uint16>::iterator l_It = m_Attackers.begin(); l_It != m_Attackers.end(); ++l_It)
     {
-        if ((*l_It).second >= l_Thread)
+        if ((*l_It).second >= l_Thread && CanAttack((*l_It).first))
         {
             l_Attacker = (*l_It).first;
             l_Thread = (*l_It).second;
@@ -597,15 +622,44 @@ uint8 Unit::GetNbAttacker() const
     return (uint8)m_Attackers.size();
 }
 
+void Unit::UpdateVictims()
+{
+    for (std::map<Unit*, uint16>::iterator l_It = m_Attackers.begin(); l_It != m_Attackers.end(); ++l_It)
+    {
+        Unit* l_Attacker = (*l_It).first;
+        if (l_Attacker->GetDistance(this) > CaseToPixel(30))
+            l_Attacker->RemoveVictim(this);
+    }
+    for (std::map<Unit*, uint16>::iterator l_It = m_Victims.begin(); l_It != m_Victims.end(); ++l_It)
+    {
+        Unit* l_Victim = (*l_It).first;
+        if (l_Victim->GetDistance(this) > CaseToPixel(30))
+            l_Victim->RemoveAttacker(this);
+    }
+}
+
 void Unit::CleanAttackers()
 {
-    if (GetVictim())
-        GetVictim()->RemoveAttacker(this);
     for (std::map<Unit*, uint16>::iterator l_It = m_Attackers.begin(); l_It != m_Attackers.end(); ++l_It)
     {
         Unit* l_Attacker = (*l_It).first;
         if (l_Attacker && l_Attacker->GetVictim() == this)
             l_Attacker->SetVictim(nullptr);
+        if (l_Attacker)
+            l_Attacker->RemoveVictim(this);
     }
     m_Attackers.clear();
+}
+
+void Unit::CleanVictims()
+{
+    if (GetVictim())
+        GetVictim()->RemoveAttacker(this);
+    for (std::map<Unit*, uint16>::iterator l_It = m_Victims.begin(); l_It != m_Victims.end(); ++l_It)
+    {
+        Unit* l_Victim = (*l_It).first;
+        if (l_Victim)
+            l_Victim->RemoveAttacker(this);
+    }
+    m_Victims.clear();
 }

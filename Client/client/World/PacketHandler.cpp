@@ -332,6 +332,7 @@ void PacketHandler::HandleCreateUnit(WorldPacket &p_Packet)
     Position l_Pos;
     uint8 l_Orientation;
     bool l_IsInMovement;
+    bool l_IsInAttack;
 
     p_Packet >> l_TypeID;
     p_Packet >> l_ID;
@@ -344,6 +345,7 @@ void PacketHandler::HandleCreateUnit(WorldPacket &p_Packet)
     p_Packet >> l_Pos.y;
     p_Packet >> l_Orientation;
     p_Packet >> l_IsInMovement;
+    p_Packet >> l_IsInAttack;
 
     printf("Create new Unit: %d %s %d %d %d %d\n", l_ID, l_Name.c_str(), l_SkinID, l_MapID, l_Pos.x, l_Pos.y);
 
@@ -365,6 +367,8 @@ void PacketHandler::HandleCreateUnit(WorldPacket &p_Packet)
         l_ActualMap->AddUnit(l_NewUnit);
         if (l_IsInMovement)
             l_NewUnit->GetMovementHandler()->AddMovementToStack(eActionType::Go, l_Pos, (Orientation)l_NewUnit->GetOrientation());
+        if (l_IsInAttack)
+            l_NewUnit->GetMovementHandler()->AddMovementToStack(eActionType::Attack, l_Pos, (Orientation)l_NewUnit->GetOrientation());
     }
 }
 

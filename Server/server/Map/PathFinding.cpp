@@ -68,7 +68,7 @@ const Position Map::BestNode(ListNode & p_ListNode)
             l_Pos = l_It->first;
         }
     }
-    printf("Best Node %d %d\n", l_Pos.m_X, l_Pos.m_Y);
+    //printf("Best Node %d %d\n", l_Pos.m_X, l_Pos.m_Y);
     return l_Pos;
 }
 

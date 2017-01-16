@@ -126,7 +126,7 @@ void Creature::ReturnInRay()
     }
     else if (!IsFollowingPath() && GetDistance(m_RespawnPosition.GetPosition()) > CaseToPixel(m_CreatureTemplate.m_MaxRay)) ///< WHEN IN GOOD CASE
     {
-        printf("Return in ray\n");
+        //printf("Return in ray\n");
         if (PositionToCasePosition(GetPosition()) == PositionToCasePosition(m_RespawnPosition.GetPosition()))
         {
             m_MovementHandler->SetStopPoint(true, m_RespawnPosition.GetPosition());
@@ -190,7 +190,7 @@ void Creature::Respawn()
 
     /// Respawn creature for players
     PacketUnitCreate l_Packet;
-    l_Packet.BuildPacket((uint8)TypeUnit::CREATURE, GetID(), GetName(), GetLevel(), GetHealth(), GetSkinID(), GetMapID(), GetPosition(), GetOrientation(), m_MovementHandler->IsInMovement());
+    l_Packet.BuildPacket((uint8)TypeUnit::CREATURE, GetID(), GetName(), GetLevel(), GetHealth(), GetSkinID(), GetMapID(), GetPosition(), GetOrientation(), m_MovementHandler->IsInMovement(), false);
     m_Map->SendToSet(l_Packet.m_Packet, this);
 }
 

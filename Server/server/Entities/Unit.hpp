@@ -41,7 +41,7 @@ public:
     void SetPosY(const uint32 &);
     void SetSkinID(const uint8 &);
     void Talk(const std::string &);
-    void SetHealth(const uint8 &);
+    virtual void SetHealth(const uint8 &);
     void SetOrientation(const Orientation &);
     void SetMap(Map*);
     void SetSquareID(uint16);
@@ -50,7 +50,7 @@ public:
     bool IsInFront(const Position &) const;
     bool IsInFront(Unit const*) const;
     void DealDamage(Unit*);
-    void Respawn();
+    virtual void Respawn();
     bool IsInWorld() const;
     void SetInWorld(bool);
     TypeUnit GetType() const;
@@ -64,6 +64,7 @@ public:
     void UpdateCombat(sf::Time);
     void UpdateDeathState(sf::Time);
     void UpdateRegen(sf::Time);
+    void UpdateVictims();
 
     bool IsInCombat() const;
     void EnterInEvade();
@@ -73,7 +74,9 @@ public:
     void InCombat();
     void OutOfCombat();
     void AddAttacker(Unit*);
+    void AddVictim(Unit*);
     void RemoveAttacker(Unit*);
+    void RemoveVictim(Unit*);
     uint8 GetNbAttacker() const;
     void SetVictim(Unit*);
     void TeleportTo(const WorldPosition&);
@@ -115,11 +118,14 @@ protected:
 
 private:
     void CleanAttackers();
+    void CleanVictims();
 
     bool m_InCombat;
     uint64 m_CombatTimer;
     Unit* m_Victim;
     std::map<Unit*, uint16> m_Attackers;
+    std::map<Unit*, uint16> m_Victims;
+
     eFactionType m_FactionType;
 
     std::map< eGossipType, std::vector<Gossip*> > m_ListGossip;

@@ -195,9 +195,9 @@ void Creature::UpdateAgresive(sf::Time p_Diff)
             return;
         }
 
-        SetVictim(GetMaxThreatAttacker());
-
-        if (GetVictim() == nullptr || !GetVictim()->IsInWorld())
+        if (GetVictim() == nullptr || !CanAttack(GetVictim()))
+            SetVictim(GetMaxThreatAttacker());
+        if (GetVictim() == nullptr /*|| !GetVictim()->IsInWorld()*/)
         {
             EnterInEvade();
             OutOfCombat();
