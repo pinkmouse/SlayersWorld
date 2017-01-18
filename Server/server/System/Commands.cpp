@@ -14,6 +14,8 @@ void Player::InitializeCommands()
 	m_CmdHandleMap["points"].second = &Player::HandleCommandAddPoint;
     m_CmdHandleMap["npc"].first = eAccessType::Moderator;
     m_CmdHandleMap["npc"].second = &Player::HandleCommandCreature;
+    m_CmdHandleMap["who"].first = eAccessType::Moderator;
+    m_CmdHandleMap["who"].second = &Player::HandleCommandWho;
 }
 
 bool Player::HandleCommandSkin(std::vector<std::string> p_ListCmd)
@@ -29,6 +31,24 @@ bool Player::HandleCommandSkin(std::vector<std::string> p_ListCmd)
 
     return true;
 }
+
+bool Player::HandleCommandWho(std::vector<std::string> p_ListCmd)
+{
+    std::string l_ListNames;
+    std::map<uint16, Unit*>* l_ListPlayer = GetMap()->GetListUnitType(TypeUnit::PLAYER);
+    for (std::map<uint16, Unit*>::iterator l_It = l_ListPlayer->begin(); l_It != l_ListPlayer->end();)
+    {
+        l_ListNames += (*l_It).second->GetName();
+        if (++l_It != l_ListPlayer->end())
+            l_ListNames += ":";
+        else
+            break;
+    }
+    SendMsg("ListPlayer: " + l_ListNames);
+
+    return true;
+}
+
 
 bool Player::HandleCommandWhere(std::vector<std::string> p_ListCmd)
 {

@@ -33,6 +33,7 @@ public:
     uint16 GetSizeX() const;
     uint16 GetSizeY() const;
     void UpdateForPlayersInNewSquare(Unit*, bool p_UpdateAll = false);
+    std::map<uint16, Unit*>* GetListUnitType(TypeUnit);
 
     /// Network
     void SendToSet(WorldPacket, Unit*);
@@ -90,5 +91,3 @@ private:
     Path GetPath();
     ///*******************************
 };
-
-

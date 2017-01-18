@@ -78,6 +78,12 @@ void Map::Update(sf::Time p_Diff)
     }
 }
 
+std::map<uint16, Unit*>* Map::GetListUnitType(TypeUnit p_Type)
+{
+    return &m_ListUnitZone[p_Type];
+}
+
+
 uint16 Map::ChangeSquare(Unit* p_Unit)
 {
     /// Send the new Unit to Player entering

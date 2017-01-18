@@ -100,7 +100,7 @@ void SqlManager::AddConnectionLogin(uint32 p_AccountID)
 
 std::string SqlManager::GetLoginName(uint32 p_AccountID)
 {
-    std::string l_Query = "SELECT `login` FROM `login` WHERE `id` = '" + std::to_string(p_AccountID) + "';";
+    std::string l_Query = "SELECT `characterName` FROM `login` WHERE `id` = '" + std::to_string(p_AccountID) + "';";
     mysql_query(&m_MysqlCharacters, l_Query.c_str());
 
     std::string l_Name = "";
