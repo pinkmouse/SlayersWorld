@@ -112,7 +112,7 @@ bool Player::HandleCommandAddPoint(std::vector<std::string> p_ListCmd)
 	}
 	if (p_ListCmd.size() < 2)
 	{
-		SendMsg("/point add|sub force|stamina|dexterity");
+		SendMsg("/points add|sub force|stamina|dexterity");
 		return true;
 	}
 

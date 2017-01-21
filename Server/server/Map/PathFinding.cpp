@@ -91,6 +91,7 @@ Path Map::GetPath()
     while (l_Before != m_StartPosition)
     {
         l_Path.push_back(l_Before);
+        printf("LOG -> Path : %d %d\n", l_Before.m_X, l_Before.m_Y);
         l_TmpNode = m_CloseList[l_TmpNode.m_PosParent];
         l_Before = l_TmpNode.m_PosParent;
     }

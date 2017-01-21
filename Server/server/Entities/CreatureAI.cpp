@@ -176,6 +176,7 @@ void Creature::UpdateAgresive(sf::Time p_Diff)
             if (Unit* l_Victim = m_Map->GetCloserUnit(this, (float)CaseToPixel(m_CreatureTemplate.m_MaxVision), true, false, true))
             {
                 SetVictim(l_Victim);
+                printf("LOG -> ADD Victim \n");
                 //EnterInCombat(l_Victim);
                 return;
             }
@@ -217,6 +218,7 @@ void Creature::UpdateAgresive(sf::Time p_Diff)
             if (!m_MovementHandler->IsInAttack())
             {
                 m_RandMovementTime = 0;
+                printf("LOG -> GO TO CASE\n");
                 GoToCase(GetVictim()->GetPosition());
                 /*if (!IsValidOrientationToPoint((Orientation)GetOrientation(), GetVictim()) || !IsInMovement())
                 {
