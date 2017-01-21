@@ -141,7 +141,10 @@ void Creature::ReturnInRay()
 void Creature::GoToCase(const Position & p_Position)
 {
     if (m_PathToTargetPosition.empty() || m_PathToTargetPosition[0] != PositionToCasePosition(p_Position))
-            m_PathToTargetPosition = m_Map->LaunchPathFinding(PositionToCasePosition(GetPosition()), PositionToCasePosition(p_Position));
+    {
+        printf("LOG -> GO TO CASE\n");
+        m_PathToTargetPosition = m_Map->LaunchPathFinding(PositionToCasePosition(GetPosition()), PositionToCasePosition(p_Position));
+    }
 }
 
 void Creature::ResetRandMovementTime(bool ForMoving)
