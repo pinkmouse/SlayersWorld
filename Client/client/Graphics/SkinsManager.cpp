@@ -30,7 +30,7 @@ bool SkinsManager::LoadSkins()
         if (!l_Texture->loadFromFile(SKINS_FOLDER + l_FileName))
         {
             printf("Load Skin %s Failed\n", l_FileName.c_str());
-            continue;
+            return false;
         }
         m_TextureSkinsMap[i] = l_Texture;
 

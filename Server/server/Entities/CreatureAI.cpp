@@ -218,7 +218,6 @@ void Creature::UpdateAgresive(sf::Time p_Diff)
             if (!m_MovementHandler->IsInAttack())
             {
                 m_RandMovementTime = 0;
-                printf("LOG -> GO TO CASE\n");
                 GoToCase(GetVictim()->GetPosition());
                 /*if (!IsValidOrientationToPoint((Orientation)GetOrientation(), GetVictim()) || !IsInMovement())
                 {

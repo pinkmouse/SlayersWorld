@@ -38,7 +38,9 @@ bool World::InitializeConnection()
 bool World::InitializeWindow()
 {
     m_InterfaceManager->Initialize();
-	m_Graphics->CreateWindow(X_WINDOW, Y_WINDOW, ZOOM_FACTOR);
+    if (!m_Graphics->CreateWindow(X_WINDOW, Y_WINDOW, ZOOM_FACTOR))
+        return false;
+
     if (!m_Graphics->LoadFont())
         return false;
 	return true;

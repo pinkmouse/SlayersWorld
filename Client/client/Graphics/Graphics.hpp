@@ -20,7 +20,7 @@ public:
 	Graphics(MapManager*, InterfaceManager*, Events*);
 	~Graphics();
     bool LoadFont();
-	void CreateWindow(uint32, uint32, float);
+	bool CreateWindow(uint32, uint32, float);
 	void UpdateWindow(sf::Time);
     void UpdateInterface(sf::Time);
 	void Display();

@@ -24,7 +24,7 @@ bool Graphics::LoadFont()
     return true;
 }
 
-void Graphics::CreateWindow(uint32 p_X, uint32 p_Y, float p_Zoom)
+bool Graphics::CreateWindow(uint32 p_X, uint32 p_Y, float p_Zoom)
 {
 	m_Window.create(sf::VideoMode(p_X, p_Y), NAME_WINDOW);
 	m_View = m_Window.getDefaultView();
@@ -39,7 +39,10 @@ void Graphics::CreateWindow(uint32 p_X, uint32 p_Y, float p_Zoom)
 	m_TileSet->BuildSprites();
 
     m_SkinsManager = new SkinsManager();
-    m_SkinsManager->LoadSkins();
+    if (!m_SkinsManager->LoadSkins())
+        return false;
+
+    return true;
 }
 
 void Graphics::CheckEvent()
