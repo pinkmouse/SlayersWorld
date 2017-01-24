@@ -84,6 +84,22 @@ enum eGossipType
     Yell = 1
 };
 
+enum eRequiredType
+{
+    QuestDone = 0,
+    QuestNotDone = 1,
+    LevelMin = 2,
+    LevelMax = 3
+};
+
+enum eResourceType
+{
+    None = 0,
+    Health = 1,
+    Mana = 2,
+    Alignment = 3
+};
+
 struct Position
 {
     uint32 m_X;

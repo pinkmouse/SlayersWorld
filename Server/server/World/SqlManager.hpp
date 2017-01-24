@@ -40,7 +40,7 @@ public:
     void AddNewRespawnPositionForPlayer(uint32);
 	PointsSet GetPointsSetForPlayer(uint32);
 	void AddNewPointsSetForPlayer(uint32);
-    void SavePlayer(Player const*);
+    void SavePlayer(Player*);
 	void UpdatePointsSet(Player const*);
     void AddConnectionLogin(uint32);
 

@@ -87,7 +87,7 @@ void Player::UpdateNewSquares(uint16 p_OldSquareID, uint16 p_NewSquareID, bool p
                 if (l_Unit->IsPlayer() && l_Unit->GetID() == GetID())
                     continue;
 
-                GetSession()->SendUnitCreate(l_Unit->GetType(), l_Unit->GetID(), l_Unit->GetName(), l_Unit->GetLevel(), l_Unit->GetHealth(), l_Unit->GetSkinID(), l_Unit->GetMapID(), l_Unit->GetPosX(), l_Unit->GetPosY(), l_Unit->GetOrientation(), l_Unit->IsInMovement(), l_Unit->GetMovementHandler()->IsInAttack());
+                GetSession()->SendUnitCreate(l_Unit->GetType(), l_Unit->GetID(), l_Unit->GetName(), l_Unit->GetLevel(), l_Unit->GetResourceNb(eResourceType::Health), l_Unit->GetSkinID(), l_Unit->GetMapID(), l_Unit->GetPosX(), l_Unit->GetPosY(), l_Unit->GetOrientation(), l_Unit->IsInMovement(), l_Unit->GetMovementHandler()->IsInAttack());
             }
         }
     }
@@ -108,11 +108,11 @@ uint32 Player::GetXp() const
     return m_Xp;
 }
 
-void Player::SetHealth(const uint8 & p_Health)
+void Player::SetResourceNb(eResourceType p_Resource, uint8 p_Nb)
 {
-    Unit::SetHealth(p_Health);
+    Unit::SetResourceNb(p_Resource, p_Nb);
     if (m_Initilize)
-        m_Session->SendUpdateUnitHealth(GetType(), GetID(), p_Health);
+        m_Session->SendUpdateUnitHealth(GetType(), GetID(), p_Nb);
 }
 
 bool Player::CheckCommand(const std::string & p_String)
@@ -205,4 +205,9 @@ void Player::EventAction()
         return;
 
     l_Unit->GossipTo(this);
+}
+
+void Player::Save()
+{
+    g_SqlManager->SavePlayer(this);
 }

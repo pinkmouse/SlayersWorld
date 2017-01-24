@@ -3,6 +3,7 @@
 #include "MovementHandler.hpp"
 #include "MovementHandlerCreature.hpp"
 #include "../Define.hpp"
+#include "../System/Resource/Resource.hpp"
 #include <string>
 #include <map>
 
@@ -30,8 +31,12 @@ public:
     Map* GetMap() const;
     uint16 GetSquareID() const;
     uint16 GetID() const;
-    uint8 GetHealth() const;
-    bool IsDeath() const;
+
+    Resource* GetResource(eResourceType);
+    uint8 GetResourceNb(eResourceType);
+    virtual void SetResourceNb(eResourceType, uint8);
+
+    bool IsDeath();
 	PointsSet GetPointsSet() const;
 
 
@@ -101,6 +106,7 @@ protected:
     uint8 m_SizeX;
     uint8 m_SizeY;
 
+    std::map< eResourceType, Resource* > m_Resources;
     uint8 m_Health;
     uint8 m_SkinID;
     MovementHandler* m_MovementHandler;

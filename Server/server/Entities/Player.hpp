@@ -19,14 +19,15 @@ public:
 
     void Update(sf::Time);
     void UpdateNewSquares(uint16, uint16, bool p_UpdateAll = false);
-    void SetHealth(const uint8 &);
     void SetXp(uint32);
     void HasBeenInitialize();
     bool CheckCommand(const std::string &);
     void EventAction();
 
+    void SetResourceNb(eResourceType, uint8);
     void Respawn();
     void SendMsg(const std::string &);
+    void Save();
 
     /// Commands
     void InitializeCommands();

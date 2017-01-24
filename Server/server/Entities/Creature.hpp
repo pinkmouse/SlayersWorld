@@ -16,7 +16,7 @@ public:
     void UpdateOrientation(Orientation);
     void Respawn();
     void Unspawn();
-    void SetHealth(const uint8 &);
+    void SetResourceNb(eResourceType, uint8);
     void ResetRandMovementTime(bool);
     uint32 GetXpEarn() const;
     Orientation GetOrientationByPath(Path &);

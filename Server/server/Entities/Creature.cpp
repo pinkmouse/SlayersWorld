@@ -82,9 +82,9 @@ void Creature::Update(sf::Time p_Diff)
     UpdateAI(p_Diff);
 }
 
-void Creature::SetHealth(const uint8 & p_Health)
+void Creature::SetResourceNb(eResourceType p_Resource, uint8 p_Nb)
 {
-    Unit::SetHealth(p_Health);
+    Unit::SetResourceNb(p_Resource, p_Nb);
     if (IsDeath())
         Unspawn();
 }
@@ -188,7 +188,7 @@ void Creature::Respawn()
 
     /// Respawn creature for players
     PacketUnitCreate l_Packet;
-    l_Packet.BuildPacket((uint8)TypeUnit::CREATURE, GetID(), GetName(), GetLevel(), GetHealth(), GetSkinID(), GetMapID(), GetPosition(), GetOrientation(), m_MovementHandler->IsInMovement(), false);
+    l_Packet.BuildPacket((uint8)TypeUnit::CREATURE, GetID(), GetName(), GetLevel(), GetResourceNb(eResourceType::Health), GetSkinID(), GetMapID(), GetPosition(), GetOrientation(), m_MovementHandler->IsInMovement(), false);
     m_Map->SendToSet(l_Packet.m_Packet, this);
 }
 

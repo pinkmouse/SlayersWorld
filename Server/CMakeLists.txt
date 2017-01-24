@@ -35,6 +35,19 @@ add_executable(${EXECUTABLE_NAME}
               server/System/WorldPosition.hpp
 	      server/System/Commands.cpp
 
+	      server/System/Required/Required.cpp
+              server/System/Required/Required.hpp
+	      server/System/Required/SubRequired.cpp
+              server/System/Required/SubRequired.hpp
+	      server/System/Required/SubRequiredQuest.cpp
+              server/System/Required/SubRequiredQuest.hpp
+	      server/System/Required/SubRequiredLevel.cpp
+              server/System/Required/SubRequiredLevel.hpp
+
+	      server/System/Resource/Resource.cpp
+              server/System/Resource/Resource.hpp
+	      server/System/Resource/ResourceHealth.cpp
+              server/System/Resource/ResourceHealth.hpp
               server/Map/Case.cpp
               server/Map/Case.hpp
               server/Map/Map.cpp

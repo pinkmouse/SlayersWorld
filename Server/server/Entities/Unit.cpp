@@ -2,6 +2,7 @@
 #include "../Map/Map.hpp"
 #include "../World/WorldSocket.hpp"
 #include "../World/PacketDefine.hpp"
+#include "../System/Resource/ResourceHealth.hpp"
 #include <cstdlib>
 
 
@@ -19,7 +20,7 @@ Unit::Unit(uint16 p_ID, TypeUnit p_Type, eFactionType p_FactionType)
     m_ID = p_ID;
     m_SizeX = 24;
     m_SizeY = 32;
-    m_Health = 100;
+    m_Resources[eResourceType::Health] = new ResourceHealth();
 
     m_InWorld = false;
     m_InCombat = false;
@@ -130,7 +131,11 @@ void Unit::UpdateRegen(sf::Time p_Diff)
     if (IsDeath())
         return;
 
-    if (GetHealth() >= MAX_HEALTH)
+    uint8 l_Before = GetResourceNb(eResourceType::Health);
+    m_Resources[eResourceType::Health]->Update(p_Diff);
+    if (l_Before != GetResourceNb(eResourceType::Health))
+        SetResourceNb(eResourceType::Health, GetResourceNb(eResourceType::Health));
+    /*if (GetHealth() >= MAX_HEALTH)
         return;
 
     m_RegenTimer += p_Diff.asMicroseconds();
@@ -148,9 +153,9 @@ void Unit::UpdateRegen(sf::Time p_Diff)
             break;
         default:
             break;
-        }*/
+        }
         m_RegenTimer -= REGEN_HEALTH_TIMER * 1000;
-    }
+    }*/
 }
 
 void Unit::Update(sf::Time p_Diff)
@@ -229,12 +234,12 @@ void Unit::DealDamage(Unit* p_Victim)
 	if (l_Miss)
 		l_Damage = 0;
 
-	int8 l_NewHealth = std::max(p_Victim->GetHealth() - l_Damage, 0);
+	int8 l_NewHealth = std::max(p_Victim->GetResourceNb(eResourceType::Health) - l_Damage, 0);
 
 	if (IsPlayer())
 		ToPlayer()->GetSession()->SendLogDamage(p_Victim->GetType(), p_Victim->GetID(), l_Damage, l_Miss);
 
-    p_Victim->SetHealth((uint8)l_NewHealth);
+    p_Victim->SetResourceNb(eResourceType::Health, (uint8)l_NewHealth);
     switch (p_Victim->GetType())
     {
         case TypeUnit::PLAYER:
@@ -320,9 +325,19 @@ uint8 Unit::GetLevel() const
     return m_Level;
 }
 
-uint8 Unit::GetHealth() const
+Resource *Unit::GetResource(eResourceType p_Resource)
 {
-    return m_Health;
+    return m_Resources[p_Resource];
+}
+
+uint8 Unit::GetResourceNb(eResourceType p_Resource)
+{
+    return m_Resources[p_Resource]->GetNumber();
+}
+
+void Unit::SetResourceNb(eResourceType p_Resource, uint8 p_Nb)
+{
+    m_Resources[p_Resource]->SetNumber(p_Nb);
 }
 
 uint8 Unit::GetSkinID() const
@@ -429,15 +444,15 @@ void Unit::SetMap(Map* p_Map)
 
 void Unit::SetHealth(const uint8 & p_Health)
 {
-    m_Health = p_Health;
+    m_Resources[eResourceType::Health]->SetNumber(p_Health);
 
-    if (!m_Health)
+    if (!m_Resources[eResourceType::Health]->GetNumber())
         OutOfCombat();
 }
 
-bool Unit::IsDeath() const
+bool Unit::IsDeath()
 {
-    if (m_Health)
+    if (m_Resources[eResourceType::Health]->GetNumber())
         return false;
     return true;
 }
