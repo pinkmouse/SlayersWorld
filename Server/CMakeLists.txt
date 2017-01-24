@@ -48,6 +48,10 @@ add_executable(${EXECUTABLE_NAME}
               server/System/Resource/Resource.hpp
 	      server/System/Resource/ResourceHealth.cpp
               server/System/Resource/ResourceHealth.hpp
+	      server/System/Resource/ResourceMana.cpp
+              server/System/Resource/ResourceMana.hpp
+	      server/System/Resource/ResourceAlignment.cpp
+              server/System/Resource/ResourceAlignment.hpp
 
               server/Map/Case.cpp
               server/Map/Case.hpp

@@ -21,7 +21,7 @@ void PacketHandler::LoadPacketHandlerMap()
     m_PacketHandleMap[SMSG::S_PlayerCreate] = &PacketHandler::HandleCreateMainPlayer;
     m_PacketHandleMap[SMSG::S_UnitCreate] = &PacketHandler::HandleCreateUnit;
     m_PacketHandleMap[SMSG::S_UnitRemove] = &PacketHandler::HandleRemoveUnit;
-    m_PacketHandleMap[SMSG::S_UnitUpdateLife] = &PacketHandler::HandleUpdateHealth;
+    m_PacketHandleMap[SMSG::S_UnitUpdateResource] = &PacketHandler::HandleUpdateResource;
     m_PacketHandleMap[SMSG::S_PlayerUpdateXp] = &PacketHandler::HandleUpdateXpPct;
     m_PacketHandleMap[SMSG::S_UnitGoDirection] = &PacketHandler::HandleUnitGoDirection;
     m_PacketHandleMap[SMSG::S_UnitStopMovement] = &PacketHandler::HandleStopMovement;
@@ -55,15 +55,18 @@ void PacketHandler::HandleRemoveUnit(WorldPacket &p_Packet)
     }
 }
 
-void PacketHandler::HandleUpdateHealth(WorldPacket &p_Packet)
+void PacketHandler::HandleUpdateResource(WorldPacket &p_Packet)
 {
     uint8 l_TypeID;
     uint16 l_ID;
-    uint8 l_NewHealth;
+    uint8 l_Resource;
+    uint8 l_NewNb;
 
     p_Packet >> l_TypeID;
     p_Packet >> l_ID;
-    p_Packet >> l_NewHealth;
+    p_Packet >> l_Resource;
+    p_Packet >> l_NewNb;
+
     if (Map* l_Map = m_MapManager->GetActualMap())
     {
         Unit* l_Unit = nullptr;
@@ -72,7 +75,7 @@ void PacketHandler::HandleUpdateHealth(WorldPacket &p_Packet)
         if (l_Unit == nullptr)
             return;
 
-        l_Unit->SetResourceNb(eResourceType::Health, l_NewHealth);
+        l_Unit->SetResourceNb((eResourceType)l_Resource, l_NewNb);
     }
 }
 

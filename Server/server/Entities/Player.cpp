@@ -1,6 +1,8 @@
 #include "Player.hpp"
 #include "../World/WorldSocket.hpp"
 #include "../World/PacketDefine.hpp"
+#include "../System/Resource/ResourceHealth.hpp"
+#include "../System/Resource/ResourceAlignment.hpp"
 #include "../Map/Map.hpp"
 #include "../Global.hpp"
 
@@ -9,6 +11,9 @@ Player::Player(int32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_Health, ui
     m_AccessType(p_AccessType)
 {
     InitializeCommands();
+
+    m_Resources[eResourceType::Mana] = new ResourceHealth();
+    m_Resources[eResourceType::Alignment] = new ResourceAlignment();
     m_Name = p_Name;
     m_Level = p_Level;
     m_SkinID = p_SkinID;
@@ -19,7 +24,7 @@ Player::Player(int32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_Health, ui
     m_Session = nullptr;
     m_Alignment = 0;
     m_Initilize = false;
-    m_Health = p_Health;
+    SetResourceNb(eResourceType::Health, p_Health);
     m_Xp = p_Xp;
     m_RespawnTime = PLAYER_TIME_RESPAWN * IN_MICROSECOND;
 }
@@ -111,8 +116,9 @@ uint32 Player::GetXp() const
 void Player::SetResourceNb(eResourceType p_Resource, uint8 p_Nb)
 {
     Unit::SetResourceNb(p_Resource, p_Nb);
-    if (m_Initilize)
-        m_Session->SendUpdateUnitHealth(GetType(), GetID(), p_Nb);
+    if (!m_Initilize)
+        return;
+    m_Session->SendUpdateUnitResource(GetType(), GetID(), p_Resource, p_Nb);
 }
 
 bool Player::CheckCommand(const std::string & p_String)
@@ -189,7 +195,7 @@ void Player::Respawn()
     Unit::Respawn();
     GetSession()->SendUpdatePositionToSet(GetType(), GetID(), GetPosX(), GetPosY(), GetOrientation());
 
-    SetHealth(MAX_HEALTH);
+    SetResourceNb(eResourceType::Health, MAX_HEALTH);
     m_ResTimer = 0;
 }
 

@@ -46,7 +46,6 @@ public:
     void SetPosY(const uint32 &);
     void SetSkinID(const uint8 &);
     void Talk(const std::string &);
-    virtual void SetHealth(const uint8 &);
     void SetOrientation(const Orientation &);
     void SetMap(Map*);
     void SetSquareID(uint16);
@@ -107,7 +106,6 @@ protected:
     uint8 m_SizeY;
 
     std::map< eResourceType, Resource* > m_Resources;
-    uint8 m_Health;
     uint8 m_SkinID;
     MovementHandler* m_MovementHandler;
     TypeUnit m_Type;

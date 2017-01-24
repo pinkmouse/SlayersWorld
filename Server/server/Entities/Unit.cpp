@@ -131,10 +131,13 @@ void Unit::UpdateRegen(sf::Time p_Diff)
     if (IsDeath())
         return;
 
-    uint8 l_Before = GetResourceNb(eResourceType::Health);
-    m_Resources[eResourceType::Health]->Update(p_Diff);
-    if (l_Before != GetResourceNb(eResourceType::Health))
-        SetResourceNb(eResourceType::Health, GetResourceNb(eResourceType::Health));
+    for (auto l_Resource : m_Resources)
+    {
+        uint8 l_Before = l_Resource.second->GetNumber();
+        l_Resource.second->Update(p_Diff);
+        if (l_Before != l_Resource.second->GetNumber()) ///> Hacky to send for player when resource change
+            SetResourceNb(l_Resource.first, l_Resource.second->GetNumber());
+    }
 }
 
 void Unit::Update(sf::Time p_Diff)
@@ -317,6 +320,16 @@ uint8 Unit::GetResourceNb(eResourceType p_Resource)
 void Unit::SetResourceNb(eResourceType p_Resource, uint8 p_Nb)
 {
     m_Resources[p_Resource]->SetNumber(p_Nb);
+
+    switch(p_Resource)
+    {
+        case eResourceType::Health:
+            if (!m_Resources[p_Resource]->GetNumber())
+                OutOfCombat();
+            break;
+        default:
+            break;
+    }
 }
 
 uint8 Unit::GetSkinID() const
@@ -419,14 +432,6 @@ void Unit::SetMap(Map* p_Map)
 {
     m_Map = p_Map;
     m_MovementHandler->SetMap(m_Map);
-}
-
-void Unit::SetHealth(const uint8 & p_Health)
-{
-    m_Resources[eResourceType::Health]->SetNumber(p_Health);
-
-    if (!m_Resources[eResourceType::Health]->GetNumber())
-        OutOfCombat();
 }
 
 bool Unit::IsDeath()

@@ -51,7 +51,7 @@ public:
     void SetTalk(const std::string &);
     std::string GetTalk() const;
 	void AddDamageLog(const DamageInfo &);
-	std::vector<std::pair<DamageInfo, uint32>>& GetDamageLog();
+	std::vector<std::pair<DamageInfo, uint32>> GetDamageLog();
     void Update(sf::Time);
 
 protected:
