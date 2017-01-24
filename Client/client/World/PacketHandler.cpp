@@ -72,7 +72,7 @@ void PacketHandler::HandleUpdateHealth(WorldPacket &p_Packet)
         if (l_Unit == nullptr)
             return;
 
-        l_Unit->SetHealth(l_NewHealth);
+        l_Unit->SetResourceNb(eResourceType::Health, l_NewHealth);
     }
 }
 

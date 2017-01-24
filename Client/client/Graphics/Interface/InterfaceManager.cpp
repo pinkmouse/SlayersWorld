@@ -93,8 +93,8 @@ void InterfaceManager::Draw(Window & p_Window)
     l_FlaskEmpty.setScale(FLASK_SCALE, FLASK_SCALE);
     p_Window.draw(l_FlaskEmpty);
     TileSprite l_Flask = GetFlask(0, true);
-    l_Flask.setTextureRect(sf::IntRect(0, ((FLASK_SIZE_Y - FLASK_OFFSET_TOP - FLASK_OFFSET_BOTTOM) * (1.0f - ((float)g_Player->GetHealth() / 100.0f))) + FLASK_OFFSET_TOP, FLASK_SIZE_X, ((FLASK_SIZE_Y - FLASK_OFFSET_TOP - FLASK_OFFSET_BOTTOM) * ((float)g_Player->GetHealth() / 100.0f))));
-    l_Flask.setPosition(0, Y_WINDOW - (XP_BAR_SIZE_Y * XP_BAR_SCALE) - (FLASK_OFFSET_BOTTOM * FLASK_SCALE) - (((FLASK_SIZE_Y - FLASK_OFFSET_TOP - FLASK_OFFSET_BOTTOM) * ((float)g_Player->GetHealth() / 100.0f)) * FLASK_SCALE));
+    l_Flask.setTextureRect(sf::IntRect(0, ((FLASK_SIZE_Y - FLASK_OFFSET_TOP - FLASK_OFFSET_BOTTOM) * (1.0f - ((float)g_Player->GetResourceNb(eResourceType::Health) / 100.0f))) + FLASK_OFFSET_TOP, FLASK_SIZE_X, ((FLASK_SIZE_Y - FLASK_OFFSET_TOP - FLASK_OFFSET_BOTTOM) * ((float)g_Player->GetResourceNb(eResourceType::Health) / 100.0f))));
+    l_Flask.setPosition(0, Y_WINDOW - (XP_BAR_SIZE_Y * XP_BAR_SCALE) - (FLASK_OFFSET_BOTTOM * FLASK_SCALE) - (((FLASK_SIZE_Y - FLASK_OFFSET_TOP - FLASK_OFFSET_BOTTOM) * ((float)g_Player->GetResourceNb(eResourceType::Health) / 100.0f)) * FLASK_SCALE));
     l_Flask.setScale(FLASK_SCALE, FLASK_SCALE);
     p_Window.draw(l_Flask);
 

@@ -135,27 +135,6 @@ void Unit::UpdateRegen(sf::Time p_Diff)
     m_Resources[eResourceType::Health]->Update(p_Diff);
     if (l_Before != GetResourceNb(eResourceType::Health))
         SetResourceNb(eResourceType::Health, GetResourceNb(eResourceType::Health));
-    /*if (GetHealth() >= MAX_HEALTH)
-        return;
-
-    m_RegenTimer += p_Diff.asMicroseconds();
-    if (m_RegenTimer >= REGEN_HEALTH_TIMER * 1000)
-    {
-     
-        SetHealth(GetHealth() + 5);
-        /*switch (m_Type)
-        {
-        case TypeUnit::PLAYER:
-            ToPlayer()->SetHealth(GetHealth() + 5);
-            break;
-        case TypeUnit::CREATURE:
-            SetHealth(GetHealth() + 5);
-            break;
-        default:
-            break;
-        }
-        m_RegenTimer -= REGEN_HEALTH_TIMER * 1000;
-    }*/
 }
 
 void Unit::Update(sf::Time p_Diff)

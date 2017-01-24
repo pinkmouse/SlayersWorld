@@ -17,6 +17,7 @@ Unit::Unit(uint16 p_ID, TypeUnit p_Type) :
     m_DiffTimeOpactiy = 0;
     m_MovementHandler = new MovementHandler(GetSizeX(), GetSizeY());
     m_SkinZoomFactor = SKIN_ZOOM_FACTOR_DEFAULT;
+    m_Resources[eResourceType::Health] = new Resource();
 }
 
 Unit::~Unit()
@@ -24,9 +25,9 @@ Unit::~Unit()
     delete m_MovementHandler;
 }
 
-bool Unit::IsDeath() const
+bool Unit::IsDeath()
 {
-    if (m_Health > 0)
+    if (m_Resources[eResourceType::Health]->GetNumber())
         return false;
     return true;
 }
@@ -77,13 +78,13 @@ void Unit::Update(sf::Time p_Diff)
 			l_It = m_HistoryDamage.erase(l_It);
 		else
 		{
-			(*l_It).second -= (p_Diff.asMicroseconds() * 2);
+			(*l_It).second -= (uint32)(p_Diff.asMicroseconds() * 2);
 			++l_It;
 		}
 	}
 }
 
-uint8 Unit::GetOpacity() const
+uint8 Unit::GetOpacity()
 {
     if (IsDeath())
     {
@@ -107,11 +108,6 @@ std::string Unit::GetName() const
 uint8 Unit::GetLevel() const
 {
     return m_Level;
-}
-
-uint8 Unit::GetHealth() const
-{
-    return m_Health;
 }
 
 uint8 Unit::GetSkinID() const
@@ -163,11 +159,6 @@ void Unit::SetSkinID(const uint8 & p_SkinID)
     m_SkinID = p_SkinID;
 }
 
-void Unit::SetHealth(const uint8 & p_Health)
-{
-    m_Health = p_Health;
-}
-
 void Unit::SetPosX(const uint32 & p_PosX)
 {
     WorldObject::SetPosX(p_PosX);
@@ -183,6 +174,21 @@ void Unit::SetPosY(const uint32 & p_PosY)
 void Unit::SetOrientation(const Orientation & p_Orientation)
 {
     m_MovementHandler->SetOrientation((Orientation)p_Orientation);
+}
+
+Resource *Unit::GetResource(eResourceType p_Resource)
+{
+    return m_Resources[p_Resource];
+}
+
+uint8 Unit::GetResourceNb(eResourceType p_Resource)
+{
+    return m_Resources[p_Resource]->GetNumber();
+}
+
+void Unit::SetResourceNb(eResourceType p_Resource, uint8 p_Nb)
+{
+    m_Resources[p_Resource]->SetNumber(p_Nb);
 }
 
 bool Unit::IsInRayVisible(Unit* p_Unit)
