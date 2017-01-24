@@ -12,7 +12,7 @@ Player::Player(int32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_Health, ui
     m_MovementHandler->SetPosX(p_PosX);
     m_MovementHandler->SetPosY(p_PosY);
     m_MovementHandler->SetOrientation(p_Orientation);
-    m_Health = p_Health;
+    SetResourceNb(eResourceType::Health, p_Health);
     m_Alignment = 0;
     SetMapID(p_MapID);
     m_XpPct = 0.0f;

@@ -132,3 +132,11 @@ enum eActionType
     Stop = 2,
     StopAttack = 4
 };
+
+enum eResourceType
+{
+    None = 0,
+    Health = 1,
+    Mana = 2,
+    Alignment = 3
+};

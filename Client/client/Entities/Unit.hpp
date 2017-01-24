@@ -1,5 +1,6 @@
 #pragma once
 #include "../Define.hpp"
+#include "../System/Resource/Resource.hpp"
 #include "WorldObject.hpp"
 #include "MovementHandler.hpp"
 #include <map>
@@ -24,9 +25,8 @@ public:
     float GetSkinZoomFactor() const;
     Orientation GetOrientation() const;
     TypeUnit GetType() const;
-    uint8 GetOpacity() const;
-    uint8 GetHealth() const;
-    bool IsDeath() const;
+    uint8 GetOpacity();
+    bool IsDeath();
 
     void SetName(const std::string &);
     void SetLevel(const uint8 &);
@@ -36,7 +36,6 @@ public:
     void SetOrientation(const Orientation &);
     void SetSkinZoomFactor(const float &);
     void SetMap(Map*);
-    void SetHealth(const uint8 &);
     
     void StartMovement();
     bool IsInRayVisible(Unit*);
@@ -44,6 +43,10 @@ public:
 
     MovementHandler* GetMovementHandler();
     Player* ToPlayer();
+
+    Resource* GetResource(eResourceType);
+    uint8 GetResourceNb(eResourceType);
+    void SetResourceNb(eResourceType, uint8);
 
     void SetTalk(const std::string &);
     std::string GetTalk() const;
@@ -55,9 +58,9 @@ protected:
     std::string m_Name;
     uint16 m_ID;
     uint8 m_Level;
-    uint8 m_Health;
     uint8 m_SkinID;
     float m_SkinZoomFactor;
+    std::map< eResourceType, Resource* > m_Resources;
 
     MovementHandler* m_MovementHandler;
     TypeUnit m_Type;

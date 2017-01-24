@@ -13,7 +13,7 @@ Creature::Creature(int32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_Health
     m_MovementHandler->SetPosX(p_PosX);
     m_MovementHandler->SetPosY(p_PosY);
     m_MovementHandler->SetOrientation(p_Orientation);
-    m_Health = p_Health;
+    SetResourceNb(eResourceType::Health, p_Health);
     SetMapID(p_MapID);
     m_MovementHandler->SetSpeed(0.5f);
 }
