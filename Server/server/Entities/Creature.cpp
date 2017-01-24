@@ -183,7 +183,7 @@ void Creature::Respawn()
     m_DiffMovementTime = 0;
     SetInWorld(true);
 
-    SetHealth(MAX_HEALTH);
+    SetResourceNb(eResourceType::Health, MAX_HEALTH);
     m_ResTimer = 0;
 
     /// Respawn creature for players

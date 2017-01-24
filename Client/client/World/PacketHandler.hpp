@@ -19,7 +19,7 @@ public:
     void HandleCreateUnit(WorldPacket &);
     void HandleStopMovement(WorldPacket &);
     void HandleRemoveUnit(WorldPacket &);
-    void HandleUpdateHealth(WorldPacket &);
+    void HandleUpdateResource(WorldPacket &);
     void HandleUpdateXpPct(WorldPacket &);
     void HandleUpdatePosition(WorldPacket &);
     void HandleUpdateOrientation(WorldPacket &);

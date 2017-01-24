@@ -18,7 +18,7 @@ enum SMSG : uint8
 	S_PlayerCreate = 10,
 	S_UnitCreate = 11,
 	S_UnitRemove = 12,
-	S_UnitUpdateLife = 13,
+    S_UnitUpdateResource = 13,
 	S_PlayerUpdateXp = 14,
 	S_LogDamage = 15,
 	S_UnitGoDirection = 20,

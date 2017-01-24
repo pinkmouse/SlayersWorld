@@ -142,12 +142,12 @@ void WorldSocket::SendLogDamage(uint8 p_TypeID, uint16 p_ID, uint8 p_Damage, boo
 	SendMsg(l_Packet.m_Packet);
 }
 
-void WorldSocket::SendUpdateUnitHealth(uint8 p_TypeID, uint16 p_ID, uint8 p_NewHealth)
+void WorldSocket::SendUpdateUnitResource(uint8 p_TypeID, uint16 p_ID, uint8 p_Resource, uint8 p_NewHealth)
 {
     WorldPacket l_Packet;
-    uint8 l_ID = SMSG::S_UnitUpdateLife;
+    uint8 l_ID = SMSG::S_UnitUpdateResource;
 
-    l_Packet << l_ID << p_TypeID << p_ID << p_NewHealth;
+    l_Packet << l_ID << p_TypeID << p_ID << p_Resource << p_NewHealth;
     SendToSet(l_Packet);
 }
 

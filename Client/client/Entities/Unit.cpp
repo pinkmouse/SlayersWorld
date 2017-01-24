@@ -17,7 +17,8 @@ Unit::Unit(uint16 p_ID, TypeUnit p_Type) :
     m_DiffTimeOpactiy = 0;
     m_MovementHandler = new MovementHandler(GetSizeX(), GetSizeY());
     m_SkinZoomFactor = SKIN_ZOOM_FACTOR_DEFAULT;
-    m_Resources[eResourceType::Health] = new Resource();
+    m_Resources[eResourceType::Health] = new Resource(eResourceType::Health);
+    m_HistoryDamage.clear();
 }
 
 Unit::~Unit()
@@ -266,7 +267,7 @@ void Unit::AddDamageLog(const DamageInfo & p_Damage)
 	m_HistoryDamage.push_back(std::pair<DamageInfo, uint32>(p_Damage, MAX_HISTORY_LOG_TIME));
 }
 
-std::vector<std::pair<DamageInfo, uint32>>& Unit::GetDamageLog()
+std::vector<std::pair<DamageInfo, uint32>> Unit::GetDamageLog()
 {
 	return m_HistoryDamage;
 }
