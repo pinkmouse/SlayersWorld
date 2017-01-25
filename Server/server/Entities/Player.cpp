@@ -1,19 +1,15 @@
 #include "Player.hpp"
 #include "../World/WorldSocket.hpp"
 #include "../World/PacketDefine.hpp"
-#include "../System/Resource/ResourceHealth.hpp"
-#include "../System/Resource/ResourceAlignment.hpp"
 #include "../Map/Map.hpp"
 #include "../Global.hpp"
 
-Player::Player(int32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_Health, uint8 p_SkinID, uint16 p_MapID, uint32 p_PosX, uint32 p_PosY, Orientation p_Orientation, uint32 p_Xp, eAccessType p_AccessType) :
+Player::Player(int32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_Health, uint8 p_Mana, uint8 p_Alignment, uint8 p_SkinID, uint16 p_MapID, uint32 p_PosX, uint32 p_PosY, Orientation p_Orientation, uint32 p_Xp, eAccessType p_AccessType) :
     Unit(p_ID, TypeUnit::PLAYER, eFactionType::Ally),
     m_AccessType(p_AccessType)
 {
     InitializeCommands();
 
-    m_Resources[eResourceType::Mana] = new ResourceHealth();
-    m_Resources[eResourceType::Alignment] = new ResourceAlignment();
     m_Name = p_Name;
     m_Level = p_Level;
     m_SkinID = p_SkinID;
@@ -25,6 +21,8 @@ Player::Player(int32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_Health, ui
     m_Alignment = 0;
     m_Initilize = false;
     SetResourceNb(eResourceType::Health, p_Health);
+    SetResourceNb(eResourceType::Mana, p_Mana);
+    SetResourceNb(eResourceType::Alignment, p_Alignment);
     m_Xp = p_Xp;
     m_RespawnTime = PLAYER_TIME_RESPAWN * IN_MICROSECOND;
 }
@@ -92,7 +90,7 @@ void Player::UpdateNewSquares(uint16 p_OldSquareID, uint16 p_NewSquareID, bool p
                 if (l_Unit->IsPlayer() && l_Unit->GetID() == GetID())
                     continue;
 
-                GetSession()->SendUnitCreate(l_Unit->GetType(), l_Unit->GetID(), l_Unit->GetName(), l_Unit->GetLevel(), l_Unit->GetResourceNb(eResourceType::Health), l_Unit->GetSkinID(), l_Unit->GetMapID(), l_Unit->GetPosX(), l_Unit->GetPosY(), l_Unit->GetOrientation(), l_Unit->IsInMovement(), l_Unit->GetMovementHandler()->IsInAttack());
+                GetSession()->SendUnitCreate(l_Unit->GetType(), l_Unit->GetID(), l_Unit->GetName(), l_Unit->GetLevel(), l_Unit->GetResourceNb(eResourceType::Health), l_Unit->GetResourceNb(eResourceType::Mana), l_Unit->GetResourceNb(eResourceType::Alignment), l_Unit->GetSkinID(), l_Unit->GetMapID(), l_Unit->GetPosX(), l_Unit->GetPosY(), l_Unit->GetOrientation(), l_Unit->IsInMovement(), l_Unit->GetMovementHandler()->IsInAttack());
             }
         }
     }

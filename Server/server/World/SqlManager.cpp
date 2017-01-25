@@ -124,13 +124,14 @@ void SqlManager::AddNewPlayer(uint32 p_AccountID)
 
 Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
 {
-    std::string l_Query = "SELECT characterID, name, level, health, alignment, skinID, mapID, posX, posY, orientation, xp FROM characters WHERE accountID = '" + std::to_string(p_AccountID) + "'";
+    std::string l_Query = "SELECT characterID, name, level, health, mana, alignment, skinID, mapID, posX, posY, orientation, xp FROM characters WHERE accountID = '" + std::to_string(p_AccountID) + "'";
     mysql_query(&m_MysqlCharacters, l_Query.c_str());
 
     uint32 l_ID = 0;
     std::string l_Name = "";
     uint8 l_Lvl = 0;
     uint8 l_Health = 0;
+    uint8 l_Mana = 0;
     uint8 l_Alignment = 0;
     uint8 l_SkinID = 0;
     uint16 l_MapID = 0;
@@ -152,25 +153,25 @@ Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
         l_Name = std::string(l_Row[1]);
         l_Lvl = atoi(l_Row[2]);
         l_Health = atoi(l_Row[3]);
-        l_Alignment = atoi(l_Row[4]);
-        l_SkinID = atoi(l_Row[5]);
-        l_MapID = atoi(l_Row[6]);
-        l_PosX = atoi(l_Row[7]);
-        l_PosY = atoi(l_Row[8]);
-        l_Orientation = atoi(l_Row[9]);
-        l_Xp = atoi(l_Row[10]);
+        l_Mana = atoi(l_Row[4]);
+        l_Alignment = atoi(l_Row[5]);
+        l_SkinID = atoi(l_Row[6]);
+        l_MapID = atoi(l_Row[7]);
+        l_PosX = atoi(l_Row[8]);
+        l_PosY = atoi(l_Row[9]);
+        l_Orientation = atoi(l_Row[10]);
+        l_Xp = atoi(l_Row[11]);
     }
     mysql_free_result(l_Result);
 
     if (!l_Exist)
     {
-        printf("Add New Player %d", p_AccountID);
+        printf("Create new Player %d", p_AccountID);
         AddNewPlayer(p_AccountID);
         return GetNewPlayer(p_AccountID);
     }
     eAccessType l_PlayerAccessType = GetAccessType(p_AccountID);
-    l_Player = new Player(l_ID, l_Name, l_Lvl, l_Health, l_SkinID, l_MapID, l_PosX, l_PosY, (Orientation)l_Orientation, l_Xp, l_PlayerAccessType);
-    l_Player->SetAlignment(l_Alignment);
+    l_Player = new Player(l_ID, l_Name, l_Lvl, l_Health, l_Mana, l_Alignment, l_SkinID, l_MapID, l_PosX, l_PosY, (Orientation)l_Orientation, l_Xp, l_PlayerAccessType);
 	l_Player->SetPointsSet(GetPointsSetForPlayer(l_ID));
     l_Player->SetRespawnPosition(GetRespawnPositionForPlayer(l_ID));
 

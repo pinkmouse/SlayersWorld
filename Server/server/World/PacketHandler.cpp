@@ -40,7 +40,7 @@ void PacketHandler::HandleUnitUnknow(WorldPacket &p_Packet, WorldSocket* p_World
     if (l_UniknowUnit == nullptr)
         return;
 
-    p_WorldSocket->SendUnitCreate(l_UniknowUnit->GetType(), l_UniknowUnit->GetID(), l_UniknowUnit->GetName(), l_UniknowUnit->GetLevel(), l_UniknowUnit->GetResourceNb(eResourceType::Health), l_UniknowUnit->GetSkinID(), l_UniknowUnit->GetMapID(), l_UniknowUnit->GetPosX(), l_UniknowUnit->GetPosY(), l_UniknowUnit->GetOrientation(), l_UniknowUnit->IsInMovement(), l_UniknowUnit->GetMovementHandler()->IsInAttack());
+    p_WorldSocket->SendUnitCreate(l_UniknowUnit->GetType(), l_UniknowUnit->GetID(), l_UniknowUnit->GetName(), l_UniknowUnit->GetLevel(), l_UniknowUnit->GetResourceNb(eResourceType::Health), l_UniknowUnit->GetResourceNb(eResourceType::Mana), l_UniknowUnit->GetResourceNb(eResourceType::Alignment),  l_UniknowUnit->GetSkinID(), l_UniknowUnit->GetMapID(), l_UniknowUnit->GetPosX(), l_UniknowUnit->GetPosY(), l_UniknowUnit->GetOrientation(), l_UniknowUnit->IsInMovement(), l_UniknowUnit->GetMovementHandler()->IsInAttack());
 }
 
 void PacketHandler::HandleGoDirection(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
@@ -203,7 +203,7 @@ void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldS
     printf("Load Player success\n");
 
     /// Send to Player
-    p_WorldSocket->SendPlayerCreate(l_Player->GetID(), l_Player->GetName(), l_Player->GetLevel(), l_Player->GetResourceNb(eResourceType::Health), l_Player->GetAlignment(), l_Player->GetSkinID(), l_Player->GetMapID(), l_Player->GetPosX(), l_Player->GetPosY(), l_Player->GetOrientation());
+    p_WorldSocket->SendPlayerCreate(l_Player->GetID(), l_Player->GetName(), l_Player->GetLevel(), l_Player->GetResourceNb(eResourceType::Health), l_Player->GetResourceNb(eResourceType::Mana), l_Player->GetAlignment(), l_Player->GetSkinID(), l_Player->GetMapID(), l_Player->GetPosX(), l_Player->GetPosY(), l_Player->GetOrientation());
     p_WorldSocket->SendUpdateXpPct(g_LevelManager->XpPct(l_Player->GetLevel(), l_Player->GetXp()));
     p_WorldSocket->SetPlayer(l_Player);
     l_Map->AddUnit(l_Player);

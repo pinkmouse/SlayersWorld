@@ -3,6 +3,8 @@
 #include "../World/WorldSocket.hpp"
 #include "../World/PacketDefine.hpp"
 #include "../System/Resource/ResourceHealth.hpp"
+#include "../System/Resource/ResourceMana.hpp"
+#include "../System/Resource/ResourceAlignment.hpp"
 #include <cstdlib>
 
 
@@ -21,6 +23,8 @@ Unit::Unit(uint16 p_ID, TypeUnit p_Type, eFactionType p_FactionType)
     m_SizeX = 24;
     m_SizeY = 32;
     m_Resources[eResourceType::Health] = new ResourceHealth();
+    m_Resources[eResourceType::Mana] = new ResourceMana();
+    m_Resources[eResourceType::Alignment] = new ResourceAlignment();
 
     m_InWorld = false;
     m_InCombat = false;
@@ -29,7 +33,6 @@ Unit::Unit(uint16 p_ID, TypeUnit p_Type, eFactionType p_FactionType)
     m_CombatTimer = 0;
     m_ResTimer = 0;
     m_RespawnTime = 0;
-    m_RegenTimer = 0;
     
     m_Victim = nullptr;
     if (m_Type == TypeUnit::CREATURE)

@@ -286,6 +286,7 @@ void PacketHandler::HandleCreateMainPlayer(WorldPacket &p_Packet)
     std::string l_Name;
     uint8 l_Level;
     uint8 l_Health;
+    uint8 l_Mana;
     uint8 l_Alignment;
     uint8 l_SkinID;
     uint16 l_MapID;
@@ -297,6 +298,7 @@ void PacketHandler::HandleCreateMainPlayer(WorldPacket &p_Packet)
     p_Packet >> l_Name;
     p_Packet >> l_Level;
     p_Packet >> l_Health;
+    p_Packet >> l_Mana;
     p_Packet >> l_Alignment;
     p_Packet >> l_SkinID;
     p_Packet >> l_MapID;
@@ -304,12 +306,10 @@ void PacketHandler::HandleCreateMainPlayer(WorldPacket &p_Packet)
     p_Packet >> l_PosY;
     p_Packet >> l_Orientation;
 
-    printf("Create me: %d %s %d %d %d %d\n", l_ID, l_Name.c_str(), l_SkinID, l_MapID, l_PosX, l_PosY);
     if (!m_MapManager->LoadMap(l_MapID))
         return;
 
-    g_Player = new Player(l_ID, l_Name, l_Level, l_Health, l_SkinID, l_MapID, l_PosX, l_PosY, (Orientation)l_Orientation);
-    g_Player->SetAlignment(l_Alignment);
+    g_Player = new Player(l_ID, l_Name, l_Level, l_Health, l_Mana, l_Alignment, l_SkinID, l_MapID, l_PosX, l_PosY, (Orientation)l_Orientation);
     m_MapManager->SetPosX(l_PosX);
     m_MapManager->SetPosY(l_PosY);
 
@@ -330,6 +330,8 @@ void PacketHandler::HandleCreateUnit(WorldPacket &p_Packet)
     std::string l_Name;
     uint8 l_Level;
     uint8 l_Health;
+    uint8 l_Mana;
+    uint8 l_Alignment;
     uint8 l_SkinID;
     uint16 l_MapID;
     Position l_Pos;
@@ -342,6 +344,8 @@ void PacketHandler::HandleCreateUnit(WorldPacket &p_Packet)
     p_Packet >> l_Name;
     p_Packet >> l_Level;
     p_Packet >> l_Health;
+    p_Packet >> l_Mana;
+    p_Packet >> l_Alignment;
     p_Packet >> l_SkinID;
     p_Packet >> l_MapID;
     p_Packet >> l_Pos.x;
@@ -362,7 +366,7 @@ void PacketHandler::HandleCreateUnit(WorldPacket &p_Packet)
     if (l_ActualMap->GetID() == l_MapID && l_ActualMap->GetUnit((TypeUnit)l_TypeID, l_ID) == nullptr)
     {
         if (l_TypeID == (uint8)TypeUnit::PLAYER)
-            l_NewUnit = new Player(l_ID, l_Name, l_Level, l_Health, l_SkinID, l_MapID, l_Pos.x, l_Pos.y, (Orientation)l_Orientation);
+            l_NewUnit = new Player(l_ID, l_Name, l_Level, l_Health, l_Mana, l_Alignment, l_SkinID, l_MapID, l_Pos.x, l_Pos.y, (Orientation)l_Orientation);
         else if (l_TypeID == (uint8)TypeUnit::CREATURE)
             l_NewUnit = new Creature(l_ID, l_Name, l_Level, l_Health, l_SkinID, l_MapID, l_Pos.x, l_Pos.y, (Orientation)l_Orientation);
 

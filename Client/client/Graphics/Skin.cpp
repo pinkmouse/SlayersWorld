@@ -33,8 +33,6 @@ SkinSprite* Skin::GetSprite(uint8 p_SpriteID)
     while (p_SpriteID >= m_SpriteList.size())
         p_SpriteID -= (MAX_MOVEMENT_POSITION * Orientation::MAX);
 
-    if (p_SpriteID < 0)
-        p_SpriteID = 0;
-
+    p_SpriteID = std::min((uint8)m_SpriteList.size(), p_SpriteID);
     return m_SpriteList[p_SpriteID];
 }

@@ -117,7 +117,6 @@ protected:
 	PointsSet m_PointsSet;
     uint64 m_RespawnTime;
     uint64 m_ResTimer;
-    uint64 m_RegenTimer;
     bool m_Evade;
 
 private:

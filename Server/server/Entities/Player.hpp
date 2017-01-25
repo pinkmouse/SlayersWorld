@@ -7,7 +7,7 @@ class WorldSocket;
 class Player : public Unit
 {
 public:
-    Player(int32, std::string, uint8, uint8, uint8, uint16, uint32, uint32, Orientation, uint32, eAccessType);
+    Player(int32, std::string, uint8, uint8, uint8, uint8, uint8, uint16, uint32, uint32, Orientation, uint32, eAccessType);
     ~Player();
     WorldSocket* GetSession() const;
     void SetSession(WorldSocket*);
