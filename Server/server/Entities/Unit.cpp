@@ -64,6 +64,9 @@ Unit::~Unit()
     m_Map->RemoveUnit(this);
     delete m_MovementHandler;
     m_MovementHandler = nullptr;
+
+    for (auto l_Resource : m_Resources)
+        delete l_Resource.second;
 }
 
 void Unit::UpdateDeathState(sf::Time p_Diff)

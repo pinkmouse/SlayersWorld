@@ -23,6 +23,9 @@ Unit::Unit(uint16 p_ID, TypeUnit p_Type) :
 
 Unit::~Unit()
 {
+    for (auto l_Resource : m_Resources)
+        delete l_Resource.second;
+
     delete m_MovementHandler;
 }
 
