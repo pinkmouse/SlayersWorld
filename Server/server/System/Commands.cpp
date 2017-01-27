@@ -16,6 +16,8 @@ void Player::InitializeCommands()
     m_CmdHandleMap["npc"].second = &Player::HandleCommandCreature;
     m_CmdHandleMap["who"].first = eAccessType::Moderator;
     m_CmdHandleMap["who"].second = &Player::HandleCommandWho;
+    m_CmdHandleMap["tele"].first = eAccessType::Moderator;
+    m_CmdHandleMap["tele"].second = &Player::HandleCommandTeleport;
 }
 
 bool Player::HandleCommandSkin(std::vector<std::string> p_ListCmd)
@@ -209,4 +211,16 @@ bool Player::HandleCommandAddPoint(std::vector<std::string> p_ListCmd)
 	}
 
 	return true;
+}
+
+bool Player::HandleCommandTeleport(std::vector<std::string> p_ListCmd)
+{
+    if (p_ListCmd.empty() || p_ListCmd.size() != 2)
+        return false;
+
+    uint16 l_X = atoi(p_ListCmd[0].c_str());
+    uint16 l_Y = atoi(p_ListCmd[1].c_str());
+
+    TeleportTo(l_X, l_Y);
+    return true;
 }

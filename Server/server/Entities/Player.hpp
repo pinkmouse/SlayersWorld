@@ -37,6 +37,7 @@ public:
 	bool HandleCommandAddPoint(std::vector<std::string>);
     bool HandleCommandCreature(std::vector<std::string>);
     bool HandleCommandWho(std::vector<std::string>);
+    bool HandleCommandTeleport(std::vector<std::string>);
 
 private:
     WorldSocket* m_Session;

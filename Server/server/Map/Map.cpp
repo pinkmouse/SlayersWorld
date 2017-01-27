@@ -1,6 +1,7 @@
 ﻿#include <cstdio>
 #include "Map.hpp"
 #include "../World/WorldSocket.hpp"
+#include "../World/PacketDefine.hpp"
 
 Map::Map()
 {
@@ -25,6 +26,11 @@ uint16 Map::GetSizeY() const
 Case* Map::GetCase(uint16 p_ID) const
 {
     return m_ListCase[p_ID];
+}
+
+uint16 Map::GetID() const
+{
+    return m_ID;
 }
 
 Case* Map::GetCase(uint32 p_PosX, uint32 p_PosY) const
@@ -71,8 +77,9 @@ void Map::Update(sf::Time p_Diff)
                 l_Unit->ToCreature()->Update(p_Diff);
             else*/
             l_Unit->Update(p_Diff);
-
-            if (l_Unit->GetSquareID() != GetSquareID(l_Unit->GetPosX(), l_Unit->GetPosY()))
+            if (l_Unit->GetMapID() != m_ID)
+                m_UnitSwitchMapQueue.push(l_Unit);
+            else if (l_Unit->GetSquareID() != GetSquareID(l_Unit->GetPosX(), l_Unit->GetPosY()))
                 ChangeSquare(l_Unit);
         }
     }
@@ -83,6 +90,10 @@ std::map<uint16, Unit*>* Map::GetListUnitType(TypeUnit p_Type)
     return &m_ListUnitZone[p_Type];
 }
 
+std::queue<Unit*>* Map::GetUnitSwitchMapQueue()
+{
+    return &m_UnitSwitchMapQueue;
+}
 
 uint16 Map::ChangeSquare(Unit* p_Unit)
 {
@@ -204,14 +215,21 @@ void Map::AddUnit(Unit* p_Unit)
         printf("Add creature:%s to square %d\n", p_Unit->GetName().c_str(), l_SquareId);
     AddToSquare(p_Unit, l_SquareId);
     UpdateForPlayersInNewSquare(p_Unit, true);
+    if (p_Unit->GetType() == TypeUnit::PLAYER)
+        p_Unit->ToPlayer()->UpdateNewSquares(0, p_Unit->GetSquareID(), true);
 }
 
 void Map::RemoveUnit(Unit* p_Unit)
 {
+    PacketUnitRemove l_Packet;
+    l_Packet.BuildPacket(p_Unit->GetType(), p_Unit->GetID());
+    SendToSet(l_Packet.m_Packet, p_Unit);
+
     m_ListUnitZone[p_Unit->GetType()].erase(p_Unit->GetID());
-    p_Unit->SetInWorld(false);
     /// Remove from square
     RemoveFromSquare(p_Unit);
+
+    p_Unit->SetInWorld(false);
 }
 
 void Map::AddToSquare(Unit* p_Unit, uint16 p_SquareID)

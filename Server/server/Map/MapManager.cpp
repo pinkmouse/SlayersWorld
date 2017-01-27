@@ -53,6 +53,29 @@ void MapManager::Update(sf::Time p_Diff)
 
         l_Map->Update(p_Diff);
     }
+    /// Switch Unit of map
+    for (std::map<uint16, Map*>::iterator l_It = m_MapList.begin(); l_It != m_MapList.end(); ++l_It)
+    {
+        Map* l_Map = (*l_It).second;
+        if (l_Map == nullptr)
+            continue;
+
+        std::queue<Unit*>* l_UnitSwitchMapQueue = l_Map->GetUnitSwitchMapQueue();
+        while (!l_UnitSwitchMapQueue->empty())
+        {
+            Unit* l_Unit = l_UnitSwitchMapQueue->front();
+            Map* l_NewMap = GetMap(l_Unit->GetMapID());
+
+            if (l_NewMap == nullptr || l_NewMap->GetID() == l_Map->GetID()) /// If new map doesn't exist, we don't switch it
+            {
+                l_Unit->SetMapID(l_Map->GetID());
+                l_UnitSwitchMapQueue->pop();
+                continue;
+            }
+            l_Map->RemoveUnit(l_Unit);
+            l_NewMap->AddUnit(l_Unit);
+        }
+    }
 }
 
 Player* MapManager::GetPlayer(uint16 p_IdPlayer)

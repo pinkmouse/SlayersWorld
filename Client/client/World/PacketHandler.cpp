@@ -218,12 +218,14 @@ void PacketHandler::HandleUpdatePosition(WorldPacket &p_Packet)
 {
     uint8 l_TypeID;
     uint16 l_UnitID;
+    uint16 l_MapId;
     uint32 l_PosX;
     uint32 l_PosY;
     uint8 l_Orientation;
 
     p_Packet >> l_TypeID;
     p_Packet >> l_UnitID;
+    p_Packet >> l_MapId;
     p_Packet >> l_PosX;
     p_Packet >> l_PosY;
     p_Packet >> l_Orientation;
@@ -237,7 +239,7 @@ void PacketHandler::HandleUpdatePosition(WorldPacket &p_Packet)
             g_Socket->SendUnitUnknow(l_TypeID, l_UnitID); ///< Ask for unknow unit to server
             return;
         }
-        WorldPosition l_WorldPosition(l_PosX, l_PosY, 0, (Orientation)l_Orientation);
+        WorldPosition l_WorldPosition(l_PosX, l_PosY, l_MapId, (Orientation)l_Orientation);
         l_Unit->TeleportTo(l_WorldPosition);
     }
 }

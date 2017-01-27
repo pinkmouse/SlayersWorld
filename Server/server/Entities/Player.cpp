@@ -191,7 +191,6 @@ void Player::SendMsg(const std::string & p_Msg)
 void Player::Respawn()
 {
     Unit::Respawn();
-    GetSession()->SendUpdatePositionToSet(GetType(), GetID(), GetPosX(), GetPosY(), GetOrientation());
 
     SetResourceNb(eResourceType::Health, MAX_HEALTH);
     m_ResTimer = 0;

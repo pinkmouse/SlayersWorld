@@ -137,6 +137,32 @@ struct PacketUpdateOrientation
     }
 };
 
+struct PacketUpdatePosition
+{
+    WorldPacket m_Packet;
+    uint8 m_PacketID;
+    uint8 m_TypeID;
+    uint16 m_ID;
+    uint16 m_MapID;
+    uint32 m_PosX;
+    uint32 m_PosY;
+    uint8 m_Orientation;
+
+    PacketUpdatePosition() :
+        m_PacketID(SMSG::S_UnitUpdatePosition) {}
+
+    void BuildPacket(uint8 p_TypeID, uint16 p_ID, uint16 p_MapID, uint32 p_PosX, uint32 p_PosY, uint8 p_Orientation)
+    {
+        m_Packet << m_PacketID << p_TypeID << p_ID << p_MapID << p_PosX << p_PosY << p_Orientation;
+        m_Orientation = p_Orientation;
+        m_MapID = p_MapID;
+        m_PosX = p_PosX;
+        m_PosY = p_PosY;
+        m_TypeID = p_TypeID;
+        m_ID = p_ID;
+    }
+};
+
 struct PacketUnitCreate
 {
     WorldPacket m_Packet;

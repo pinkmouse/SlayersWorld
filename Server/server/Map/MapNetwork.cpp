@@ -1,12 +1,12 @@
 #include "Map.hpp"
 #include "../World/WorldSocket.hpp"
 
-void Map::SendToSet(WorldPacket p_Packet, Unit* l_Unit)
+void Map::SendToSet(WorldPacket p_Packet, Unit* p_Unit)
 {
-    if (!l_Unit->IsInWorld())
+    if (!p_Unit->IsInWorld())
         return;
 
-    std::vector<Square*> l_SquareSet = GetSquareSet(l_Unit->GetSquareID());
+    std::vector<Square*> l_SquareSet = GetSquareSet(p_Unit->GetSquareID());
     for (Square* l_Square : l_SquareSet)
     {
         std::map<uint16, Unit*>* l_SquareList = l_Square->GetList(TypeUnit::PLAYER);

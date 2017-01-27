@@ -13,12 +13,6 @@ WorldSocket::~WorldSocket()
     if (m_Player == nullptr)
         return;
 
-    WorldPacket l_Packet;
-    uint8 l_ID = SMSG::S_UnitRemove;
-    uint8 l_Type = (uint8)TypeUnit::PLAYER;
-
-    l_Packet << l_ID << l_Type << m_Player->GetID();
-    SendToSet(l_Packet, true);
     /// Save Player
     printf("DELETE PLAYER\n");
     m_Player->SetInWorld(false);
@@ -36,24 +30,6 @@ void WorldSocket::SendAuthResponse(uint8 p_Status)
 	l_Packet << l_ID << p_Status;
 	send(l_Packet);
 	printf("Send Status Auth %d\n", p_Status);
-}
-
-void WorldSocket::SendUpdatePosition(uint8 p_Type, uint16 p_ID, uint32 p_PosX, uint32 p_PosY, uint8 p_Orientation)
-{
-    WorldPacket l_Packet;
-    uint8 l_ID = SMSG::S_UnitUpdatePosition;
-
-    l_Packet << l_ID << p_Type << p_ID << p_PosX << p_PosY << p_Orientation;
-    send(l_Packet);
-}
-
-void WorldSocket::SendUpdatePositionToSet(uint8 p_Type, uint16 p_ID, uint32 p_PosX, uint32 p_PosY, uint8 p_Orientation)
-{
-    WorldPacket l_Packet;
-    uint8 l_ID = SMSG::S_UnitUpdatePosition;
-
-    l_Packet << l_ID << p_Type << p_ID << p_PosX << p_PosY << p_Orientation;
-    SendToSet(l_Packet);
 }
 
 void WorldSocket::SendPlayerCreate(uint32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_Health, uint8 p_Mana, uint8 p_Alignment, uint8 p_SkinID, uint16 p_MapID, uint32 p_PosX, uint32 p_PosY, uint8 p_Orientation)

@@ -481,6 +481,20 @@ void Unit::TeleportTo(const WorldPosition& p_WorldPosition)
     SetPosX(p_WorldPosition.GetPosX());
     SetPosY(p_WorldPosition.GetPosY());
     SetOrientation(p_WorldPosition.GetOrientation());
+    SetMapID(p_WorldPosition.GetMapID());
+
+    /* TODO : check range for short TP */
+    CleanAttackers();
+    CleanVictims();
+
+    PacketUpdatePosition l_Packet;
+    l_Packet.BuildPacket(GetType(), GetID(), GetMapID(), GetPosX(), GetPosY(), GetOrientation());
+    m_Map->SendToSet(l_Packet.m_Packet, this);
+}
+
+void Unit::TeleportTo(uint16 p_X, uint16 p_Y)
+{
+    TeleportTo(WorldPosition(p_X, p_Y, GetMapID(), Orientation::Down));
 }
 
 /// COMBAT
