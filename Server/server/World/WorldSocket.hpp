@@ -25,6 +25,7 @@ public:
 	void SendAuthResponse(uint8);
     void SendMsg(WorldPacket);
     void SendToSet(WorldPacket, bool p_ExcludePlayer = false);
+    void SendSwitchMap(uint16);
 
     Player* GetPlayer();
     void SetPlayer(Player*);

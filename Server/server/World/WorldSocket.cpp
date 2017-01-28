@@ -118,6 +118,13 @@ void WorldSocket::SendLogDamage(uint8 p_TypeID, uint16 p_ID, uint8 p_Damage, boo
 	SendMsg(l_Packet.m_Packet);
 }
 
+void WorldSocket::SendSwitchMap(uint16 p_MapID)
+{
+    PacketSwitchMap l_Packet;
+    l_Packet.BuildPacket(p_MapID);
+    send(l_Packet.m_Packet);
+}
+
 void WorldSocket::SendUpdateUnitResource(uint8 p_TypeID, uint16 p_ID, uint8 p_Resource, uint8 p_NewHealth)
 {
     WorldPacket l_Packet;

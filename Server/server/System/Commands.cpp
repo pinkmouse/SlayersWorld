@@ -215,12 +215,25 @@ bool Player::HandleCommandAddPoint(std::vector<std::string> p_ListCmd)
 
 bool Player::HandleCommandTeleport(std::vector<std::string> p_ListCmd)
 {
-    if (p_ListCmd.empty() || p_ListCmd.size() != 2)
+    if (p_ListCmd.empty())
         return false;
 
-    uint16 l_X = atoi(p_ListCmd[0].c_str());
-    uint16 l_Y = atoi(p_ListCmd[1].c_str());
+    if (p_ListCmd.size() == 2)
+    {
+        uint32 l_X = atoi(p_ListCmd[0].c_str());
+        uint32 l_Y = atoi(p_ListCmd[1].c_str());
 
-    TeleportTo(l_X, l_Y);
-    return true;
+        TeleportTo(l_X, l_Y);
+        return true;
+    }
+    if (p_ListCmd.size() == 3)
+    {
+        uint16 l_Map = atoi(p_ListCmd[0].c_str());
+        uint32 l_X = atoi(p_ListCmd[1].c_str());
+        uint32 l_Y = atoi(p_ListCmd[2].c_str());
+
+        TeleportTo(l_Map, l_X, l_Y);
+        return true;
+    }
+    return false;
 }

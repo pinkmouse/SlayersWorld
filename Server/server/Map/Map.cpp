@@ -221,13 +221,13 @@ void Map::AddUnit(Unit* p_Unit)
 
 void Map::RemoveUnit(Unit* p_Unit)
 {
-    PacketUnitRemove l_Packet;
-    l_Packet.BuildPacket(p_Unit->GetType(), p_Unit->GetID());
-    SendToSet(l_Packet.m_Packet, p_Unit);
-
     m_ListUnitZone[p_Unit->GetType()].erase(p_Unit->GetID());
     /// Remove from square
     RemoveFromSquare(p_Unit);
+
+    PacketUnitRemove l_Packet;
+    l_Packet.BuildPacket(p_Unit->GetType(), p_Unit->GetID());
+    SendToSet(l_Packet.m_Packet, p_Unit);
 
     p_Unit->SetInWorld(false);
 }

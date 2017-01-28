@@ -492,9 +492,14 @@ void Unit::TeleportTo(const WorldPosition& p_WorldPosition)
     m_Map->SendToSet(l_Packet.m_Packet, this);
 }
 
-void Unit::TeleportTo(uint16 p_X, uint16 p_Y)
+void Unit::TeleportTo(uint32 p_X, uint32 p_Y)
 {
     TeleportTo(WorldPosition(p_X, p_Y, GetMapID(), Orientation::Down));
+}
+
+void Unit::TeleportTo(uint16 p_MapID, uint32 p_X, uint32 p_Y)
+{
+    TeleportTo(WorldPosition(p_X, p_Y, p_MapID, Orientation::Down));
 }
 
 /// COMBAT

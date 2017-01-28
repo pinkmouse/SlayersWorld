@@ -16,8 +16,8 @@ public:
 	void OperatePacket(WorldPacket &);
 	void HandleConnexion(WorldPacket &);
     void HandleCreateMainPlayer(WorldPacket &);
-    void HandleCreatePlayer(WorldPacket &);
     void HandleCreateUnit(WorldPacket &);
+    void HandleSwitchMap(WorldPacket &);
     void HandleStopMovement(WorldPacket &);
     void HandleRemoveUnit(WorldPacket &);
     void HandleUpdateResource(WorldPacket &);

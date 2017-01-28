@@ -21,6 +21,7 @@ enum SMSG : uint8
     S_UnitUpdateResource = 13,
 	S_PlayerUpdateXp = 14,
 	S_LogDamage = 15,
+    S_SwitchMap = 16,
 	S_UnitGoDirection = 20,
 	S_UnitStopMovement = 21,
 	S_UnitUpdatePosition = 22,

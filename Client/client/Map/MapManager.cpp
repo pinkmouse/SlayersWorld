@@ -1,6 +1,5 @@
 #include "MapManager.hpp"
-
-
+#define NB_MAP 2
 
 MapManager::MapManager(Events* p_Events) :
     m_Events(p_Events),
@@ -25,7 +24,7 @@ void MapManager::Update(sf::Time p_Diff)
 bool MapManager::LoadMap(uint16 m_MapID)
 {
 	m_ActualMap = new Map(m_MapID);
-    if (!m_ActualMap->InitializeMap(m_MapsPath[0]))
+    if (!m_ActualMap->InitializeMap(m_MapsPath[m_MapID]))
         return false;
     return true;
 }
@@ -37,7 +36,8 @@ Map* MapManager::GetActualMap() const
 
 void MapManager::InitializeMaps()
 {
-	m_MapsPath[0] = "map00.map";
+    for (uint8 i = 0; i < NB_MAP; ++i)
+	    m_MapsPath[i] = "map" + std::to_string(i) + ".map";
 }
 
 bool  MapManager::HasMap()

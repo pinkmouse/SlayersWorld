@@ -1,6 +1,7 @@
 #include <cstdio>
 #include "MapManager.hpp"
-
+#include "../World/WorldSocket.hpp"
+#define NB_MAP 2
 
 MapManager::MapManager()
 {
@@ -13,11 +14,14 @@ MapManager::~MapManager()
 
 bool MapManager::InitializeMaps()
 {
-	Map* l_Map = new Map();
-    if (!l_Map->InitializeMap("map00.map"))
-        return false;
-    else
-        m_MapList[0] = l_Map;
+    for (uint16 i = 0; i < NB_MAP; ++i)
+    {
+        Map* l_Map = new Map();
+        if (!l_Map->InitializeMap("map" + std::to_string(i) + ".map"))
+            return false;
+        else
+            m_MapList[i] = l_Map;
+    }
 	return true;
 }
 
@@ -74,6 +78,9 @@ void MapManager::Update(sf::Time p_Diff)
             }
             l_Map->RemoveUnit(l_Unit);
             l_NewMap->AddUnit(l_Unit);
+            if (Player* l_Player = l_Unit->ToPlayer())
+                l_Player->GetSession()->SendSwitchMap(l_NewMap->GetID());
+            l_UnitSwitchMapQueue->pop();
         }
     }
 }

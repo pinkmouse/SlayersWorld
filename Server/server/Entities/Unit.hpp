@@ -84,7 +84,8 @@ public:
     uint8 GetNbAttacker() const;
     void SetVictim(Unit*);
     void TeleportTo(const WorldPosition&);
-    void TeleportTo(uint16, uint16);
+    void TeleportTo(uint32, uint32);
+    void TeleportTo(uint16, uint32, uint32);
     Unit* GetMaxThreatAttacker();
     void AddThreadFromAttacker(Unit*, uint16);
     Unit* GetVictim() const;

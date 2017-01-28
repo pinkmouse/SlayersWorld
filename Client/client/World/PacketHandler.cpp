@@ -21,6 +21,7 @@ void PacketHandler::LoadPacketHandlerMap()
     m_PacketHandleMap[SMSG::S_PlayerCreate] = &PacketHandler::HandleCreateMainPlayer;
     m_PacketHandleMap[SMSG::S_UnitCreate] = &PacketHandler::HandleCreateUnit;
     m_PacketHandleMap[SMSG::S_UnitRemove] = &PacketHandler::HandleRemoveUnit;
+    m_PacketHandleMap[SMSG::S_SwitchMap] = &PacketHandler::HandleSwitchMap;
     m_PacketHandleMap[SMSG::S_UnitUpdateResource] = &PacketHandler::HandleUpdateResource;
     m_PacketHandleMap[SMSG::S_PlayerUpdateXp] = &PacketHandler::HandleUpdateXpPct;
     m_PacketHandleMap[SMSG::S_UnitGoDirection] = &PacketHandler::HandleUnitGoDirection;
@@ -419,6 +420,22 @@ void PacketHandler::HandleUpdateSkin(WorldPacket &p_Packet)
         }
 
         l_Unit->SetSkinID(l_Skin);
+    }
+}
+
+void PacketHandler::HandleSwitchMap(WorldPacket &p_Packet)
+{
+    uint16 l_MapID;
+
+    p_Packet >> l_MapID;
+
+    if (!m_MapManager->LoadMap(l_MapID))
+        return;
+
+    if (Map* l_ActualMap = m_MapManager->GetActualMap())
+    {
+        g_Player->SetMap(l_ActualMap);
+        l_ActualMap->AddUnit(g_Player);
     }
 }
 

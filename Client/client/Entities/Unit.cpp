@@ -17,6 +17,7 @@ Unit::Unit(uint16 p_ID, TypeUnit p_Type) :
     m_DiffTimeOpactiy = 0;
     m_MovementHandler = new MovementHandler(GetSizeX(), GetSizeY());
     m_SkinZoomFactor = SKIN_ZOOM_FACTOR_DEFAULT;
+    m_Resources.clear();
     m_Resources[eResourceType::Health] = new Resource(eResourceType::Health);
     m_HistoryDamage.clear();
 }

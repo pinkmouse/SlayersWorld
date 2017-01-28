@@ -22,6 +22,7 @@ enum SMSG : uint8
     S_UnitUpdateResource = 13,
     S_PlayerUpdateXp = 14,
 	S_LogDamage = 15,
+    S_SwitchMap = 16,
     S_UnitGoDirection = 20,
     S_UnitStopMovement = 21,
     S_UnitUpdatePosition = 22,
@@ -279,4 +280,20 @@ struct PacketLogDamage
 		m_ID = p_ID;
 		m_Miss = p_Miss;
 	}
+};
+
+struct PacketSwitchMap
+{
+    WorldPacket m_Packet;
+    uint8 m_PacketID;
+    uint16 m_MapID;
+
+    PacketSwitchMap() :
+        m_PacketID(SMSG::S_SwitchMap) {}
+
+    void BuildPacket(const uint16 & p_MapID)
+    {
+        m_Packet << m_PacketID << p_MapID;
+        m_MapID = p_MapID;
+    }
 };
