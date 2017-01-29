@@ -67,6 +67,7 @@ bool World::Initialize()
 
 void World::Login(const std::string& login, const std::string& password)
 {
+    m_InterfaceManager->SetSystemMsg("Connection...");
     g_Socket->SendAuth(login, password);
 }
 

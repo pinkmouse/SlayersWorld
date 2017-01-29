@@ -272,12 +272,14 @@ void PacketHandler::HandleConnexion(WorldPacket &p_Packet)
     switch (l_Status)
     {
     case 0:
+        m_InterfaceManager->SetSystemMsg("Authentication failed");
         printf("Auth Failed\n");
         break;
     case 1:
         printf("Auth Success\n");
         break;
     case 2:
+        m_InterfaceManager->SetSystemMsg("Already connected");
         printf("Already connected\n");
         break;
     }

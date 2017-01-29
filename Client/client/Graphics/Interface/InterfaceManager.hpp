@@ -20,14 +20,20 @@ public:
     TileSprite GetFlask(uint8, bool, uint8 p_Pct = 100);
     TileSprite GetXpBar(bool, uint8 p_Pct = 100);
     void Draw(Window &);
+    void DrawStartingPage(Window &);
     HistoryField* GetHistoryField() const;
+    void AddWarningMsg(const std::string &);
+    void SetSystemMsg(const std::string &);
 
 private:
-    sf::Texture     m_SystemTexture;
-    sf::Texture     m_FlaskTexture;
-    sf::Texture     m_XpTexture;
-    Events*         m_Events;
-    WritingField*   m_WritingField;
-    HistoryField*   m_HistoryField;
+    sf::Texture                         m_SystemTexture;
+    sf::Texture                         m_FlaskTexture;
+    sf::Texture                         m_XpTexture;
+    sf::Texture                         m_Background;
+    Events*                             m_Events;
+    WritingField*                       m_WritingField;
+    HistoryField*                       m_HistoryField;
+    sf::Text                            m_SystemMsg;
+    std::map< uint64, std::string >     m_WarningMsgs;
 };
 

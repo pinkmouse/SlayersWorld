@@ -267,7 +267,7 @@ void Graphics::DrawMap()
 
 void Graphics::DrawInterface()
 {
-    if (!m_Window.isOpen() || !m_MapManager->HasMap() || g_Player == nullptr)
+    if (!m_Window.isOpen())
         return;
 
     m_InterfaceManager->Draw(m_Window);

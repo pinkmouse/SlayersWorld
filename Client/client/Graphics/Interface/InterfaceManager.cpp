@@ -8,6 +8,9 @@ InterfaceManager::InterfaceManager(Events* p_Events) :
 {
     m_Events->SetWritingField(m_WritingField);
     m_Events->SetHistoryField(m_HistoryField);
+
+    m_SystemMsg.setCharacterSize(30);
+    m_SystemMsg.setColor(sf::Color::White);
 }
 
 
@@ -28,6 +31,10 @@ void InterfaceManager::Initialize()
     l_FileSystemName = "xp.png";
     if (!m_XpTexture.loadFromFile(IMG_FOLDER + l_FileSystemName))
         printf("Load SystemImg Xp Failed\n");
+
+    l_FileSystemName = "background.png";
+    if (!m_Background.loadFromFile(IMG_FOLDER + l_FileSystemName))
+        printf("Load Background Failed\n");
 }
 
 TileSprite InterfaceManager::GetField(uint16 p_SizeX, uint16 p_SizeY)
@@ -82,10 +89,38 @@ void InterfaceManager::Update(sf::Time p_Diff)
     m_HistoryField->Update(p_Diff);
 }
 
+void InterfaceManager::DrawStartingPage(Window & p_Window)
+{
+    TileSprite l_Background;
+    l_Background.setTexture(m_Background);
+    l_Background.setPosition(0, 0);
+    p_Window.draw(l_Background);
+
+    if (m_SystemMsg.getString() != "")
+    {
+        TileSprite l_Sprite = GetField(m_SystemMsg.getGlobalBounds().width + 8, (float)g_Font->getLineSpacing(m_SystemMsg.getCharacterSize()) + 8);
+        l_Sprite.setPosition((X_WINDOW / 2) - ((m_SystemMsg.getGlobalBounds().width + 8) / 2), (Y_WINDOW / 2) - ((g_Font->getLineSpacing(m_SystemMsg.getCharacterSize()) + 8) / 2));
+
+        p_Window.draw(l_Sprite);
+
+        m_SystemMsg.setPosition((X_WINDOW / 2) - ((m_SystemMsg.getGlobalBounds().width) / 2), (Y_WINDOW / 2) - ((g_Font->getLineSpacing(m_SystemMsg.getCharacterSize())) / 2));
+        m_SystemMsg.setFont(*g_Font);
+        p_Window.draw(m_SystemMsg);
+    }
+}
+
+
 void InterfaceManager::Draw(Window & p_Window)
 {
     if (m_Events == nullptr)
         return;
+
+    /// Draw Starting
+    if (g_Player == nullptr)
+    {
+        DrawStartingPage(p_Window);
+        return;
+    }
 
     /// Draw Flask Life
     TileSprite l_FlaskEmpty = GetFlask(0, false);
@@ -146,4 +181,14 @@ void InterfaceManager::Draw(Window & p_Window)
         }
         //p_Window.draw(m_WritingField->GetText());
     }
+}
+
+void InterfaceManager::AddWarningMsg(const std::string & p_Msg)
+{
+    m_WarningMsgs[MAX_WARNING_LOG_TIME] = p_Msg;
+}
+
+void InterfaceManager::SetSystemMsg(const std::string & p_Msg)
+{
+    m_SystemMsg.setString(p_Msg);
 }
