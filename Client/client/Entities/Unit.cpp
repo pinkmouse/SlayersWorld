@@ -162,6 +162,7 @@ uint16 Unit::GetID() const
 void Unit::SetMap(Map* p_Map)
 {
     m_Map = p_Map;
+    SetMapID(p_Map->GetID());
     m_MovementHandler->SetMap(m_Map);
 }
 
@@ -200,7 +201,10 @@ void Unit::SetOrientation(const Orientation & p_Orientation)
 bool Unit::IsInRayVisible(Unit* p_Unit)
 {
     if (p_Unit->GetMapID() != GetMapID())
+    {
+        printf("----> NOT IN RAY %d %d\n", p_Unit->GetMapID(), GetMapID());
         return false;
+    }
 
     if (p_Unit == this)
         return true;
@@ -213,6 +217,7 @@ bool Unit::IsInRayVisible(Unit* p_Unit)
         if (l_Id == l_UnitSquareID)
             return true;
     }
+    printf("----> NOT IN RAY %d %d : %d %d\n", GetCasePosX(), GetCasePosY(), p_Unit->GetCasePosX(), p_Unit->GetCasePosY());
     return false;
 }
 

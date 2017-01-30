@@ -31,7 +31,7 @@ void Map::Update(sf::Time p_Diff)
 
             if (!g_Player->IsInRayVisible(l_Unit))
             {
-               //s printf("----> REMOVE UNIT out of range %d\n", l_Unit->GetID());
+                printf("----> REMOVE UNIT out of range %d\n", l_Unit->GetID());
                 m_ListUnitZone[l_Unit->GetType()].erase(l_Unit->GetID());
             }
             else

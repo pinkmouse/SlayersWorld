@@ -22,7 +22,6 @@ public:
     Unit* ToUnit();
 
 private:
-    Position m_Position;
     TypeWorldObject m_Type;
     sf::Sprite* m_Tile;
     uint8 m_SizeX;
