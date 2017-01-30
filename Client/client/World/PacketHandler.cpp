@@ -276,6 +276,7 @@ void PacketHandler::HandleConnexion(WorldPacket &p_Packet)
         printf("Auth Failed\n");
         break;
     case 1:
+        m_InterfaceManager->SetSystemMsg("Authentication success");
         printf("Auth Success\n");
         break;
     case 2:
