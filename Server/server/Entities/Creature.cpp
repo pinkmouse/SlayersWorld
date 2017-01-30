@@ -6,7 +6,7 @@ Creature::Creature(uint16 p_ID, uint16 p_Entry, CreatureTemplate p_CreatureTempl
     Unit(p_ID, TypeUnit::CREATURE, p_CreatureTemplate.m_FactionType)
 {
     m_Entry = p_Entry;
-    m_MapID = p_MapID;
+    SetMapID(p_MapID);
     SetPosX(p_PosX);
     SetPosY(p_PosY);
     m_SkinID = p_CreatureTemplate.m_SkinID;

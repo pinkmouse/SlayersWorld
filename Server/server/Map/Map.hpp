@@ -13,7 +13,7 @@
 class Map
 {
 public:
-	Map();
+	Map(uint16);
 	~Map();
 	bool InitializeMap(const std::string &);
     void Update(sf::Time);

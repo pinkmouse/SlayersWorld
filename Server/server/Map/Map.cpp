@@ -3,8 +3,9 @@
 #include "../World/WorldSocket.hpp"
 #include "../World/PacketDefine.hpp"
 
-Map::Map()
+Map::Map(uint16 p_ID)
 {
+    m_ID = p_ID;
     m_SizeX = 0;
     m_SizeY = 0;
 }

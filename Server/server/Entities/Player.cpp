@@ -13,7 +13,7 @@ Player::Player(int32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_Health, ui
     m_Name = p_Name;
     m_Level = p_Level;
     m_SkinID = p_SkinID;
-    m_MapID = p_MapID;
+    SetMapID(p_MapID);
     SetPosX(p_PosX);
     SetPosY(p_PosY);
     SetOrientation(p_Orientation);
