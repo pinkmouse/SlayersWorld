@@ -12,6 +12,13 @@ Map::Map(uint16 p_ID)
 
 Map::~Map()
 {
+    for (Case* l_Case : m_ListCase)
+        delete l_Case;
+    for (std::pair< TypeUnit, std::map<uint16, Unit*> > l_ListUnit : m_ListUnitZone)
+    {
+        for (std::pair< uint16, Unit* > l_Unit : l_ListUnit.second)
+            delete l_Unit.second;
+    }
 }
 
 uint16 Map::GetSizeX() const

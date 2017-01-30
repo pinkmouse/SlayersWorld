@@ -13,6 +13,17 @@ Map::Map(uint16 p_MapID)
 
 Map::~Map()
 {
+    for (Case* l_Case : m_ListCase)
+        delete l_Case;
+    for (std::pair< TypeUnit, std::map<uint16, Unit*> > l_ListUnit : m_ListUnitZone)
+    {
+        for (std::pair< uint16, Unit* > l_Unit : l_ListUnit.second)
+        {
+            if (l_Unit.second == g_Player)
+                continue;
+            delete l_Unit.second;
+        }
+    }
 }
 
 void Map::Update(sf::Time p_Diff)
@@ -31,7 +42,6 @@ void Map::Update(sf::Time p_Diff)
 
             if (!g_Player->IsInRayVisible(l_Unit))
             {
-                printf("----> REMOVE UNIT out of range %d\n", l_Unit->GetID());
                 m_ListUnitZone[l_Unit->GetType()].erase(l_Unit->GetID());
             }
             else

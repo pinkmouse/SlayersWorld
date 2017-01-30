@@ -337,6 +337,11 @@ uint16 SqlManager::AddNewCreature(uint16 p_Map, uint16 p_Entry, uint32 p_PosX, u
     MYSQL_RES *l_Result = NULL;
     MYSQL_ROW l_Row;
     l_Result = mysql_use_result(&m_MysqlWorld);
+    if (l_Result == NULL)
+    {
+        printf("FAILD SQL ADD CREATURE\n");
+        return 0;
+    }
     while ((l_Row = mysql_fetch_row(l_Result)))
     {
         l_Id = atoi(l_Row[0]);
