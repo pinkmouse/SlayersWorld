@@ -43,6 +43,7 @@ void Map::Update(sf::Time p_Diff)
             if (!g_Player->IsInRayVisible(l_Unit))
             {
                 m_ListUnitZone[l_Unit->GetType()].erase(l_Unit->GetID());
+                delete l_Unit;
             }
             else
                 l_Unit->Update(p_Diff);
