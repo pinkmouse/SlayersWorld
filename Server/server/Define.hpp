@@ -15,6 +15,7 @@
 #define MAX_HEALTH 100
 #define MAX_MANA 100
 #define MAX_ALIGNMENT 100
+#define MAX_EFFECTS_FOR_SPELL 4
 
 #define REGEN_HEALTH_TIMER 5000
 
@@ -103,6 +104,30 @@ enum eResourceType
     Alignment = 3
 };
 
+enum ePlayerAction
+{
+    General = 57, // SpaceBAR
+    Spell1 = 25, // Z
+    Spell2 = 4 // E
+};
+
+enum SpellEffectType
+{
+    Damage = 0,
+    Heal,
+    Teleport,
+    LaunchSpell
+};
+
+enum SpellTarget
+{
+    Caster = 0,
+    CloserAlly,
+    CloserEnemy,
+    ZoneAlly,
+    ZoneEnemy
+};
+
 struct Position
 {
     uint32 m_X;
@@ -143,6 +168,25 @@ struct Gossip
     Gossip(uint16 p_ID, TypeUnit p_TypeUnit, uint16 p_UnitEntry, eGossipType p_GossipType, uint32 p_Data1, std::string p_Msg) :
         m_ID(p_ID), m_TypeUnit(p_TypeUnit), m_UnitEntry(p_UnitEntry), m_GossipType(p_GossipType), m_Data1(p_Data1), m_Msg(p_Msg), m_GossipTimer(0){}
 };
+
+struct SpellEffect
+{
+    uint16 m_ID;
+    SpellEffectType m_EffectID;
+    SpellTarget m_Target;
+    uint32 m_BasePoint1;
+    uint32 m_BasePoint2;
+    uint32 m_BasePoint3;
+    uint32 m_BasePoint4;
+    float m_RadiusMin;
+    float m_RadiusMax;
+
+    SpellEffect() {}
+
+    SpellEffect(uint16 p_ID, SpellEffectType p_EffectID, SpellTarget p_Target, int32 p_BP1, int32 p_BP2, int32 p_BP3, int32 p_BP4, float p_RadiusMin, float p_RadiusMax) :
+        m_ID(p_ID), m_EffectID(p_EffectID), m_Target(p_Target), m_BasePoint1(p_BP1), m_BasePoint2(p_BP2), m_BasePoint3(p_BP3), m_BasePoint4(p_BP4), m_RadiusMin(p_RadiusMin), m_RadiusMax(p_RadiusMax) {}
+};
+
 
 struct CreatureTemplate
 {

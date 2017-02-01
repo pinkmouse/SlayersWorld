@@ -123,11 +123,14 @@ void PacketHandler::HandleStopAttack(WorldPacket &p_Packet, WorldSocket* p_World
 void PacketHandler::HandleEventAction(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
 {
     Player* l_Player = p_WorldSocket->GetPlayer();
+    uint8 l_ActionID;
+
+    p_Packet >> l_ActionID;
 
     if (l_Player == nullptr)
         return;
 
-    l_Player->EventAction();
+    l_Player->EventAction((ePlayerAction)l_ActionID);
 }
 
 void PacketHandler::HandleDisconnected(WorldSocket* p_WorldSocket)

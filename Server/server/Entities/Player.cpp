@@ -201,13 +201,26 @@ eAccessType Player::GetAccessType() const
     return m_AccessType;
 }
 
-void Player::EventAction()
+void Player::EventAction(ePlayerAction p_PlayerAction)
 {
-    Unit* l_Unit = m_Map->GetCloserUnit(this, MELEE_RANGE, true);
-    if (l_Unit == nullptr)
-        return;
+    switch (p_PlayerAction)
+    {
+    case General: /// GOSSIP
+    {
+        Unit* l_Unit = m_Map->GetCloserUnit(this, MELEE_RANGE, true);
+        if (l_Unit == nullptr)
+            return;
 
-    l_Unit->GossipTo(this);
+        l_Unit->GossipTo(this);
+        break;
+    }
+    case Spell1:
+        break;
+    case Spell2:
+        break;
+    default:
+        break;
+    }
 }
 
 void Player::Save()

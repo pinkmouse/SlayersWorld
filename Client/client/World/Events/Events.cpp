@@ -198,9 +198,11 @@ void Events::NewKeyPressed(sf::Keyboard::Key p_NewKey)
             break;
         }
         /// Action
+        case sf::Keyboard::Key::Z:
+        case sf::Keyboard::Key::E:
         case sf::Keyboard::Key::Space:
         {
-            g_Socket->SendEventAction();
+            g_Socket->SendEventAction((uint8)p_NewKey);
             break;
         }
         case sf::Keyboard::Key::Return:

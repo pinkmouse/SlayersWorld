@@ -11,6 +11,7 @@ World::World()
 	g_Config = new ConfigHandler();
     g_SqlManager = new SqlManager();
     g_LevelManager = new LevelManager();
+    g_SpellManager = new SpellManager();
 }
 
 
@@ -41,6 +42,14 @@ bool World::Initialize()
     printf("Initialize XpLevel\n");
     if (!g_LevelManager->Initialize())
         printf("Error Initialize XpLevel...\n");
+
+    printf("Initialize SpellEffects\n");
+    if (!g_SqlManager->InitializeSpellEffects())
+        printf("Error Initialize SpellEffects...\n");
+
+    printf("Initialize Spells\n");
+    if (!g_SqlManager->InitializeSpells())
+        printf("Error Initialize Spells...\n");
 
     printf("Initialize CreatureTemplate\n");
     if (!g_SqlManager->InitializeCreatureTemplate(m_CreatureManager))

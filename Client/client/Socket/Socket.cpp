@@ -95,12 +95,12 @@ void Socket::SendTalk(const std::string & p_TalkString)
     send(packet);
 }
 
-void Socket::SendEventAction()
+void Socket::SendEventAction(const uint8 & p_Key)
 {
     WorldPacket packet;
     uint8 l_ID = CMSG::C_UnitEventAction;
 
-    packet << l_ID;
+    packet << l_ID << p_Key;
 
     send(packet);
 }

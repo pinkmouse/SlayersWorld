@@ -22,7 +22,7 @@ public:
     void SetXp(uint32);
     void HasBeenInitialize();
     bool CheckCommand(const std::string &);
-    void EventAction();
+    void EventAction(ePlayerAction);
 
     void SetResourceNb(eResourceType, uint8);
     void Respawn();

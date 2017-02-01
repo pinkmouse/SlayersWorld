@@ -469,6 +469,78 @@ bool SqlManager::InitializeCreature(UnitManager* p_CreatureManager)
     return true;
 }
 
+bool  SqlManager::InitializeSpells()
+{
+    std::string l_Query = "SELECT `id`, `level`, `visualID`, `effect1`, `effect2`, `effect3`, `effect4` FROM spell_template";
+    mysql_query(&m_MysqlWorld, l_Query.c_str());
+
+    uint16 l_Id = 0;
+    uint8 l_Level = 0;
+    int32 l_VisualID = 0;
+    std::vector<int32> l_EffectList;
+
+    MYSQL_RES *l_Result = NULL;
+    MYSQL_ROW l_Row;
+    l_Result = mysql_use_result(&m_MysqlWorld);
+    while ((l_Row = mysql_fetch_row(l_Result)))
+    {
+        l_Id = atoi(l_Row[0]);
+        l_Level = atoi(l_Row[1]);
+        for (uint8 i = 0; i < MAX_EFFECTS_FOR_SPELL; ++i)
+            l_EffectList.push_back(atoi(l_Row[2 + i]));
+
+        Spell* l_Spell = new Spell(l_Id);
+        l_Spell->SetLevel(l_Level);
+        l_Spell->SetVisualID(l_VisualID);
+        for (int32 l_SpellEffectID : l_EffectList)
+        {
+            if (g_SpellManager->GetSpellEffect(l_SpellEffectID) != nullptr)
+                l_Spell->AddSpellEffect(g_SpellManager->GetSpellEffect(l_SpellEffectID));
+        }
+
+        g_SpellManager->AddSpell(l_Spell);
+    }
+    mysql_free_result(l_Result);
+    return true;
+}
+
+bool  SqlManager::InitializeSpellEffects()
+{
+    std::string l_Query = "SELECT `id`, `effectType`, `target`, `basepoint1`, `basepoint2`, `basepoint3`, `basepoint4`, `radiusMin`, `radiusMax` FROM spell_effect";
+    mysql_query(&m_MysqlWorld, l_Query.c_str());
+
+    uint16 l_Id = 0;
+    uint8 l_EffectType = 0;
+    uint8 l_Target = 0;
+    int32 l_BasePoint1 = 0;
+    int32 l_BasePoint2 = 0;
+    int32 l_BasePoint3 = 0;
+    int32 l_BasePoint4 = 0;
+    float l_RadiusMin = 0.0f;
+    float l_RadiusMax = 0.0f;
+
+    MYSQL_RES *l_Result = NULL;
+    MYSQL_ROW l_Row;
+    l_Result = mysql_use_result(&m_MysqlWorld);
+    while ((l_Row = mysql_fetch_row(l_Result)))
+    {
+        l_Id = atoi(l_Row[0]);
+        l_EffectType = atoi(l_Row[1]);
+        l_Target = atoi(l_Row[2]);
+        l_BasePoint1 = atoi(l_Row[3]);
+        l_BasePoint2 = atoi(l_Row[4]);
+        l_BasePoint3 = atoi(l_Row[5]);
+        l_BasePoint4 = atoi(l_Row[6]);
+        l_RadiusMin = atoi(l_Row[7]);
+        l_RadiusMax = atoi(l_Row[8]);
+
+        SpellEffect l_SpellEffect(l_Id, (SpellEffectType)l_EffectType, (SpellTarget)l_Target, l_BasePoint1, l_BasePoint2, l_BasePoint3, l_BasePoint4, l_RadiusMin, l_RadiusMax);
+        g_SpellManager->AddSpellEffect(l_SpellEffect);
+    }
+    mysql_free_result(l_Result);
+    return true;
+}
+
 std::map<uint8, uint16> SqlManager::GetXpLevel()
 {
     std::map<uint8, uint16> l_XpLevel;

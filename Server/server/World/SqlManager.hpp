@@ -44,6 +44,8 @@ public:
 	void UpdatePointsSet(Player const*);
     void AddConnectionLogin(uint32);
 
+    bool InitializeSpells();
+    bool InitializeSpellEffects();
     bool InitializeCreatureTemplate(UnitManager*);
     bool InitializeGossip(UnitManager*);
     CreatureTemplate GetCreatureTemplate(uint16);
