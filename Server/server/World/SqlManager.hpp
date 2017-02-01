@@ -48,6 +48,7 @@ public:
     bool InitializeSpellEffects();
     bool InitializeCreatureTemplate(UnitManager*);
     bool InitializeGossip(UnitManager*);
+    bool InitializeSpellsForPlayer(Player*);
     CreatureTemplate GetCreatureTemplate(uint16);
     uint16 AddNewCreature(uint16, uint16, uint32, uint32);
     bool InitializeCreature(UnitManager*);

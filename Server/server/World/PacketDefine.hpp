@@ -23,6 +23,7 @@ enum SMSG : uint8
     S_PlayerUpdateXp = 14,
 	S_LogDamage = 15,
     S_SwitchMap = 16,
+    S_WarningMsg = 17,
     S_UnitGoDirection = 20,
     S_UnitStopMovement = 21,
     S_UnitUpdatePosition = 22,
@@ -295,5 +296,21 @@ struct PacketSwitchMap
     {
         m_Packet << m_PacketID << p_MapID;
         m_MapID = p_MapID;
+    }
+};
+
+struct PacketWarningMsg
+{
+    WorldPacket m_Packet;
+    uint8 m_PacketID;
+    uint8 m_MsgID;
+
+    PacketWarningMsg() :
+        m_PacketID(SMSG::S_WarningMsg) {}
+
+    void BuildPacket(const uint8 & p_MsgID)
+    {
+        m_Packet << m_PacketID << p_MsgID;
+        m_MsgID = p_MsgID;
     }
 };

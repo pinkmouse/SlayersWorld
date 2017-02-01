@@ -21,6 +21,7 @@ public:
     TileSprite GetXpBar(bool, uint8 p_Pct = 100);
     void Draw(Window &);
     void DrawStartingPage(Window &);
+    void DrawWarnings(Window &);
     HistoryField* GetHistoryField() const;
     void AddWarningMsg(const std::string &);
     void SetSystemMsg(const std::string &);
@@ -34,6 +35,5 @@ private:
     WritingField*                       m_WritingField;
     HistoryField*                       m_HistoryField;
     sf::Text                            m_SystemMsg;
-    std::map< uint64, std::string >     m_WarningMsgs;
+    std::vector< std::pair<std::string, uint32> >     m_WarningMsgs;
 };
-

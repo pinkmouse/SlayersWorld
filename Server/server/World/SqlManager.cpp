@@ -174,6 +174,7 @@ Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
     l_Player = new Player(l_ID, l_Name, l_Lvl, l_Health, l_Mana, l_Alignment, l_SkinID, l_MapID, l_PosX, l_PosY, (Orientation)l_Orientation, l_Xp, l_PlayerAccessType);
 	l_Player->SetPointsSet(GetPointsSetForPlayer(l_ID));
     l_Player->SetRespawnPosition(GetRespawnPositionForPlayer(l_ID));
+    InitializeSpellsForPlayer(l_Player);
 
     return l_Player;
 }
@@ -406,6 +407,26 @@ bool SqlManager::InitializeCreatureTemplate(UnitManager* p_CreatureManager)
     return true;
 }
 
+bool SqlManager::InitializeSpellsForPlayer(Player* p_Player)
+{
+    std::string l_Query = "SELECT `spellID` FROM characters_spells WHERE `characterID` = '" + std::to_string(p_Player->GetID()) + "'";
+    mysql_query(&m_MysqlCharacters, l_Query.c_str());
+
+    uint16 l_SpellID;
+
+    MYSQL_RES *l_Result = NULL;
+    MYSQL_ROW l_Row;
+    l_Result = mysql_use_result(&m_MysqlCharacters);
+    while ((l_Row = mysql_fetch_row(l_Result)))
+    {
+        l_SpellID = atoi(l_Row[0]);
+        p_Player->AddSpellID(l_SpellID);
+    }
+    mysql_free_result(l_Result);
+
+    return true;
+}
+
 bool SqlManager::InitializeGossip(UnitManager* p_CreatureManager)
 {
     std::string l_Query = "SELECT `id`, `typeUnit`, `unitEntry`, `type`, `data1`, `msg` FROM gossip";
@@ -471,12 +492,17 @@ bool SqlManager::InitializeCreature(UnitManager* p_CreatureManager)
 
 bool  SqlManager::InitializeSpells()
 {
-    std::string l_Query = "SELECT `id`, `level`, `visualID`, `effect1`, `effect2`, `effect3`, `effect4` FROM spell_template";
+    std::string l_Query = "SELECT `id`, `level`, `visualID`, `visualIDTarget`,`castTime`, `cooldown`, `resourceType`, `resourceNb`, `effect1`, `effect2`, `effect3`, `effect4` FROM spell_template";
     mysql_query(&m_MysqlWorld, l_Query.c_str());
 
     uint16 l_Id = 0;
     uint8 l_Level = 0;
-    int32 l_VisualID = 0;
+    int32 l_VisualID = -1;
+    int32 l_VisualIDTarget = -1;
+    uint16 l_CastTime = 0;
+    uint32 l_Cooldown = 0;
+    int16 l_ResourceType = 0;
+    int32 l_ResourceNb = 0;
     std::vector<int32> l_EffectList;
 
     MYSQL_RES *l_Result = NULL;
@@ -486,12 +512,26 @@ bool  SqlManager::InitializeSpells()
     {
         l_Id = atoi(l_Row[0]);
         l_Level = atoi(l_Row[1]);
+        l_VisualID = atoi(l_Row[2]);
+        l_VisualIDTarget = atoi(l_Row[3]);
+        l_CastTime = atoi(l_Row[4]);
+        l_Cooldown = atoi(l_Row[5]);
+        l_ResourceType = atoi(l_Row[6]);
+        l_ResourceNb = atoi(l_Row[7]);
         for (uint8 i = 0; i < MAX_EFFECTS_FOR_SPELL; ++i)
-            l_EffectList.push_back(atoi(l_Row[2 + i]));
+            l_EffectList.push_back(atoi(l_Row[8 + i]));
 
-        Spell* l_Spell = new Spell(l_Id);
+        SpellTemplate* l_Spell = new SpellTemplate(l_Id);
         l_Spell->SetLevel(l_Level);
-        l_Spell->SetVisualID(l_VisualID);
+        l_Spell->SetVisualsID(l_VisualID, l_VisualIDTarget);
+        l_Spell->SetCastTime(l_CastTime);
+        l_Spell->SetCooldown(l_Cooldown);
+        if (l_ResourceType > 0)
+        {
+            printf("ADD RESOURCE TYPE %dT\n", l_ResourceType);
+            l_Spell->AddResourceNeed(ResourceNeed((eResourceType)l_ResourceType, l_ResourceNb));
+        }
+
         for (int32 l_SpellEffectID : l_EffectList)
         {
             if (g_SpellManager->GetSpellEffect(l_SpellEffectID) != nullptr)
@@ -531,8 +571,8 @@ bool  SqlManager::InitializeSpellEffects()
         l_BasePoint2 = atoi(l_Row[4]);
         l_BasePoint3 = atoi(l_Row[5]);
         l_BasePoint4 = atoi(l_Row[6]);
-        l_RadiusMin = atoi(l_Row[7]);
-        l_RadiusMax = atoi(l_Row[8]);
+        l_RadiusMin = (float)atof(l_Row[7]);
+        l_RadiusMax = (float)atof(l_Row[8]);
 
         SpellEffect l_SpellEffect(l_Id, (SpellEffectType)l_EffectType, (SpellTarget)l_Target, l_BasePoint1, l_BasePoint2, l_BasePoint3, l_BasePoint4, l_RadiusMin, l_RadiusMax);
         g_SpellManager->AddSpellEffect(l_SpellEffect);

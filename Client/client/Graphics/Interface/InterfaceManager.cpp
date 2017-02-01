@@ -87,6 +87,17 @@ HistoryField* InterfaceManager::GetHistoryField() const
 void InterfaceManager::Update(sf::Time p_Diff)
 {
     m_HistoryField->Update(p_Diff);
+
+    for (std::vector<std::pair<std::string, uint32>>::iterator l_It = m_WarningMsgs.begin(); l_It != m_WarningMsgs.end();)
+    {
+        if ((*l_It).second <= (p_Diff.asMicroseconds()))
+            l_It = m_WarningMsgs.erase(l_It);
+        else
+        {
+            (*l_It).second -= (p_Diff.asMicroseconds());
+            ++l_It;
+        }
+    }
 }
 
 void InterfaceManager::DrawStartingPage(Window & p_Window)
@@ -109,6 +120,20 @@ void InterfaceManager::DrawStartingPage(Window & p_Window)
     }
 }
 
+void InterfaceManager::DrawWarnings(Window & p_Window)
+{
+    for (uint8 i = 0; i < m_WarningMsgs.size(); ++i)
+    {
+        sf::Text    l_WarningMsg;
+        l_WarningMsg.setCharacterSize(30);
+        l_WarningMsg.setColor(sf::Color::White);
+        l_WarningMsg.setString(m_WarningMsgs[i].first);
+
+        l_WarningMsg.setPosition((X_WINDOW / 2) - ((l_WarningMsg.getGlobalBounds().width) / 2), (Y_WINDOW / 2) - ((g_Font->getLineSpacing(l_WarningMsg.getCharacterSize())) / 2));
+        l_WarningMsg.setFont(*g_Font);
+        p_Window.draw(l_WarningMsg);
+    }
+}
 
 void InterfaceManager::Draw(Window & p_Window)
 {
@@ -181,11 +206,12 @@ void InterfaceManager::Draw(Window & p_Window)
         }
         //p_Window.draw(m_WritingField->GetText());
     }
+    DrawWarnings(p_Window);
 }
 
 void InterfaceManager::AddWarningMsg(const std::string & p_Msg)
 {
-    m_WarningMsgs[MAX_WARNING_LOG_TIME] = p_Msg;
+    m_WarningMsgs.push_back(std::pair<std::string, uint32>(p_Msg, MAX_WARNING_LOG_TIME));
 }
 
 void InterfaceManager::SetSystemMsg(const std::string & p_Msg)

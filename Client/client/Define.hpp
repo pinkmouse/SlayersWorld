@@ -141,3 +141,8 @@ enum eResourceType
     Mana = 2,
     Alignment = 3
 };
+
+enum eWarningMsg
+{
+    NOMANA = 0
+};

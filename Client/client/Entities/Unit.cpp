@@ -266,7 +266,6 @@ void Unit::TeleportTo(const WorldPosition& p_WorldPosition)
     GetMovementHandler()->StopMovement();
     GetMovementHandler()->StopAttack();
 
-    printf("------> PASS %d-%d\n", p_WorldPosition.GetPosX(), p_WorldPosition.GetPosY());
     SetPosX(p_WorldPosition.GetPosX());
     SetPosY(p_WorldPosition.GetPosY());
     SetOrientation(p_WorldPosition.GetOrientation());

@@ -1,46 +1,62 @@
 #include "Spell.hpp"
+#include "../../World/PacketDefine.hpp"
+#include "../../Entities/Player.hpp"
+#include "../../World/WorldSocket.hpp"
 
-Spell::Spell(uint16 p_ID) :
-    m_ID(p_ID)
+
+Spell::Spell(SpellTemplate* p_SpellTemplate) :
+    m_SpellTemplate(p_SpellTemplate)
 {
-    m_Level = 0;
-    m_VisualID = 0;
 }
 
 Spell::~Spell()
 {
 }
 
-uint16 Spell::GetID()
+bool Spell::Prepare(Unit* p_Caster)
 {
-    return m_ID;
+    m_Caster = p_Caster;
+
+    /// Check Resources
+    std::vector<ResourceNeed>* l_ResourcesNeed = m_SpellTemplate->GetReousrcesNeed();
+    for (std::vector<ResourceNeed>::iterator l_It = l_ResourcesNeed->begin(); l_It != l_ResourcesNeed->end(); ++l_It)
+    {
+        ResourceNeed l_ResourceNedd = (*l_It);
+        if (p_Caster->GetResourceNb(l_ResourceNedd.m_ResourceType) < l_ResourceNedd.m_Nb)
+        {
+            if (Player* l_Player = p_Caster->ToPlayer())
+            {
+                PacketWarningMsg l_Packet;
+                l_Packet.BuildPacket(0);
+                l_Player->GetSession()->send(l_Packet.m_Packet);
+                /// TODO
+            }
+            return false;
+        }
+    }
+
+    /// Consume Resources
+    for (std::vector<ResourceNeed>::iterator l_It = l_ResourcesNeed->begin(); l_It != l_ResourcesNeed->end(); ++l_It)
+    {
+        ResourceNeed l_ResourceNedd = (*l_It);
+        if (Resource* l_Resource = p_Caster->GetResource(l_ResourceNedd.m_ResourceType))
+            l_Resource->AddNumber(-l_ResourceNedd.m_Nb);
+    }
+
+    return true;
 }
 
-uint8 Spell::GetLevel()
+void Spell::LaunchEffects()
 {
-    return m_Level;
+    std::vector<SpellEffect*>* l_SpellEffects = m_SpellTemplate->GetListEffect();
+    for (std::vector<SpellEffect*>::iterator l_It = l_SpellEffects->begin(); l_It != l_SpellEffects->end(); ++l_It)
+    {
+        SpellEffect* l_SpellEffect = (*l_It);
+        printf("Lauch effect : %d\n", l_SpellEffect->m_EffectID);
+        /// TODO
+    }
 }
 
-uint16 Spell::GetVisualID()
+void Spell::SearchTargets()
 {
-    return m_VisualID;
-}
-
-std::vector<SpellEffect*>* Spell::GetListEffect()
-{
-    return &m_ListEffect;
-}
-
-void Spell::SetLevel(uint8 p_Level)
-{
-    m_Level = p_Level;
-}
-void Spell::SetVisualID(uint16 p_VisualID)
-{
-    m_VisualID = p_VisualID;
-}
-
-void Spell::AddSpellEffect(SpellEffect* p_SpellEffect)
-{
-    m_ListEffect.push_back(p_SpellEffect);
 }

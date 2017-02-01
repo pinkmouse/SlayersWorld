@@ -34,6 +34,7 @@ void PacketHandler::LoadPacketHandlerMap()
     m_PacketHandleMap[SMSG::S_UnitStopAttack] = &PacketHandler::HandleUnitStopAttack;
     m_PacketHandleMap[SMSG::S_UnitUpdateSkin] = &PacketHandler::HandleUpdateSkin;
 	m_PacketHandleMap[SMSG::S_LogDamage] = &PacketHandler::HandleLogDamage;
+    m_PacketHandleMap[SMSG::S_WarningMsg] = &PacketHandler::HandleWarningMsg;
 }
 
 void PacketHandler::HandleRemoveUnit(WorldPacket &p_Packet)
@@ -477,4 +478,13 @@ void PacketHandler::HandleLogDamage(WorldPacket &p_Packet)
 		}
 		l_Unit->AddDamageLog(DamageInfo(l_Damage, l_Miss));
 	}
+}
+
+void PacketHandler::HandleWarningMsg(WorldPacket &p_Packet)
+{
+    uint8 l_WarningID;
+
+    p_Packet >> l_WarningID;
+
+    m_InterfaceManager->AddWarningMsg("Manque mana");
 }

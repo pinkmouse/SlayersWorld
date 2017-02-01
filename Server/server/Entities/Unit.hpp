@@ -93,6 +93,10 @@ public:
     bool IsHostileTo(Unit*);
     eFactionType GetFaction() const;
 
+    /// SPELL
+    void AddSpellID(uint16);
+    void CastSpell(uint16);
+
     /// GOSSIP
     void SetGossipList(std::vector<Gossip>*);
     void GossipTo(Player *);
@@ -133,5 +137,6 @@ private:
 
     eFactionType m_FactionType;
 
+    std::vector<uint16> m_ListSpellID;
     std::map< eGossipType, std::vector<Gossip*> > m_ListGossip;
 };

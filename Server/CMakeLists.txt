@@ -53,10 +53,12 @@ add_executable(${EXECUTABLE_NAME}
 	      server/System/Resource/ResourceAlignment.cpp
               server/System/Resource/ResourceAlignment.hpp
 
-	      server/System/Spell/Spell.cpp
-              server/System/Spell/Spell.hpp
+	      server/System/Spell/SpellTemplate.cpp
+              server/System/Spell/SpellTemplate.hpp
 	      server/System/Spell/SpellManager.cpp
               server/System/Spell/SpellManager.hpp
+	      server/System/Spell/Spell.cpp
+              server/System/Spell/Spell.hpp
 
               server/Map/Case.cpp
               server/Map/Case.hpp

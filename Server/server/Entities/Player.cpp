@@ -215,6 +215,7 @@ void Player::EventAction(ePlayerAction p_PlayerAction)
         break;
     }
     case Spell1:
+        CastSpell(1);
         break;
     case Spell2:
         break;

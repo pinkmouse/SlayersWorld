@@ -1,19 +1,19 @@
 #pragma once
 #include "../../Define.hpp"
 #include <map>
-#include "Spell.hpp"
+#include "SpellTemplate.hpp"
 
 class SpellManager
 {
 public:
     SpellManager();
     ~SpellManager();
-    Spell* GetSpell(uint16);
-    void AddSpell(Spell*);
+    SpellTemplate* GetSpell(uint16);
+    void AddSpell(SpellTemplate*);
     SpellEffect* GetSpellEffect(uint16);
     void AddSpellEffect(SpellEffect);
 
 private:
-    std::map< uint16, Spell* > m_Spells;
+    std::map< uint16, SpellTemplate* > m_Spells;
     std::map< uint16, SpellEffect > m_SpellEffects;
 };

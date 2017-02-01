@@ -5,6 +5,8 @@
 #include "../System/Resource/ResourceHealth.hpp"
 #include "../System/Resource/ResourceMana.hpp"
 #include "../System/Resource/ResourceAlignment.hpp"
+#include "../System/Spell/Spell.hpp"
+#include "../Global.hpp"
 #include <cstdlib>
 
 
@@ -315,16 +317,23 @@ uint8 Unit::GetLevel() const
 
 Resource *Unit::GetResource(eResourceType p_Resource)
 {
+    if (m_Resources.find(p_Resource) == m_Resources.end())
+        return nullptr;
     return m_Resources[p_Resource];
 }
 
 uint8 Unit::GetResourceNb(eResourceType p_Resource)
 {
+    if (m_Resources.find(p_Resource) == m_Resources.end())
+        return 0;
     return m_Resources[p_Resource]->GetNumber();
 }
 
 void Unit::SetResourceNb(eResourceType p_Resource, uint8 p_Nb)
 {
+    if (m_Resources.find(p_Resource) == m_Resources.end())
+        return;
+
     m_Resources[p_Resource]->SetNumber(p_Nb);
 
     switch(p_Resource)
@@ -660,6 +669,27 @@ void Unit::UpdateVictims()
         if (l_Victim->GetDistance(this) > CaseToPixel(30))
             l_Victim->RemoveAttacker(this);
     }
+}
+
+void Unit::AddSpellID(uint16 p_ID)
+{
+    m_ListSpellID.push_back(p_ID);
+}
+
+void Unit::CastSpell(uint16 p_ID)
+{
+    if (g_SpellManager == nullptr)
+        return;
+    printf("CASE SPELL\n");
+    SpellTemplate* l_SpellTemplate = g_SpellManager->GetSpell(p_ID);
+    if (l_SpellTemplate == nullptr)
+        return;
+
+    Spell* l_Spell = new Spell(l_SpellTemplate);
+    if (!l_Spell->Prepare(this))
+        return;
+
+    l_Spell->LaunchEffects();
 }
 
 void Unit::CleanAttackers()

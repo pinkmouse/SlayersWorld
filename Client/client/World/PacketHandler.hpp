@@ -31,6 +31,7 @@ public:
     void HandleSrvPlayerMsg(WorldPacket &);
     void HandleUpdateSkin(WorldPacket &);
 	void HandleLogDamage(WorldPacket &);
+    void HandleWarningMsg(WorldPacket &);
 
 private:
 	MapManager* m_MapManager;

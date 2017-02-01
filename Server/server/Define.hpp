@@ -128,6 +128,15 @@ enum SpellTarget
     ZoneEnemy
 };
 
+struct ResourceNeed
+{
+    eResourceType m_ResourceType;
+    int16 m_Nb;
+
+    ResourceNeed(eResourceType p_ResourceType, int16 p_Nb) :
+        m_ResourceType(p_ResourceType), m_Nb(p_Nb) {}
+};
+
 struct Position
 {
     uint32 m_X;

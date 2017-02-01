@@ -8,12 +8,12 @@ SpellManager::~SpellManager()
 {
 }
 
-void SpellManager::AddSpell(Spell* p_Spell)
+void SpellManager::AddSpell(SpellTemplate* p_Spell)
 {
     m_Spells[p_Spell->GetID()] = p_Spell;
 }
 
-Spell* SpellManager::GetSpell(uint16 p_ID)
+SpellTemplate* SpellManager::GetSpell(uint16 p_ID)
 {
     if (m_Spells.find(p_ID) == m_Spells.end())
         return nullptr;
