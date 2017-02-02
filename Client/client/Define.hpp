@@ -144,5 +144,5 @@ enum eResourceType
 
 enum eWarningMsg
 {
-    NOMANA = 0
+   NotEnoughMana = 0
 };

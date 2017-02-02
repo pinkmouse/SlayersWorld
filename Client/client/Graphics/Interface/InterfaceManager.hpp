@@ -14,6 +14,7 @@ public:
     ~InterfaceManager();
 
     void Initialize();
+    void InitializeWarningMsgs();
     void Update(sf::Time);
     TileSprite GetField(uint16, uint16);
     TileSprite GetBorderField(uint16, uint16);
@@ -24,6 +25,7 @@ public:
     void DrawWarnings(Window &);
     HistoryField* GetHistoryField() const;
     void AddWarningMsg(const std::string &);
+    void AddWarningMsg(eWarningMsg);
     void SetSystemMsg(const std::string &);
 
 private:
@@ -36,4 +38,5 @@ private:
     HistoryField*                       m_HistoryField;
     sf::Text                            m_SystemMsg;
     std::vector< std::pair<std::string, uint32> >     m_WarningMsgs;
+    std::map< eWarningMsg, std::string > m_WarningMsgsEnum;
 };

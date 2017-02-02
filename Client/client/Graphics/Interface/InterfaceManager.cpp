@@ -11,11 +11,18 @@ InterfaceManager::InterfaceManager(Events* p_Events) :
 
     m_SystemMsg.setCharacterSize(30);
     m_SystemMsg.setColor(sf::Color::White);
+
+    InitializeWarningMsgs();
 }
 
 
 InterfaceManager::~InterfaceManager()
 {
+}
+
+void InterfaceManager::InitializeWarningMsgs()
+{
+    m_WarningMsgsEnum[eWarningMsg::NotEnoughMana] = "Pas assez de mana";
 }
 
 void InterfaceManager::Initialize()
@@ -126,11 +133,11 @@ void InterfaceManager::DrawWarnings(Window & p_Window)
     {
         sf::Text    l_WarningMsg;
         l_WarningMsg.setCharacterSize(30);
-        l_WarningMsg.setColor(sf::Color::White);
+        l_WarningMsg.setColor(sf::Color(255, 66, 66, 150));
         l_WarningMsg.setString(m_WarningMsgs[i].first);
-
-        l_WarningMsg.setPosition((X_WINDOW / 2) - ((l_WarningMsg.getGlobalBounds().width) / 2), (Y_WINDOW / 2) - ((g_Font->getLineSpacing(l_WarningMsg.getCharacterSize())) / 2));
         l_WarningMsg.setFont(*g_Font);
+
+        l_WarningMsg.setPosition((X_WINDOW / 2) - ((l_WarningMsg.getGlobalBounds().width) / 2), (Y_WINDOW / 2) - ((g_Font->getLineSpacing(l_WarningMsg.getCharacterSize())) / 2) + (g_Font->getLineSpacing(l_WarningMsg.getCharacterSize()) * i));
         p_Window.draw(l_WarningMsg);
     }
 }
@@ -212,6 +219,14 @@ void InterfaceManager::Draw(Window & p_Window)
 void InterfaceManager::AddWarningMsg(const std::string & p_Msg)
 {
     m_WarningMsgs.push_back(std::pair<std::string, uint32>(p_Msg, MAX_WARNING_LOG_TIME));
+}
+
+void InterfaceManager::AddWarningMsg(eWarningMsg p_WarningMsg)
+{
+    if (m_WarningMsgsEnum.find(p_WarningMsg) == m_WarningMsgsEnum.end())
+        return;
+
+    m_WarningMsgs.push_back(std::pair<std::string, uint32>(m_WarningMsgsEnum[p_WarningMsg], MAX_WARNING_LOG_TIME));
 }
 
 void InterfaceManager::SetSystemMsg(const std::string & p_Msg)

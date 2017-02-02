@@ -486,5 +486,5 @@ void PacketHandler::HandleWarningMsg(WorldPacket &p_Packet)
 
     p_Packet >> l_WarningID;
 
-    m_InterfaceManager->AddWarningMsg("Manque mana");
+    m_InterfaceManager->AddWarningMsg((eWarningMsg)l_WarningID);
 }
