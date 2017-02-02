@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.6)
 
-project(SWserver)
+project(SWServer)
 
 set(myproject_VERSION_MAJOR 1)
 set(myproject_VERSION_MINOR 0)

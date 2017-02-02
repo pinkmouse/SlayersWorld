@@ -95,6 +95,8 @@ void Map::Update(sf::Time p_Diff)
 
 std::map<uint16, Unit*>* Map::GetListUnitType(TypeUnit p_Type)
 {
+    if (m_ListUnitZone.find(p_Type) == m_ListUnitZone.end())
+        return nullptr;
     return &m_ListUnitZone[p_Type];
 }
 
