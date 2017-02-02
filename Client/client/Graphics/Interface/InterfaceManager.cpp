@@ -226,6 +226,9 @@ void InterfaceManager::AddWarningMsg(eWarningMsg p_WarningMsg)
     if (m_WarningMsgsEnum.find(p_WarningMsg) == m_WarningMsgsEnum.end())
         return;
 
+    if (m_WarningMsgs.size() && (m_WarningMsgs[m_WarningMsgs.size() - 1].first == m_WarningMsgsEnum[p_WarningMsg]) && m_WarningMsgs[m_WarningMsgs.size() - 1].second >= MAX_WARNING_LOG_TIME_BETWEEN_SAME)
+        return;
+
     m_WarningMsgs.push_back(std::pair<std::string, uint32>(m_WarningMsgsEnum[p_WarningMsg], MAX_WARNING_LOG_TIME));
 }
 
