@@ -12,6 +12,8 @@ void Player::InitializeCommands()
     m_CmdHandleMap["level"].second = &Player::HandleCommandLevel;
     m_CmdHandleMap["points"].first = eAccessType::Dummy;
 	m_CmdHandleMap["points"].second = &Player::HandleCommandAddPoint;
+    m_CmdHandleMap["save"].first = eAccessType::Dummy;
+    m_CmdHandleMap["save"].second = &Player::HandleSave;
     m_CmdHandleMap["npc"].first = eAccessType::Moderator;
     m_CmdHandleMap["npc"].second = &Player::HandleCommandCreature;
     m_CmdHandleMap["who"].first = eAccessType::Moderator;
@@ -30,6 +32,16 @@ bool Player::HandleCommandSkin(std::vector<std::string> p_ListCmd)
         l_SkinID = 0;
 
     SetSkinID(l_SkinID);
+
+    return true;
+}
+
+bool Player::HandleSave(std::vector<std::string> p_ListCmd)
+{
+    if (!p_ListCmd.empty())
+        return false;
+
+    g_SqlManager->SavePlayer(this);
 
     return true;
 }

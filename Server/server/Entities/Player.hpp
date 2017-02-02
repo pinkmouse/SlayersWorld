@@ -36,6 +36,7 @@ public:
     bool HandleCommandWhere(std::vector<std::string>);
     bool HandleCommandLevel(std::vector<std::string>);
 	bool HandleCommandAddPoint(std::vector<std::string>);
+    bool HandleSave(std::vector<std::string>);
     bool HandleCommandCreature(std::vector<std::string>);
     bool HandleCommandWho(std::vector<std::string>);
     bool HandleCommandTeleport(std::vector<std::string>);
