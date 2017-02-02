@@ -39,8 +39,7 @@ bool Spell::Prepare(Unit* p_Caster)
     for (std::vector<ResourceNeed>::iterator l_It = l_ResourcesNeed->begin(); l_It != l_ResourcesNeed->end(); ++l_It)
     {
         ResourceNeed l_ResourceNedd = (*l_It);
-        if (Resource* l_Resource = p_Caster->GetResource(l_ResourceNedd.m_ResourceType))
-            l_Resource->AddNumber(-l_ResourceNedd.m_Nb);
+        p_Caster->AddResourceNb(l_ResourceNedd.m_ResourceType, -l_ResourceNedd.m_Nb);
     }
 
     return true;

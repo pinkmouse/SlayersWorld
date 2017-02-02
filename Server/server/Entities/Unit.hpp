@@ -35,6 +35,7 @@ public:
     Resource* GetResource(eResourceType);
     uint8 GetResourceNb(eResourceType);
     virtual void SetResourceNb(eResourceType, uint8);
+    virtual void AddResourceNb(eResourceType, uint8);
 
     bool IsDeath();
 	PointsSet GetPointsSet() const;

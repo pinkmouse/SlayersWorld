@@ -347,6 +347,24 @@ void Unit::SetResourceNb(eResourceType p_Resource, uint8 p_Nb)
     }
 }
 
+void Unit::AddResourceNb(eResourceType p_Resource, uint8 p_Nb)
+{
+    if (m_Resources.find(p_Resource) == m_Resources.end())
+        return;
+
+    m_Resources[p_Resource]->AddNumber(p_Nb);
+
+    switch (p_Resource)
+    {
+    case eResourceType::Health:
+        if (!m_Resources[p_Resource]->GetNumber())
+            OutOfCombat();
+        break;
+    default:
+        break;
+    }
+}
+
 uint8 Unit::GetSkinID() const
 {
     return m_SkinID;

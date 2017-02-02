@@ -119,6 +119,14 @@ void Player::SetResourceNb(eResourceType p_Resource, uint8 p_Nb)
     m_Session->SendUpdateUnitResource(GetType(), GetID(), p_Resource, p_Nb);
 }
 
+void Player::AddResourceNb(eResourceType p_Resource, uint8 p_Nb)
+{
+    Unit::AddResourceNb(p_Resource, p_Nb);
+    if (!m_Initilize)
+        return;
+    m_Session->SendUpdateUnitResource(GetType(), GetID(), p_Resource, GetResourceNb(p_Resource));
+}
+
 bool Player::CheckCommand(const std::string & p_String)
 {
     if (p_String.empty())

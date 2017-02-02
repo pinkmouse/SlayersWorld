@@ -25,6 +25,7 @@ public:
     void EventAction(ePlayerAction);
 
     void SetResourceNb(eResourceType, uint8);
+    void AddResourceNb(eResourceType, uint8);
     void Respawn();
     void SendMsg(const std::string &);
     void Save();

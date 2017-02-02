@@ -7,7 +7,7 @@ set(myproject_VERSION_MINOR 0)
 
 include_directories("${PROJECT_BINARY_DIR}")
 
-set(EXECUTABLE_NAME "SWserver")
+set(EXECUTABLE_NAME "SWServer")
 add_executable(${EXECUTABLE_NAME}
               server/server.cpp
               server/Define.hpp
