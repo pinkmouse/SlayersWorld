@@ -3,6 +3,7 @@
 #include "../System/Resource/Resource.hpp"
 #include "WorldObject.hpp"
 #include "MovementHandler.hpp"
+#include "../Graphics/VisualEffect.hpp"
 #include <map>
 #include <string>
 
@@ -52,6 +53,10 @@ public:
     std::string GetTalk() const;
 	void AddDamageLog(const DamageInfo &);
 	std::vector<std::pair<DamageInfo, uint32>> GetDamageLog();
+
+    void AddVisualEffect(VisualEffect);
+    std::vector< VisualEffect >  *GetVisualsEffect();
+
     void Update(sf::Time);
 
 protected:
@@ -66,8 +71,8 @@ protected:
     TypeUnit m_Type;
     uint8 m_Opacity;
     uint64 m_DiffTimeOpactiy;
-	std::vector<std::pair<DamageInfo, uint32>> m_HistoryDamage;
-
+	std::vector< std::pair< DamageInfo, uint32 > > m_HistoryDamage;
+    std::vector< VisualEffect > m_VisualEffects;
     Map* m_Map;
 
     std::string m_Talk;

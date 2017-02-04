@@ -45,6 +45,13 @@ bool Spell::Prepare(Unit* p_Caster)
     return true;
 }
 
+void Spell::EffectDamage(Unit* p_Target, int8 l_Coeff)
+{
+    DamageInfo l_DamageInfo;
+    l_DamageInfo.m_Damage = 20;
+    m_Caster->DealDamage(p_Target, l_DamageInfo);
+}
+
 void Spell::LaunchEffects()
 {
     std::vector<SpellEffect*>* l_SpellEffects = m_SpellTemplate->GetListEffect();

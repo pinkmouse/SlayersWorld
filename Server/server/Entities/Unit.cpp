@@ -171,7 +171,7 @@ void Unit::Update(sf::Time p_Diff)
         Unit* l_Unit = m_Map->GetCloserUnit(this, MELEE_RANGE, true, true ,true);
 
         if (l_Unit != nullptr)
-            DealDamage(l_Unit);
+            AutoAttack(l_Unit);
 
         m_MovementHandler->SetDamageDone(true);
     }
@@ -203,7 +203,56 @@ bool Unit::IsInFront(const Position & p_Position) const
     return false;
 }
 
-void Unit::DealDamage(Unit* p_Victim)
+void Unit::DealDamage(Unit* p_Victim, DamageInfo p_DamageInfo)
+{
+    if (p_DamageInfo.m_Result == DamageResult::Miss)
+        p_DamageInfo.m_Damage = 0;
+
+    int8 l_NewHealth = std::max(p_Victim->GetResourceNb(eResourceType::Health) - p_DamageInfo.m_Damage, 0);
+
+    if (IsPlayer())
+        ToPlayer()->GetSession()->SendLogDamage(p_Victim->GetType(), p_Victim->GetID(), p_DamageInfo);
+
+    p_Victim->SetResourceNb(eResourceType::Health, (uint8)l_NewHealth);
+    switch (p_Victim->GetType())
+    {
+    case TypeUnit::PLAYER:
+        //p_Victim->ToPlayer()->SetHealth((uint8)l_NewHealth);
+        p_Victim->ToPlayer()->GetSession()->SendLogDamage(p_Victim->GetType(), p_Victim->GetID(), p_DamageInfo);
+        break;
+        /*case TypeUnit::CREATURE:
+        p_Victim->ToCreature()->SetHealth((uint8)l_NewHealth);
+        break;*/
+    default:
+        break;
+    }
+
+    if (p_Victim->IsDeath())
+    {
+        if (IsPlayer() && p_Victim->IsCreature())
+        {
+            ToPlayer()->SetXp(ToPlayer()->GetXp() + p_Victim->ToCreature()->GetXpEarn());
+        }
+        return;
+    }
+
+    if (!p_DamageInfo.m_Damage)
+        return;
+
+    if (GetVictim() != p_Victim)
+    {
+        EnterInCombat(p_Victim);
+        p_Victim->AddThreadFromAttacker(this, p_DamageInfo.m_Damage);
+    }
+    else
+    {
+        InCombat();
+        p_Victim->InCombat();
+        p_Victim->AddThreadFromAttacker(this, p_DamageInfo.m_Damage);
+    }
+}
+
+void Unit::AutoAttack(Unit* p_Victim)
 {
 	/// DAMAGE
 	uint16 l_ForceAttacker = m_PointsSet.m_Force;
@@ -221,48 +270,12 @@ void Unit::DealDamage(Unit* p_Victim)
 	l_MissChance = std::max(l_MissChance, (int8)0);
 	l_MissChance = std::min(l_MissChance, (int8)100);
 	bool l_Miss = (rand() % 100) <= l_MissChance;
-	if (l_Miss)
-		l_Damage = 0;
-
-	int8 l_NewHealth = std::max(p_Victim->GetResourceNb(eResourceType::Health) - l_Damage, 0);
-
-	if (IsPlayer())
-		ToPlayer()->GetSession()->SendLogDamage(p_Victim->GetType(), p_Victim->GetID(), l_Damage, l_Miss);
-
-    p_Victim->SetResourceNb(eResourceType::Health, (uint8)l_NewHealth);
-    switch (p_Victim->GetType())
-    {
-        case TypeUnit::PLAYER:
-			//p_Victim->ToPlayer()->SetHealth((uint8)l_NewHealth);
-			p_Victim->ToPlayer()->GetSession()->SendLogDamage(p_Victim->GetType(), p_Victim->GetID(), l_Damage, l_Miss);
-        break;
-        /*case TypeUnit::CREATURE:
-            p_Victim->ToCreature()->SetHealth((uint8)l_NewHealth);
-            break;*/
-        default:
-            break;
-    }
-
-    if (p_Victim->IsDeath())
-    {
-        if (IsPlayer() && p_Victim->IsCreature())
-        {
-            ToPlayer()->SetXp(ToPlayer()->GetXp() + p_Victim->ToCreature()->GetXpEarn());
-        }
-        return;
-    }
-
-    if (GetVictim() != p_Victim)
-    {
-        EnterInCombat(p_Victim);
-        p_Victim->AddThreadFromAttacker(this, l_Damage);
-    }
-    else
-    {
-        InCombat();
-        p_Victim->InCombat();
-        p_Victim->AddThreadFromAttacker(this, l_Damage);
-    }
+	
+    DamageInfo l_DamageInfo;
+    if (l_Miss)
+        l_DamageInfo.m_Result = DamageResult::Miss;
+    l_DamageInfo.m_Damage = l_Damage;
+    DealDamage(p_Victim, l_DamageInfo);
 }
 
 bool Unit::IsInFront(Unit const* p_Unit) const

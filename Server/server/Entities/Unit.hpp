@@ -54,7 +54,8 @@ public:
 	void SetPointsSet(const PointsSet &);
     bool IsInFront(const Position &) const;
     bool IsInFront(Unit const*) const;
-    void DealDamage(Unit*);
+    void AutoAttack(Unit*);
+    void DealDamage(Unit*, DamageInfo);
     virtual void Respawn();
     bool IsInWorld() const;
     void SetInWorld(bool);

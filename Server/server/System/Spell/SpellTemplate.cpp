@@ -56,6 +56,11 @@ void SpellTemplate::SetCastTime(uint16 p_CastTime)
     m_CastTime = p_CastTime;
 }
 
+void SpellTemplate::SetSpeed(float p_Speed)
+{
+    m_Speed = p_Speed;
+}
+
 void SpellTemplate::AddSpellEffect(SpellEffect* p_SpellEffect)
 {
     m_ListEffect.push_back(p_SpellEffect);

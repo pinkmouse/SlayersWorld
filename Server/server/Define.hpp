@@ -137,6 +137,21 @@ struct ResourceNeed
         m_ResourceType(p_ResourceType), m_Nb(p_Nb) {}
 };
 
+enum DamageResult
+{
+    Success = 0,
+    Miss = 1
+};
+
+struct DamageInfo
+{
+    int8 m_Damage;
+    DamageResult m_Result;
+
+    DamageInfo() :
+        m_Damage(0), m_Result(DamageResult::Success) {}
+};
+
 struct Position
 {
     uint32 m_X;

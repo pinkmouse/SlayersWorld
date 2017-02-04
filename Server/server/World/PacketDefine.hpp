@@ -268,18 +268,18 @@ struct PacketLogDamage
 	uint8 m_TypeID;
 	uint16 m_ID;
 	uint8 m_Damage;
-	bool m_Miss;
+	uint8 m_Result;
 
 	PacketLogDamage() :
 		m_PacketID(SMSG::S_LogDamage) {}
 
-	void BuildPacket(uint8 p_TypeID, uint16 p_ID, uint8 p_Damage, bool p_Miss)
+	void BuildPacket(uint8 p_TypeID, uint16 p_ID, uint8 p_Damage, uint8 p_Result)
 	{
-		m_Packet << m_PacketID << p_TypeID << p_ID << p_Damage << p_Miss;
+		m_Packet << m_PacketID << p_TypeID << p_ID << p_Damage << p_Result;
 		m_Damage = p_Damage;
 		m_TypeID = p_TypeID;
 		m_ID = p_ID;
-		m_Miss = p_Miss;
+		m_Result = p_Result;
 	}
 };
 

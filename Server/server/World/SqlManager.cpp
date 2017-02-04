@@ -492,7 +492,7 @@ bool SqlManager::InitializeCreature(UnitManager* p_CreatureManager)
 
 bool  SqlManager::InitializeSpells()
 {
-    std::string l_Query = "SELECT `id`, `level`, `visualID`, `visualIDTarget`,`castTime`, `cooldown`, `resourceType`, `resourceNb`, `effect1`, `effect2`, `effect3`, `effect4` FROM spell_template";
+    std::string l_Query = "SELECT `id`, `level`, `visualID`, `visualIDTarget`,`castTime`, `cooldown`, `speed`,`resourceType`, `resourceNb`, `effect1`, `effect2`, `effect3`, `effect4` FROM spell_template";
     mysql_query(&m_MysqlWorld, l_Query.c_str());
 
     uint16 l_Id = 0;
@@ -501,6 +501,7 @@ bool  SqlManager::InitializeSpells()
     int32 l_VisualIDTarget = -1;
     uint16 l_CastTime = 0;
     uint32 l_Cooldown = 0;
+    float l_Speed = 0.0f;
     int16 l_ResourceType = 0;
     int32 l_ResourceNb = 0;
     std::vector<int32> l_EffectList;
@@ -516,16 +517,18 @@ bool  SqlManager::InitializeSpells()
         l_VisualIDTarget = atoi(l_Row[3]);
         l_CastTime = atoi(l_Row[4]);
         l_Cooldown = atoi(l_Row[5]);
-        l_ResourceType = atoi(l_Row[6]);
-        l_ResourceNb = atoi(l_Row[7]);
+        l_Speed = (float)atof(l_Row[6]);
+        l_ResourceType = atoi(l_Row[7]);
+        l_ResourceNb = atoi(l_Row[8]);
         for (uint8 i = 0; i < MAX_EFFECTS_FOR_SPELL; ++i)
-            l_EffectList.push_back(atoi(l_Row[8 + i]));
+            l_EffectList.push_back(atoi(l_Row[9 + i]));
 
         SpellTemplate* l_Spell = new SpellTemplate(l_Id);
         l_Spell->SetLevel(l_Level);
         l_Spell->SetVisualsID(l_VisualID, l_VisualIDTarget);
         l_Spell->SetCastTime(l_CastTime);
         l_Spell->SetCooldown(l_Cooldown);
+        l_Spell->SetSpeed(l_Speed);
         if (l_ResourceType > 0)
         {
             printf("ADD RESOURCE TYPE %dT\n", l_ResourceType);

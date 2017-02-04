@@ -7,7 +7,7 @@ Graphics::Graphics(MapManager* p_MapManager, InterfaceManager* p_InterfaceManage
     m_Events(p_Events)
 {
 	m_TileSet = nullptr;
-    m_SkinsManager = nullptr;
+    m_VisualManager = nullptr;
     m_Clock = new ClockHandler();
 }
 
@@ -38,10 +38,11 @@ bool Graphics::CreateWindow(uint32 p_X, uint32 p_Y, float p_Zoom)
 	m_TileSet = new TileSet();
 	m_TileSet->BuildSprites();
 
-    m_SkinsManager = new SkinsManager();
-    if (!m_SkinsManager->LoadSkins())
+    m_VisualManager = new VisualManager();
+    if (!m_VisualManager->LoadSkins())
         return false;
-
+    if (!m_VisualManager->LoadVisuals())
+        return false;
     return true;
 }
 
@@ -90,14 +91,25 @@ void Graphics::DrawUnitDetails(Unit* p_Unit)
     if (p_Unit == nullptr)
         return;
 
+    std::vector<VisualEffect>  *l_VisualsEffect = p_Unit->GetVisualsEffect();
+
+    /// VISUAL EFFECT
+    for (std::vector<VisualEffect>::iterator l_It = l_VisualsEffect->begin(); l_It != l_VisualsEffect->end(); ++l_It)
+    {
+        SkinSprite* l_SkinSprite = m_VisualManager->GetVisualSprite((*l_It).GetType(), (*l_It).GetID(), (*l_It).GetFrame());
+        l_SkinSprite->setScale(sf::Vector2f(p_Unit->GetSkinZoomFactor(), p_Unit->GetSkinZoomFactor()));
+        l_SkinSprite->setPosition(p_Unit->GetPosX(), p_Unit->GetPosY());
+        m_Window.draw(*l_SkinSprite);
+    }
+
     /// Set view to don t have a zoom on text
     m_Window.setView(m_ViewFont);
 
     std::vector<std::pair<DamageInfo, uint32>> l_DamageLogHistory = p_Unit->GetDamageLog();
-
+    /// LOG DAMAGE
     for (std::pair<DamageInfo, uint32> l_DamageLog : l_DamageLogHistory)
     {
-        std::string l_DmgStr = l_DamageLog.first.m_Miss ? "Miss" : std::to_string(l_DamageLog.first.m_Damage);
+        std::string l_DmgStr = l_DamageLog.first.m_Result == DamageResult::Miss ? "Miss" : std::to_string(l_DamageLog.first.m_Damage);
         sf::Text l_Text(l_DmgStr, *g_Font, SIZE_TALK_FONT);
 
         l_Text.setColor(sf::Color::White);
@@ -229,7 +241,7 @@ void Graphics::DrawMap()
             if (l_MovementHandler->IsInAttack())
                 l_SpriteNb += (MAX_MOVEMENT_POSITION * Orientation::MAX);
 
-            SkinSprite* l_SkinSprite = m_SkinsManager->GetSkinSprite(l_Unit->GetSkinID(), l_SpriteNb);
+            SkinSprite* l_SkinSprite = m_VisualManager->GetVisualSprite(eVisualType::Skin, l_Unit->GetSkinID(), l_SpriteNb);
             l_SkinSprite->setScale(sf::Vector2f(l_Unit->GetSkinZoomFactor(), l_Unit->GetSkinZoomFactor()));
             if (l_Unit->IsPlayer())
                 l_SkinSprite->setColor(sf::Color(255, 255, 255, l_Unit->GetOpacity()));

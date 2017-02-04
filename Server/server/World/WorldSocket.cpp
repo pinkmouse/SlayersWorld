@@ -111,10 +111,10 @@ void WorldSocket::SendUnitStopAttack(uint8 p_TypeID, uint16 p_ID)
     SendToSet(l_Packet, true);
 }
 
-void WorldSocket::SendLogDamage(uint8 p_TypeID, uint16 p_ID, uint8 p_Damage, bool p_Miss)
+void WorldSocket::SendLogDamage(uint8 p_TypeID, uint16 p_ID, DamageInfo p_DamageInfo)
 {
 	PacketLogDamage l_Packet;
-	l_Packet.BuildPacket(p_TypeID, p_ID, p_Damage, p_Miss);
+	l_Packet.BuildPacket(p_TypeID, p_ID, p_DamageInfo.m_Damage, p_DamageInfo.m_Result);
 	SendMsg(l_Packet.m_Packet);
 }
 

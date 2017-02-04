@@ -14,6 +14,7 @@ public:
     void LaunchEffects();
 
     void SearchTargets();
+    void EffectDamage(Unit*, int8);
 
 private:
     SpellTemplate* m_SpellTemplate;

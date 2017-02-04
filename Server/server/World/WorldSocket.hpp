@@ -21,7 +21,7 @@ public:
     void SendUpdateXpPct(float);
     void SendUpdateUnitResource(uint8, uint16, uint8, uint8);
     void SendUnitTalk(uint8, uint16, const std::string &);
-	void SendLogDamage(uint8, uint16, uint8, bool);
+	void SendLogDamage(uint8, uint16, DamageInfo);
 	void SendAuthResponse(uint8);
     void SendMsg(WorldPacket);
     void SendToSet(WorldPacket, bool p_ExcludePlayer = false);

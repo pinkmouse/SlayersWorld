@@ -460,12 +460,12 @@ void PacketHandler::HandleLogDamage(WorldPacket &p_Packet)
 	uint8 l_TypeID;
 	uint16 l_ID;
 	uint8 l_Damage;
-	bool l_Miss;
+    uint8 l_DamageResult;
 
 	p_Packet >> l_TypeID;
 	p_Packet >> l_ID;
 	p_Packet >> l_Damage;
-	p_Packet >> l_Miss;
+	p_Packet >> l_DamageResult;
 
 	if (Map* l_Map = m_MapManager->GetActualMap())
 	{
@@ -476,7 +476,7 @@ void PacketHandler::HandleLogDamage(WorldPacket &p_Packet)
 			g_Socket->SendUnitUnknow(l_TypeID, l_ID); ///< Ask for unknow unit to server
 			return;
 		}
-		l_Unit->AddDamageLog(DamageInfo(l_Damage, l_Miss));
+		l_Unit->AddDamageLog(DamageInfo(l_Damage, (DamageResult)l_DamageResult));
 	}
 }
 
@@ -487,4 +487,7 @@ void PacketHandler::HandleWarningMsg(WorldPacket &p_Packet)
     p_Packet >> l_WarningID;
 
     m_InterfaceManager->AddWarningMsg((eWarningMsg)l_WarningID);
+    VisualEffect l_VisualEffect(eVisualType::Spell, 0, 3);
+    l_VisualEffect.StartAnimAndStop();
+    g_Player->AddVisualEffect(l_VisualEffect);
 }

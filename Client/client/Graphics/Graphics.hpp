@@ -9,7 +9,7 @@
 #include <SFML/Graphics/View.hpp>
 #include "../Map/MapManager.hpp"
 #include "TileSet.hpp"
-#include "SkinsManager.hpp"
+#include "VisualManager.hpp"
 #include "Interface/InterfaceManager.hpp"
 #include "../World/Events/Events.hpp"
 #include "../World/ClockHandler.hpp"
@@ -43,7 +43,7 @@ private:
 
 	MapManager*         m_MapManager;
 	TileSet*            m_TileSet;
-    SkinsManager*       m_SkinsManager;
+    VisualManager*       m_VisualManager;
     InterfaceManager*   m_InterfaceManager;
     Events*             m_Events;
     ClockHandler*       m_Clock;

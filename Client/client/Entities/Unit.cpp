@@ -87,6 +87,17 @@ void Unit::Update(sf::Time p_Diff)
 			++l_It;
 		}
 	}
+
+    for (std::vector<VisualEffect>::iterator l_It = m_VisualEffects.begin(); l_It < m_VisualEffects.end();)
+    {
+        if ((*l_It).HasFinishAnim())
+            l_It = m_VisualEffects.erase(l_It);
+        else
+        {
+            (*l_It).Update(p_Diff);
+            ++l_It;
+        }
+    }
 }
 
 uint8 Unit::GetOpacity()
@@ -279,4 +290,14 @@ void Unit::AddDamageLog(const DamageInfo & p_Damage)
 std::vector<std::pair<DamageInfo, uint32>> Unit::GetDamageLog()
 {
 	return m_HistoryDamage;
+}
+
+void Unit::AddVisualEffect(VisualEffect p_VisualEffect)
+{
+    m_VisualEffects.push_back(p_VisualEffect);
+}
+
+std::vector< VisualEffect >* Unit::GetVisualsEffect()
+{
+    return &m_VisualEffects;
 }

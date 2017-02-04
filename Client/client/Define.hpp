@@ -29,6 +29,10 @@
 #define DEATH_OPACITY 100
 #define MAX_OPACITY 255
 
+/// SPELL
+#define SPELLS_FOLDER "img/spells/"
+#define MAX_VISUAL_IMG_X 3 
+
 /// UNIT
 #define TALK_TIME_SHOW 5000
 
@@ -111,21 +115,32 @@ struct Position
     uint32 y;
 };
 
+enum DamageResult
+{
+    Success = 0,
+    Miss = 1
+};
+
 struct DamageInfo
 {
 	uint8 m_Damage;
-	bool m_Miss;
+	DamageResult m_Result;
 
 	DamageInfo() :
-		m_Damage(0), m_Miss(false) {}
+		m_Damage(0), m_Result(DamageResult::Success) {}
 
-	DamageInfo(uint8 p_Damage, bool p_Miss) :
-		m_Damage(p_Damage), m_Miss(p_Miss) {}
+	DamageInfo(uint8 p_Damage, DamageResult p_Result) :
+		m_Damage(p_Damage), m_Result(p_Result) {}
 
 	DamageInfo(const DamageInfo & p_DamageInfo) :
-		m_Damage(p_DamageInfo.m_Damage), m_Miss(p_DamageInfo.m_Miss) {}
+		m_Damage(p_DamageInfo.m_Damage), m_Result(p_DamageInfo.m_Result) {}
 };
 
+enum eVisualType
+{
+    Skin = 0,
+    Spell = 1
+};
 
 enum eActionType
 {
