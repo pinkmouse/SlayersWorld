@@ -13,11 +13,13 @@ public:
     bool Prepare(Unit*);
     void LaunchEffects();
 
-    void SearchTargets();
-    void EffectDamage(Unit*, int8);
+    std::vector<Unit*> SearchTargets(SpellTarget);
+    void EffectDamage(Unit*, SpellEffect*);
 
 private:
     SpellTemplate* m_SpellTemplate;
     Unit* m_Caster;
-    std::vector<Unit*> m_Targets;
+
+    typedef void(Spell::*m_Func)(Unit*, SpellEffect*);
+    std::map<SpellEffectType, m_Func> m_SpellEffectsMap;
 };
