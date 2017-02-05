@@ -13,7 +13,7 @@ public:
     bool Prepare(Unit*);
     void LaunchEffects();
 
-    std::vector<Unit*> SearchTargets(SpellTarget);
+    std::vector<Unit*> SearchTargets(SpellTarget, float, float p_RadiusMin = 0.0f);
     void EffectDamage(Unit*, SpellEffect*);
 
 private:

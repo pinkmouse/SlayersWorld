@@ -7,9 +7,10 @@ public:
     SpellTemplate(uint16);
     ~SpellTemplate();
 
-    uint16 GetID();
-    uint8 GetLevel();
-    uint16 GetVisualID();
+    uint16 GetID() const;
+    uint8 GetLevel() const;
+    int16 GetVisualID() const;
+    int16 GetVisualIDTarget() const;
     std::vector<SpellEffect*>* GetListEffect();
     std::vector<ResourceNeed>* GetReousrcesNeed();
     void SetLevel(uint8);

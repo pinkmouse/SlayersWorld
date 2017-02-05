@@ -32,7 +32,8 @@ enum SMSG : uint8
     S_SrvPlayerMsg = 25,
     S_UnitStartAttack = 26,
     S_UnitStopAttack = 27,
-    S_UnitUpdateSkin = 28
+    S_UnitUpdateSkin = 28,
+    S_UnitPlayVisual = 30
 };
 
 struct PacketGoDirection
@@ -312,5 +313,25 @@ struct PacketWarningMsg
     {
         m_Packet << m_PacketID << p_MsgID;
         m_MsgID = p_MsgID;
+    }
+};
+
+struct PacketUnitPlayVisual
+{
+    WorldPacket m_Packet;
+    uint8 m_PacketID;
+    uint8 m_TypeID;
+    uint16 m_ID;
+    uint8 m_VisualID;
+
+    PacketUnitPlayVisual() :
+        m_PacketID(SMSG::S_UnitPlayVisual) {}
+
+    void BuildPacket(uint8 p_TypeID, uint16 p_ID, uint8 p_VisualID)
+    {
+        m_Packet << m_PacketID << p_TypeID << p_ID << p_VisualID;
+        m_VisualID = p_VisualID;
+        m_TypeID = p_TypeID;
+        m_ID = p_ID;
     }
 };

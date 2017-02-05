@@ -68,6 +68,12 @@ void Map::RemoveUnit(Unit* p_Unit)
 
 Unit* Map::GetUnit(TypeUnit p_TypeID, uint16 p_UnitID)
 {
+    if (m_ListUnitZone.find(p_TypeID) == m_ListUnitZone.end())
+        return nullptr;
+
+    if (m_ListUnitZone[p_TypeID].find(p_UnitID) == m_ListUnitZone[p_TypeID].end())
+        return nullptr;
+
     return m_ListUnitZone[p_TypeID][p_UnitID];
 }
 
@@ -85,6 +91,12 @@ void Map::MoveUnitToDirection(TypeUnit p_TypeID, uint16 p_UnitID, Position p_Pos
 
 std::vector<Case*> Map::GetSquare(uint16 p_ID)
 {
+    if (m_MapListCase.find(p_ID) == m_MapListCase.end())
+    {
+        std::vector<Case*> l_Map;
+        return l_Map;
+    }
+
 	return m_MapListCase[p_ID];
 }
 

@@ -720,6 +720,14 @@ void Unit::CastSpell(uint16 p_ID)
     if (!l_Spell->Prepare(this))
         return;
 
+    /// Send caster visual
+    if (l_SpellTemplate->GetVisualID() >= 0)
+    {
+        PacketUnitPlayVisual l_Packet;
+        l_Packet.BuildPacket(GetType(), GetID(), (uint8)l_SpellTemplate->GetVisualID());
+        m_Map->SendToSet(l_Packet.m_Packet, this);
+    }
+
     l_Spell->LaunchEffects();
 }
 

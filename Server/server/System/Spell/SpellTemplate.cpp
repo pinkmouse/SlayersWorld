@@ -11,19 +11,24 @@ SpellTemplate::~SpellTemplate()
 {
 }
 
-uint16 SpellTemplate::GetID()
+uint16 SpellTemplate::GetID() const
 {
     return m_ID;
 }
 
-uint8 SpellTemplate::GetLevel()
+uint8 SpellTemplate::GetLevel() const
 {
     return m_Level;
 }
 
-uint16 SpellTemplate::GetVisualID()
+int16 SpellTemplate::GetVisualID() const
 {
     return m_VisualID;
+}
+
+int16 SpellTemplate::GetVisualIDTarget() const
+{
+    return m_VisualIDTarget;
 }
 
 std::vector<SpellEffect*>* SpellTemplate::GetListEffect()

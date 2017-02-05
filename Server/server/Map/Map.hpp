@@ -30,7 +30,10 @@ public:
     std::vector<Square*> GetSquareSet(uint16);
     Square* GetSquare(uint16);
     std::vector<uint16> GetSquareSetID(uint16);
+
     Unit* GetCloserUnit(Unit const*, float p_Range = 2.0f, bool p_OnlyInLife = false, bool p_InFront = true, bool p_Attackable = false);
+    std::vector<Unit*> GetUnitsInRadius(Unit const*, float p_RangeMin = 0.0f, float p_RangeMax = 2.0f, bool p_OnlyInLife = false, bool p_Attackable = false, float p_Angle = 360.0f);
+
     uint16 GetSizeX() const;
     uint16 GetSizeY() const;
     std::queue<Unit*>* GetUnitSwitchMapQueue();

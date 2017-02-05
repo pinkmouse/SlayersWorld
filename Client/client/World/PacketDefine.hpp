@@ -31,5 +31,6 @@ enum SMSG : uint8
 	S_SrvPlayerMsg = 25,
 	S_UnitStartAttack = 26,
 	S_UnitStopAttack = 27,
-	S_UnitUpdateSkin = 28
+	S_UnitUpdateSkin = 28,
+    S_UnitPlayVisual = 30
 };

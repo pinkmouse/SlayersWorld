@@ -27,6 +27,7 @@ public:
 	void Clear();
 	void CheckEvent();
 	bool WindowIsOpen() const;
+    Position GetCenterPositionOnUnit(Unit*, sf::Sprite*);
 
     /// Draw Methods
     void DrawMap();

@@ -60,31 +60,51 @@ void Spell::LaunchEffects()
     for (std::vector<SpellEffect*>::iterator l_It = l_SpellEffects->begin(); l_It != l_SpellEffects->end(); ++l_It)
     {
         SpellEffect* l_SpellEffect = (*l_It);
-        std::vector<Unit*> l_Targets = SearchTargets(l_SpellEffect->m_Target);
+        std::vector<Unit*> l_Targets = SearchTargets(l_SpellEffect->m_Target, l_SpellEffect->m_RadiusMax, l_SpellEffect->m_RadiusMin);
         printf("Lauch effect : %d\n", l_SpellEffect->m_EffectID);
 
         m_Func l_Fun = m_SpellEffectsMap[l_SpellEffect->m_EffectID];
         if (l_Fun != nullptr)
         {
             for (uint8 i = 0; i < l_Targets.size(); ++i)
+            {
+                /// Start Visual on target
+                if (m_SpellTemplate->GetVisualIDTarget() >= 0)
+                {
+                    PacketUnitPlayVisual l_Packet;
+                    l_Packet.BuildPacket(l_Targets[i]->GetType(), l_Targets[i]->GetID(), (uint8)m_SpellTemplate->GetVisualIDTarget());
+                    l_Targets[i]->GetMap()->SendToSet(l_Packet.m_Packet, l_Targets[i]);
+                }
+
                 (this->*(l_Fun))(l_Targets[i], l_SpellEffect);
+            }
         }
         else
             printf("Spell type: %d Unknow\n", l_SpellEffect->m_EffectID);
     }
 }
 
-std::vector<Unit*> Spell::SearchTargets(SpellTarget p_TargetType)
+std::vector<Unit*> Spell::SearchTargets(SpellTarget p_TargetType, float p_RadiusMax, float p_RadiusMin)
 {
     std::vector<Unit*> l_Targets;
 
     switch (p_TargetType)
     {
     case SpellTarget::Caster:
+        l_Targets.push_back(m_Caster);
         break;
     case SpellTarget::CloserEnemy:
-        l_Targets.push_back(m_Caster->GetMap()->GetCloserUnit(m_Caster, MELEE_RANGE, true, true, true));
+    {
+        Unit* l_Target = m_Caster->GetMap()->GetCloserUnit(m_Caster, p_RadiusMax, true, true, true);
+        if (l_Target != nullptr)
+            l_Targets.push_back(l_Target);
         break;
+    }
+    case SpellTarget::ZoneEnemy:
+    {
+        l_Targets = m_Caster->GetMap()->GetUnitsInRadius(m_Caster, p_RadiusMin, p_RadiusMax, true, true);
+        break;
+    }
     default:
         break;
     }

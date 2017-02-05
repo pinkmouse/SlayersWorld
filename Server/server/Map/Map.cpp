@@ -213,6 +213,52 @@ Unit* Map::GetCloserUnit(Unit const* p_Unit, float p_Range /*= 2.0f*/, bool p_On
     return l_CloserUnit;
 }
 
+std::vector<Unit*> Map::GetUnitsInRadius(Unit const* p_Unit, float p_RangeMin, float p_RangeMax, bool p_OnlyInLife /*= false*/, bool p_Attackable /*= false*/, float p_Angle /*= 360.0f*/)
+{
+    /// TODO : QuadTree
+    std::vector<Square*> l_Grid = GetSquareSet(p_Unit->GetSquareID());
+    std::vector<Unit*> l_Result;
+
+    for (uint8 i = 0; i < l_Grid.size(); ++i)
+    {
+        Square* l_Square = l_Grid[i];
+
+        std::map<TypeUnit, std::map<uint16, Unit*>>* l_SquareList = l_Square->GetList();
+
+        for (std::pair<TypeUnit, std::map<uint16, Unit*>> l_SquareMap : *l_SquareList)
+        {
+            for (std::pair<uint16, Unit*> l_SquareList : l_SquareMap.second)
+            {
+                Unit* l_Unit = l_SquareList.second;
+
+                if (l_Unit == nullptr || !l_Unit->IsInWorld() || l_Unit->IsInEvade())
+                    continue;
+
+                if (l_Unit == p_Unit)
+                    continue;
+
+                if (p_OnlyInLife && l_Unit->IsDeath())
+                    continue;
+
+                if (p_Attackable && !p_Unit->CanAttack(l_Unit))
+                    continue;
+
+                float l_Dist = InYard(p_Unit->GetDistance(l_Unit));
+
+                if (l_Dist > p_RangeMax || l_Dist < p_RangeMin)
+                    continue;
+
+                /// TODO : cheack angle
+                /*if (p_InFront && !p_Unit->IsInFront(l_Unit))
+                    continue;*/
+
+                l_Result.push_back(l_Unit);
+            }
+        }
+    }
+    return l_Result;
+}
+
 void Map::AddUnit(Unit* p_Unit)
 {
     p_Unit->SetMap(this);

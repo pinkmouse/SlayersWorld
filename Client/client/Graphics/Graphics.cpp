@@ -86,6 +86,17 @@ bool Graphics::WindowIsOpen() const
 	return m_Window.isOpen();
 }
 
+Position Graphics::GetCenterPositionOnUnit(Unit* p_Unit, sf::Sprite* p_Sprite)
+{
+    int16 l_DiffSizeX = (p_Sprite->getTextureRect().width - p_Unit->GetSizeX()) / 2;
+    int16 l_DiffSizeY = (p_Sprite->getTextureRect().height - p_Unit->GetSizeY()) / 2;
+
+    Position l_Pos;
+    l_Pos.x = p_Unit->GetPosX() - l_DiffSizeX;
+    l_Pos.y = p_Unit->GetPosY() - l_DiffSizeY;
+    return l_Pos;
+}
+
 void Graphics::DrawUnitDetails(Unit* p_Unit)
 {
     if (p_Unit == nullptr)
@@ -97,9 +108,13 @@ void Graphics::DrawUnitDetails(Unit* p_Unit)
     for (std::vector<VisualEffect>::iterator l_It = l_VisualsEffect->begin(); l_It != l_VisualsEffect->end(); ++l_It)
     {
         SkinSprite* l_SkinSprite = m_VisualManager->GetVisualSprite((*l_It).GetType(), (*l_It).GetID(), (*l_It).GetFrame());
-        l_SkinSprite->setScale(sf::Vector2f(p_Unit->GetSkinZoomFactor(), p_Unit->GetSkinZoomFactor()));
-        l_SkinSprite->setPosition(p_Unit->GetPosX(), p_Unit->GetPosY());
-        m_Window.draw(*l_SkinSprite);
+        if (l_SkinSprite)
+        {
+            l_SkinSprite->setScale(sf::Vector2f(p_Unit->GetSkinZoomFactor(), p_Unit->GetSkinZoomFactor()));
+            Position l_Pos = GetCenterPositionOnUnit(p_Unit, l_SkinSprite);
+            l_SkinSprite->setPosition(l_Pos.x, l_Pos.y - p_Unit->GetSizeY());
+            m_Window.draw(*l_SkinSprite);
+        }
     }
 
     /// Set view to don t have a zoom on text

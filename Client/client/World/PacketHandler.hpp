@@ -32,6 +32,7 @@ public:
     void HandleUpdateSkin(WorldPacket &);
 	void HandleLogDamage(WorldPacket &);
     void HandleWarningMsg(WorldPacket &);
+    void HandleUnitPlayVisual(WorldPacket &);
 
 private:
 	MapManager* m_MapManager;

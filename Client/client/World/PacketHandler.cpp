@@ -35,6 +35,7 @@ void PacketHandler::LoadPacketHandlerMap()
     m_PacketHandleMap[SMSG::S_UnitUpdateSkin] = &PacketHandler::HandleUpdateSkin;
 	m_PacketHandleMap[SMSG::S_LogDamage] = &PacketHandler::HandleLogDamage;
     m_PacketHandleMap[SMSG::S_WarningMsg] = &PacketHandler::HandleWarningMsg;
+    m_PacketHandleMap[SMSG::S_UnitPlayVisual] = &PacketHandler::HandleUnitPlayVisual;
 }
 
 void PacketHandler::HandleRemoveUnit(WorldPacket &p_Packet)
@@ -487,7 +488,29 @@ void PacketHandler::HandleWarningMsg(WorldPacket &p_Packet)
     p_Packet >> l_WarningID;
 
     m_InterfaceManager->AddWarningMsg((eWarningMsg)l_WarningID);
-    VisualEffect l_VisualEffect(eVisualType::Spell, 0, 3);
-    l_VisualEffect.StartAnimAndStop();
-    g_Player->AddVisualEffect(l_VisualEffect);
+}
+
+void PacketHandler::HandleUnitPlayVisual(WorldPacket &p_Packet)
+{
+    uint8 l_TypeID;
+    uint16 l_ID;
+    uint8 l_VisualID;
+
+    p_Packet >> l_TypeID;
+    p_Packet >> l_ID;
+    p_Packet >> l_VisualID;
+
+    if (Map* l_Map = m_MapManager->GetActualMap())
+    {
+        Unit* l_Unit = l_Map->GetUnit((TypeUnit)l_TypeID, l_ID);
+
+        if (l_Unit == nullptr)
+        {
+            g_Socket->SendUnitUnknow(l_TypeID, l_ID); ///< Ask for unknow unit to server
+            return;
+        }
+        VisualEffect l_VisualEffect(eVisualType::Spell, l_VisualID, 3);
+        l_VisualEffect.StartAnimAndStop();
+        l_Unit->AddVisualEffect(l_VisualEffect);
+    }
 }
