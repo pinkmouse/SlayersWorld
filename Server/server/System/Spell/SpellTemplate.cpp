@@ -31,6 +31,11 @@ int16 SpellTemplate::GetVisualIDTarget() const
     return m_VisualIDTarget;
 }
 
+uint32 SpellTemplate::GetCooldown() const
+{
+    return m_Cooldown;
+}
+
 std::vector<SpellEffect*>* SpellTemplate::GetListEffect()
 {
     return &m_ListEffect;

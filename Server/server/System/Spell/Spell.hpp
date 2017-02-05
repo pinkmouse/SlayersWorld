@@ -15,6 +15,7 @@ public:
 
     std::vector<Unit*> SearchTargets(SpellTarget, float, float p_RadiusMin = 0.0f);
     void EffectDamage(Unit*, SpellEffect*);
+    void EffectHeal(Unit*, SpellEffect*);
 
 private:
     SpellTemplate* m_SpellTemplate;

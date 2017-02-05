@@ -56,6 +56,7 @@ public:
     bool IsInFront(Unit const*) const;
     void AutoAttack(Unit*);
     void DealDamage(Unit*, DamageInfo);
+    void DealHeal(Unit*, DamageInfo);
     virtual void Respawn();
     bool IsInWorld() const;
     void SetInWorld(bool);
@@ -70,6 +71,7 @@ public:
     void UpdateCombat(sf::Time);
     void UpdateDeathState(sf::Time);
     void UpdateRegen(sf::Time);
+    void UpdateCooldowns(sf::Time);
     void UpdateVictims();
 
     virtual void OutOfCombat();
@@ -96,8 +98,11 @@ public:
     eFactionType GetFaction() const;
 
     /// SPELL
-    void AddSpellID(uint16);
+    void AddSpellID(uint16, uint64);
     void CastSpell(uint16);
+    std::map< uint16, uint64 >* GetSpellList();
+    void AddCooldown(uint16, uint64);
+    bool HasCooldown(uint16);
 
     /// GOSSIP
     void SetGossipList(std::vector<Gossip>*);
@@ -139,6 +144,6 @@ private:
 
     eFactionType m_FactionType;
 
-    std::vector<uint16> m_ListSpellID;
+    std::map< uint16, uint64 > m_ListSpellID;
     std::map< eGossipType, std::vector<Gossip*> > m_ListGossip;
 };

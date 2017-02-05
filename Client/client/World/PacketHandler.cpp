@@ -460,7 +460,7 @@ void PacketHandler::HandleLogDamage(WorldPacket &p_Packet)
 {
 	uint8 l_TypeID;
 	uint16 l_ID;
-	uint8 l_Damage;
+	sf::Int8 l_Damage;
     uint8 l_DamageResult;
 
 	p_Packet >> l_TypeID;

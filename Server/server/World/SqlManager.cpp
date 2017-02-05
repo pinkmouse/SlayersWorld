@@ -261,6 +261,15 @@ PointsSet SqlManager::GetPointsSetForPlayer(uint32 p_PlayerID)
 
 void SqlManager::SavePlayer(Player* p_Player)
 {
+    /// Save cooldowns
+    std::map< uint16, uint64 >* l_SpellList = p_Player->GetSpellList();
+    for (std::map< uint16, uint64 >::iterator l_It = l_SpellList->begin(); l_It != l_SpellList->end(); ++l_It)
+    {
+        /// CHECK 
+        std::string l_Query = "UPDATE characters_spells SET `cooldown` = '" + std::to_string((*l_It).second); +"' WHERE spellID = '" + std::to_string((*l_It).first) + "' AND characterID = '" + std::to_string(p_Player->GetID()) + "';";
+        mysql_query(&m_MysqlCharacters, l_Query.c_str());
+    }
+
 	std::string l_Query = "UPDATE characters SET `posX` = '" + std::to_string(p_Player->GetPosX()) + "', `posY` = '" + std::to_string(p_Player->GetPosY()) + "', `mapID` = '" + std::to_string(p_Player->GetMapID()) + "', `orientation` = '" + std::to_string(p_Player->GetOrientation()) + "', `health` = '" + std::to_string(p_Player->GetResourceNb(eResourceType::Health)) + "', `mana` = '" + std::to_string(p_Player->GetResourceNb(eResourceType::Mana)) + "', `alignment` = '" + std::to_string(p_Player->GetAlignment()) + "', `xp` = '" + std::to_string(p_Player->GetXp()) + "', `level` = '" + std::to_string(p_Player->GetLevel()) + "', skinID = '" + std::to_string(p_Player->GetSkinID()) + "' WHERE characterID = '" + std::to_string(p_Player->GetID()) + "';";
     mysql_query(&m_MysqlCharacters, l_Query.c_str());
 	UpdatePointsSet(p_Player);
@@ -409,10 +418,11 @@ bool SqlManager::InitializeCreatureTemplate(UnitManager* p_CreatureManager)
 
 bool SqlManager::InitializeSpellsForPlayer(Player* p_Player)
 {
-    std::string l_Query = "SELECT `spellID` FROM characters_spells WHERE `characterID` = '" + std::to_string(p_Player->GetID()) + "'";
+    std::string l_Query = "SELECT `spellID`, `cooldown` FROM characters_spells WHERE `characterID` = '" + std::to_string(p_Player->GetID()) + "'";
     mysql_query(&m_MysqlCharacters, l_Query.c_str());
 
     uint16 l_SpellID;
+    uint64 l_Cooldown;
 
     MYSQL_RES *l_Result = NULL;
     MYSQL_ROW l_Row;
@@ -420,7 +430,8 @@ bool SqlManager::InitializeSpellsForPlayer(Player* p_Player)
     while ((l_Row = mysql_fetch_row(l_Result)))
     {
         l_SpellID = atoi(l_Row[0]);
-        p_Player->AddSpellID(l_SpellID);
+        l_Cooldown = atoi(l_Row[1]);
+        p_Player->AddSpellID(l_SpellID, l_Cooldown);
     }
     mysql_free_result(l_Result);
 

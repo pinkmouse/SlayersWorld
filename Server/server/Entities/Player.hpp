@@ -40,6 +40,7 @@ public:
     bool HandleCommandCreature(std::vector<std::string>);
     bool HandleCommandWho(std::vector<std::string>);
     bool HandleCommandTeleport(std::vector<std::string>);
+    bool HandleRegen(std::vector<std::string>);
 
 private:
     WorldSocket* m_Session;

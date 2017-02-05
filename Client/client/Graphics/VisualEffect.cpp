@@ -15,7 +15,7 @@ VisualEffect::VisualEffect(eVisualType p_Type, uint8 p_ID, uint8 p_NbFrames) :
     switch (p_Type)
     {
     case eVisualType::Spell:
-        m_TimerUpdate = 500000; /// 0.5s
+        m_TimerUpdate = 250000; /// 0.25s
         break;
     default:
         m_TimerUpdate = 500000; /// 0.5s

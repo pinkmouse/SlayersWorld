@@ -23,6 +23,7 @@ InterfaceManager::~InterfaceManager()
 void InterfaceManager::InitializeWarningMsgs()
 {
     m_WarningMsgsEnum[eWarningMsg::NotEnoughMana] = "Pas assez de mana";
+    m_WarningMsgsEnum[eWarningMsg::InCooldown] = "Temps de recharge en cours";
 }
 
 void InterfaceManager::Initialize()

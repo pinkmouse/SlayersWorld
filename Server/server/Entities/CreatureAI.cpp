@@ -106,6 +106,7 @@ void Creature::UpdateDefensive(sf::Time p_Diff)
 
         if (GetVictim() == nullptr || !GetVictim()->IsInWorld())
         {
+            printf("-----> Vivctim null out of combat\n");
             OutOfCombat();
             return;
         }
@@ -176,7 +177,7 @@ void Creature::UpdateAgresive(sf::Time p_Diff)
             if (Unit* l_Victim = m_Map->GetCloserUnit(this, (float)CaseToPixel(m_CreatureTemplate.m_MaxVision), true, false, true))
             {
                 SetVictim(l_Victim);
-                printf("LOG -> ADD Victim \n");
+                //printf("LOG -> ADD Victim \n");
                 //EnterInCombat(l_Victim);
                 return;
             }

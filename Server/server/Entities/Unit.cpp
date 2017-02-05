@@ -148,12 +148,30 @@ void Unit::UpdateRegen(sf::Time p_Diff)
     }
 }
 
+void Unit::UpdateCooldowns(sf::Time p_Diff)
+{
+    for (auto l_Spell : m_ListSpellID)
+    {
+        if (l_Spell.second == 0)
+            continue;
+
+        if (p_Diff.asMicroseconds() >= (int64)l_Spell.second)
+        {
+            l_Spell.second = 0;
+            continue;
+        }
+        
+        l_Spell.second -= p_Diff.asMicroseconds();
+    }
+}
+
 void Unit::Update(sf::Time p_Diff)
 {
     UpdateDeathState(p_Diff);
     UpdateCombat(p_Diff);
     UpdateRegen(p_Diff);
     UpdateGossip(p_Diff);
+    UpdateCooldowns(p_Diff);
     UpdateVictims();
 
     if (m_MovementHandler == nullptr)
@@ -203,6 +221,31 @@ bool Unit::IsInFront(const Position & p_Position) const
     return false;
 }
 
+void Unit::DealHeal(Unit* p_Victim, DamageInfo p_DamageInfo)
+{
+    if (p_DamageInfo.m_Result == DamageResult::Miss)
+        p_DamageInfo.m_Damage = 0;
+
+    int8 l_NewHealth = std::min(p_Victim->GetResourceNb(eResourceType::Health) - p_DamageInfo.m_Damage, 100);
+
+    if (IsPlayer())
+        ToPlayer()->GetSession()->SendLogDamage(p_Victim->GetType(), p_Victim->GetID(), p_DamageInfo);
+
+    p_Victim->SetResourceNb(eResourceType::Health, (uint8)l_NewHealth);
+    switch (p_Victim->GetType())
+    {
+    case TypeUnit::PLAYER:
+        if (p_Victim != this)
+            p_Victim->ToPlayer()->GetSession()->SendLogDamage(p_Victim->GetType(), p_Victim->GetID(), p_DamageInfo);
+        break;
+        /*case TypeUnit::CREATURE:
+        p_Victim->ToCreature()->SetHealth((uint8)l_NewHealth);
+        break;*/
+    default:
+        break;
+    }
+}
+
 void Unit::DealDamage(Unit* p_Victim, DamageInfo p_DamageInfo)
 {
     if (p_DamageInfo.m_Result == DamageResult::Miss)
@@ -217,8 +260,8 @@ void Unit::DealDamage(Unit* p_Victim, DamageInfo p_DamageInfo)
     switch (p_Victim->GetType())
     {
     case TypeUnit::PLAYER:
-        //p_Victim->ToPlayer()->SetHealth((uint8)l_NewHealth);
-        p_Victim->ToPlayer()->GetSession()->SendLogDamage(p_Victim->GetType(), p_Victim->GetID(), p_DamageInfo);
+        if (p_Victim != this)
+            p_Victim->ToPlayer()->GetSession()->SendLogDamage(p_Victim->GetType(), p_Victim->GetID(), p_DamageInfo);
         break;
         /*case TypeUnit::CREATURE:
         p_Victim->ToCreature()->SetHealth((uint8)l_NewHealth);
@@ -702,9 +745,33 @@ void Unit::UpdateVictims()
     }
 }
 
-void Unit::AddSpellID(uint16 p_ID)
+void Unit::AddSpellID(uint16 p_ID, uint64 p_Cooldown)
 {
-    m_ListSpellID.push_back(p_ID);
+    m_ListSpellID[p_ID] = p_Cooldown; /// Cooldown set at 0
+}
+
+std::map< uint16, uint64 >* Unit::GetSpellList()
+{
+    return &m_ListSpellID;
+}
+
+void Unit::AddCooldown(uint16 p_SpellID, uint64 p_Cooldown)
+{
+    if (m_ListSpellID.find(p_SpellID) == m_ListSpellID.end())
+        return;
+
+    m_ListSpellID[p_SpellID] += p_Cooldown;
+}
+
+bool Unit::HasCooldown(uint16 p_SpellID)
+{
+    if (m_ListSpellID.find(p_SpellID) == m_ListSpellID.end())
+        return false;
+
+    if (m_ListSpellID[p_SpellID] > 0)
+        return true;
+
+    return false;
 }
 
 void Unit::CastSpell(uint16 p_ID)

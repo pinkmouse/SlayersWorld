@@ -123,13 +123,13 @@ enum DamageResult
 
 struct DamageInfo
 {
-	uint8 m_Damage;
+	int8 m_Damage;
 	DamageResult m_Result;
 
 	DamageInfo() :
 		m_Damage(0), m_Result(DamageResult::Success) {}
 
-	DamageInfo(uint8 p_Damage, DamageResult p_Result) :
+	DamageInfo(int8 p_Damage, DamageResult p_Result) :
 		m_Damage(p_Damage), m_Result(p_Result) {}
 
 	DamageInfo(const DamageInfo & p_DamageInfo) :
@@ -160,5 +160,6 @@ enum eResourceType
 
 enum eWarningMsg
 {
-   NotEnoughMana = 0
+   NotEnoughMana = 0,
+   InCooldown
 };

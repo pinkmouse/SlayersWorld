@@ -11,6 +11,7 @@ public:
     uint8 GetLevel() const;
     int16 GetVisualID() const;
     int16 GetVisualIDTarget() const;
+    uint32 GetCooldown() const;
     std::vector<SpellEffect*>* GetListEffect();
     std::vector<ResourceNeed>* GetReousrcesNeed();
     void SetLevel(uint8);

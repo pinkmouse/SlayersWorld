@@ -124,10 +124,16 @@ void Graphics::DrawUnitDetails(Unit* p_Unit)
     /// LOG DAMAGE
     for (std::pair<DamageInfo, uint32> l_DamageLog : l_DamageLogHistory)
     {
-        std::string l_DmgStr = l_DamageLog.first.m_Result == DamageResult::Miss ? "Miss" : std::to_string(l_DamageLog.first.m_Damage);
+        int8 l_LogToShow = l_DamageLog.first.m_Damage;
+        if (l_LogToShow < 0)
+            l_LogToShow *= -1;
+        std::string l_DmgStr = l_DamageLog.first.m_Result == DamageResult::Miss ? "Miss" : std::to_string(l_LogToShow);
         sf::Text l_Text(l_DmgStr, *g_Font, SIZE_TALK_FONT);
 
-        l_Text.setColor(sf::Color::White);
+        if (l_DamageLog.first.m_Damage >= 0)
+            l_Text.setColor(sf::Color(255, 66, 66));
+        else
+            l_Text.setColor(sf::Color(164, 255, 6));
         sf::Vector2f v1(p_Unit->GetPosX() + (p_Unit->GetSizeX() / 2), p_Unit->GetPosY() - p_Unit->GetSizeY() - 6 - 4 - ((MAX_HISTORY_LOG_TIME - l_DamageLog.second) / 100000));
         sf::Vector2f l_Coord = m_Window.mapCoordsToPixelFloat(v1, m_View);
         l_Text.setPosition((l_Coord.x - (l_Text.getGlobalBounds().width / 2)), l_Coord.y);

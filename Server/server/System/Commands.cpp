@@ -20,6 +20,18 @@ void Player::InitializeCommands()
     m_CmdHandleMap["who"].second = &Player::HandleCommandWho;
     m_CmdHandleMap["tele"].first = eAccessType::Moderator;
     m_CmdHandleMap["tele"].second = &Player::HandleCommandTeleport;
+    m_CmdHandleMap["regen"].first = eAccessType::Moderator;
+    m_CmdHandleMap["regen"].second = &Player::HandleRegen;
+}
+
+bool Player::HandleRegen(std::vector<std::string> p_ListCmd)
+{
+    if (!p_ListCmd.empty())
+        return false;
+
+    SetResourceNb(eResourceType::Health, 100);
+    SetResourceNb(eResourceType::Mana, 100);
+    return true;
 }
 
 bool Player::HandleCommandSkin(std::vector<std::string> p_ListCmd)
