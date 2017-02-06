@@ -266,7 +266,8 @@ void SqlManager::SavePlayer(Player* p_Player)
     for (std::map< uint16, uint64 >::iterator l_It = l_SpellList->begin(); l_It != l_SpellList->end(); ++l_It)
     {
         /// CHECK 
-        std::string l_Query = "UPDATE characters_spells SET `cooldown` = '" + std::to_string((*l_It).second); +"' WHERE spellID = '" + std::to_string((*l_It).first) + "' AND characterID = '" + std::to_string(p_Player->GetID()) + "';";
+        std::string l_Query = "UPDATE characters_spells SET `cooldown` = '" + std::to_string((*l_It).second) + "' WHERE spellID = '" + std::to_string((*l_It).first) + "' AND characterID = '" + std::to_string(p_Player->GetID()) + "';";
+        printf("%s\n", l_Query.c_str());
         mysql_query(&m_MysqlCharacters, l_Query.c_str());
     }
 

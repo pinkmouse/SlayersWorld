@@ -150,18 +150,18 @@ void Unit::UpdateRegen(sf::Time p_Diff)
 
 void Unit::UpdateCooldowns(sf::Time p_Diff)
 {
-    for (auto l_Spell : m_ListSpellID)
+    for (std::map< uint16, uint64 >::iterator l_It = m_ListSpellID.begin(); l_It != m_ListSpellID.end(); ++l_It)
     {
-        if (l_Spell.second == 0)
+        if ((*l_It).second == 0)
             continue;
 
-        if (p_Diff.asMicroseconds() >= (int64)l_Spell.second)
+        if (p_Diff.asMicroseconds() >= (int64)(*l_It).second)
         {
-            l_Spell.second = 0;
+            (*l_It).second = 0;
             continue;
         }
         
-        l_Spell.second -= p_Diff.asMicroseconds();
+        (*l_It).second -= p_Diff.asMicroseconds();
     }
 }
 
