@@ -1,6 +1,7 @@
 #include "../Entities/Player.hpp"
 #include "../World/PacketDefine.hpp"
 #include "../Global.hpp"
+#include  "../System/Quest/Quest.hpp"
 
 void Player::InitializeCommands()
 {
@@ -22,6 +23,17 @@ void Player::InitializeCommands()
     m_CmdHandleMap["tele"].second = &Player::HandleCommandTeleport;
     m_CmdHandleMap["regen"].first = eAccessType::Moderator;
     m_CmdHandleMap["regen"].second = &Player::HandleRegen;
+    m_CmdHandleMap["test"].first = eAccessType::Moderator;
+    m_CmdHandleMap["test"].second = &Player::HandleTest;
+}
+
+bool Player::HandleTest(std::vector<std::string> p_ListCmd)
+{
+    if (!p_ListCmd.empty())
+        return false;
+
+    AddQuest(new Quest(g_QuestManager->GetQuestTemplate(1)));
+    return true;
 }
 
 bool Player::HandleRegen(std::vector<std::string> p_ListCmd)

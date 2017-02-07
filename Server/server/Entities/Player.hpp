@@ -1,4 +1,5 @@
 #pragma once
+#include "../System/Quest/Quest.hpp"
 #include "Unit.hpp"
 #include <map>
 
@@ -30,6 +31,10 @@ public:
     void SendMsg(const std::string &);
     void Save();
 
+    void UpdateQuests();
+    void AddQuest(Quest*);
+    void CheckQuestObjective(eObjectifType, int32);
+
     /// Commands
     void InitializeCommands();
     bool HandleCommandSkin(std::vector<std::string>);
@@ -41,6 +46,7 @@ public:
     bool HandleCommandWho(std::vector<std::string>);
     bool HandleCommandTeleport(std::vector<std::string>);
     bool HandleRegen(std::vector<std::string>);
+    bool HandleTest(std::vector<std::string>);
 
 private:
     WorldSocket* m_Session;
@@ -49,6 +55,8 @@ private:
     uint32 m_Xp;
     bool m_Initilize;
     eAccessType m_AccessType;
+
+    std::map< uint16, Quest* > m_Quests;
 
     typedef bool(Player::*m_Func)(std::vector<std::string>);
     std::map < std::string, std::pair < eAccessType,  m_Func > > m_CmdHandleMap;

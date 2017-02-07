@@ -274,7 +274,10 @@ void Unit::DealDamage(Unit* p_Victim, DamageInfo p_DamageInfo)
     {
         if (IsPlayer() && p_Victim->IsCreature())
         {
-            ToPlayer()->SetXp(ToPlayer()->GetXp() + p_Victim->ToCreature()->GetXpEarn());
+            Player* l_Player = ToPlayer();
+            Creature* l_Victim = p_Victim->ToCreature();
+            l_Player->SetXp(l_Player->GetXp() + l_Victim->GetXpEarn());
+            l_Player->CheckQuestObjective(eObjectifType::KillMob, l_Victim->GetEntry());
         }
         return;
     }

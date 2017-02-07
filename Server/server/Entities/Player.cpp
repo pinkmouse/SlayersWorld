@@ -51,6 +51,7 @@ Player::~Player()
 void Player::Update(sf::Time p_Diff)
 {
     Unit::Update(p_Diff);
+    UpdateQuests();
 }
 
 void Player::UpdateNewSquares(uint16 p_OldSquareID, uint16 p_NewSquareID, bool p_UpdateAll)
@@ -235,4 +236,26 @@ void Player::EventAction(ePlayerAction p_PlayerAction)
 void Player::Save()
 {
     g_SqlManager->SavePlayer(this);
+}
+
+void Player::UpdateQuests()
+{
+    for (std::map< uint16, Quest* >::iterator l_It = m_Quests.begin(); l_It != m_Quests.end(); ++l_It)
+    {
+        if ((*l_It).second->IsDone())
+            printf("-----> Quest %d is DONE\n", (*l_It).first);
+    }
+}
+
+void Player::AddQuest(Quest* p_Quest)
+{
+    m_Quests[p_Quest->GetID()] = p_Quest;
+}
+
+void Player::CheckQuestObjective(eObjectifType p_EventType, int32 p_Data0)
+{
+    for (std::map< uint16, Quest* >::iterator l_It = m_Quests.begin(); l_It != m_Quests.end(); ++l_It)
+    {
+        (*l_It).second->CheckAtEvent(p_EventType, p_Data0);
+    }
 }

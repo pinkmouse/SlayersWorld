@@ -267,8 +267,8 @@ void Map::AddUnit(Unit* p_Unit)
 
     /// Add to square
     uint16 l_SquareId = GetSquareID(p_Unit->GetPosX(), p_Unit->GetPosY());
-    if (p_Unit->GetType() == TypeUnit::CREATURE)
-        printf("Add creature:%s to square %d\n", p_Unit->GetName().c_str(), l_SquareId);
+    //if (p_Unit->GetType() == TypeUnit::CREATURE)
+     //   printf("Add creature:%s to square %d\n", p_Unit->GetName().c_str(), l_SquareId);
     AddToSquare(p_Unit, l_SquareId);
     UpdateForPlayersInNewSquare(p_Unit, true);
     if (p_Unit->GetType() == TypeUnit::PLAYER)

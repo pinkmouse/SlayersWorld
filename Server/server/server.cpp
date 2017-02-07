@@ -8,6 +8,7 @@ SqlManager* g_SqlManager;
 LevelManager* g_LevelManager;
 MapManager* g_MapManager;
 SpellManager* g_SpellManager;
+QuestManager* g_QuestManager;
 
 int main()
 {

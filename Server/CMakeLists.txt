@@ -35,6 +35,11 @@ add_executable(${EXECUTABLE_NAME}
               server/System/WorldPosition.hpp
 	      server/System/Commands.cpp
 
+	      server/System/Quest/Quest.cpp
+              server/System/Quest/Quest.hpp
+  	      server/System/Quest/QuestManager.cpp
+              server/System/Quest/QuestManager.hpp
+
 	      server/System/Required/Required.cpp
               server/System/Required/Required.hpp
 	      server/System/Required/SubRequired.cpp

@@ -267,7 +267,6 @@ void SqlManager::SavePlayer(Player* p_Player)
     {
         /// CHECK 
         std::string l_Query = "UPDATE characters_spells SET `cooldown` = '" + std::to_string((*l_It).second) + "' WHERE spellID = '" + std::to_string((*l_It).first) + "' AND characterID = '" + std::to_string(p_Player->GetID()) + "';";
-        printf("%s\n", l_Query.c_str());
         mysql_query(&m_MysqlCharacters, l_Query.c_str());
     }
 
@@ -543,7 +542,6 @@ bool  SqlManager::InitializeSpells()
         l_Spell->SetSpeed(l_Speed);
         if (l_ResourceType > 0)
         {
-            printf("ADD RESOURCE TYPE %dT\n", l_ResourceType);
             l_Spell->AddResourceNeed(ResourceNeed((eResourceType)l_ResourceType, l_ResourceNb));
         }
 
@@ -593,6 +591,60 @@ bool  SqlManager::InitializeSpellEffects()
         g_SpellManager->AddSpellEffect(l_SpellEffect);
     }
     mysql_free_result(l_Result);
+    return true;
+}
+
+bool  SqlManager::InitializeQuests()
+{
+    /// QUEST TEMPLATE
+    std::string l_Query = "SELECT `id`, `repetitionType` FROM quest_template";
+    mysql_query(&m_MysqlWorld, l_Query.c_str());
+
+    uint16 l_Id = 0;
+    uint8 l_RepetitionType = 0;
+
+    MYSQL_RES *l_Result = NULL;
+    MYSQL_ROW l_Row;
+    l_Result = mysql_use_result(&m_MysqlWorld);
+    while ((l_Row = mysql_fetch_row(l_Result)))
+    {
+        l_Id = atoi(l_Row[0]);
+        l_RepetitionType = atoi(l_Row[1]);
+
+        printf("Add Quest %d %d\n", l_Id, l_RepetitionType);
+        QuestTemplate* l_QuestTempalte = new QuestTemplate(l_Id, (eRepetitionType)l_RepetitionType);
+        g_QuestManager->AddQuestTemplate(l_QuestTempalte);
+    }
+    mysql_free_result(l_Result);
+
+    /// OBJECTIFS
+    l_Query = "SELECT `questID`, `id`, `typeID`, `data0`, `data1`, `data2`, `data3` FROM objectif_quest_template";
+    mysql_query(&m_MysqlWorld, l_Query.c_str());
+
+    uint8 l_IdObjective = 0;
+    uint16 l_QuestID = 0;
+    uint8 l_TypeID = 0;
+    int16 l_Data0 = 0;
+    int16 l_Data1 = 0;
+    int16 l_Data2 = 0;
+    int16 l_Data3 = 0;
+
+    l_Result = mysql_use_result(&m_MysqlWorld);
+    while ((l_Row = mysql_fetch_row(l_Result)))
+    {
+        l_QuestID = atoi(l_Row[0]);
+        l_IdObjective = atoi(l_Row[1]);
+        l_TypeID = atoi(l_Row[2]);
+        l_Data0 = atoi(l_Row[3]);
+        l_Data1 = atoi(l_Row[4]);
+        l_Data2 = atoi(l_Row[5]);
+        l_Data3 = atoi(l_Row[6]);
+
+        ObjectifQuestTemplate* l_ObjectifQuestTemplate = new ObjectifQuestTemplate(l_IdObjective, (eObjectifType)l_TypeID, l_Data0, l_Data1, l_Data2, l_Data3);
+        g_QuestManager->AddObjectifToTemplate(l_QuestID, l_ObjectifQuestTemplate);
+    }
+    mysql_free_result(l_Result);
+
     return true;
 }
 

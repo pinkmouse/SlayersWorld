@@ -12,6 +12,7 @@ World::World()
     g_SqlManager = new SqlManager();
     g_LevelManager = new LevelManager();
     g_SpellManager = new SpellManager();
+    g_QuestManager = new QuestManager();
 }
 
 
@@ -46,6 +47,10 @@ bool World::Initialize()
     printf("Initialize SpellEffects\n");
     if (!g_SqlManager->InitializeSpellEffects())
         printf("Error Initialize SpellEffects...\n");
+
+    printf("Initialize Quests\n");
+    if (!g_SqlManager->InitializeQuests())
+        printf("Error Initialize Quests...\n");
 
     printf("Initialize Spells\n");
     if (!g_SqlManager->InitializeSpells())

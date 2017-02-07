@@ -67,7 +67,7 @@ bool VisualManager::LoadSkins()
 bool VisualManager::LoadVisuals()
 {
     sf::Texture *l_Texture = nullptr;
-    for (uint8 i = 0; i < 3; ++i)
+    for (uint8 i = 0; i < 4; ++i)
     {
         l_Texture = new sf::Texture();
         std::string l_FileName = std::to_string(i) + ".png";

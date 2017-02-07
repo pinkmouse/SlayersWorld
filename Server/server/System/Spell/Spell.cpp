@@ -81,7 +81,7 @@ void Spell::EffectHeal(Unit* p_Target, SpellEffect* p_SpellEffect)
     DamageInfo l_DamageInfo;
     l_DamageInfo.m_Damage = p_SpellEffect->m_BasePoint1;
 
-    int8 l_LevelDiff = m_Caster->GetLevel() - p_Target->GetLevel();
+    int8 l_LevelDiff = m_SpellTemplate->GetLevel() - p_Target->GetLevel();
     if (l_LevelDiff > 0)
         l_DamageInfo.m_Damage += (l_LevelDiff * 2);
     else
@@ -98,7 +98,6 @@ void Spell::LaunchEffects()
     {
         SpellEffect* l_SpellEffect = (*l_It);
         std::vector<Unit*> l_Targets = SearchTargets(l_SpellEffect->m_Target, l_SpellEffect->m_RadiusMax, l_SpellEffect->m_RadiusMin);
-        printf("Lauch effect : %d\n", l_SpellEffect->m_EffectID);
 
         m_Func l_Fun = m_SpellEffectsMap[l_SpellEffect->m_EffectID];
         if (l_Fun != nullptr)

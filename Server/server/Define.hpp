@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <map>
 #include <vector>
 
 #define MAP_PATH "map/"
@@ -126,6 +127,56 @@ enum SpellTarget
     CloserEnemy,
     ZoneAlly,
     ZoneEnemy
+};
+
+enum eObjectifType
+{
+    KillMob = 0,
+    SpeackMob = 1
+};
+
+enum eRepetitionType
+{
+    Never = 0,
+    Daily,
+    Weekly
+};
+
+struct ObjectifQuestTemplate
+{
+    uint8 m_Id;
+    eObjectifType m_ObjectifType;
+    int16 m_Data0;
+    int16 m_Data1;
+    int16 m_Data2;
+    int16 m_Data3;
+
+    ObjectifQuestTemplate(uint8 p_Id, eObjectifType p_ObjectifType, int16 p_Data0, int16 p_Data1, int16 p_Data2, int16 p_Data3) :
+        m_Id(p_Id), m_ObjectifType(p_ObjectifType), m_Data0(p_Data0), m_Data1(p_Data1), m_Data2(p_Data2), m_Data3(m_Data3) {}
+};
+
+struct ObjectifProgess
+{
+    uint8 m_Id;
+    int16 m_Data0;
+
+    ObjectifProgess(uint8 p_Id) :
+        m_Id(p_Id), m_Data0(0) {}
+};
+
+struct QuestTemplate
+{
+    uint16 m_Id;
+    eRepetitionType m_RepetitionType;
+    std::map< uint8, ObjectifQuestTemplate* > m_ObjectifList;
+
+    QuestTemplate(uint16 p_Id, eRepetitionType p_RepetitionType) :
+        m_Id(p_Id), m_RepetitionType(p_RepetitionType) {}
+
+    void AddObjectif(ObjectifQuestTemplate* p_Objecif)
+    {
+        m_ObjectifList[p_Objecif->m_Id] = p_Objecif;
+    }
 };
 
 struct ResourceNeed

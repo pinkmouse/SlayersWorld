@@ -29,6 +29,11 @@ Creature::~Creature()
 {
 }
 
+uint16 Creature::GetEntry() const
+{
+    return m_Entry;
+}
+
 void Creature::RandMoving()
 {
     ResetRandMovementTime(true);

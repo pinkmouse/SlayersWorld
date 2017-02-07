@@ -25,6 +25,7 @@ public:
     void ReturnInRay();
     void GoToCase(const Position &);
     void OutOfCombat();
+    uint16 GetEntry() const;
 
     /// CREATURE AI
     void UpdateAI(sf::Time);
