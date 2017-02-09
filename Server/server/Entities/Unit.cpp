@@ -620,7 +620,19 @@ void Unit::EnterInCombat(Unit* p_Victim)
 
 void Unit::EnterInEvade()
 {
+    RegenerateAll();
     m_Evade = true;
+}
+
+void Unit::RegenerateAll()
+{
+    for (auto l_Resource : m_Resources)
+    {
+        if (l_Resource.second->GetNumber() == 100) /// Already max
+            continue;
+
+        SetResourceNb(l_Resource.first, 100);
+    }
 }
 
 void Unit::OutOfEvade()
@@ -750,7 +762,7 @@ void Unit::UpdateVictims()
 
 void Unit::AddSpellID(uint16 p_ID, uint64 p_Cooldown)
 {
-    m_ListSpellID[p_ID] = p_Cooldown; /// Cooldown set at 0
+    m_ListSpellID[p_ID] = p_Cooldown;
 }
 
 std::map< uint16, uint64 >* Unit::GetSpellList()
@@ -758,7 +770,7 @@ std::map< uint16, uint64 >* Unit::GetSpellList()
     return &m_ListSpellID;
 }
 
-void Unit::AddCooldown(uint16 p_SpellID, uint64 p_Cooldown)
+void Unit::AddSpellCooldown(uint16 p_SpellID, uint64 p_Cooldown)
 {
     if (m_ListSpellID.find(p_SpellID) == m_ListSpellID.end())
         return;
@@ -766,7 +778,7 @@ void Unit::AddCooldown(uint16 p_SpellID, uint64 p_Cooldown)
     m_ListSpellID[p_SpellID] += p_Cooldown;
 }
 
-bool Unit::HasCooldown(uint16 p_SpellID)
+bool Unit::HasSpellCooldown(uint16 p_SpellID)
 {
     if (m_ListSpellID.find(p_SpellID) == m_ListSpellID.end())
         return false;
@@ -781,7 +793,7 @@ void Unit::CastSpell(uint16 p_ID)
 {
     if (g_SpellManager == nullptr)
         return;
-    printf("CASE SPELL\n");
+
     SpellTemplate* l_SpellTemplate = g_SpellManager->GetSpell(p_ID);
     if (l_SpellTemplate == nullptr)
         return;

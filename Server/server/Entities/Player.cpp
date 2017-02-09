@@ -45,7 +45,11 @@ void Player::SetSession(WorldSocket* p_Session)
 Player::~Player()
 {
     printf("Erase Player %d:%s\n", m_ID, m_Name.c_str());
-    //Unit::~Unit();
+
+    for (std::map< uint16, Quest* >::iterator l_It = m_Quests.begin(); l_It != m_Quests.end(); ++l_It)
+    {
+        delete (*l_It).second;
+    }
 }
 
 void Player::Update(sf::Time p_Diff)
@@ -210,11 +214,11 @@ eAccessType Player::GetAccessType() const
     return m_AccessType;
 }
 
-void Player::EventAction(ePlayerAction p_PlayerAction)
+void Player::EventAction(eKeyBoardAction p_PlayerAction)
 {
     switch (p_PlayerAction)
     {
-    case General: /// GOSSIP
+    case eKeyBoardAction::KeyBoardAction: /// GOSSIP
     {
         Unit* l_Unit = m_Map->GetCloserUnit(this, MELEE_RANGE, true);
         if (l_Unit == nullptr)
@@ -223,10 +227,10 @@ void Player::EventAction(ePlayerAction p_PlayerAction)
         l_Unit->GossipTo(this);
         break;
     }
-    case Spell1:
+    case eKeyBoardAction::KeyBoardSpell0:
         CastSpell(1);
         break;
-    case Spell2:
+    case eKeyBoardAction::KeyBoardSpell1:
         break;
     default:
         break;
@@ -247,6 +251,11 @@ void Player::UpdateQuests()
     }
 }
 
+void Player::AddKeyBoardBind(eKeyBoardAction p_Action, uint8 p_ID)
+{
+    m_KeyBoardBinds[p_Action] = p_ID;
+}
+
 void Player::AddQuest(Quest* p_Quest)
 {
     m_Quests[p_Quest->GetID()] = p_Quest;
@@ -258,4 +267,35 @@ void Player::CheckQuestObjective(eObjectifType p_EventType, int32 p_Data0)
     {
         (*l_It).second->CheckAtEvent(p_EventType, p_Data0);
     }
+}
+
+std::map< eKeyBoardAction, uint8 >* Player::GetKeyBoardBinds()
+{
+    return &m_KeyBoardBinds;
+}
+
+void Player::AddSpellCooldown(uint16 p_SpellID, uint64 p_Time)
+{
+    Unit::AddSpellCooldown(p_SpellID, p_Time);
+
+    int32 l_BindSpell = GetBindSpell(p_SpellID);
+    if (l_BindSpell < 0)
+        return;
+
+    PacketKeyBoardBlock l_Packet;
+    l_Packet.BuildPacket((uint8)l_BindSpell, (uint32)(p_Time / 1000));
+    WorldSocket* l_Session = GetSession();
+    l_Session->SendMsg(l_Packet.m_Packet);
+}
+
+void Player::AddSpellBindToKey(uint16 p_SpellID, uint8 p_Bind)
+{
+    m_SpellsBindToKey[p_SpellID] = p_Bind;
+}
+
+int32 Player::GetBindSpell(uint16 p_SpellID)
+{
+    if (m_SpellsBindToKey.find(p_SpellID) == m_SpellsBindToKey.end())
+        return -1;
+    return m_SpellsBindToKey[p_SpellID];
 }

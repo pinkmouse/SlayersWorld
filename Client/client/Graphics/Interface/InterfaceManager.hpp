@@ -16,6 +16,7 @@ public:
     void Initialize();
     void InitializeWarningMsgs();
     void Update(sf::Time);
+    void ManageEvent(sf::Event);
     TileSprite GetField(uint16, uint16);
     TileSprite GetBorderField(uint16, uint16);
     TileSprite GetFlask(uint8, bool, uint8 p_Pct = 100);
@@ -26,7 +27,11 @@ public:
     HistoryField* GetHistoryField() const;
     void AddWarningMsg(const std::string &);
     void AddWarningMsg(eWarningMsg);
+    void AddKeyBind(uint8, uint8);
+    int16 GetBindForKey(uint8);
     void SetSystemMsg(const std::string &);
+    void AddBlockingBind(uint8, uint32);
+    bool IsBlockingBind(uint8);
 
 private:
     sf::Texture                         m_SystemTexture;
@@ -39,4 +44,6 @@ private:
     sf::Text                            m_SystemMsg;
     std::vector< std::pair<std::string, uint32> >     m_WarningMsgs;
     std::map< eWarningMsg, std::string > m_WarningMsgsEnum;
+    std::map< uint8, uint8 >             m_KeyBoardBind;
+    std::map< uint8, uint64 >            m_BlockingBinds;
 };

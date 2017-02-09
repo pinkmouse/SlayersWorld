@@ -57,15 +57,7 @@ void Graphics::CheckEvent()
             case sf::Event::Closed: ///< Request for closing the window
                 m_Window.close();
                 break;
-            case sf::Event::KeyPressed: ///< Key Press
-                m_Events->NewKeyPressed(l_Event.key.code);
-                break;
-            case sf::Event::KeyReleased: ///< Key Release
-                m_Events->KeyRelease(l_Event.key.code);
-                break;
-            case sf::Event::TextEntered: ///< Text Entered
-                m_Events->TextEntered(l_Event.text.unicode);
-                break;
+           
             case sf::Event::Resized: ///< Resize Window
                 /*
                 std::cout << "new width: " << event.size.width << std::endl;
@@ -73,9 +65,8 @@ void Graphics::CheckEvent()
                 */
                 break;
                 /// Reset KeyPress queue when lost focus
-            case sf::Event::LostFocus:
-                m_Events->LostFocus();
             default:
+                m_InterfaceManager->ManageEvent(l_Event);
                 break;
         }
 	}
@@ -262,7 +253,7 @@ void Graphics::DrawMap()
             if (l_MovementHandler->IsInAttack())
                 l_SpriteNb += (MAX_MOVEMENT_POSITION * Orientation::MAX);
 
-            SkinSprite* l_SkinSprite = m_VisualManager->GetVisualSprite(eVisualType::Skin, l_Unit->GetSkinID(), l_SpriteNb);
+            SkinSprite* l_SkinSprite = m_VisualManager->GetVisualSprite(eVisualType::VisualSkin, l_Unit->GetSkinID(), l_SpriteNb);
             l_SkinSprite->setScale(sf::Vector2f(l_Unit->GetSkinZoomFactor(), l_Unit->GetSkinZoomFactor()));
             if (l_Unit->IsPlayer())
                 l_SkinSprite->setColor(sf::Color(255, 255, 255, l_Unit->GetOpacity()));

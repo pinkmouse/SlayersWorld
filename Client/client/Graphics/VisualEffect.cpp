@@ -14,7 +14,7 @@ VisualEffect::VisualEffect(eVisualType p_Type, uint8 p_ID, uint8 p_NbFrames) :
     m_TypeAnim = eTypeAnim::AnimLoop;
     switch (p_Type)
     {
-    case eVisualType::Spell:
+    case eVisualType::VisualSpell:
         m_TimerUpdate = 250000; /// 0.25s
         break;
     default:

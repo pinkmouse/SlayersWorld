@@ -26,6 +26,7 @@ public:
     void SendMsg(WorldPacket);
     void SendToSet(WorldPacket, bool p_ExcludePlayer = false);
     void SendSwitchMap(uint16);
+    void SendKeyBoardBind(eKeyBoardAction, uint8);
 
     Player* GetPlayer();
     void SetPlayer(Player*);

@@ -17,13 +17,14 @@ enum SMSG : uint8
 {
     S_Connexion = 1,
     S_PlayerCreate = 10,
-    S_UnitCreate = 11,
-    S_UnitRemove = 12,
-    S_UnitUpdateResource = 13,
-    S_PlayerUpdateXp = 14,
-	S_LogDamage = 15,
-    S_SwitchMap = 16,
-    S_WarningMsg = 17,
+    S_KeyBoardBind = 11,
+    S_UnitCreate = 12,
+    S_UnitRemove = 13,
+    S_UnitUpdateResource = 14,
+    S_PlayerUpdateXp = 15,
+    S_LogDamage = 16,
+    S_SwitchMap = 17,
+    S_WarningMsg = 18,
     S_UnitGoDirection = 20,
     S_UnitStopMovement = 21,
     S_UnitUpdatePosition = 22,
@@ -33,7 +34,8 @@ enum SMSG : uint8
     S_UnitStartAttack = 26,
     S_UnitStopAttack = 27,
     S_UnitUpdateSkin = 28,
-    S_UnitPlayVisual = 30
+    S_UnitPlayVisual = 30,
+    S_BlockBind = 31
 };
 
 struct PacketGoDirection
@@ -333,5 +335,42 @@ struct PacketUnitPlayVisual
         m_VisualID = p_VisualID;
         m_TypeID = p_TypeID;
         m_ID = p_ID;
+    }
+};
+
+
+struct PacketKeyBoardBind
+{
+    WorldPacket m_Packet;
+    uint8 m_PacketID;
+    uint8 m_TypeAction;
+    uint8 m_Key;
+
+    PacketKeyBoardBind() :
+        m_PacketID(SMSG::S_KeyBoardBind) {}
+
+    void BuildPacket(uint8 p_TypeAction, uint8 p_Key)
+    {
+        m_Packet << m_PacketID << p_TypeAction << p_Key;
+        m_TypeAction = p_TypeAction;
+        m_Key = p_Key;
+    }
+};
+
+struct PacketKeyBoardBlock
+{
+    WorldPacket m_Packet;
+    uint8 m_PacketID;
+    uint8 m_TypeAction;
+    uint32 m_Time;
+
+    PacketKeyBoardBlock() :
+        m_PacketID(SMSG::S_BlockBind) {}
+
+    void BuildPacket(uint8 p_TypeAction, uint32 p_Time)
+    {
+        m_Packet << m_PacketID << p_TypeAction << p_Time;
+        m_TypeAction = p_TypeAction;
+        m_Time = p_Time;
     }
 };

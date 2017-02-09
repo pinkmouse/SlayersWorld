@@ -31,6 +31,7 @@ public:
     bool IsExistingAccound(std::string);
     Player* GetNewPlayer(uint32);
     void AddNewPlayer(uint32);
+    void AddKeyDefaultBindsForAccount(uint32);
     std::string GetLoginName(uint32);
     int16 GetLevel(const std::string &);
     WorldPosition GetPosition(const std::string &);
@@ -49,6 +50,8 @@ public:
     bool InitializeCreatureTemplate(UnitManager*);
     bool InitializeGossip(UnitManager*);
     bool InitializeSpellsForPlayer(Player*);
+    bool InitializeKeyBindsForAccount(uint32, Player*);
+    bool InitializeSpellsBinds(Player*);
     bool InitializeQuests();
     CreatureTemplate GetCreatureTemplate(uint16);
     uint16 AddNewCreature(uint16, uint16, uint32, uint32);

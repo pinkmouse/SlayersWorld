@@ -33,6 +33,8 @@ public:
 	void HandleLogDamage(WorldPacket &);
     void HandleWarningMsg(WorldPacket &);
     void HandleUnitPlayVisual(WorldPacket &);
+    void HandleKeyBoardBind(WorldPacket &);
+    void HandleKeyBindBlock(WorldPacket &);
 
 private:
 	MapManager* m_MapManager;

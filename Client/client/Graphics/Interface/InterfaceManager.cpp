@@ -15,7 +15,6 @@ InterfaceManager::InterfaceManager(Events* p_Events) :
     InitializeWarningMsgs();
 }
 
-
 InterfaceManager::~InterfaceManager()
 {
 }
@@ -43,6 +42,33 @@ void InterfaceManager::Initialize()
     l_FileSystemName = "background.png";
     if (!m_Background.loadFromFile(IMG_FOLDER + l_FileSystemName))
         printf("Load Background Failed\n");
+}
+
+void  InterfaceManager::ManageEvent(sf::Event p_Event)
+{
+    eKeyBoardAction l_KeyBoardAction = eKeyBoardAction::NoneAction;
+    if (m_KeyBoardBind.find(p_Event.key.code) != m_KeyBoardBind.end())
+        l_KeyBoardAction = (eKeyBoardAction)m_KeyBoardBind[p_Event.key.code];
+
+    switch (p_Event.type)
+    {
+        case sf::Event::KeyPressed: ///< Key Press
+            if (IsBlockingBind(l_KeyBoardAction))
+                AddWarningMsg("Temps de recharge restant : " + std::to_string(uint8(m_BlockingBinds[l_KeyBoardAction] / 1000000)) + "s");
+            else
+                m_Events->NewKeyPressed(l_KeyBoardAction);
+            break;
+        case sf::Event::KeyReleased: ///< Key Release
+            m_Events->KeyRelease(l_KeyBoardAction);
+            break;
+        case sf::Event::TextEntered: ///< Text Entered
+            m_Events->TextEntered(p_Event.text.unicode);
+            break;
+        case sf::Event::LostFocus:
+            m_Events->LostFocus();
+        default:
+            break;
+    }
 }
 
 TileSprite InterfaceManager::GetField(uint16 p_SizeX, uint16 p_SizeY)
@@ -106,6 +132,25 @@ void InterfaceManager::Update(sf::Time p_Diff)
             ++l_It;
         }
     }
+
+    for (std::map< uint8, uint64 >::iterator l_It = m_BlockingBinds.begin(); l_It != m_BlockingBinds.end();)
+    {
+        if ((*l_It).second == 0)
+        {
+            l_It = m_BlockingBinds.erase(l_It);
+            continue;
+        }
+
+        if ((*l_It).second < p_Diff.asMicroseconds())
+        {
+            l_It = m_BlockingBinds.erase(l_It);
+            continue;
+        }
+
+        printf("-> %d:%d\n", (*l_It).first, (*l_It).second);
+        (*l_It).second -= p_Diff.asMicroseconds();
+        ++l_It;
+    }
 }
 
 void InterfaceManager::DrawStartingPage(Window & p_Window)
@@ -133,8 +178,8 @@ void InterfaceManager::DrawWarnings(Window & p_Window)
     for (uint8 i = 0; i < m_WarningMsgs.size(); ++i)
     {
         sf::Text    l_WarningMsg;
-        l_WarningMsg.setCharacterSize(30);
-        l_WarningMsg.setColor(sf::Color(255, 66, 66, 150));
+        l_WarningMsg.setCharacterSize(22);
+        l_WarningMsg.setColor(sf::Color(255, 66, 66, 240));
         l_WarningMsg.setString(m_WarningMsgs[i].first);
         l_WarningMsg.setFont(*g_Font);
 
@@ -236,4 +281,28 @@ void InterfaceManager::AddWarningMsg(eWarningMsg p_WarningMsg)
 void InterfaceManager::SetSystemMsg(const std::string & p_Msg)
 {
     m_SystemMsg.setString(p_Msg);
+}
+
+void InterfaceManager::AddKeyBind(uint8 p_Key, uint8 p_Bind)
+{
+    m_KeyBoardBind[p_Key] = p_Bind;
+}
+
+int16 InterfaceManager::GetBindForKey(uint8 p_Key)
+{
+    if (m_KeyBoardBind.find(p_Key) == m_KeyBoardBind.end())
+        return -1;
+    return m_KeyBoardBind[p_Key];
+}
+
+void InterfaceManager::AddBlockingBind(uint8 p_BindType, uint32 p_Time)
+{
+    m_BlockingBinds[p_BindType] = (uint64)p_Time * 1000;
+}
+
+bool InterfaceManager::IsBlockingBind(uint8 p_BindType)
+{
+    if (m_BlockingBinds.find(p_BindType) == m_BlockingBinds.end())
+        return false;
+    return true;
 }

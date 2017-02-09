@@ -21,7 +21,7 @@ bool Spell::Prepare(Unit* p_Caster)
     m_Caster = p_Caster;
 
     /// Check Cooldown
-    if (p_Caster->HasCooldown(m_SpellTemplate->GetID()))
+    if (p_Caster->HasSpellCooldown(m_SpellTemplate->GetID()))
     {
         if (Player* l_Player = p_Caster->ToPlayer())
         {
@@ -51,7 +51,7 @@ bool Spell::Prepare(Unit* p_Caster)
     }
 
     /// Consume Cooldown
-    p_Caster->AddCooldown(m_SpellTemplate->GetID(), m_SpellTemplate->GetCooldown() * 1000 /* MILLISECOND TO MICROSECOND*/);
+    p_Caster->AddSpellCooldown(m_SpellTemplate->GetID(), m_SpellTemplate->GetCooldown() * 1000 /* MILLISECOND TO MICROSECOND*/);
 
     /// Consume Resources
     for (std::vector<ResourceNeed>::iterator l_It = l_ResourcesNeed->begin(); l_It != l_ResourcesNeed->end(); ++l_It)

@@ -41,8 +41,7 @@ bool Player::HandleRegen(std::vector<std::string> p_ListCmd)
     if (!p_ListCmd.empty())
         return false;
 
-    SetResourceNb(eResourceType::Health, 100);
-    SetResourceNb(eResourceType::Mana, 100);
+    RegenerateAll();
     return true;
 }
 

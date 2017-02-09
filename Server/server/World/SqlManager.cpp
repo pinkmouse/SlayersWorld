@@ -118,7 +118,12 @@ std::string SqlManager::GetLoginName(uint32 p_AccountID)
 void SqlManager::AddNewPlayer(uint32 p_AccountID)
 {
     std::string l_Query = "insert into `characters` (`accountID`, `name`, `skinID`, `level`, `health`, `alignment`, `mapID`, `posX`, `posY`, `orientation`, `xp`) values('" + std::to_string(p_AccountID) + "', '" + GetLoginName(p_AccountID) + "','0','1','100','0','0','256','296','0','0');";
+    mysql_query(&m_MysqlCharacters, l_Query.c_str());
+}
 
+void SqlManager::AddKeyDefaultBindsForAccount(uint32 p_AccountID)
+{
+    std::string l_Query = "INSERT INTO `account_key_binds` VALUES (" + std::to_string(p_AccountID) + ", 1, 74), (" + std::to_string(p_AccountID) + ", 2, 73), (" + std::to_string(p_AccountID) + ", 3, 71), (" + std::to_string(p_AccountID) + ", 4, 72), (" + std::to_string(p_AccountID) + ", 5, 57), (" + std::to_string(p_AccountID) + ", 6, 58), (" + std::to_string(p_AccountID) + ", 7, 96), (" + std::to_string(p_AccountID) + ", 8, 18), (" + std::to_string(p_AccountID) + ", 9, 25), (" + std::to_string(p_AccountID) + ", 10, 4);";
     mysql_query(&m_MysqlCharacters, l_Query.c_str());
 }
 
@@ -168,6 +173,7 @@ Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
     {
         printf("Create new Player %d", p_AccountID);
         AddNewPlayer(p_AccountID);
+        AddKeyDefaultBindsForAccount(p_AccountID);
         return GetNewPlayer(p_AccountID);
     }
     eAccessType l_PlayerAccessType = GetAccessType(p_AccountID);
@@ -175,6 +181,8 @@ Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
 	l_Player->SetPointsSet(GetPointsSetForPlayer(l_ID));
     l_Player->SetRespawnPosition(GetRespawnPositionForPlayer(l_ID));
     InitializeSpellsForPlayer(l_Player);
+    InitializeKeyBindsForAccount(p_AccountID, l_Player);
+    InitializeSpellsBinds(l_Player);
 
     return l_Player;
 }
@@ -432,6 +440,50 @@ bool SqlManager::InitializeSpellsForPlayer(Player* p_Player)
         l_SpellID = atoi(l_Row[0]);
         l_Cooldown = atoi(l_Row[1]);
         p_Player->AddSpellID(l_SpellID, l_Cooldown);
+    }
+    mysql_free_result(l_Result);
+
+    return true;
+}
+
+bool SqlManager::InitializeSpellsBinds(Player* p_Player)
+{
+    std::string l_Query = "SELECT `spellID`, `bindID` FROM characters_spell_binds WHERE `characterID` = '" + std::to_string(p_Player->GetID()) + "'";
+    mysql_query(&m_MysqlCharacters, l_Query.c_str());
+
+    uint16 l_SpellID;
+    uint8 l_BindID;
+
+    MYSQL_RES *l_Result = NULL;
+    MYSQL_ROW l_Row;
+    l_Result = mysql_use_result(&m_MysqlCharacters);
+    while ((l_Row = mysql_fetch_row(l_Result)))
+    {
+        l_SpellID = atoi(l_Row[0]);
+        l_BindID = atoi(l_Row[1]);
+        p_Player->AddSpellBindToKey(l_SpellID, l_BindID);
+    }
+    mysql_free_result(l_Result);
+
+    return true;
+}
+
+bool SqlManager::InitializeKeyBindsForAccount(uint32 p_Account, Player* p_Player)
+{
+    std::string l_Query = "SELECT `typeID`, `key` FROM account_key_binds WHERE `accountID` = '" + std::to_string(p_Account) + "'";
+    mysql_query(&m_MysqlCharacters, l_Query.c_str());
+
+    uint8 l_TypeID;
+    uint8 l_Key;
+
+    MYSQL_RES *l_Result = NULL;
+    MYSQL_ROW l_Row;
+    l_Result = mysql_use_result(&m_MysqlCharacters);
+    while ((l_Row = mysql_fetch_row(l_Result)))
+    {
+        l_TypeID = atoi(l_Row[0]);
+        l_Key = atoi(l_Row[1]);
+        p_Player->AddKeyBoardBind((eKeyBoardAction)l_TypeID, l_Key);
     }
     mysql_free_result(l_Result);
 

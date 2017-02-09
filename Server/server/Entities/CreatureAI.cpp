@@ -106,7 +106,6 @@ void Creature::UpdateDefensive(sf::Time p_Diff)
 
         if (GetVictim() == nullptr || !GetVictim()->IsInWorld())
         {
-            printf("-----> Vivctim null out of combat\n");
             OutOfCombat();
             return;
         }
@@ -129,7 +128,7 @@ void Creature::UpdateDefensive(sf::Time p_Diff)
                     GoToCase(GetVictim()->GetPosition());
                 else
                 {
-                    Orientation l_Orientation = GetOrientationToPoint(m_RespawnPosition.GetPosition());
+                    Orientation l_Orientation = GetOrientationToPoint(GetVictim()->GetPosition());
                     if (GetOrientation() != l_Orientation || !IsInMovement())
                         StartMovement(l_Orientation);
                 }

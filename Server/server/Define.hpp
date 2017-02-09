@@ -105,13 +105,6 @@ enum eResourceType
     Alignment = 3
 };
 
-enum ePlayerAction
-{
-    General = 57, // SpaceBAR
-    Spell1 = 25, // Z
-    Spell2 = 4 // E
-};
-
 enum SpellEffectType
 {
     Damage = 0,
@@ -192,6 +185,21 @@ enum DamageResult
 {
     Success = 0,
     Miss = 1
+};
+
+enum eKeyBoardAction
+{
+    NoneAction = 0,
+    KeyBoardDown,
+    KeyBoardUp,
+    KeyBoardLeft,
+    KeyBoardRight,
+    KeyBoardAction,
+    KeyBoardEnter,
+    KeyBoardHistoryMsg,
+    KeyBoardAutoAttack,
+    KeyBoardSpell0,
+    KeyBoardSpell1
 };
 
 struct DamageInfo

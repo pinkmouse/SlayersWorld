@@ -36,6 +36,8 @@ void PacketHandler::LoadPacketHandlerMap()
 	m_PacketHandleMap[SMSG::S_LogDamage] = &PacketHandler::HandleLogDamage;
     m_PacketHandleMap[SMSG::S_WarningMsg] = &PacketHandler::HandleWarningMsg;
     m_PacketHandleMap[SMSG::S_UnitPlayVisual] = &PacketHandler::HandleUnitPlayVisual;
+    m_PacketHandleMap[SMSG::S_KeyBoardBind] = &PacketHandler::HandleKeyBoardBind;
+    m_PacketHandleMap[SMSG::S_BlockBind] = &PacketHandler::HandleKeyBindBlock;
 }
 
 void PacketHandler::HandleRemoveUnit(WorldPacket &p_Packet)
@@ -509,8 +511,30 @@ void PacketHandler::HandleUnitPlayVisual(WorldPacket &p_Packet)
             g_Socket->SendUnitUnknow(l_TypeID, l_ID); ///< Ask for unknow unit to server
             return;
         }
-        VisualEffect l_VisualEffect(eVisualType::Spell, l_VisualID, 3);
+        VisualEffect l_VisualEffect(eVisualType::VisualSpell, l_VisualID, 3);
         l_VisualEffect.StartAnimAndStop();
         l_Unit->AddVisualEffect(l_VisualEffect);
     }
+}
+
+void PacketHandler::HandleKeyBoardBind(WorldPacket &p_Packet)
+{
+    uint8 l_TypeAction;
+    uint8 l_Key;
+
+    p_Packet >> l_TypeAction;
+    p_Packet >> l_Key;
+
+    m_InterfaceManager->AddKeyBind(l_Key, l_TypeAction);
+}
+
+void PacketHandler::HandleKeyBindBlock(WorldPacket &p_Packet)
+{
+    uint8 l_TypeAction;
+    uint32 l_Time;
+
+    p_Packet >> l_TypeAction;
+    p_Packet >> l_Time;
+
+    m_InterfaceManager->AddBlockingBind(l_TypeAction, l_Time);
 }

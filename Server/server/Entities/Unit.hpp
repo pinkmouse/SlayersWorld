@@ -96,13 +96,14 @@ public:
     bool CanAttack(Unit*) const;
     bool IsHostileTo(Unit*);
     eFactionType GetFaction() const;
+    void RegenerateAll();
 
     /// SPELL
     void AddSpellID(uint16, uint64);
     void CastSpell(uint16);
     std::map< uint16, uint64 >* GetSpellList();
-    void AddCooldown(uint16, uint64);
-    bool HasCooldown(uint16);
+    virtual void AddSpellCooldown(uint16, uint64);
+    bool HasSpellCooldown(uint16);
 
     /// GOSSIP
     void SetGossipList(std::vector<Gossip>*);

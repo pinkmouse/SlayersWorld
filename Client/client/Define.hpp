@@ -138,8 +138,29 @@ struct DamageInfo
 
 enum eVisualType
 {
-    Skin = 0,
-    Spell = 1
+    VisualSkin = 0,
+    VisualSpell = 1
+};
+
+enum eTimeSpellAttribute
+{
+    CooldownAttribute = 0,
+    CastimeAttribute = 1
+};
+
+enum eKeyBoardAction
+{
+    NoneAction = 0,
+    KeyBoardDown,
+    KeyBoardUp,
+    KeyBoardLeft,
+    KeyBoardRight,
+    KeyBoardAction,
+    KeyBoardEnter,
+    KeyBoardHistoryMsg,
+    KeyBoardAutoAttack,
+    KeyBoardSpell0,
+    KeyBoardSpell1
 };
 
 enum eActionType

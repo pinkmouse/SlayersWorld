@@ -23,7 +23,7 @@ public:
     void SetXp(uint32);
     void HasBeenInitialize();
     bool CheckCommand(const std::string &);
-    void EventAction(ePlayerAction);
+    void EventAction(eKeyBoardAction);
 
     void SetResourceNb(eResourceType, uint8);
     void AddResourceNb(eResourceType, uint8);
@@ -34,6 +34,12 @@ public:
     void UpdateQuests();
     void AddQuest(Quest*);
     void CheckQuestObjective(eObjectifType, int32);
+    void AddKeyBoardBind(eKeyBoardAction, uint8);
+    void AddSpellBindToKey(uint16, uint8);
+    int32 GetBindSpell(uint16);
+    std::map< eKeyBoardAction, uint8 >* GetKeyBoardBinds();
+
+    void AddSpellCooldown(uint16, uint64);
 
     /// Commands
     void InitializeCommands();
@@ -60,5 +66,7 @@ private:
 
     typedef bool(Player::*m_Func)(std::vector<std::string>);
     std::map < std::string, std::pair < eAccessType,  m_Func > > m_CmdHandleMap;
+    std::map < eKeyBoardAction, uint8 > m_KeyBoardBinds;
+    std::map < uint16, uint8 > m_SpellsBindToKey;
 };
 

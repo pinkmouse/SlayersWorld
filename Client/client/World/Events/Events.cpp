@@ -3,16 +3,16 @@
 
 Events::Events()
 {
-    m_DirectionMap[sf::Keyboard::Key::Up] = Orientation::Up;
-    m_DirectionMap[sf::Keyboard::Key::Down] = Orientation::Down;
-    m_DirectionMap[sf::Keyboard::Key::Left] = Orientation::Left;
-    m_DirectionMap[sf::Keyboard::Key::Right] = Orientation::Right;
+    m_DirectionMap[eKeyBoardAction::KeyBoardUp] = Orientation::Up;
+    m_DirectionMap[eKeyBoardAction::KeyBoardDown] = Orientation::Down;
+    m_DirectionMap[eKeyBoardAction::KeyBoardLeft] = Orientation::Left;
+    m_DirectionMap[eKeyBoardAction::KeyBoardRight] = Orientation::Right;
     m_WritingField = nullptr;
 
-    m_KeyUsableWhileDeath[sf::Keyboard::Key::Up] = true;
-    m_KeyUsableWhileDeath[sf::Keyboard::Key::Down] = true;
-    m_KeyUsableWhileDeath[sf::Keyboard::Key::Left] = true;
-    m_KeyUsableWhileDeath[sf::Keyboard::Key::Right] = true;
+    m_KeyUsableWhileDeath[eKeyBoardAction::KeyBoardUp] = true;
+    m_KeyUsableWhileDeath[eKeyBoardAction::KeyBoardDown] = true;
+    m_KeyUsableWhileDeath[eKeyBoardAction::KeyBoardLeft] = true;
+    m_KeyUsableWhileDeath[eKeyBoardAction::KeyBoardRight] = true;
 }
 
 
@@ -20,7 +20,7 @@ Events::~Events()
 {
 }
 
-bool Events::IsKeyUsableWhileDeath(sf::Keyboard::Key p_Key)
+bool Events::IsKeyUsableWhileDeath(eKeyBoardAction p_Key)
 {
     if (m_KeyUsableWhileDeath.find(p_Key) != m_KeyUsableWhileDeath.end())
         return m_KeyUsableWhileDeath[p_Key];
@@ -40,7 +40,7 @@ void Events::Update()
     /// If death, attack key will not be able to use, so we need to stop attack if player is attaking
     if (g_Player->IsDeath() && l_MovementHandler->IsInAttack())
     {
-        std::vector<sf::Keyboard::Key>::iterator l_It = std::find(m_KeyPressed.begin(), m_KeyPressed.end(), sf::Keyboard::Key::S);
+        std::vector<eKeyBoardAction>::iterator l_It = std::find(m_KeyPressed.begin(), m_KeyPressed.end(), eKeyBoardAction::KeyBoardAutoAttack);
         if (l_It != m_KeyPressed.end())
         {
             m_KeyPressed.erase(l_It);
@@ -56,10 +56,10 @@ void Events::Update()
         {
             switch (m_KeyPressed.back())
             {
-                case sf::Keyboard::Key::Up:
-                case sf::Keyboard::Key::Down:
-                case sf::Keyboard::Key::Left:
-                case sf::Keyboard::Key::Right:
+                case eKeyBoardAction::KeyBoardUp:
+                case eKeyBoardAction::KeyBoardDown:
+                case eKeyBoardAction::KeyBoardLeft:
+                case eKeyBoardAction::KeyBoardRight:
                 {
                     g_Socket->SendGoDirection((Orientation)m_DirectionMap[m_KeyPressed.back()], g_Player->GetPosX(), g_Player->GetPosY());
                     g_Player->SetOrientation((Orientation)m_DirectionMap[m_KeyPressed.back()]);
@@ -78,28 +78,31 @@ void Events::LostFocus()
 
     m_KeyPressed.clear();
     MovementHandler* l_MovementHandler = g_Player->GetMovementHandler();
-    KeyRelease(sf::Keyboard::Key::Up);
-    KeyRelease(sf::Keyboard::Key::Down);
-    KeyRelease(sf::Keyboard::Key::Left);
-    KeyRelease(sf::Keyboard::Key::Right);
-    KeyRelease(sf::Keyboard::Key::S);
+    KeyRelease(eKeyBoardAction::KeyBoardUp);
+    KeyRelease(eKeyBoardAction::KeyBoardDown);
+    KeyRelease(eKeyBoardAction::KeyBoardLeft);
+    KeyRelease(eKeyBoardAction::KeyBoardRight);
+    KeyRelease(eKeyBoardAction::KeyBoardAutoAttack);
 }
 
-void Events::KeyRelease(sf::Keyboard::Key p_KeyRealease)
+void Events::KeyRelease(eKeyBoardAction p_NewKey)
 {
+    if (p_NewKey == eKeyBoardAction::NoneAction)
+        return;
+
     if (g_Player == nullptr)
         return;
 
-    if (g_Player->IsDeath() && !IsKeyUsableWhileDeath(p_KeyRealease))
+    if (g_Player->IsDeath() && !IsKeyUsableWhileDeath(p_NewKey))
         return;
 
-    std::vector<sf::Keyboard::Key>::iterator l_It = std::find(m_KeyPressed.begin(), m_KeyPressed.end(), p_KeyRealease);
+    std::vector<eKeyBoardAction>::iterator l_It = std::find(m_KeyPressed.begin(), m_KeyPressed.end(), p_NewKey);
     if (l_It != m_KeyPressed.end())
     {
         m_KeyPressed.erase(l_It);
         MovementHandler* l_MovementHandler = g_Player->GetMovementHandler();
 
-        if (p_KeyRealease == sf::Keyboard::Key::S)
+        if (p_NewKey == eKeyBoardAction::KeyBoardAutoAttack)
         {
             g_Socket->SendStopAttack();
             l_MovementHandler->StopAttack();
@@ -108,17 +111,17 @@ void Events::KeyRelease(sf::Keyboard::Key p_KeyRealease)
         {
             switch (m_KeyPressed.back())
             {
-                case sf::Keyboard::Key::Up:
-                case sf::Keyboard::Key::Down:
-                case sf::Keyboard::Key::Left:
-                case sf::Keyboard::Key::Right:
+                case eKeyBoardAction::KeyBoardUp:
+                case eKeyBoardAction::KeyBoardDown:
+                case eKeyBoardAction::KeyBoardLeft:
+                case eKeyBoardAction::KeyBoardRight:
                 {
                     g_Socket->SendGoDirection((Orientation)m_DirectionMap[m_KeyPressed.back()], g_Player->GetPosX(), g_Player->GetPosY());
                     g_Player->SetOrientation((Orientation)m_DirectionMap[m_KeyPressed.back()]);
                     g_Player->StartMovement();
                     break;
                 }
-                case sf::Keyboard::Key::S:
+                case eKeyBoardAction::KeyBoardAutoAttack:
                 {           
                     MovementHandler* l_MovementHandler = g_Player->GetMovementHandler();
                     if (!l_MovementHandler->IsInAttack())
@@ -127,7 +130,10 @@ void Events::KeyRelease(sf::Keyboard::Key p_KeyRealease)
                 }
             }
         }
-        else if (p_KeyRealease >= 71 && p_KeyRealease <= 74 && !l_MovementHandler->IsInAttack()) ///< If the last key release
+        else if ((p_NewKey == eKeyBoardAction::KeyBoardDown ||
+            p_NewKey == eKeyBoardAction::KeyBoardUp ||
+            p_NewKey == eKeyBoardAction::KeyBoardLeft ||
+            p_NewKey == eKeyBoardAction::KeyBoardRight) && !l_MovementHandler->IsInAttack()) ///< If the last key release
         {
             g_Socket->SendStopMovement(l_MovementHandler->GetPosX(), l_MovementHandler->GetPosY());
             g_Player->GetMovementHandler()->StopMovement();
@@ -135,31 +141,34 @@ void Events::KeyRelease(sf::Keyboard::Key p_KeyRealease)
     }
 }
 
-void Events::NewKeyPressed(sf::Keyboard::Key p_NewKey)
+void Events::NewKeyPressed(eKeyBoardAction p_NewKey)
 {
+    if (p_NewKey == eKeyBoardAction::NoneAction)
+        return;
+
     if (g_Player == nullptr)
         return;
 
     if (g_Player->IsDeath() && !IsKeyUsableWhileDeath(p_NewKey))
         return;
 
-    if (m_WritingField->IsFieldOpen() && p_NewKey != sf::Keyboard::Key::Return && !IsKeyUsableWhileDeath(p_NewKey))
+    if (m_WritingField->IsFieldOpen() && p_NewKey != eKeyBoardAction::KeyBoardEnter && !IsKeyUsableWhileDeath(p_NewKey))
         return;
 
     switch (p_NewKey)
     {
         /// Direction
-        case sf::Keyboard::Key::Up:
-        case sf::Keyboard::Key::Down:
-        case sf::Keyboard::Key::Left:
-        case sf::Keyboard::Key::Right:
+        case eKeyBoardAction::KeyBoardUp:
+        case eKeyBoardAction::KeyBoardDown:
+        case eKeyBoardAction::KeyBoardLeft:
+        case eKeyBoardAction::KeyBoardRight:
         {
             if (g_Player == nullptr)
                 return;
 
             MovementHandler* l_MovementHandler = g_Player->GetMovementHandler();
 
-            std::vector<sf::Keyboard::Key>::iterator l_It = std::find(m_KeyPressed.begin(), m_KeyPressed.end(), p_NewKey);
+            std::vector<eKeyBoardAction>::iterator l_It = std::find(m_KeyPressed.begin(), m_KeyPressed.end(), p_NewKey);
 
             if (l_It != m_KeyPressed.end())
                 break;
@@ -177,8 +186,10 @@ void Events::NewKeyPressed(sf::Keyboard::Key p_NewKey)
             break;
         }
         /// Attack
-        case sf::Keyboard::Key::S:
+        case eKeyBoardAction::KeyBoardAutoAttack:
         {
+        //case sf::Keyboard::Key::S:
+
             MovementHandler* l_MovementHandler = g_Player->GetMovementHandler();
 
             if (l_MovementHandler->IsInAttack())
@@ -198,14 +209,18 @@ void Events::NewKeyPressed(sf::Keyboard::Key p_NewKey)
             break;
         }
         /// Action
-        case sf::Keyboard::Key::Z:
-        case sf::Keyboard::Key::E:
-        case sf::Keyboard::Key::Space:
+        case eKeyBoardAction::KeyBoardSpell0:
+        case eKeyBoardAction::KeyBoardSpell1:
         {
             g_Socket->SendEventAction((uint8)p_NewKey);
             break;
         }
-        case sf::Keyboard::Key::Return:
+        case eKeyBoardAction::KeyBoardAction:
+        {
+            g_Socket->SendEventAction((uint8)p_NewKey);
+            break;
+        }
+        case eKeyBoardAction::KeyBoardEnter:
         {
             if (m_WritingField == nullptr)
                 return;
@@ -217,7 +232,7 @@ void Events::NewKeyPressed(sf::Keyboard::Key p_NewKey)
 
             break;
         }
-        case sf::Keyboard::Key::F12:
+        case eKeyBoardAction::KeyBoardHistoryMsg:
         {
             if (m_HistoryField == nullptr)
                 return;

@@ -46,7 +46,7 @@ bool VisualManager::LoadSkins()
 
         uint32 l_NbSkinX = l_Texture->getSize().x / SKIN_SIZE_X;
         uint32 l_NbSkinY = l_Texture->getSize().y / SKIN_SIZE_Y;
-        Visual l_Skin(eVisualType::Skin, l_NbSkinX, l_NbSkinY);
+        Visual l_Skin(eVisualType::VisualSkin, l_NbSkinX, l_NbSkinY);
 
         for (uint8 j = 0; j < l_NbSkinX / MAX_MOVEMENT_POSITION; ++j)
         {
@@ -80,7 +80,7 @@ bool VisualManager::LoadVisuals()
 
         uint32 l_NbVisuSizeX = l_Texture->getSize().x / MAX_VISUAL_IMG_X;
         uint32 l_NbVisuSizeY = l_Texture->getSize().y;
-        Visual l_Visual(eVisualType::Spell, MAX_VISUAL_IMG_X, 0);
+        Visual l_Visual(eVisualType::VisualSpell, MAX_VISUAL_IMG_X, 0);
 
         for (uint8 i = 0; i < MAX_VISUAL_IMG_X; ++i)
         {
