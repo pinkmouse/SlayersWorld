@@ -16,6 +16,16 @@ CREATE DATABASE /*!32312 IF NOT EXISTS*/`characters` /*!40100 DEFAULT CHARACTER 
 
 USE `characters`;
 
+/*Table structure for table `account_key_binds` */
+
+DROP TABLE IF EXISTS `account_key_binds`;
+
+CREATE TABLE `account_key_binds` (
+  `accountID` int(11) NOT NULL,
+  `typeID` int(11) NOT NULL,
+  `key` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 /*Table structure for table `characters` */
 
 DROP TABLE IF EXISTS `characters`;
@@ -27,6 +37,7 @@ CREATE TABLE `characters` (
   `skinID` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `level` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `health` tinyint(3) unsigned NOT NULL DEFAULT '100',
+  `mana` tinyint(3) unsigned NOT NULL DEFAULT '100',
   `alignment` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `mapID` smallint(5) unsigned NOT NULL DEFAULT '0',
   `posX` int(10) unsigned NOT NULL DEFAULT '0',
@@ -34,9 +45,9 @@ CREATE TABLE `characters` (
   `orientation` smallint(5) unsigned NOT NULL DEFAULT '0',
   `xp` int(10) unsigned NOT NULL DEFAULT '0',
   `creationDate` datetime DEFAULT NULL,
-  `lastConnection` datetime DEFAULT CURRENT_TIMESTAMP,
+  `lastConnection` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`characterID`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8;
 
 /*Table structure for table `characters_point` */
 
@@ -63,13 +74,34 @@ CREATE TABLE `characters_respawn` (
   UNIQUE KEY `characterID` (`characterID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+/*Table structure for table `characters_spell_binds` */
+
+DROP TABLE IF EXISTS `characters_spell_binds`;
+
+CREATE TABLE `characters_spell_binds` (
+  `characterID` int(10) unsigned NOT NULL,
+  `bindID` int(10) unsigned NOT NULL,
+  `spellID` int(10) unsigned NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*Table structure for table `characters_spells` */
+
+DROP TABLE IF EXISTS `characters_spells`;
+
+CREATE TABLE `characters_spells` (
+  `characterID` int(10) unsigned NOT NULL,
+  `spellID` int(10) unsigned NOT NULL,
+  `cooldown` int(10) unsigned NOT NULL DEFAULT '0',
+  `key` int(11) NOT NULL DEFAULT '-1'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 /*Table structure for table `connection_logs` */
 
 DROP TABLE IF EXISTS `connection_logs`;
 
 CREATE TABLE `connection_logs` (
   `accountID` int(10) unsigned DEFAULT NULL,
-  `connectionDate` datetime DEFAULT CURRENT_TIMESTAMP
+  `connectionDate` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Table structure for table `login` */
@@ -80,8 +112,18 @@ CREATE TABLE `login` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `login` varchar(50) NOT NULL,
   `password` varchar(50) NOT NULL,
+  `characterName` tinytext NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8;
+
+/*Table structure for table `login_access` */
+
+DROP TABLE IF EXISTS `login_access`;
+
+CREATE TABLE `login_access` (
+  `accountID` int(10) unsigned NOT NULL,
+  `accessType` tinyint(3) unsigned NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

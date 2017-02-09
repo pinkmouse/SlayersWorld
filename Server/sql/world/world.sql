@@ -1,6 +1,6 @@
 /*
-SQLyog Ultimate v11.11 (64 bit)
-MySQL - 5.5.52-0+deb7u1 : Database - world
+SQLyog Community v12.3.2 (32 bit)
+MySQL - 5.7.17-log : Database - world
 *********************************************************************
 */
 
@@ -16,42 +16,6 @@ CREATE DATABASE /*!32312 IF NOT EXISTS*/`world` /*!40100 DEFAULT CHARACTER SET u
 
 USE `world`;
 
-/*Table structure for table `characters` */
-
-DROP TABLE IF EXISTS `characters`;
-
-CREATE TABLE `characters` (
-  `accountID` int(10) unsigned DEFAULT '0',
-  `characterID` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `name` tinytext NOT NULL,
-  `skinID` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `level` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `health` tinyint(3) unsigned NOT NULL DEFAULT '100',
-  `alignment` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `mapID` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `posX` int(10) unsigned NOT NULL DEFAULT '0',
-  `posY` int(10) unsigned NOT NULL DEFAULT '0',
-  `orientation` smallint(5) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`characterID`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
-
-/*Data for the table `characters` */
-
-/*Table structure for table `characters_respawn` */
-
-DROP TABLE IF EXISTS `characters_respawn`;
-
-CREATE TABLE `characters_respawn` (
-  `characterID` int(11) DEFAULT '300',
-  `posX` int(11) DEFAULT '300',
-  `posY` int(11) DEFAULT '300',
-  `mapID` smallint(6) DEFAULT '0',
-  `orientation` tinyint(4) DEFAULT '0',
-  UNIQUE KEY `characterID` (`characterID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-/*Data for the table `characters_respawn` */
-
 /*Table structure for table `creature` */
 
 DROP TABLE IF EXISTS `creature`;
@@ -63,11 +27,7 @@ CREATE TABLE `creature` (
   `posX` int(11) NOT NULL DEFAULT '0',
   `posY` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
-
-/*Data for the table `creature` */
-
-insert  into `creature`(`id`,`mapID`,`entry`,`posX`,`posY`) values (1,0,1,100,200),(2,0,2,120,200),(3,0,1,160,160),(4,0,1,200,200),(5,0,2,200,300),(6,0,2,160,260),(7,0,2,130,250),(8,0,1,350,300);
+) ENGINE=InnoDB AUTO_INCREMENT=57 DEFAULT CHARSET=utf8;
 
 /*Table structure for table `creature_template` */
 
@@ -83,16 +43,32 @@ CREATE TABLE `creature_template` (
   `dexterity` tinyint(4) NOT NULL DEFAULT '0',
   `xp` tinyint(4) NOT NULL DEFAULT '0',
   `state` tinyint(4) NOT NULL DEFAULT '0',
-  `maxRay` mediumint(9) NOT NULL DEFAULT '5',
+  `maxRay` mediumint(9) unsigned NOT NULL DEFAULT '5',
+  `maxVision` mediumint(9) unsigned NOT NULL DEFAULT '3',
+  `movingTimeMin` float NOT NULL DEFAULT '1',
+  `movingTimeMax` float NOT NULL DEFAULT '2',
+  `stopTimeMin` float NOT NULL DEFAULT '1',
+  `stopTimeMax` float NOT NULL DEFAULT '2',
   `respawnTime` int(11) NOT NULL DEFAULT '5000',
   `rank` tinyint(4) NOT NULL DEFAULT '0',
   `aiType` tinyint(4) NOT NULL DEFAULT '0',
+  `faction` tinyint(4) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`entry`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+
+/*Table structure for table `gossip` */
+
+DROP TABLE IF EXISTS `gossip`;
+
+CREATE TABLE `gossip` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `typeUnit` tinyint(4) unsigned NOT NULL,
+  `unitEntry` int(11) unsigned NOT NULL,
+  `type` tinyint(4) unsigned NOT NULL,
+  `data1` int(11) DEFAULT NULL,
+  `msg` varchar(50) DEFAULT NULL,
+  KEY `id` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
-
-/*Data for the table `creature_template` */
-
-insert  into `creature_template`(`entry`,`skinID`,`name`,`level`,`force`,`stamina`,`dexterity`,`xp`,`state`,`maxRay`,`respawnTime`,`rank`,`aiType`) values (1,1,'blob',0,0,0,0,20,0,5,5000,0,0),(2,66,'chevalier',0,0,0,0,10,0,5,5000,0,1);
 
 /*Table structure for table `level_xp` */
 
@@ -103,24 +79,68 @@ CREATE TABLE `level_xp` (
   `xp` mediumint(8) unsigned NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Data for the table `level_xp` */
+/*Table structure for table `objectif_quest_template` */
 
-insert  into `level_xp`(`level`,`xp`) values (1,50),(2,60),(3,70);
+DROP TABLE IF EXISTS `objectif_quest_template`;
 
-/*Table structure for table `login` */
+CREATE TABLE `objectif_quest_template` (
+  `questID` int(10) unsigned NOT NULL,
+  `id` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `typeID` tinyint(3) unsigned NOT NULL,
+  `data0` int(11) NOT NULL DEFAULT '-1',
+  `data1` int(11) NOT NULL DEFAULT '-1',
+  `data2` int(11) NOT NULL DEFAULT '-1',
+  `data3` int(11) NOT NULL DEFAULT '-1'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `login`;
+/*Table structure for table `quest_template` */
 
-CREATE TABLE `login` (
+DROP TABLE IF EXISTS `quest_template`;
+
+CREATE TABLE `quest_template` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `login` varchar(50) NOT NULL,
-  `password` varchar(50) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+  `repetitionType` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  KEY `id` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
-/*Data for the table `login` */
+/*Table structure for table `spell_effect` */
 
-insert  into `login`(`id`,`login`,`password`) values (4,'test2@test','098f6bcd4621d373cade4e832627b4f6');
+DROP TABLE IF EXISTS `spell_effect`;
+
+CREATE TABLE `spell_effect` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `effectType` tinyint(4) DEFAULT NULL,
+  `target` tinyint(3) unsigned NOT NULL,
+  `basepoint1` int(11) NOT NULL DEFAULT '0',
+  `basepoint2` int(11) NOT NULL DEFAULT '0',
+  `basepoint3` int(11) NOT NULL DEFAULT '0',
+  `basepoint4` int(11) NOT NULL DEFAULT '0',
+  `radiusMin` float DEFAULT '0',
+  `radiusMax` float DEFAULT '0',
+  KEY `id` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+
+/*Table structure for table `spell_template` */
+
+DROP TABLE IF EXISTS `spell_template`;
+
+CREATE TABLE `spell_template` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `level` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `visualID` int(10) NOT NULL DEFAULT '-1',
+  `visualIDTarget` int(11) NOT NULL DEFAULT '-1',
+  `castTime` int(10) unsigned NOT NULL DEFAULT '0',
+  `cooldown` int(10) unsigned NOT NULL DEFAULT '0',
+  `speed` float unsigned NOT NULL DEFAULT '0',
+  `resourceType` tinyint(4) NOT NULL DEFAULT '-1',
+  `resourceNb` int(11) NOT NULL DEFAULT '0',
+  `effect1` int(11) NOT NULL DEFAULT '-1',
+  `effect2` int(11) NOT NULL DEFAULT '-1',
+  `effect3` int(11) NOT NULL DEFAULT '-1',
+  `effect4` int(11) NOT NULL DEFAULT '-1',
+  `name` text,
+  KEY `id` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
