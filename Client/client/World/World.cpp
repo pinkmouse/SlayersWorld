@@ -28,10 +28,12 @@ bool World::InitializeConnection()
 {
 	if (!g_Socket->Connection(m_Ip))
 	{
-		printf("Error Connection...\n");
+        m_InterfaceManager->SetSystemMsg("Connection failed");
 		return false;
 	}
+
     g_Socket->setBlocking(false);
+    g_Socket->SendAuth(m_Credentials.first, m_Credentials.second);
 	return true;
 }
 
@@ -57,8 +59,6 @@ bool World::Initialize()
 
     if (!InitializeWindow())
         return false;
-    while (!InitializeConnection()) ///< While not connected, wait for connection
-        ;
 
 	m_MapManager->InitializeMaps();
 	m_PacketHandler->LoadPacketHandlerMap();
@@ -67,18 +67,23 @@ bool World::Initialize()
 
 void World::Login(const std::string& login, const std::string& password)
 {
+    m_Credentials.first = login;
+    m_Credentials.second = password;
     m_InterfaceManager->SetSystemMsg("Connection...");
-    g_Socket->SendAuth(login, password);
+    //m_InterfaceManager->SetSystemMsg("Connection...");
 }
 
 void World::Run()
 {
 	while (m_Run)
 	{
-        if (!UpdateSocket())
+        if (!g_Socket->IsConnected())
+            InitializeConnection();
+        else if (!UpdateSocket())
         {
-            End();
-            continue;
+            m_InterfaceManager->SetSystemMsg("Disconnected");
+            delete g_Player;
+            g_Player = nullptr;
         }
         sf::Time l_Diff = m_Clock.restart();
         if (m_PacketHandler->HasMinimalRequiered())
@@ -94,14 +99,11 @@ bool World::UpdateSocket()
 {
 	WorldPacket l_Packet;
 	sf::Socket::Status l_SocketStatus;
-	l_SocketStatus = g_Socket->receive(l_Packet);
+	l_SocketStatus = g_Socket->Receive(l_Packet);
 	if (l_SocketStatus == sf::Socket::Status::Done) ///< Reception OK
 		m_PacketHandler->OperatePacket(l_Packet);
 	if (l_SocketStatus == sf::Socket::Status::Disconnected) ///< Disconnecetd
-	{
-		printf("Disco\n");
 		return false;
-	}
 	return true;
 }
 

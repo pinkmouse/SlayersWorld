@@ -32,7 +32,7 @@ bool Graphics::CreateWindow(uint32 p_X, uint32 p_Y, float p_Zoom)
     m_ViewInterface = m_Window.getDefaultView();
 	m_View.zoom(p_Zoom);
 	m_Window.setView(m_View);
-    //m_Window.setFramerateLimit(40);
+    //m_Window.setFramerateLimit(10);
     m_Window.setVerticalSyncEnabled(true);
 
 	m_TileSet = new TileSet();

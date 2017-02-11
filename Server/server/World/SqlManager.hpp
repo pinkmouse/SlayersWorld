@@ -32,6 +32,7 @@ public:
     Player* GetNewPlayer(uint32);
     void AddNewPlayer(uint32);
     void AddKeyDefaultBindsForAccount(uint32);
+    void ReplaceKeyBindsForAccount(uint32, eKeyBoardAction, uint8);
     std::string GetLoginName(uint32);
     int16 GetLevel(const std::string &);
     WorldPosition GetPosition(const std::string &);

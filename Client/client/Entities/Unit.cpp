@@ -15,6 +15,10 @@ Unit::Unit(uint16 p_ID, TypeUnit p_Type) :
     m_ID = p_ID;
     m_Opacity = 0;
     m_DiffTimeOpactiy = 0;
+
+    m_CastTime.first = 0;
+    m_CastTime.second = 0;
+    
     m_MovementHandler = new MovementHandler(GetSizeX(), GetSizeY());
     m_SkinZoomFactor = SKIN_ZOOM_FACTOR_DEFAULT;
     m_Resources.clear();
@@ -98,6 +102,11 @@ void Unit::Update(sf::Time p_Diff)
             ++l_It;
         }
     }
+
+    if (m_CastTime.second <= p_Diff.asMicroseconds())
+        m_CastTime.second = 0;
+    else
+        m_CastTime.second -= p_Diff.asMicroseconds();
 }
 
 uint8 Unit::GetOpacity()
@@ -286,6 +295,27 @@ void Unit::AddDamageLog(const DamageInfo & p_Damage)
 {
 	m_HistoryDamage.push_back(std::pair<DamageInfo, uint32>(p_Damage, MAX_HISTORY_LOG_TIME));
 }
+
+void Unit::LaunchCastBar(uint16 p_Timer)
+{
+    m_CastTime.first = p_Timer;
+    m_CastTime.second = p_Timer;
+}
+
+void Unit::CleanCastBar()
+{
+    m_CastTime.first = 0;
+    m_CastTime.second = 0;
+}
+
+uint8 Unit::GetCastPct()
+{
+    if (m_CastTime.first == 0 || m_CastTime.second == 0)
+        return 0;
+
+    return (uint8)((m_CastTime.first - m_CastTime.second) / (m_CastTime.first));
+}
+
 
 std::vector<std::pair<DamageInfo, uint32>> Unit::GetDamageLog()
 {

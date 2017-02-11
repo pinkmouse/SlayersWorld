@@ -8,12 +8,18 @@
 Spell::Spell(SpellTemplate* p_SpellTemplate) :
     m_SpellTemplate(p_SpellTemplate)
 {
+    m_CastTimer = 0;
     m_SpellEffectsMap[SpellEffectType::Damage] = &Spell::EffectDamage;
     m_SpellEffectsMap[SpellEffectType::Heal] = &Spell::EffectHeal;
 }
 
 Spell::~Spell()
 {
+}
+
+SpellTemplate* Spell::GetTemplate() const
+{
+    return m_SpellTemplate;
 }
 
 bool Spell::Prepare(Unit* p_Caster)
@@ -59,6 +65,9 @@ bool Spell::Prepare(Unit* p_Caster)
         ResourceNeed l_ResourceNedd = (*l_It);
         p_Caster->AddResourceNb(l_ResourceNedd.m_ResourceType, -l_ResourceNedd.m_Nb);
     }
+
+    /// ADD CAST TIME
+    SetCastTime((uint64)m_SpellTemplate->GetCastTime() * 1000);
     return true;
 }
 
@@ -74,6 +83,21 @@ void Spell::EffectDamage(Unit* p_Target, SpellEffect* p_SpellEffect)
         l_DamageInfo.m_Damage -= (l_LevelDiff * -2);
 
     m_Caster->DealDamage(p_Target, l_DamageInfo);
+}
+
+void Spell::SetCastTime(uint64 p_CastTime)
+{
+    m_CastTimer = p_CastTime;
+}
+
+uint64 Spell::GetCastTime() const
+{
+    return m_CastTimer;
+}
+
+bool Spell::IsReadyToLaunch() const
+{
+    return m_CastTimer == 0;
 }
 
 void Spell::EffectHeal(Unit* p_Target, SpellEffect* p_SpellEffect)
@@ -118,6 +142,7 @@ void Spell::LaunchEffects()
         else
             printf("Spell type: %d Unknow\n", l_SpellEffect->m_EffectID);
     }
+    delete this;
 }
 
 std::vector<Unit*> Spell::SearchTargets(SpellTarget p_TargetType, float p_RadiusMax, float p_RadiusMin)

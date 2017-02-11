@@ -37,6 +37,7 @@ Unit::Unit(uint16 p_ID, TypeUnit p_Type, eFactionType p_FactionType)
     m_RespawnTime = 0;
     
     m_Victim = nullptr;
+    m_CurrentSpell = nullptr;
     if (m_Type == TypeUnit::CREATURE)
         m_MovementHandler = new MovementHandlerCreature(this, m_SizeX, m_SizeY);
     else
@@ -148,6 +149,32 @@ void Unit::UpdateRegen(sf::Time p_Diff)
     }
 }
 
+void Unit::UpdateSpell(sf::Time p_Diff)
+{
+    if (m_CurrentSpell == nullptr)
+        return;
+
+    uint64 m_ActualTimer = m_CurrentSpell->GetCastTime();
+    if (p_Diff.asMicroseconds() >= m_ActualTimer)
+        m_CurrentSpell->SetCastTime(0);
+    else
+        m_CurrentSpell->SetCastTime(m_ActualTimer - p_Diff.asMicroseconds()); ///< /1000 to convert micro to milli
+
+    if (m_CurrentSpell->IsReadyToLaunch())
+    {
+        /// Send caster visual
+        if (m_CurrentSpell->GetTemplate()->GetVisualID() >= 0)
+        {
+            PacketUnitPlayVisual l_Packet;
+            l_Packet.BuildPacket(GetType(), GetID(), (uint8)m_CurrentSpell->GetTemplate()->GetVisualID());
+            m_Map->SendToSet(l_Packet.m_Packet, this);
+        }
+
+        m_CurrentSpell->LaunchEffects();
+        m_CurrentSpell = nullptr;
+    }
+}
+
 void Unit::UpdateCooldowns(sf::Time p_Diff)
 {
     for (std::map< uint16, uint64 >::iterator l_It = m_ListSpellID.begin(); l_It != m_ListSpellID.end(); ++l_It)
@@ -172,6 +199,7 @@ void Unit::Update(sf::Time p_Diff)
     UpdateRegen(p_Diff);
     UpdateGossip(p_Diff);
     UpdateCooldowns(p_Diff);
+    UpdateSpell(p_Diff);
     UpdateVictims();
 
     if (m_MovementHandler == nullptr)
@@ -760,9 +788,10 @@ void Unit::UpdateVictims()
     }
 }
 
-void Unit::AddSpellID(uint16 p_ID, uint64 p_Cooldown)
+void Unit::AddSpellID(uint16 p_SpellID, uint64 p_Cooldown)
 {
-    m_ListSpellID[p_ID] = p_Cooldown;
+    m_ListSpellID[p_SpellID] = 0;
+    AddSpellCooldown(p_SpellID, p_Cooldown);
 }
 
 std::map< uint16, uint64 >* Unit::GetSpellList()
@@ -802,15 +831,17 @@ void Unit::CastSpell(uint16 p_ID)
     if (!l_Spell->Prepare(this))
         return;
 
-    /// Send caster visual
-    if (l_SpellTemplate->GetVisualID() >= 0)
-    {
-        PacketUnitPlayVisual l_Packet;
-        l_Packet.BuildPacket(GetType(), GetID(), (uint8)l_SpellTemplate->GetVisualID());
-        m_Map->SendToSet(l_Packet.m_Packet, this);
-    }
+    SetCurrentSpell(l_Spell);
+}
 
-    l_Spell->LaunchEffects();
+void Unit::SetCurrentSpell(Spell* p_Spell)
+{
+    m_CurrentSpell = p_Spell;
+}
+
+Spell* Unit::GetCurrentSpell() const
+{
+    return m_CurrentSpell;
 }
 
 void Unit::CleanAttackers()

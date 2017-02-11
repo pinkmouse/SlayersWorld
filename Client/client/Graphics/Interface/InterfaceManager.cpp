@@ -4,7 +4,9 @@
 InterfaceManager::InterfaceManager(Events* p_Events) :
     m_Events(p_Events),
     m_WritingField(new WritingField()),
-    m_HistoryField(new HistoryField())
+    m_HistoryField(new HistoryField()),
+    m_CastBarTimer(0),
+    m_CastBarBaseTime(0)
 {
     m_Events->SetWritingField(m_WritingField);
     m_Events->SetHistoryField(m_HistoryField);
@@ -38,6 +40,10 @@ void InterfaceManager::Initialize()
     l_FileSystemName = "xp.png";
     if (!m_XpTexture.loadFromFile(IMG_FOLDER + l_FileSystemName))
         printf("Load SystemImg Xp Failed\n");
+
+    l_FileSystemName = "castBar.png";
+    if (!m_CastBarTexture.loadFromFile(IMG_FOLDER + l_FileSystemName))
+        printf("Load SystemImg Cast Bar Failed\n");
 
     l_FileSystemName = "background.png";
     if (!m_Background.loadFromFile(IMG_FOLDER + l_FileSystemName))
@@ -109,7 +115,19 @@ TileSprite InterfaceManager::GetXpBar(bool p_Full, uint8 p_Pct)
 
     TileSprite l_TileSprite;
     l_TileSprite.setTexture(m_XpTexture);
-    l_TileSprite.setTextureRect(sf::IntRect(0, XP_BAR_SIZE_Y * l_Full, XP_BAR_SIZE_X, XP_BAR_SIZE_Y));
+    l_TileSprite.setTextureRect(sf::IntRect(0, (m_XpTexture.getSize().y / 2) * l_Full, m_XpTexture.getSize().x, m_XpTexture.getSize().y / 2));
+    return l_TileSprite;
+}
+
+TileSprite InterfaceManager::GetCastBar(bool p_Full, uint8 p_Pct)
+{
+    uint8 l_Full = 0;
+    if (p_Full)
+        l_Full = 1;
+
+    TileSprite l_TileSprite;
+    l_TileSprite.setTexture(m_CastBarTexture);
+    l_TileSprite.setTextureRect(sf::IntRect(0, (m_CastBarTexture.getSize().y / 2) * l_Full, m_CastBarTexture.getSize().x, m_CastBarTexture.getSize().y / 2));
     return l_TileSprite;
 }
 
@@ -147,10 +165,15 @@ void InterfaceManager::Update(sf::Time p_Diff)
             continue;
         }
 
-        printf("-> %d:%d\n", (*l_It).first, (*l_It).second);
+        //printf("-> %d:%d\n", (*l_It).first, (*l_It).second);
         (*l_It).second -= p_Diff.asMicroseconds();
         ++l_It;
     }
+
+    if (m_CastBarTimer < p_Diff.asMicroseconds())
+        m_CastBarTimer = 0;
+    else
+        m_CastBarTimer -= p_Diff.asMicroseconds();
 }
 
 void InterfaceManager::DrawStartingPage(Window & p_Window)
@@ -194,7 +217,7 @@ void InterfaceManager::Draw(Window & p_Window)
         return;
 
     /// Draw Starting
-    if (g_Player == nullptr)
+    if (/*!g_Socket->IsConnected() || */g_Player == nullptr)
     {
         DrawStartingPage(p_Window);
         return;
@@ -202,36 +225,51 @@ void InterfaceManager::Draw(Window & p_Window)
 
     /// Draw Flask Life
     TileSprite l_FlaskEmpty = GetFlask(0, false);
-    l_FlaskEmpty.setPosition(0, Y_WINDOW - (FLASK_SIZE_Y * FLASK_SCALE) - (XP_BAR_SIZE_Y * XP_BAR_SCALE));
+    l_FlaskEmpty.setPosition(0, Y_WINDOW - (FLASK_SIZE_Y * FLASK_SCALE) - (m_XpTexture.getSize().y / 2 * XP_BAR_SCALE));
     l_FlaskEmpty.setScale(FLASK_SCALE, FLASK_SCALE);
     p_Window.draw(l_FlaskEmpty);
     TileSprite l_Flask = GetFlask(0, true);
     l_Flask.setTextureRect(sf::IntRect(0, ((FLASK_SIZE_Y - FLASK_OFFSET_TOP - FLASK_OFFSET_BOTTOM) * (1.0f - ((float)g_Player->GetResourceNb(eResourceType::Health) / 100.0f))) + FLASK_OFFSET_TOP, FLASK_SIZE_X, ((FLASK_SIZE_Y - FLASK_OFFSET_TOP - FLASK_OFFSET_BOTTOM) * ((float)g_Player->GetResourceNb(eResourceType::Health) / 100.0f))));
-    l_Flask.setPosition(0, Y_WINDOW - (XP_BAR_SIZE_Y * XP_BAR_SCALE) - (FLASK_OFFSET_BOTTOM * FLASK_SCALE) - (((FLASK_SIZE_Y - FLASK_OFFSET_TOP - FLASK_OFFSET_BOTTOM) * ((float)g_Player->GetResourceNb(eResourceType::Health) / 100.0f)) * FLASK_SCALE));
+    l_Flask.setPosition(0, Y_WINDOW - (m_XpTexture.getSize().y / 2 * XP_BAR_SCALE) - (FLASK_OFFSET_BOTTOM * FLASK_SCALE) - (((FLASK_SIZE_Y - FLASK_OFFSET_TOP - FLASK_OFFSET_BOTTOM) * ((float)g_Player->GetResourceNb(eResourceType::Health) / 100.0f)) * FLASK_SCALE));
     l_Flask.setScale(FLASK_SCALE, FLASK_SCALE);
     p_Window.draw(l_Flask);
 
     /// Draw Flask Mana
     l_FlaskEmpty = GetFlask(1, false);
-    l_FlaskEmpty.setPosition(X_WINDOW - (FLASK_SIZE_X * FLASK_SCALE), Y_WINDOW - (FLASK_SIZE_Y * FLASK_SCALE) - (XP_BAR_SIZE_Y * XP_BAR_SCALE));
+    l_FlaskEmpty.setPosition(X_WINDOW - (FLASK_SIZE_X * FLASK_SCALE), Y_WINDOW - (FLASK_SIZE_Y * FLASK_SCALE) - (m_XpTexture.getSize().y / 2 * XP_BAR_SCALE));
     l_FlaskEmpty.setScale(FLASK_SCALE, FLASK_SCALE);
     p_Window.draw(l_FlaskEmpty);
     l_Flask = GetFlask(1, true);
     l_Flask.setTextureRect(sf::IntRect(FLASK_SIZE_X * 2, ((FLASK_SIZE_Y - FLASK_OFFSET_TOP - FLASK_OFFSET_BOTTOM) * (1.0f - ((float)g_Player->GetResourceNb(eResourceType::Mana) / 100.0f))) + FLASK_OFFSET_TOP, FLASK_SIZE_X, ((FLASK_SIZE_Y - FLASK_OFFSET_TOP - FLASK_OFFSET_BOTTOM) * ((float)g_Player->GetResourceNb(eResourceType::Mana) / 100.0f))));
-    l_Flask.setPosition(X_WINDOW - (FLASK_SIZE_X * FLASK_SCALE), Y_WINDOW - (XP_BAR_SIZE_Y * XP_BAR_SCALE) - (FLASK_OFFSET_BOTTOM * FLASK_SCALE) - (((FLASK_SIZE_Y - FLASK_OFFSET_TOP - FLASK_OFFSET_BOTTOM) * ((float)g_Player->GetResourceNb(eResourceType::Mana) / 100.0f)) * FLASK_SCALE));
+    l_Flask.setPosition(X_WINDOW - (FLASK_SIZE_X * FLASK_SCALE), Y_WINDOW - (m_XpTexture.getSize().y / 2 * XP_BAR_SCALE) - (FLASK_OFFSET_BOTTOM * FLASK_SCALE) - (((FLASK_SIZE_Y - FLASK_OFFSET_TOP - FLASK_OFFSET_BOTTOM) * ((float)g_Player->GetResourceNb(eResourceType::Mana) / 100.0f)) * FLASK_SCALE));
     l_Flask.setScale(FLASK_SCALE, FLASK_SCALE);
     p_Window.draw(l_Flask);
 
     /// Draw XP bar
     TileSprite l_XpBarEmpty = GetXpBar(false);
-    l_XpBarEmpty.setPosition(0, Y_WINDOW - (XP_BAR_SIZE_Y * XP_BAR_SCALE));
+    l_XpBarEmpty.setPosition(0, Y_WINDOW - (m_XpTexture.getSize().y / 2 * XP_BAR_SCALE));
     l_XpBarEmpty.setScale(XP_BAR_SCALE, XP_BAR_SCALE);
     p_Window.draw(l_XpBarEmpty);
     TileSprite l_XpBar = GetXpBar(true);
-    l_XpBar.setTextureRect(sf::IntRect(0, XP_BAR_SIZE_Y, (XP_BAR_SIZE_X / 100.0f) * g_Player->GetXpPct(), XP_BAR_SIZE_Y));
-    l_XpBar.setPosition(0, Y_WINDOW - (XP_BAR_SIZE_Y * XP_BAR_SCALE));
+    l_XpBar.setTextureRect(sf::IntRect(0, m_XpTexture.getSize().y / 2, (m_XpTexture.getSize().x / 100.0f) * g_Player->GetXpPct(), m_XpTexture.getSize().y / 2));
+    l_XpBar.setPosition(0, Y_WINDOW - (m_XpTexture.getSize().y / 2 * XP_BAR_SCALE));
     l_XpBar.setScale(XP_BAR_SCALE, XP_BAR_SCALE);
     p_Window.draw(l_XpBar);
+
+    /// Draw CAST Bar
+    uint8 l_CastPct = GetCastPct();
+    if (l_CastPct)
+    {
+        TileSprite l_CastBarEmpty = GetCastBar(false);
+        l_CastBarEmpty.setPosition((X_WINDOW / 2) - (m_CastBarTexture.getSize().x / 2 * XP_BAR_SCALE), Y_WINDOW - 180);
+        l_CastBarEmpty.setScale(XP_BAR_SCALE, XP_BAR_SCALE);
+        p_Window.draw(l_CastBarEmpty);
+        TileSprite l_CastBar = GetCastBar(true);
+        l_CastBar.setTextureRect(sf::IntRect(0, m_CastBarTexture.getSize().y / 2, (m_CastBarTexture.getSize().x / 100.0f) * GetCastPct(), m_CastBarTexture.getSize().y / 2));
+        l_CastBar.setPosition((X_WINDOW / 2) - (m_CastBarTexture.getSize().x / 2 * XP_BAR_SCALE), Y_WINDOW - 180);
+        l_CastBar.setScale(XP_BAR_SCALE, XP_BAR_SCALE);
+        p_Window.draw(l_CastBar);
+    }
 
     /// Draw chat bar
     if (m_WritingField->IsFieldOpen())
@@ -295,7 +333,7 @@ int16 InterfaceManager::GetBindForKey(uint8 p_Key)
     return m_KeyBoardBind[p_Key];
 }
 
-void InterfaceManager::AddBlockingBind(uint8 p_BindType, uint32 p_Time)
+void InterfaceManager::AddBlockingBind(uint8 p_BindType, uint16 p_Time)
 {
     m_BlockingBinds[p_BindType] = (uint64)p_Time * 1000;
 }
@@ -305,4 +343,19 @@ bool InterfaceManager::IsBlockingBind(uint8 p_BindType)
     if (m_BlockingBinds.find(p_BindType) == m_BlockingBinds.end())
         return false;
     return true;
+}
+
+void InterfaceManager::LaunchCastBar(uint16 p_Time)
+{
+    m_CastBarBaseTime = p_Time;
+    m_CastBarTimer = (uint64)p_Time * 1000;
+}
+
+uint8 InterfaceManager::GetCastPct()
+{
+    if (m_CastBarTimer == 0 || m_CastBarBaseTime == 0)
+        return 0;
+
+    uint16 m_CastTimer16 = (uint16)(m_CastBarTimer / 1000);
+    return (uint8)((m_CastBarBaseTime - m_CastTimer16) / (m_CastBarBaseTime / 100));
 }

@@ -25,6 +25,7 @@ enum SMSG : uint8
     S_LogDamage = 16,
     S_SwitchMap = 17,
     S_WarningMsg = 18,
+    S_CastBar = 19,
     S_UnitGoDirection = 20,
     S_UnitStopMovement = 21,
     S_UnitUpdatePosition = 22,
@@ -362,15 +363,31 @@ struct PacketKeyBoardBlock
     WorldPacket m_Packet;
     uint8 m_PacketID;
     uint8 m_TypeAction;
-    uint32 m_Time;
+    uint16 m_Time;
 
     PacketKeyBoardBlock() :
         m_PacketID(SMSG::S_BlockBind) {}
 
-    void BuildPacket(uint8 p_TypeAction, uint32 p_Time)
+    void BuildPacket(uint8 p_TypeAction, uint16 p_Time)
     {
         m_Packet << m_PacketID << p_TypeAction << p_Time;
         m_TypeAction = p_TypeAction;
+        m_Time = p_Time;
+    }
+};
+
+struct PacketCastBar
+{
+    WorldPacket m_Packet;
+    uint8 m_PacketID;
+    uint8 m_Time;
+
+    PacketCastBar() :
+        m_PacketID(SMSG::S_CastBar) {}
+
+    void BuildPacket(uint8 p_Time)
+    {
+        m_Packet << m_PacketID << p_Time;
         m_Time = p_Time;
     }
 };

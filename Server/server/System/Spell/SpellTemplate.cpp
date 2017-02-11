@@ -36,6 +36,11 @@ uint32 SpellTemplate::GetCooldown() const
     return m_Cooldown;
 }
 
+uint16 SpellTemplate::GetCastTime() const
+{
+    return m_CastTime;
+}
+
 std::vector<SpellEffect*>* SpellTemplate::GetListEffect()
 {
     return &m_ListEffect;

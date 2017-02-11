@@ -41,8 +41,7 @@ int main(int argc, char** argv)
             ;
     }
 
-	l_World.Login(l_Login, l_Password);
-
+    l_World.Login(l_Login, l_Password);
 	l_World.Run();
 
 	return 0;

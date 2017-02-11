@@ -160,7 +160,8 @@ enum eKeyBoardAction
     KeyBoardHistoryMsg,
     KeyBoardAutoAttack,
     KeyBoardSpell0,
-    KeyBoardSpell1
+    KeyBoardSpell1,
+    MaxKeyBoard
 };
 
 enum eActionType

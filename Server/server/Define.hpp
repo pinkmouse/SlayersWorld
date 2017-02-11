@@ -143,9 +143,10 @@ struct ObjectifQuestTemplate
     int16 m_Data1;
     int16 m_Data2;
     int16 m_Data3;
+    std::string m_Entitled;
 
-    ObjectifQuestTemplate(uint8 p_Id, eObjectifType p_ObjectifType, int16 p_Data0, int16 p_Data1, int16 p_Data2, int16 p_Data3) :
-        m_Id(p_Id), m_ObjectifType(p_ObjectifType), m_Data0(p_Data0), m_Data1(p_Data1), m_Data2(p_Data2), m_Data3(m_Data3) {}
+    ObjectifQuestTemplate(uint8 p_Id, eObjectifType p_ObjectifType, int16 p_Data0, int16 p_Data1, int16 p_Data2, int16 p_Data3, const std::string & p_Entitled) :
+        m_Id(p_Id), m_ObjectifType(p_ObjectifType), m_Data0(p_Data0), m_Data1(p_Data1), m_Data2(p_Data2), m_Data3(m_Data3), m_Entitled(p_Entitled) {}
 };
 
 struct ObjectifProgess
@@ -199,7 +200,8 @@ enum eKeyBoardAction
     KeyBoardHistoryMsg,
     KeyBoardAutoAttack,
     KeyBoardSpell0,
-    KeyBoardSpell1
+    KeyBoardSpell1,
+    MaxKeyBoard
 };
 
 struct DamageInfo

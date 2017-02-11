@@ -35,6 +35,7 @@ public:
     void HandleUnitPlayVisual(WorldPacket &);
     void HandleKeyBoardBind(WorldPacket &);
     void HandleKeyBindBlock(WorldPacket &);
+    void HandleCastBar(WorldPacket &);
 
 private:
 	MapManager* m_MapManager;

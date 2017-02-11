@@ -24,6 +24,7 @@ enum SMSG : uint8
     S_LogDamage = 16,
     S_SwitchMap = 17,
     S_WarningMsg = 18,
+    S_CastBar = 19,
     S_UnitGoDirection = 20,
     S_UnitStopMovement = 21,
     S_UnitUpdatePosition = 22,

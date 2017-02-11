@@ -38,6 +38,7 @@ void PacketHandler::LoadPacketHandlerMap()
     m_PacketHandleMap[SMSG::S_UnitPlayVisual] = &PacketHandler::HandleUnitPlayVisual;
     m_PacketHandleMap[SMSG::S_KeyBoardBind] = &PacketHandler::HandleKeyBoardBind;
     m_PacketHandleMap[SMSG::S_BlockBind] = &PacketHandler::HandleKeyBindBlock;
+    m_PacketHandleMap[SMSG::S_CastBar] = &PacketHandler::HandleCastBar;
 }
 
 void PacketHandler::HandleRemoveUnit(WorldPacket &p_Packet)
@@ -531,10 +532,19 @@ void PacketHandler::HandleKeyBoardBind(WorldPacket &p_Packet)
 void PacketHandler::HandleKeyBindBlock(WorldPacket &p_Packet)
 {
     uint8 l_TypeAction;
-    uint32 l_Time;
+    uint16 l_Time;
 
     p_Packet >> l_TypeAction;
     p_Packet >> l_Time;
 
     m_InterfaceManager->AddBlockingBind(l_TypeAction, l_Time);
+}
+
+void PacketHandler::HandleCastBar(WorldPacket &p_Packet)
+{
+    uint8 l_Time;
+
+    p_Packet >> l_Time;
+
+    m_InterfaceManager->LaunchCastBar((uint16)l_Time * 100);
 }

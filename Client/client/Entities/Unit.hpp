@@ -56,6 +56,9 @@ public:
 
     void AddVisualEffect(VisualEffect);
     std::vector< VisualEffect >  *GetVisualsEffect();
+    void LaunchCastBar(uint16);
+    uint8 GetCastPct();
+    void CleanCastBar();
 
     void Update(sf::Time);
 
@@ -73,6 +76,7 @@ protected:
     uint64 m_DiffTimeOpactiy;
 	std::vector< std::pair< DamageInfo, uint32 > > m_HistoryDamage;
     std::vector< VisualEffect > m_VisualEffects;
+    std::pair< uint64, uint64> m_CastTime;
     Map* m_Map;
 
     std::string m_Talk;

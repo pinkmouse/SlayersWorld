@@ -1,12 +1,14 @@
 #include "Player.hpp"
 #include "../World/WorldSocket.hpp"
+#include "../System/Spell/Spell.hpp"
 #include "../World/PacketDefine.hpp"
 #include "../Map/Map.hpp"
 #include "../Global.hpp"
 
-Player::Player(int32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_Health, uint8 p_Mana, uint8 p_Alignment, uint8 p_SkinID, uint16 p_MapID, uint32 p_PosX, uint32 p_PosY, Orientation p_Orientation, uint32 p_Xp, eAccessType p_AccessType) :
+Player::Player(uint32 p_AccountID, int32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_Health, uint8 p_Mana, uint8 p_Alignment, uint8 p_SkinID, uint16 p_MapID, uint32 p_PosX, uint32 p_PosY, Orientation p_Orientation, uint32 p_Xp, eAccessType p_AccessType) :
     Unit(p_ID, TypeUnit::PLAYER, eFactionType::Ally),
-    m_AccessType(p_AccessType)
+    m_AccessType(p_AccessType),
+    m_AccountID(p_AccountID)
 {
     InitializeCommands();
 
@@ -50,6 +52,11 @@ Player::~Player()
     {
         delete (*l_It).second;
     }
+}
+
+uint32 Player::GetAccountID() const
+{
+    return m_AccountID;
 }
 
 void Player::Update(sf::Time p_Diff)
@@ -253,7 +260,17 @@ void Player::UpdateQuests()
 
 void Player::AddKeyBoardBind(eKeyBoardAction p_Action, uint8 p_ID)
 {
+    if (p_ID >= sf::Keyboard::KeyCount)
+        return;
     m_KeyBoardBinds[p_Action] = p_ID;
+    g_SqlManager->ReplaceKeyBindsForAccount(GetAccountID(), p_Action, p_ID);
+}
+
+int16 Player::GetKeyBoardBind(eKeyBoardAction p_Action)
+{
+    if (m_KeyBoardBinds.find(p_Action) == m_KeyBoardBinds.end())
+        return -1;
+    return m_KeyBoardBinds[p_Action];
 }
 
 void Player::AddQuest(Quest* p_Quest)
@@ -282,10 +299,25 @@ void Player::AddSpellCooldown(uint16 p_SpellID, uint64 p_Time)
     if (l_BindSpell < 0)
         return;
 
+    /// Block bind of spell
     PacketKeyBoardBlock l_Packet;
-    l_Packet.BuildPacket((uint8)l_BindSpell, (uint32)(p_Time / 1000));
+    l_Packet.BuildPacket((uint8)l_BindSpell, (uint16)(p_Time / 1000));
     WorldSocket* l_Session = GetSession();
     l_Session->SendMsg(l_Packet.m_Packet);
+}
+
+void Player::SetCurrentSpell(Spell* p_Spell)
+{
+    if (p_Spell->GetCastTime() <= 0)
+        return;
+
+    /// Send Cast Bar visual
+    PacketCastBar l_Packet;
+    l_Packet.BuildPacket((uint8)((p_Spell->GetCastTime() / 1000) / 100));
+    WorldSocket* l_Session = GetSession();
+    l_Session->SendMsg(l_Packet.m_Packet);
+
+    Unit::SetCurrentSpell(p_Spell);
 }
 
 void Player::AddSpellBindToKey(uint16 p_SpellID, uint8 p_Bind)

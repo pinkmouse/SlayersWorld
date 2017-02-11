@@ -1,5 +1,6 @@
 #include "../Entities/Player.hpp"
 #include "../World/PacketDefine.hpp"
+#include "../World/WorldSocket.hpp"
 #include "../Global.hpp"
 #include  "../System/Quest/Quest.hpp"
 
@@ -13,6 +14,8 @@ void Player::InitializeCommands()
     m_CmdHandleMap["level"].second = &Player::HandleCommandLevel;
     m_CmdHandleMap["points"].first = eAccessType::Dummy;
 	m_CmdHandleMap["points"].second = &Player::HandleCommandAddPoint;
+    m_CmdHandleMap["bind"].first = eAccessType::Dummy;
+    m_CmdHandleMap["bind"].second = &Player::HandleBind;
     m_CmdHandleMap["save"].first = eAccessType::Dummy;
     m_CmdHandleMap["save"].second = &Player::HandleSave;
     m_CmdHandleMap["npc"].first = eAccessType::Moderator;
@@ -42,6 +45,36 @@ bool Player::HandleRegen(std::vector<std::string> p_ListCmd)
         return false;
 
     RegenerateAll();
+    return true;
+}
+
+bool Player::HandleBind(std::vector<std::string> p_ListCmd)
+{
+    if (p_ListCmd.empty())
+        return false;
+
+    eKeyBoardAction l_ActionKeyID = (eKeyBoardAction)atoi(p_ListCmd[0].c_str());
+    if (l_ActionKeyID >= eKeyBoardAction::MaxKeyBoard)
+    {
+        SendMsg("Bind: error bind unknow");
+        return true;
+    }
+
+    if (p_ListCmd.size() == 1)
+    {
+        SendMsg("Bind: " + std::to_string(GetKeyBoardBind(l_ActionKeyID)));
+    }
+    else if (p_ListCmd.size() == 2)
+    {
+        uint8 l_KeyBind = atoi(p_ListCmd[0].c_str());
+        if (l_KeyBind >= sf::Keyboard::KeyCount)
+        {
+            SendMsg("Bind: error key unknow");
+            return true;
+        }
+        AddKeyBoardBind(l_ActionKeyID, l_KeyBind);
+        GetSession()->SendKeyBoardBind(l_ActionKeyID, l_KeyBind);
+    }
     return true;
 }
 

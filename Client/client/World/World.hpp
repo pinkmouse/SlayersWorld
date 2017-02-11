@@ -34,5 +34,6 @@ private:
 	PacketHandler* m_PacketHandler;
     InterfaceManager* m_InterfaceManager;
 	Window m_Window;
+    std::pair<std::string, std::string> m_Credentials;
 };
 

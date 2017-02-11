@@ -6,7 +6,8 @@
 #include "../World/PacketDefine.hpp"
 
 
-Socket::Socket()
+Socket::Socket() :
+    m_Connected(false)
 {
 }
 
@@ -17,11 +18,16 @@ Socket::~Socket()
 
 bool Socket::Connection(const std::string & p_Ip)
 {
-    printf("Ip = %s\n", p_Ip.c_str());
+    //printf("Ip = %s\n", p_Ip.c_str());
 	sf::Socket::Status l_Status = this->connect(sf::IpAddress(p_Ip), PORT_SERVER);
 
 	if (l_Status == sf::Socket::Status::Done)
+    {
+        m_Connected = true;
 		return true;
+    }
+    else
+        m_Connected = false;
 	return false;
 }
 
@@ -103,4 +109,17 @@ void Socket::SendEventAction(const uint8 & p_Key)
     packet << l_ID << p_Key;
 
     send(packet);
+}
+
+bool Socket::IsConnected() const
+{
+    return m_Connected;
+}
+
+sf::Socket::Status Socket::Receive(WorldPacket & p_Packet)
+{
+    sf::Socket::Status l_Status = sf::TcpSocket::receive(p_Packet);
+    if (l_Status == sf::Socket::Status::Disconnected)
+        m_Connected = false;
+    return l_Status;
 }

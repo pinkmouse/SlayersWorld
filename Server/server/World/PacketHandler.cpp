@@ -157,6 +157,7 @@ void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldS
     p_Packet >> l_Password;
 
     int32 l_Id = g_SqlManager->GetIDLogin(l_Login, l_Password);
+    printf("===>Auth %d\n", l_Id);
 
     if (l_Id < 0)
     {
@@ -170,6 +171,7 @@ void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldS
         }
         else*/
             p_WorldSocket->SendAuthResponse(0); ///< Auth Failed
+            printf("Auth failed\n");
         return;
     }
     int32 l_IdCharacter = g_SqlManager->GetIDCharacter(l_Id);

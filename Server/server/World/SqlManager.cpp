@@ -127,6 +127,12 @@ void SqlManager::AddKeyDefaultBindsForAccount(uint32 p_AccountID)
     mysql_query(&m_MysqlCharacters, l_Query.c_str());
 }
 
+void SqlManager::ReplaceKeyBindsForAccount(uint32 p_AccountID, eKeyBoardAction p_Bind, uint8 p_Key)
+{
+    std::string l_Query = "REPLACE `account_key_binds` SET `key` = " + std::to_string(p_Key) + " WHERE `typeID` = " + std::to_string(p_Bind) + " AND `accountID` = " + std::to_string(p_AccountID) + ";";
+    mysql_query(&m_MysqlCharacters, l_Query.c_str());
+}
+
 Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
 {
     std::string l_Query = "SELECT characterID, name, level, health, mana, alignment, skinID, mapID, posX, posY, orientation, xp FROM characters WHERE accountID = '" + std::to_string(p_AccountID) + "'";
@@ -177,7 +183,7 @@ Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
         return GetNewPlayer(p_AccountID);
     }
     eAccessType l_PlayerAccessType = GetAccessType(p_AccountID);
-    l_Player = new Player(l_ID, l_Name, l_Lvl, l_Health, l_Mana, l_Alignment, l_SkinID, l_MapID, l_PosX, l_PosY, (Orientation)l_Orientation, l_Xp, l_PlayerAccessType);
+    l_Player = new Player(p_AccountID, l_ID, l_Name, l_Lvl, l_Health, l_Mana, l_Alignment, l_SkinID, l_MapID, l_PosX, l_PosY, (Orientation)l_Orientation, l_Xp, l_PlayerAccessType);
 	l_Player->SetPointsSet(GetPointsSetForPlayer(l_ID));
     l_Player->SetRespawnPosition(GetRespawnPositionForPlayer(l_ID));
     InitializeSpellsForPlayer(l_Player);
@@ -429,8 +435,8 @@ bool SqlManager::InitializeSpellsForPlayer(Player* p_Player)
     std::string l_Query = "SELECT `spellID`, `cooldown` FROM characters_spells WHERE `characterID` = '" + std::to_string(p_Player->GetID()) + "'";
     mysql_query(&m_MysqlCharacters, l_Query.c_str());
 
-    uint16 l_SpellID;
-    uint64 l_Cooldown;
+    uint16 l_SpellID = 0;
+    uint64 l_Cooldown = 0;
 
     MYSQL_RES *l_Result = NULL;
     MYSQL_ROW l_Row;
@@ -451,8 +457,8 @@ bool SqlManager::InitializeSpellsBinds(Player* p_Player)
     std::string l_Query = "SELECT `spellID`, `bindID` FROM characters_spell_binds WHERE `characterID` = '" + std::to_string(p_Player->GetID()) + "'";
     mysql_query(&m_MysqlCharacters, l_Query.c_str());
 
-    uint16 l_SpellID;
-    uint8 l_BindID;
+    uint16 l_SpellID = 0;
+    uint8 l_BindID = 0;
 
     MYSQL_RES *l_Result = NULL;
     MYSQL_ROW l_Row;
@@ -473,8 +479,8 @@ bool SqlManager::InitializeKeyBindsForAccount(uint32 p_Account, Player* p_Player
     std::string l_Query = "SELECT `typeID`, `key` FROM account_key_binds WHERE `accountID` = '" + std::to_string(p_Account) + "'";
     mysql_query(&m_MysqlCharacters, l_Query.c_str());
 
-    uint8 l_TypeID;
-    uint8 l_Key;
+    uint8 l_TypeID = 0;
+    uint8 l_Key = 0;
 
     MYSQL_RES *l_Result = NULL;
     MYSQL_ROW l_Row;
@@ -495,12 +501,12 @@ bool SqlManager::InitializeGossip(UnitManager* p_CreatureManager)
     std::string l_Query = "SELECT `id`, `typeUnit`, `unitEntry`, `type`, `data1`, `msg` FROM gossip";
     mysql_query(&m_MysqlWorld, l_Query.c_str());
 
-    uint16 l_ID;
-    uint8 l_TypeUnit;
-    uint16 l_UnitEntry;
-    uint8 l_GossipType;
-    uint32 l_Data1;
-    std::string l_Msg;
+    uint16 l_ID = 0;
+    uint8 l_TypeUnit = 0;
+    uint16 l_UnitEntry = 0;
+    uint8 l_GossipType = 0;
+    uint32 l_Data1 = 0;
+    std::string l_Msg = "";
 
     MYSQL_RES *l_Result = NULL;
     MYSQL_ROW l_Row;
@@ -680,6 +686,7 @@ bool  SqlManager::InitializeQuests()
     int16 l_Data1 = 0;
     int16 l_Data2 = 0;
     int16 l_Data3 = 0;
+    std::string l_Entitled = "";
 
     l_Result = mysql_use_result(&m_MysqlWorld);
     while ((l_Row = mysql_fetch_row(l_Result)))
@@ -692,7 +699,7 @@ bool  SqlManager::InitializeQuests()
         l_Data2 = atoi(l_Row[5]);
         l_Data3 = atoi(l_Row[6]);
 
-        ObjectifQuestTemplate* l_ObjectifQuestTemplate = new ObjectifQuestTemplate(l_IdObjective, (eObjectifType)l_TypeID, l_Data0, l_Data1, l_Data2, l_Data3);
+        ObjectifQuestTemplate* l_ObjectifQuestTemplate = new ObjectifQuestTemplate(l_IdObjective, (eObjectifType)l_TypeID, l_Data0, l_Data1, l_Data2, l_Data3, l_Entitled);
         g_QuestManager->AddObjectifToTemplate(l_QuestID, l_ObjectifQuestTemplate);
     }
     mysql_free_result(l_Result);

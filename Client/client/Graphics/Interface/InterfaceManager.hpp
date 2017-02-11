@@ -21,6 +21,7 @@ public:
     TileSprite GetBorderField(uint16, uint16);
     TileSprite GetFlask(uint8, bool, uint8 p_Pct = 100);
     TileSprite GetXpBar(bool, uint8 p_Pct = 100);
+    TileSprite GetCastBar(bool, uint8 p_Pct = 100);
     void Draw(Window &);
     void DrawStartingPage(Window &);
     void DrawWarnings(Window &);
@@ -30,13 +31,16 @@ public:
     void AddKeyBind(uint8, uint8);
     int16 GetBindForKey(uint8);
     void SetSystemMsg(const std::string &);
-    void AddBlockingBind(uint8, uint32);
+    void AddBlockingBind(uint8, uint16);
     bool IsBlockingBind(uint8);
+    void LaunchCastBar(uint16);
+    uint8 GetCastPct();
 
 private:
     sf::Texture                         m_SystemTexture;
     sf::Texture                         m_FlaskTexture;
     sf::Texture                         m_XpTexture;
+    sf::Texture                         m_CastBarTexture;
     sf::Texture                         m_Background;
     Events*                             m_Events;
     WritingField*                       m_WritingField;
@@ -46,4 +50,7 @@ private:
     std::map< eWarningMsg, std::string > m_WarningMsgsEnum;
     std::map< uint8, uint8 >             m_KeyBoardBind;
     std::map< uint8, uint64 >            m_BlockingBinds;
+
+    uint16                              m_CastBarBaseTime;
+    uint64                              m_CastBarTimer;
 };
