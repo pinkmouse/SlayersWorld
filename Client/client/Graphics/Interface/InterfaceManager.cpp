@@ -4,15 +4,16 @@
 InterfaceManager::InterfaceManager(Events* p_Events) :
     m_Events(p_Events),
     m_WritingField(new WritingField()),
-    m_HistoryField(new HistoryField()),
-    m_CastBarTimer(0),
-    m_CastBarBaseTime(0)
+    m_HistoryField(new HistoryField())
 {
     m_Events->SetWritingField(m_WritingField);
     m_Events->SetHistoryField(m_HistoryField);
 
     m_SystemMsg.setCharacterSize(30);
     m_SystemMsg.setColor(sf::Color::White);
+
+    m_ClockTxt.setCharacterSize(20);
+    m_ClockTxt.setColor(sf::Color::Red);
 
     InitializeWarningMsgs();
 }
@@ -169,11 +170,7 @@ void InterfaceManager::Update(sf::Time p_Diff)
         (*l_It).second -= p_Diff.asMicroseconds();
         ++l_It;
     }
-
-    if (m_CastBarTimer < p_Diff.asMicroseconds())
-        m_CastBarTimer = 0;
-    else
-        m_CastBarTimer -= p_Diff.asMicroseconds();
+    m_ClockTxt.setString(std::to_string(1000 / p_Diff.asMilliseconds()));
 }
 
 void InterfaceManager::DrawStartingPage(Window & p_Window)
@@ -194,6 +191,15 @@ void InterfaceManager::DrawStartingPage(Window & p_Window)
         m_SystemMsg.setFont(*g_Font);
         p_Window.draw(m_SystemMsg);
     }
+}
+
+void InterfaceManager::DrawClock(Window & p_Window)
+{
+    sf::Text    l_WarningMsg;
+
+    m_ClockTxt.setFont(*g_Font);
+    m_ClockTxt.setPosition(0.0f, 0.0f);
+    p_Window.draw(m_ClockTxt);
 }
 
 void InterfaceManager::DrawWarnings(Window & p_Window)
@@ -217,7 +223,7 @@ void InterfaceManager::Draw(Window & p_Window)
         return;
 
     /// Draw Starting
-    if (/*!g_Socket->IsConnected() || */g_Player == nullptr)
+    if (g_Player == nullptr)
     {
         DrawStartingPage(p_Window);
         return;
@@ -257,7 +263,7 @@ void InterfaceManager::Draw(Window & p_Window)
     p_Window.draw(l_XpBar);
 
     /// Draw CAST Bar
-    uint8 l_CastPct = GetCastPct();
+    uint8 l_CastPct = g_Player->GetCastPct();
     if (l_CastPct)
     {
         TileSprite l_CastBarEmpty = GetCastBar(false);
@@ -265,7 +271,7 @@ void InterfaceManager::Draw(Window & p_Window)
         l_CastBarEmpty.setScale(XP_BAR_SCALE, XP_BAR_SCALE);
         p_Window.draw(l_CastBarEmpty);
         TileSprite l_CastBar = GetCastBar(true);
-        l_CastBar.setTextureRect(sf::IntRect(0, m_CastBarTexture.getSize().y / 2, (m_CastBarTexture.getSize().x / 100.0f) * GetCastPct(), m_CastBarTexture.getSize().y / 2));
+        l_CastBar.setTextureRect(sf::IntRect(0, m_CastBarTexture.getSize().y / 2, (m_CastBarTexture.getSize().x / 100.0f) * l_CastPct, m_CastBarTexture.getSize().y / 2));
         l_CastBar.setPosition((X_WINDOW / 2) - (m_CastBarTexture.getSize().x / 2 * XP_BAR_SCALE), Y_WINDOW - 180);
         l_CastBar.setScale(XP_BAR_SCALE, XP_BAR_SCALE);
         p_Window.draw(l_CastBar);
@@ -298,6 +304,7 @@ void InterfaceManager::Draw(Window & p_Window)
         //p_Window.draw(m_WritingField->GetText());
     }
     DrawWarnings(p_Window);
+    DrawClock(p_Window);
 }
 
 void InterfaceManager::AddWarningMsg(const std::string & p_Msg)
@@ -343,19 +350,4 @@ bool InterfaceManager::IsBlockingBind(uint8 p_BindType)
     if (m_BlockingBinds.find(p_BindType) == m_BlockingBinds.end())
         return false;
     return true;
-}
-
-void InterfaceManager::LaunchCastBar(uint16 p_Time)
-{
-    m_CastBarBaseTime = p_Time;
-    m_CastBarTimer = (uint64)p_Time * 1000;
-}
-
-uint8 InterfaceManager::GetCastPct()
-{
-    if (m_CastBarTimer == 0 || m_CastBarBaseTime == 0)
-        return 0;
-
-    uint16 m_CastTimer16 = (uint16)(m_CastBarTimer / 1000);
-    return (uint8)((m_CastBarBaseTime - m_CastTimer16) / (m_CastBarBaseTime / 100));
 }

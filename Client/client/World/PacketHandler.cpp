@@ -542,9 +542,23 @@ void PacketHandler::HandleKeyBindBlock(WorldPacket &p_Packet)
 
 void PacketHandler::HandleCastBar(WorldPacket &p_Packet)
 {
+    uint8 l_TypeID;
+    uint16 l_ID;
     uint8 l_Time;
 
+    p_Packet >> l_TypeID;
+    p_Packet >> l_ID;
     p_Packet >> l_Time;
 
-    m_InterfaceManager->LaunchCastBar((uint16)l_Time * 100);
+    if (Map* l_Map = m_MapManager->GetActualMap())
+    {
+        Unit* l_Unit = l_Map->GetUnit((TypeUnit)l_TypeID, l_ID);
+
+        if (l_Unit == nullptr)
+        {
+            g_Socket->SendUnitUnknow(l_TypeID, l_ID); ///< Ask for unknow unit to server
+            return;
+        }
+        l_Unit->LaunchCastBar((uint16)l_Time * 100);
+    }
 }

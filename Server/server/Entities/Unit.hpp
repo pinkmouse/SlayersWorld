@@ -113,7 +113,7 @@ public:
     std::map< uint16, uint64 >* GetSpellList();
     virtual void AddSpellCooldown(uint16, uint64);
     bool HasSpellCooldown(uint16);
-    virtual void SetCurrentSpell(Spell*);
+    void SetCurrentSpell(Spell*);
     Spell* GetCurrentSpell() const;
 
     /* GOSSIP*/

@@ -298,8 +298,8 @@ void Unit::AddDamageLog(const DamageInfo & p_Damage)
 
 void Unit::LaunchCastBar(uint16 p_Timer)
 {
-    m_CastTime.first = p_Timer;
-    m_CastTime.second = p_Timer;
+    m_CastTime.first = (uint64)p_Timer * 1000;
+    m_CastTime.second = (uint64)p_Timer * 1000;
 }
 
 void Unit::CleanCastBar()
@@ -313,7 +313,8 @@ uint8 Unit::GetCastPct()
     if (m_CastTime.first == 0 || m_CastTime.second == 0)
         return 0;
 
-    return (uint8)((m_CastTime.first - m_CastTime.second) / (m_CastTime.first));
+    printf("PCt = %d", ((m_CastTime.first - m_CastTime.second) / ((m_CastTime.first) / 100)));
+    return (uint8)((m_CastTime.first - m_CastTime.second) / ((m_CastTime.first) / 100));
 }
 
 

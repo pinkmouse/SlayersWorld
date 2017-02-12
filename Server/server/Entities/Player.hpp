@@ -48,7 +48,6 @@ public:
 
     /* SPELL */
     void AddSpellCooldown(uint16, uint64);
-    void SetCurrentSpell(Spell*);
 
     /* COMMANDS */
     bool CheckCommand(const std::string &);

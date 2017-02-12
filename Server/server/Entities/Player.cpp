@@ -306,20 +306,6 @@ void Player::AddSpellCooldown(uint16 p_SpellID, uint64 p_Time)
     l_Session->SendMsg(l_Packet.m_Packet);
 }
 
-void Player::SetCurrentSpell(Spell* p_Spell)
-{
-    if (p_Spell->GetCastTime() <= 0)
-        return;
-
-    /// Send Cast Bar visual
-    PacketCastBar l_Packet;
-    l_Packet.BuildPacket((uint8)((p_Spell->GetCastTime() / 1000) / 100));
-    WorldSocket* l_Session = GetSession();
-    l_Session->SendMsg(l_Packet.m_Packet);
-
-    Unit::SetCurrentSpell(p_Spell);
-}
-
 void Player::AddSpellBindToKey(uint16 p_SpellID, uint8 p_Bind)
 {
     m_SpellsBindToKey[p_SpellID] = p_Bind;

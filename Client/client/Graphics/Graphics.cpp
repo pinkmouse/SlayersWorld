@@ -24,6 +24,15 @@ bool Graphics::LoadFont()
     return true;
 }
 
+
+bool Graphics::LoadTexture()
+{
+    std::string l_FileSystemName = "castbarmini.png";
+    if (!m_CastBarTexture.loadFromFile(IMG_FOLDER + l_FileSystemName))
+        printf("Load SystemImg Cast Bar Mini Failed\n");
+    return true;
+}
+
 bool Graphics::CreateWindow(uint32 p_X, uint32 p_Y, float p_Zoom)
 {
 	m_Window.create(sf::VideoMode(p_X, p_Y), NAME_WINDOW);
@@ -42,6 +51,8 @@ bool Graphics::CreateWindow(uint32 p_X, uint32 p_Y, float p_Zoom)
     if (!m_VisualManager->LoadSkins())
         return false;
     if (!m_VisualManager->LoadVisuals())
+        return false;
+    if (!LoadTexture())
         return false;
     return true;
 }
@@ -162,6 +173,16 @@ void Graphics::DrawUnitDetails(Unit* p_Unit)
 
     /// Reset the view
     m_Window.setView(m_View);
+
+    /// CAST BAR
+    if (p_Unit != g_Player && p_Unit->GetCastPct() > 0)
+    {
+        TileSprite l_CastBar;
+        l_CastBar.setTexture(m_CastBarTexture);
+        l_CastBar.setTextureRect(sf::IntRect(0, 0, (m_CastBarTexture.getSize().x / 100.0f) * p_Unit->GetCastPct(), m_CastBarTexture.getSize().y));
+        l_CastBar.setPosition(p_Unit->GetPosX(), p_Unit->GetPosY() - p_Unit->GetSizeY());
+        m_Window.draw(l_CastBar);
+    }
 }
 
 void Graphics::DrawWorldObjects(std::map<uint32, std::vector<WorldObject*> > *p_ListWorldObjectsByZ)
@@ -188,6 +209,32 @@ void Graphics::DrawWorldObjects(std::map<uint32, std::vector<WorldObject*> > *p_
     }
 }
 
+bool Graphics::IsInRayWindow(WorldObject* p_Center, WorldObject* p_Obj)
+{
+    uint8 l_TotalCaseXWindow = X_WINDOW / TILE_SIZE;
+    uint8 l_TotalCaseYWindow = Y_WINDOW / TILE_SIZE;
+
+    l_TotalCaseXWindow *= ZOOM_FACTOR;
+    l_TotalCaseYWindow *= ZOOM_FACTOR;
+    int16 l_CaseDiff = 0;
+    if (p_Center->GetPosXCase() > p_Obj->GetPosXCase())
+        l_CaseDiff = p_Center->GetPosXCase() - p_Obj->GetPosXCase();
+    else
+        l_CaseDiff = p_Obj->GetPosXCase() - p_Center->GetPosXCase();
+    
+    if (l_CaseDiff > l_TotalCaseXWindow / 2)
+        return false;
+
+    if (p_Center->GetPosYCase() > p_Obj->GetPosYCase())
+        l_CaseDiff = p_Center->GetPosYCase() - p_Obj->GetPosYCase();
+    else
+        l_CaseDiff = p_Obj->GetPosYCase() - p_Center->GetPosYCase();
+
+    if (l_CaseDiff > l_TotalCaseYWindow / 2)
+        return false;
+    return true;
+}
+
 void Graphics::DrawMap()
 {
 	if (!m_Window.isOpen() || !m_MapManager->HasMap() || g_Player == nullptr)
@@ -197,7 +244,7 @@ void Graphics::DrawMap()
     std::map<TypeUnit, std::map<uint16, Unit*> >* l_ListUnitZone = l_Map->GetListUnitZone();
     std::map<uint32, std::vector<WorldObject*> > l_ListWorldObjectByZ;
 
-	std::vector<std::vector<Case*>> l_SquareZone = l_Map->GetSquareZone(l_Map->GetSquareID(g_Player->GetCasePosX(), g_Player->GetCasePosY()));
+	std::vector<std::vector<Case*>> l_SquareZone = l_Map->GetSquareZone(l_Map->GetSquareID(g_Player->GetPosXCase(), g_Player->GetPosYCase()));
 	//printf("Square Acutal = %d\n", l_Map->GetSquareID(m_MapManager->GetPosX() / TILE_SIZE, m_MapManager->GetPosY() / TILE_SIZE));
 	if (l_SquareZone.empty())
 		return;
@@ -209,6 +256,9 @@ void Graphics::DrawMap()
 		std::vector<Case*> l_Square = (*l_It);
 		for (std::vector<Case*>::iterator l_It2 = l_Square.begin(); l_It2 != l_Square.end(); ++l_It2)
 		{
+            if (!IsInRayWindow(g_Player, (*l_It2)))
+                continue;
+
             for (uint8 l_LevelNb = 0; l_LevelNb < 2; ++l_LevelNb)
             {
                 int16 l_TileID = (*l_It2)->GetTile(l_LevelNb);
@@ -248,6 +298,9 @@ void Graphics::DrawMap()
             if (l_Unit == nullptr)
                 continue;
 
+            if (!IsInRayWindow(g_Player, l_Unit))
+                continue;
+
             MovementHandler* l_MovementHandler = l_Unit->GetMovementHandler();
             uint8 l_SpriteNb = (l_Unit->GetOrientation() * MAX_MOVEMENT_POSITION) + l_MovementHandler->GetMovementPosition();
             if (l_MovementHandler->IsInAttack())
@@ -274,6 +327,9 @@ void Graphics::DrawMap()
         std::vector<Case*> l_Square = (*l_It);
         for (std::vector<Case*>::iterator l_It2 = l_Square.begin(); l_It2 != l_Square.end(); ++l_It2)
         {
+            if (!IsInRayWindow(g_Player, (*l_It2)))
+                continue;
+
             for (uint8 l_LevelNb = 2; l_LevelNb < 4; ++l_LevelNb)
             {
                 int16 l_TileID = (*l_It2)->GetTile(l_LevelNb);

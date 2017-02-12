@@ -836,7 +836,15 @@ void Unit::CastSpell(uint16 p_ID)
 
 void Unit::SetCurrentSpell(Spell* p_Spell)
 {
-    m_CurrentSpell = p_Spell;
+    m_CurrentSpell = p_Spell; /// Casting
+
+    if (p_Spell->GetCastTime() <= 0)
+        return;
+
+    /// Send Cast Bar visual
+    PacketUnitCastBar l_Packet;
+    l_Packet.BuildPacket(GetType(), GetID(), (uint8)((p_Spell->GetCastTime() / 1000) / 100));
+    m_Map->SendToSet(l_Packet.m_Packet, this);
 }
 
 Spell* Unit::GetCurrentSpell() const

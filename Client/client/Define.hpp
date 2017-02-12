@@ -74,7 +74,7 @@
 #define NAME_WINDOW "Slayers World"
 
 /// GENERAL
-#define STEP_SIZE 8 /// In pixel
+#define STEP_SIZE 10 /// In pixel
 #define IN_MILLISECOND 1000
 
 typedef char int8;

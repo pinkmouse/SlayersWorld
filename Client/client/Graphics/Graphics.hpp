@@ -20,6 +20,7 @@ public:
 	Graphics(MapManager*, InterfaceManager*, Events*);
 	~Graphics();
     bool LoadFont();
+    bool LoadTexture();
 	bool CreateWindow(uint32, uint32, float);
 	void UpdateWindow(sf::Time);
     void UpdateInterface(sf::Time);
@@ -28,7 +29,7 @@ public:
 	void CheckEvent();
 	bool WindowIsOpen() const;
     Position GetCenterPositionOnUnit(Unit*, sf::Sprite*);
-
+    bool IsInRayWindow(WorldObject*, WorldObject*);
     /// Draw Methods
     void DrawMap();
     void DrawWorldObjects(std::map<uint32, std::vector<WorldObject*> >*);
@@ -41,6 +42,7 @@ private:
     sf::View            m_ViewFont;
     sf::View            m_ViewInterface;
     sf::Font            m_Font;
+    sf::Texture         m_CastBarTexture;
 
 	MapManager*         m_MapManager;
 	TileSet*            m_TileSet;

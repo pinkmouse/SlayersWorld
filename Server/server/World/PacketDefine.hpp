@@ -376,18 +376,22 @@ struct PacketKeyBoardBlock
     }
 };
 
-struct PacketCastBar
+struct PacketUnitCastBar
 {
     WorldPacket m_Packet;
     uint8 m_PacketID;
+    uint8 m_TypeID;
+    uint16 m_ID;
     uint8 m_Time;
 
-    PacketCastBar() :
+    PacketUnitCastBar() :
         m_PacketID(SMSG::S_CastBar) {}
 
-    void BuildPacket(uint8 p_Time)
+    void BuildPacket(uint8 p_TypeID, uint16 p_ID, uint8 p_Time)
     {
-        m_Packet << m_PacketID << p_Time;
+        m_Packet << m_PacketID << p_TypeID << p_ID << p_Time;
+        m_TypeID = p_TypeID;
+        m_ID = p_ID;
         m_Time = p_Time;
     }
 };

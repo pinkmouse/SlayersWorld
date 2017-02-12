@@ -25,6 +25,7 @@ public:
     void Draw(Window &);
     void DrawStartingPage(Window &);
     void DrawWarnings(Window &);
+    void DrawClock(Window &);
     HistoryField* GetHistoryField() const;
     void AddWarningMsg(const std::string &);
     void AddWarningMsg(eWarningMsg);
@@ -33,8 +34,6 @@ public:
     void SetSystemMsg(const std::string &);
     void AddBlockingBind(uint8, uint16);
     bool IsBlockingBind(uint8);
-    void LaunchCastBar(uint16);
-    uint8 GetCastPct();
 
 private:
     sf::Texture                         m_SystemTexture;
@@ -46,11 +45,9 @@ private:
     WritingField*                       m_WritingField;
     HistoryField*                       m_HistoryField;
     sf::Text                            m_SystemMsg;
+    sf::Text                            m_ClockTxt;
     std::vector< std::pair<std::string, uint32> >     m_WarningMsgs;
     std::map< eWarningMsg, std::string > m_WarningMsgsEnum;
     std::map< uint8, uint8 >             m_KeyBoardBind;
     std::map< uint8, uint64 >            m_BlockingBinds;
-
-    uint16                              m_CastBarBaseTime;
-    uint64                              m_CastBarTimer;
 };
