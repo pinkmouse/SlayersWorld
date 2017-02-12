@@ -15,6 +15,7 @@ Unit::Unit(uint16 p_ID, TypeUnit p_Type) :
     m_ID = p_ID;
     m_Opacity = 0;
     m_DiffTimeOpactiy = 0;
+    m_Speed = 1.0f;
 
     m_CastTime.first = 0;
     m_CastTime.second = 0;
@@ -313,7 +314,6 @@ uint8 Unit::GetCastPct()
     if (m_CastTime.first == 0 || m_CastTime.second == 0)
         return 0;
 
-    printf("PCt = %d", ((m_CastTime.first - m_CastTime.second) / ((m_CastTime.first) / 100)));
     return (uint8)((m_CastTime.first - m_CastTime.second) / ((m_CastTime.first) / 100));
 }
 
@@ -331,4 +331,14 @@ void Unit::AddVisualEffect(VisualEffect p_VisualEffect)
 std::vector< VisualEffect >* Unit::GetVisualsEffect()
 {
     return &m_VisualEffects;
+}
+
+float Unit::GetSpeed() const
+{
+    return m_Speed;
+}
+
+void Unit::SetSpeed(float p_Speed)
+{
+    m_Speed = p_Speed;
 }

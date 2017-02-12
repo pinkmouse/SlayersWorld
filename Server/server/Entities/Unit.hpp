@@ -31,12 +31,14 @@ public:
     uint8 GetLevel() const;
     uint8 GetSkinID() const;
     uint16 GetID() const;
+    float GetSpeed() const;
     bool IsDeath();
     void SetName(const std::string &);
     void SetLevel(const uint8 &);
     virtual void Respawn();
     bool IsInWorld() const;
     void SetInWorld(bool);
+    void SetSpeed(float);
     TypeUnit GetType() const;
     Creature* ToCreature();
     Player* ToPlayer();
@@ -132,6 +134,7 @@ protected:
     uint8 m_SkinID;
     bool m_InWorld;
     MovementHandler* m_MovementHandler;
+    float m_Speed;
 
     /* RESOURCE */
     std::map< eResourceType, Resource* > m_Resources;

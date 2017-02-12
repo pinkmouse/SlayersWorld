@@ -24,6 +24,7 @@ public:
     uint8 GetSkinID() const;
     uint16 GetID() const;
     float GetSkinZoomFactor() const;
+    float GetSpeed() const;
     Orientation GetOrientation() const;
     TypeUnit GetType() const;
     uint8 GetOpacity();
@@ -37,6 +38,7 @@ public:
     void SetOrientation(const Orientation &);
     void SetSkinZoomFactor(const float &);
     void SetMap(Map*);
+    void SetSpeed(float);
     
     void StartMovement();
     bool IsInRayVisible(Unit*);
@@ -68,6 +70,7 @@ protected:
     uint8 m_Level;
     uint8 m_SkinID;
     float m_SkinZoomFactor;
+    float m_Speed;
     std::map< eResourceType, Resource* > m_Resources;
 
     MovementHandler* m_MovementHandler;

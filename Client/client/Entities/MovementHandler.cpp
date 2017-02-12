@@ -121,7 +121,7 @@ void MovementHandler::Update(sf::Time p_Diff)
 
     m_DiffTime += p_Diff.asMicroseconds();
 
-    while (m_DiffTime > ((UPDATE_TIME_MOVEMENT / STEP_SIZE) * 1000 * (2.0f - m_Speed))) ///< 1000 because microsecond
+    while (m_DiffTime > ((UPDATE_TIME_MOVEMENT / (STEP_SIZE * m_Speed)) * 1000)) ///< 1000 because microsecond
     {
         /// UPDATE POSITION
         switch (m_Orientation)
@@ -141,7 +141,7 @@ void MovementHandler::Update(sf::Time p_Diff)
         default:
             break;
         }
-        m_DiffTime -= (uint64)((UPDATE_TIME_MOVEMENT / STEP_SIZE) * 1000 * (2.0f - m_Speed));
+        m_DiffTime -= (uint64)((UPDATE_TIME_MOVEMENT / (STEP_SIZE * m_Speed)) * 1000);
 
         if (!IsInColision(l_PosX, l_PosY))
         {
@@ -164,7 +164,7 @@ void MovementHandler::UpdateAnimationWalk(sf::Time p_Diff)
 
     m_DiffTimeAnim += p_Diff.asMicroseconds();
 
-    while (m_DiffTimeAnim > (UPDATE_TIME_MOVEMENT * 1000 * (2.0f - m_Speed))) ///< 1000 because microsecond
+    while (m_DiffTimeAnim > ((UPDATE_TIME_MOVEMENT / m_Speed) * 1000)) ///< 1000 because microsecond
     {
         /// UPDATE ANIMATION
         if (m_MovementPosition <= 0)
@@ -188,7 +188,7 @@ void MovementHandler::UpdateAnimationAttack(sf::Time p_Diff)
 
     m_DiffTimeAnimAttack += p_Diff.asMicroseconds();
 
-    while (m_DiffTimeAnimAttack > (UPDATE_TIME_MOVEMENT * 1000 * (2.0f - m_Speed))) ///< 1000 because microsecond
+    while (m_DiffTimeAnimAttack > (UPDATE_TIME_MOVEMENT * 1000)) ///< 1000 because microsecond
     {
         /// UPDATE ANIMATION
         m_MovementPosition++;
@@ -205,7 +205,7 @@ void MovementHandler::UpdateAnimationAttack(sf::Time p_Diff)
             return;
         }
         else
-        m_DiffTimeAnimAttack -= (uint64)(UPDATE_TIME_MOVEMENT * 1000 * (2.0f - m_Speed));
+        m_DiffTimeAnimAttack -= (uint64)(UPDATE_TIME_MOVEMENT * 1000);
     }
 }
 

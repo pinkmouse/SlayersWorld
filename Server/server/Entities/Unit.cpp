@@ -24,6 +24,7 @@ Unit::Unit(uint16 p_ID, TypeUnit p_Type, eFactionType p_FactionType)
     m_ID = p_ID;
     m_SizeX = 24;
     m_SizeY = 32;
+    m_Speed = 1.0f;
     m_Resources[eResourceType::Health] = new ResourceHealth();
     m_Resources[eResourceType::Mana] = new ResourceMana();
     m_Resources[eResourceType::Alignment] = new ResourceAlignment();
@@ -876,4 +877,15 @@ void Unit::CleanVictims()
             l_Victim->RemoveAttacker(this);
     }
     m_Victims.clear();
+}
+
+float Unit::GetSpeed() const
+{
+    return m_Speed;
+}
+
+void Unit::SetSpeed(float p_Speed)
+{
+    m_Speed = p_Speed;
+    m_MovementHandler->SetSpeed(p_Speed);
 }

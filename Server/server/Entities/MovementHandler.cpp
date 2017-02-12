@@ -132,11 +132,11 @@ void MovementHandler::UpdateAttack(sf::Time p_Diff)
 
     if (!m_AttackDamage.m_DamageDone)
     {
-        if (m_DiffTimeAttack > ((MAX_MOVEMENT_POSITION * UPDATE_TIME_MOVEMENT * 1000 * (2.0f - m_Speed)) / 2.0f)) ///< 1000 because microsecond
+        if (m_DiffTimeAttack > ((MAX_MOVEMENT_POSITION * UPDATE_TIME_MOVEMENT * 1000) / 2.0f)) ///< 1000 because microsecond
             m_AttackDamage.m_DamageReady = true;
     }
 
-    while (m_DiffTimeAttack > (MAX_MOVEMENT_POSITION * UPDATE_TIME_MOVEMENT * 1000 * (2.0f - m_Speed))) ///< 1000 because microsecond
+    while (m_DiffTimeAttack > (MAX_MOVEMENT_POSITION * UPDATE_TIME_MOVEMENT * 1000)) ///< 1000 because microsecond
     {
         if (m_StopAttack)
         {
@@ -167,7 +167,7 @@ void MovementHandler::Update(sf::Time p_Diff)
 
     m_DiffTime += p_Diff.asMicroseconds();
 
-    while (m_DiffTime > (uint64)((UPDATE_TIME_MOVEMENT / STEP_SIZE) * 1000 * (2.0f - m_Speed))) ///< 1000 because microsecond
+    while (m_DiffTime > (uint64)((UPDATE_TIME_MOVEMENT / (STEP_SIZE * m_Speed)) * 1000)) ///< 1000 because microsecond
     {
         /// UPDATE POSITION
         switch (m_Orientation)
@@ -187,7 +187,7 @@ void MovementHandler::Update(sf::Time p_Diff)
         default:
             break;
         }
-        m_DiffTime -= (uint64)((UPDATE_TIME_MOVEMENT / STEP_SIZE) * 1000 * (2.0f - m_Speed));
+        m_DiffTime -= (uint64)((UPDATE_TIME_MOVEMENT / (STEP_SIZE * m_Speed)) * 1000);
 
         if (!IsInColision(l_PosX, l_PosY) && !(m_StopPoint.m_Active && m_StopPoint.m_Position == m_Pos))
         {

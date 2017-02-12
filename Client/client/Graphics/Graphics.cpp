@@ -220,13 +220,13 @@ bool Graphics::IsInRayWindow(WorldObject* p_Center, WorldObject* p_Obj)
     if (p_Center->GetPosXCase() > p_Obj->GetPosXCase())
         l_CaseDiff = p_Center->GetPosXCase() - p_Obj->GetPosXCase();
     else
-        l_CaseDiff = p_Obj->GetPosXCase() - p_Center->GetPosXCase();
+        l_CaseDiff = p_Obj->GetPosXCase() - p_Center->GetPosXCase() - 1;
     
     if (l_CaseDiff > l_TotalCaseXWindow / 2)
         return false;
 
     if (p_Center->GetPosYCase() > p_Obj->GetPosYCase())
-        l_CaseDiff = p_Center->GetPosYCase() - p_Obj->GetPosYCase();
+        l_CaseDiff = p_Center->GetPosYCase() - p_Obj->GetPosYCase() - 2;
     else
         l_CaseDiff = p_Obj->GetPosYCase() - p_Center->GetPosYCase();
 
