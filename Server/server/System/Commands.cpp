@@ -18,6 +18,8 @@ void Player::InitializeCommands()
     m_CmdHandleMap["bind"].second = &Player::HandleBind;
     m_CmdHandleMap["save"].first = eAccessType::Dummy;
     m_CmdHandleMap["save"].second = &Player::HandleSave;
+    m_CmdHandleMap["msg"].first = eAccessType::Dummy;
+    m_CmdHandleMap["msg"].second = &Player::HandleCommandWisp;
     m_CmdHandleMap["npc"].first = eAccessType::Moderator;
     m_CmdHandleMap["npc"].second = &Player::HandleCommandCreature;
     m_CmdHandleMap["who"].first = eAccessType::Moderator;
@@ -147,11 +149,42 @@ bool Player::HandleCommandLevel(std::vector<std::string> p_ListCmd)
 
     int32 l_Id = g_SqlManager->GetPlayerID(l_Name);
     if (l_Id <= 0)
-        return false;
+    {
+        SendMsg(l_Name + " est introuvable");
+        return true;
+    }
 
     Player* l_Player = g_MapManager->GetPlayer(l_Id);
-
     SendMsg(l_Name + " est de niveau " + std::to_string(l_Player->GetLevel()));
+
+    return true;
+}
+
+bool Player::HandleCommandWisp(std::vector<std::string> p_ListCmd)
+{
+    if (p_ListCmd.empty())
+        return false;
+
+    std::string l_Name = p_ListCmd[0];
+
+    int32 l_Id = g_SqlManager->GetPlayerID(l_Name);
+    if (l_Id <= 0)
+    {
+        SendMsg(l_Name + " n'existe pas");
+        return true;
+    }
+
+    Player* l_Player = g_MapManager->GetPlayer(l_Id);
+    if (l_Player == nullptr)
+    {
+        SendMsg(l_Name + " n'est pas connecté");
+        return true;
+    }
+    std::string l_Msg = "";
+    for (uint8 i = 1; i < p_ListCmd.size(); ++i)
+        l_Msg += " " + p_ListCmd[i];
+
+    l_Player->SendMsg(GetName() + ": " + l_Msg);
 
     return true;
 }

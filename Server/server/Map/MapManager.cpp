@@ -94,7 +94,11 @@ Player* MapManager::GetPlayer(uint16 p_IdPlayer)
         if (l_Map == nullptr)
             continue;
 
-        return l_Map->GetUnit(TypeUnit::PLAYER, p_IdPlayer)->ToPlayer();
+        Unit* l_Unit = l_Map->GetUnit(TypeUnit::PLAYER, p_IdPlayer);
+        if (l_Unit == nullptr)
+            continue;
+
+        return l_Unit->ToPlayer();
     }
     return nullptr;
 }
