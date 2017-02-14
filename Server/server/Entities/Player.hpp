@@ -62,6 +62,7 @@ public:
     bool HandleCommandCreature(std::vector<std::string>);
     bool HandleCommandWho(std::vector<std::string>);
     bool HandleCommandTeleport(std::vector<std::string>);
+    bool HandleCommandSpeed(std::vector<std::string>);
     bool HandleRegen(std::vector<std::string>);
     bool HandleBind(std::vector<std::string>);
     bool HandleTest(std::vector<std::string>);

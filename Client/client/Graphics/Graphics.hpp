@@ -30,6 +30,10 @@ public:
 	bool WindowIsOpen() const;
     Position GetCenterPositionOnUnit(Unit*, sf::Sprite*);
     bool IsInRayWindow(WorldObject*, WorldObject*);
+
+    /// DRAW THREAD
+    void DrawLoop();
+
     /// Draw Methods
     void DrawMap();
     void DrawWorldObjects(std::map<uint32, std::vector<WorldObject*> >*);
@@ -43,12 +47,14 @@ private:
     sf::View            m_ViewInterface;
     sf::Font            m_Font;
     sf::Texture         m_CastBarTexture;
+    sf::Thread          m_Thread;
 
 	MapManager*         m_MapManager;
 	TileSet*            m_TileSet;
-    VisualManager*       m_VisualManager;
+    VisualManager*      m_VisualManager;
     InterfaceManager*   m_InterfaceManager;
     Events*             m_Events;
     ClockHandler*       m_Clock;
+    std::vector<sf::Drawable> m_DrawingList;
 };
 

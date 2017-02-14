@@ -108,6 +108,7 @@ std::vector<std::vector<Case*>> Map::GetSquareZone(uint16 p_ID)
 	uint16 l_TotalSquare = l_TotalSquareWidth * l_TotalSquareHeight;
 
 	l_SquareZone.push_back(GetSquare(p_ID));
+    //return l_SquareZone;
 	uint16 l_IDReal = p_ID + 1;
 	//printf("--> ID = %d, %d, %d, %d\n", p_ID, l_TotalSquareWidth, l_TotalSquareHeight, m_SizeY);
 	if (l_IDReal - l_TotalSquareWidth > 0)

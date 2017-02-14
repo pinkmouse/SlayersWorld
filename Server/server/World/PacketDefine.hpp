@@ -36,7 +36,8 @@ enum SMSG : uint8
     S_UnitStopAttack = 27,
     S_UnitUpdateSkin = 28,
     S_UnitPlayVisual = 30,
-    S_BlockBind = 31
+    S_UnitUpdateSpeed = 31,
+    S_BlockBind = 40
 };
 
 struct PacketGoDirection
@@ -181,9 +182,9 @@ struct PacketUnitCreate
     PacketUnitCreate() :
         m_PacketID(SMSG::S_UnitCreate) {}
 
-    void BuildPacket(uint8 p_TypeID, uint32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_Health, uint8 p_Mana, uint8 p_Alignment, uint8 p_SkinID, uint16 p_MapID, Position p_Pos, uint8 p_Orientation, bool p_IsInMovement, bool p_IsAttacking)
+    void BuildPacket(uint8 p_TypeID, uint32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_Health, uint8 p_Mana, uint8 p_Alignment, uint8 p_SkinID, uint8 p_Speed, uint16 p_MapID, Position p_Pos, uint8 p_Orientation, bool p_IsInMovement, bool p_IsAttacking)
     {
-        m_Packet << m_PacketID << p_TypeID << p_ID << p_Name << p_Level << p_Health << p_Mana << p_Alignment << p_SkinID << p_MapID << p_Pos.m_X << p_Pos.m_Y << p_Orientation << p_IsInMovement << p_IsAttacking;
+        m_Packet << m_PacketID << p_TypeID << p_ID << p_Name << p_Level << p_Health << p_Mana << p_Alignment << p_SkinID << p_Speed << p_MapID << p_Pos.m_X << p_Pos.m_Y << p_Orientation << p_IsInMovement << p_IsAttacking;
         m_TypeID = p_TypeID;
         m_ID = p_ID;
         m_Pos = p_Pos;
@@ -393,5 +394,25 @@ struct PacketUnitCastBar
         m_TypeID = p_TypeID;
         m_ID = p_ID;
         m_Time = p_Time;
+    }
+};
+
+struct PacketUnitUpdateSpeed
+{
+    WorldPacket m_Packet;
+    uint8 m_PacketID;
+    uint8 m_TypeID;
+    uint16 m_ID;
+    uint8 m_Speed;
+
+    PacketUnitUpdateSpeed() :
+        m_PacketID(SMSG::S_UnitUpdateSpeed) {}
+
+    void BuildPacket(uint8 p_TypeID, uint16 p_ID, uint8 p_Speed)
+    {
+        m_Packet << m_PacketID << p_TypeID << p_ID << p_Speed;
+        m_TypeID = p_TypeID;
+        m_ID = p_ID;
+        m_Speed = p_Speed;
     }
 };

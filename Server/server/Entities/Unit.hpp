@@ -32,6 +32,7 @@ public:
     uint8 GetSkinID() const;
     uint16 GetID() const;
     float GetSpeed() const;
+    uint8 GetSpeedUint8() const;
     bool IsDeath();
     void SetName(const std::string &);
     void SetLevel(const uint8 &);

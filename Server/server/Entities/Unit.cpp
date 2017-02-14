@@ -884,8 +884,17 @@ float Unit::GetSpeed() const
     return m_Speed;
 }
 
+uint8 Unit::GetSpeedUint8() const
+{
+    return (uint8)(m_Speed * 10.0f);
+}
+
 void Unit::SetSpeed(float p_Speed)
 {
     m_Speed = p_Speed;
     m_MovementHandler->SetSpeed(p_Speed);
+
+    PacketUnitUpdateSpeed l_Packet;
+    l_Packet.BuildPacket(GetType(), GetID(), (uint8)(p_Speed * 10.0f));
+    m_Map->SendToSet(l_Packet.m_Packet, this);
 }

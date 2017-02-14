@@ -312,6 +312,40 @@ uint32 MovementHandler::GetPosY() const
     return m_Pos.y;
 }
 
+float MovementHandler::GetPosXAtMoment()
+{
+    switch (m_Orientation)
+    {
+    case Orientation::Right:
+        return (float)m_Pos.x + ((float)(STEP_SIZE / STEP_SIZE) * ((float)m_DiffTime / ((float)UPDATE_TIME_MOVEMENT * (1000.0f / STEP_SIZE))));
+        break;
+    case Orientation::Left:
+        return (float)m_Pos.x - ((float)(STEP_SIZE / STEP_SIZE) * ((float)m_DiffTime / ((float)UPDATE_TIME_MOVEMENT * (1000.0f / STEP_SIZE))));
+        break;
+    default:
+        break;
+    }
+
+    return (float)m_Pos.x;
+}
+
+float MovementHandler::GetPosYAtMoment()
+{
+    switch (m_Orientation)
+    {
+    case Orientation::Down:
+        return (float)m_Pos.y + ((float)(STEP_SIZE / STEP_SIZE) * ((float)m_DiffTime / ((float)UPDATE_TIME_MOVEMENT * (1000.0f / STEP_SIZE))));
+        break;
+    case Orientation::Up:
+        return (float)m_Pos.y - ((float)(STEP_SIZE / STEP_SIZE) * ((float)m_DiffTime / ((float)UPDATE_TIME_MOVEMENT * (1000.0f / STEP_SIZE))));
+        break;
+    default:
+        break;
+    }
+
+    return (float)m_Pos.y;
+}
+
 void MovementHandler::SetSpeed(float p_Speed)
 {
     m_Speed = p_Speed;

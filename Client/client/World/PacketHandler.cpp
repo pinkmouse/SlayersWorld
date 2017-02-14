@@ -36,6 +36,7 @@ void PacketHandler::LoadPacketHandlerMap()
 	m_PacketHandleMap[SMSG::S_LogDamage] = &PacketHandler::HandleLogDamage;
     m_PacketHandleMap[SMSG::S_WarningMsg] = &PacketHandler::HandleWarningMsg;
     m_PacketHandleMap[SMSG::S_UnitPlayVisual] = &PacketHandler::HandleUnitPlayVisual;
+    m_PacketHandleMap[SMSG::S_UnitUpdateSpeed] = &PacketHandler::HandleUpdateSpeed;
     m_PacketHandleMap[SMSG::S_KeyBoardBind] = &PacketHandler::HandleKeyBoardBind;
     m_PacketHandleMap[SMSG::S_BlockBind] = &PacketHandler::HandleKeyBindBlock;
     m_PacketHandleMap[SMSG::S_CastBar] = &PacketHandler::HandleCastBar;
@@ -344,6 +345,7 @@ void PacketHandler::HandleCreateUnit(WorldPacket &p_Packet)
     uint8 l_Mana;
     uint8 l_Alignment;
     uint8 l_SkinID;
+    uint8 l_Speed;
     uint16 l_MapID;
     Position l_Pos;
     uint8 l_Orientation;
@@ -358,6 +360,7 @@ void PacketHandler::HandleCreateUnit(WorldPacket &p_Packet)
     p_Packet >> l_Mana;
     p_Packet >> l_Alignment;
     p_Packet >> l_SkinID;
+    p_Packet >> l_Speed;
     p_Packet >> l_MapID;
     p_Packet >> l_Pos.x;
     p_Packet >> l_Pos.y;
@@ -381,6 +384,8 @@ void PacketHandler::HandleCreateUnit(WorldPacket &p_Packet)
         else if (l_TypeID == (uint8)TypeUnit::CREATURE)
             l_NewUnit = new Creature(l_ID, l_Name, l_Level, l_Health, l_SkinID, l_MapID, l_Pos.x, l_Pos.y, (Orientation)l_Orientation);
 
+        float l_SpeedFloat = (float)l_Speed / 10.0f;
+        l_NewUnit->SetSpeed(l_SpeedFloat);
         l_NewUnit->SetMap(l_ActualMap);
         l_ActualMap->AddUnit(l_NewUnit);
         printf("Create new Unit DONE: %d %s %d %d %d %d\n", l_ID, l_Name.c_str(), l_SkinID, l_MapID, l_Pos.x, l_Pos.y);
@@ -515,6 +520,31 @@ void PacketHandler::HandleUnitPlayVisual(WorldPacket &p_Packet)
         VisualEffect l_VisualEffect(eVisualType::VisualSpell, l_VisualID, 3);
         l_VisualEffect.StartAnimAndStop();
         l_Unit->AddVisualEffect(l_VisualEffect);
+    }
+}
+
+void PacketHandler::HandleUpdateSpeed(WorldPacket &p_Packet)
+{
+    uint8 l_TypeID;
+    uint16 l_ID;
+    uint8 l_Speed;
+
+    p_Packet >> l_TypeID;
+    p_Packet >> l_ID;
+    p_Packet >> l_Speed;
+
+    if (Map* l_Map = m_MapManager->GetActualMap())
+    {
+        Unit* l_Unit = l_Map->GetUnit((TypeUnit)l_TypeID, l_ID);
+
+        if (l_Unit == nullptr)
+        {
+            g_Socket->SendUnitUnknow(l_TypeID, l_ID); ///< Ask for unknow unit to server
+            return;
+        }
+
+        float l_SpeedFloat = (float)l_Speed / 10.0f;
+        l_Unit->SetSpeed(l_SpeedFloat);
     }
 }
 

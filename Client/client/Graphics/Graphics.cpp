@@ -4,7 +4,8 @@
 Graphics::Graphics(MapManager* p_MapManager, InterfaceManager* p_InterfaceManager, Events* p_Events) :
     m_MapManager(p_MapManager),
     m_InterfaceManager(p_InterfaceManager),
-    m_Events(p_Events)
+    m_Events(p_Events),
+    m_Thread(&Graphics::DrawLoop, this)
 {
 	m_TileSet = nullptr;
     m_VisualManager = nullptr;
@@ -12,6 +13,10 @@ Graphics::Graphics(MapManager* p_MapManager, InterfaceManager* p_InterfaceManage
 }
 
 Graphics::~Graphics()
+{
+}
+
+void Graphics::DrawLoop()
 {
 }
 
@@ -41,8 +46,8 @@ bool Graphics::CreateWindow(uint32 p_X, uint32 p_Y, float p_Zoom)
     m_ViewInterface = m_Window.getDefaultView();
 	m_View.zoom(p_Zoom);
 	m_Window.setView(m_View);
-    //m_Window.setFramerateLimit(10);
-    m_Window.setVerticalSyncEnabled(true);
+    m_Window.setFramerateLimit(50);
+    //m_Window.setVerticalSyncEnabled(true);
 
 	m_TileSet = new TileSet();
 	m_TileSet->BuildSprites();
@@ -167,7 +172,6 @@ void Graphics::DrawUnitDetails(Unit* p_Unit)
         sf::Vector2f l_View(p_Unit->GetPosX() + (p_Unit->GetSizeX() / 2), p_Unit->GetPosY());
         sf::Vector2f l_Coord = m_Window.mapCoordsToPixelFloat(l_View, m_View);
         l_Name.setPosition((l_Coord.x - (l_Name.getGlobalBounds().width / 2.0f)), l_Coord.y);
-
         m_Window.draw(l_Name);
     }
 
@@ -363,14 +367,27 @@ void Graphics::UpdateInterface(sf::Time p_Diff)
 
 void Graphics::UpdateWindow(sf::Time p_Diff)
 {
-    Clear();
     if (g_Player != nullptr)
-        m_View.setCenter((float)g_Player->GetPosX() + (g_Player->GetSizeX() / 2), (float)g_Player->GetPosY() - (g_Player->GetSizeY() / 2));
+    {
+        //sf::Vector2f v1((float)g_Player->GetPosX() + (g_Player->GetSizeX() / 2), (float)g_Player->GetPosY() - (g_Player->GetSizeY() / 2));
+        //sf::Vector2f l_Coord = m_Window.mapCoordsToPixelFloat(v1, m_View);
+        //m_View.setCenter(l_Coord.x, l_Coord.y);
+        m_View.setCenter(g_Player->GetMovementHandler()->GetPosXAtMoment() + (float)(g_Player->GetSizeX() / 2), g_Player->GetMovementHandler()->GetPosY() - (float)(g_Player->GetSizeY() / 2));
+        //m_View.setCenter((float)(g_Player->GetPosX() + (g_Player->GetSizeX() / 2)), ((float)(g_Player->GetPosY() - (g_Player->GetSizeY() / 2))));
+    }
+    Clear();
     m_Window.setView(m_View);
     DrawMap();
     m_Window.setView(m_ViewInterface);
     UpdateInterface(p_Diff);
     DrawInterface();
+    if (g_Player != nullptr)
+    {
+        //sf::Vector2f v1((float)g_Player->GetPosX() + (g_Player->GetSizeX() / 2), (float)g_Player->GetPosY() - (g_Player->GetSizeY() / 2));
+        //sf::Vector2f l_Coord = m_Window.mapCoordsToPixelFloat(v1, m_View);
+        //m_View.setCenter(l_Coord.x, l_Coord.y);
+        //m_View.setCenter((float)(g_Player->GetPosX() + (g_Player->GetSizeX() / 2)), ((float)g_Player->GetPosY() - (g_Player->GetSizeY() / 2)));
+    }
     Display();
 }
 

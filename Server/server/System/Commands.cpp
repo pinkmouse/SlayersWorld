@@ -28,6 +28,8 @@ void Player::InitializeCommands()
     m_CmdHandleMap["tele"].second = &Player::HandleCommandTeleport;
     m_CmdHandleMap["regen"].first = eAccessType::Moderator;
     m_CmdHandleMap["regen"].second = &Player::HandleRegen;
+    m_CmdHandleMap["speed"].first = eAccessType::Moderator;
+    m_CmdHandleMap["speed"].second = &Player::HandleCommandSpeed;
     m_CmdHandleMap["test"].first = eAccessType::Moderator;
     m_CmdHandleMap["test"].second = &Player::HandleTest;
 }
@@ -203,6 +205,17 @@ bool Player::HandleCommandCreature(std::vector<std::string> p_ListCmd)
         Map* l_Map = g_MapManager->GetMap(GetMapID());
         l_Map->AddUnit(l_Creature);
     }
+    return true;
+}
+
+bool Player::HandleCommandSpeed(std::vector<std::string> p_ListCmd)
+{
+    if (p_ListCmd.empty())
+        return false;
+
+    uint8 l_Speed = atoi(p_ListCmd[0].c_str());
+    SetSpeed((float)l_Speed / 10.0f);
+
     return true;
 }
 

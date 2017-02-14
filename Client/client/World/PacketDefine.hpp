@@ -35,5 +35,6 @@ enum SMSG : uint8
     S_UnitStopAttack = 27,
     S_UnitUpdateSkin = 28,
     S_UnitPlayVisual = 30,
-    S_BlockBind = 31
+    S_UnitUpdateSpeed = 31,
+    S_BlockBind = 40
 };

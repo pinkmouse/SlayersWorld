@@ -68,7 +68,7 @@ void Unit::Update(sf::Time p_Diff)
                 m_Opacity = MAX_OPACITY;
             else
                 m_Opacity += 15;
-            m_DiffTimeOpactiy -= (uint64)(UPDATE_TIME_MOVEMENT * 1000);
+            m_DiffTimeOpactiy -= (uint64)(UPDATE_OPACITY_TIME * 1000);
         }
     }
 
