@@ -23,8 +23,6 @@ public:
     void Save();
 
     /* RESOURCES */
-    uint8 GetAlignment() const;
-    void SetAlignment(const uint8 &);
     uint32 GetXp() const;
     void SetXp(uint32);
     void SetResourceNb(eResourceType, uint8);

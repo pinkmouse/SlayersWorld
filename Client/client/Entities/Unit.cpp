@@ -15,7 +15,6 @@ Unit::Unit(uint16 p_ID, TypeUnit p_Type) :
     m_ID = p_ID;
     m_Opacity = 0;
     m_DiffTimeOpactiy = 0;
-    m_Speed = 1.0f;
 
     m_CastTime.first = 0;
     m_CastTime.second = 0;
@@ -25,6 +24,7 @@ Unit::Unit(uint16 p_ID, TypeUnit p_Type) :
     m_Resources.clear();
     m_Resources[eResourceType::Health] = new Resource(eResourceType::Health);
     m_HistoryDamage.clear();
+    SetSpeed(1.0f);
 }
 
 Unit::~Unit()
@@ -335,12 +335,12 @@ std::vector< VisualEffect >* Unit::GetVisualsEffect()
 
 float Unit::GetSpeed() const
 {
-    return m_Speed;
+    return m_MovementHandler->GetSpeed();
 }
 
 void Unit::SetSpeed(float p_Speed)
 {
-    m_Speed = p_Speed;
+    m_MovementHandler->SetSpeed(p_Speed);
 }
 
 float Unit::GetPosXAtIntant()

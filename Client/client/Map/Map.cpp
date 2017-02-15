@@ -58,11 +58,13 @@ std::map<TypeUnit, std::map<uint16, Unit*>>* Map::GetListUnitZone()
 
 void Map::AddUnit(Unit* p_Unit)
 {
+    printf("Add Unit %d\n", p_Unit->GetID());
     m_ListUnitZone[p_Unit->GetType()][p_Unit->GetID()] = p_Unit;
 }
 
 void Map::RemoveUnit(Unit* p_Unit)
 {
+    printf("Remove Unit %d\n", p_Unit->GetID());
     m_ListUnitZone[p_Unit->GetType()].erase(p_Unit->GetID());
 }
 

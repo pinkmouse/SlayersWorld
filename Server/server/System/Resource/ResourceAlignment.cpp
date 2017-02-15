@@ -31,7 +31,7 @@ void ResourceAlignment::Update(sf::Time p_DifTime)
     m_DifTime += p_DifTime.asMicroseconds();
     if (m_DifTime >= REGEN_HEALTH_TIMER * IN_MILLISECOND)
     {
-        AddNumber(-5);
+        AddNumber(5);
         m_DifTime -= REGEN_HEALTH_TIMER * IN_MILLISECOND;
     }
 }

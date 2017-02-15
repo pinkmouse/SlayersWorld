@@ -368,7 +368,10 @@ void PacketHandler::HandleCreateUnit(WorldPacket &p_Packet)
     p_Packet >> l_IsInMovement;
     p_Packet >> l_IsInAttack;
 
-    printf("Create new Unit: %d %s %d %d %d %d\n", l_ID, l_Name.c_str(), l_SkinID, l_MapID, l_Pos.x, l_Pos.y);
+    if (l_TypeID == (uint8)TypeUnit::PLAYER)
+        printf("Create new Player: %d %s %d %d %d %d\n", l_ID, l_Name.c_str(), l_SkinID, l_MapID, l_Pos.x, l_Pos.y);
+    else
+        printf("Create new Unit: %d %s %d %d %d %d\n", l_ID, l_Name.c_str(), l_SkinID, l_MapID, l_Pos.x, l_Pos.y);
 
     Unit* l_NewUnit = nullptr;
 
@@ -377,6 +380,7 @@ void PacketHandler::HandleCreateUnit(WorldPacket &p_Packet)
     if (l_ActualMap == nullptr)
         return;
 
+    printf("Map\n");
     if (l_ActualMap->GetID() == l_MapID && l_ActualMap->GetUnit((TypeUnit)l_TypeID, l_ID) == nullptr)
     {
         if (l_TypeID == (uint8)TypeUnit::PLAYER)

@@ -36,6 +36,7 @@ public:
     uint32 GetPosY() const;
     float GetPosXAtIntant();
     float GetPosYAtIntant();
+    float GetSpeed() const;
 
     void Update(sf::Time);
     void UpdateAnimationWalk(sf::Time);

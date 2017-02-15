@@ -60,7 +60,7 @@ void WorldSocket::SendUnitCreate(uint8 p_Type, uint32 p_ID, std::string p_Name, 
      /*WorldPacket l_Packet;
      uint8 l_ID = SMSG::S_UnitCreate;*/
     PacketUnitCreate l_Packet;
-    l_Packet.BuildPacket((uint8)TypeUnit::CREATURE, p_ID, p_Name, p_Level, p_Level, p_Mana, p_Alignment, p_SkinID, p_Speed, p_MapID, p_Position, p_Orientation, p_InMovement, p_IsAttacking);
+    l_Packet.BuildPacket(p_Type, p_ID, p_Name, p_Level, p_Level, p_Mana, p_Alignment, p_SkinID, p_Speed, p_MapID, p_Position, p_Orientation, p_InMovement, p_IsAttacking);
     send(l_Packet.m_Packet);
 
     /*l_Packet << l_ID << p_Type << p_ID << p_Name << p_Level << p_Health << p_Mana << p_Alignment << p_SkinID << p_MapID << p_PosX << p_PosY << p_Orientation << p_InMovement << p_IsAttacking;

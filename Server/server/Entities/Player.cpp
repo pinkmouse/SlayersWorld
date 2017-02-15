@@ -20,7 +20,6 @@ Player::Player(uint32 p_AccountID, int32 p_ID, std::string p_Name, uint8 p_Level
     SetPosY(p_PosY);
     SetOrientation(p_Orientation);
     m_Session = nullptr;
-    m_Alignment = 0;
     m_Initilize = false;
     SetResourceNb(eResourceType::Health, p_Health);
     SetResourceNb(eResourceType::Mana, p_Mana);
@@ -106,16 +105,6 @@ void Player::UpdateNewSquares(uint16 p_OldSquareID, uint16 p_NewSquareID, bool p
             }
         }
     }
-}
-
-void Player::SetAlignment(const uint8 & p_Alignment)
-{
-    m_Alignment = p_Alignment;
-}
-
-uint8 Player::GetAlignment() const
-{
-    return m_Alignment;
 }
 
 uint32 Player::GetXp() const

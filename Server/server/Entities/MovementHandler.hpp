@@ -36,6 +36,7 @@ public:
     Position GetPos() const;
     uint32 GetPosX() const;
     uint32 GetPosY() const;
+    float GetSpeed() const;
 
     void Update(sf::Time);
     void UpdateAttack(sf::Time);

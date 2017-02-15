@@ -308,6 +308,11 @@ void Unit::DealDamage(Unit* p_Victim, DamageInfo p_DamageInfo)
             l_Player->SetXp(l_Player->GetXp() + l_Victim->GetXpEarn());
             l_Player->CheckQuestObjective(eObjectifType::KillMob, l_Victim->GetEntry());
         }
+        if (IsPlayer() && p_Victim->IsPlayer())
+        {
+            Player* l_Player = ToPlayer();
+            l_Player->AddResourceNb(eResourceType::Alignment, -15);
+        }
         return;
     }
 
@@ -881,17 +886,16 @@ void Unit::CleanVictims()
 
 float Unit::GetSpeed() const
 {
-    return m_Speed;
+    return m_MovementHandler->GetSpeed();
 }
 
 uint8 Unit::GetSpeedUint8() const
 {
-    return (uint8)(m_Speed * 10.0f);
+    return (uint8)(m_MovementHandler->GetSpeed() * 10.0f);
 }
 
 void Unit::SetSpeed(float p_Speed)
 {
-    m_Speed = p_Speed;
     m_MovementHandler->SetSpeed(p_Speed);
 
     PacketUnitUpdateSpeed l_Packet;

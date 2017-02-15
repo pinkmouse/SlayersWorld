@@ -274,6 +274,11 @@ void MovementHandler::SetMap(Map* p_Map)
     m_Map = p_Map;
 }
 
+float MovementHandler::GetSpeed() const
+{
+    return m_Speed;
+}
+
 Orientation MovementHandler::GetOrientation() const
 {
     return m_Orientation;

@@ -311,3 +311,8 @@ void MovementHandler::ClearMovementStack()
     while (!m_MovementStack.empty())
         m_MovementStack.pop();
 }
+
+float MovementHandler::GetSpeed() const
+{
+    return m_Speed;
+}

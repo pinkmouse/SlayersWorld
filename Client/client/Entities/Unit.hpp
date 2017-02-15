@@ -72,7 +72,6 @@ protected:
     uint8 m_Level;
     uint8 m_SkinID;
     float m_SkinZoomFactor;
-    float m_Speed;
     std::map< eResourceType, Resource* > m_Resources;
 
     MovementHandler* m_MovementHandler;
