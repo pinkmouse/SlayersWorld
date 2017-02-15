@@ -669,16 +669,16 @@ bool  SqlManager::InitializeQuests()
     {
         l_Id = atoi(l_Row[0]);
         l_RepetitionType = atoi(l_Row[1]);
-        l_Name = atoi(l_Row[2]);
+        l_Name = std::string(l_Row[2]);
 
-        printf("Add Quest %d %d\n", l_Id, l_RepetitionType);
+        printf("Add Quest %d %d %s\n", l_Id, l_RepetitionType, l_Name.c_str());
         QuestTemplate* l_QuestTempalte = new QuestTemplate(l_Id, (eRepetitionType)l_RepetitionType, l_Name);
         g_QuestManager->AddQuestTemplate(l_QuestTempalte);
     }
     mysql_free_result(l_Result);
 
     /// OBJECTIFS
-    l_Query = "SELECT `questID`, `id`, `typeID`, `data0`, `data1`, `data2`, `data3` FROM objectif_quest_template";
+    l_Query = "SELECT `questID`, `id`, `typeID`, `data0`, `data1`, `data2`, `data3`, `entitled` FROM objectif_quest_template";
     mysql_query(&m_MysqlWorld, l_Query.c_str());
 
     uint8 l_IdObjective = 0;
@@ -700,6 +700,7 @@ bool  SqlManager::InitializeQuests()
         l_Data1 = atoi(l_Row[4]);
         l_Data2 = atoi(l_Row[5]);
         l_Data3 = atoi(l_Row[6]);
+        l_Entitled = std::string(l_Row[7]);
 
         ObjectifQuestTemplate* l_ObjectifQuestTemplate = new ObjectifQuestTemplate(l_IdObjective, (eObjectifType)l_TypeID, l_Data0, l_Data1, l_Data2, l_Data3, l_Entitled);
         g_QuestManager->AddObjectifToTemplate(l_QuestID, l_ObjectifQuestTemplate);

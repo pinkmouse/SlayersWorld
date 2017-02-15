@@ -23,21 +23,24 @@ void Quest::SetObjectifProgress(ObjectifProgess* p_ObjectifProgress)
     m_ObjectifProgressList[p_ObjectifProgress->m_Id] = p_ObjectifProgress;
 }
 
-void Quest::CheckAtEvent(eObjectifType p_ObjectifType, int32 p_Data0)
+std::vector<std::string> Quest::CheckAtEvent(eObjectifType p_ObjectifType, int32 p_Data0)
 {
+    std::vector<std::string> l_List;
     for (std::map< uint8, ObjectifQuestTemplate* >::iterator l_It = m_QuestTemplate->m_ObjectifList.begin(); l_It != m_QuestTemplate->m_ObjectifList.end(); ++l_It)
     {
         if ((*l_It).second->m_ObjectifType != p_ObjectifType)
             continue;
 
         if ((*l_It).second->m_Data0 != p_Data0)
-            return;
+            continue;
 
         if (m_ObjectifProgressList[(*l_It).first]->m_Data0 >= (*l_It).second->m_Data1)
             continue;
 
         m_ObjectifProgressList[(*l_It).first]->m_Data0 += 1; /// TODO
+        l_List.push_back((*l_It).second->m_Entitled + " " + std::to_string(m_ObjectifProgressList[(*l_It).first]->m_Data0) + "/" + std::to_string((*l_It).second->m_Data1));
     }
+    return l_List;
 }
 
 bool Quest::IsDone()
@@ -47,6 +50,7 @@ bool Quest::IsDone()
         if (m_ObjectifProgressList[(*l_It).first]->m_Data0 < (*l_It).second->m_Data1)
             return false;
     }
+    printf("Quest Done\n");
     return true;
 }
 

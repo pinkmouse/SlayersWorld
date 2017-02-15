@@ -7,7 +7,7 @@ public:
     Quest(QuestTemplate*);
     ~Quest();
     void SetObjectifProgress(ObjectifProgess*);
-    void CheckAtEvent(eObjectifType, int32);
+    std::vector<std::string> CheckAtEvent(eObjectifType, int32);
     bool IsDone();
     std::string GetName() const;
     uint16 GetID();

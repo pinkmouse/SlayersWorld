@@ -275,7 +275,13 @@ void Player::CheckQuestObjective(eObjectifType p_EventType, int32 p_Data0)
 {
     for (std::map< uint16, Quest* >::iterator l_It = m_Quests.begin(); l_It != m_Quests.end(); ++l_It)
     {
-        (*l_It).second->CheckAtEvent(p_EventType, p_Data0);
+        std::vector<std::string> l_ListMsg = (*l_It).second->CheckAtEvent(p_EventType, p_Data0);
+        for (std::vector<std::string>::iterator l_It = l_ListMsg.begin(); l_It != l_ListMsg.end(); ++l_It)
+        {
+            PacketWarningMsg l_Packet;
+            l_Packet.BuildPacket(eTypeWarningMsg::Yellow, (*l_It));
+            GetSession()->send(l_Packet.m_Packet);
+        }
     }
 }
 
