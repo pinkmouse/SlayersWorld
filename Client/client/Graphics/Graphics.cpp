@@ -170,7 +170,6 @@ void Graphics::DrawUnitDetails(Unit* p_Unit)
         sf::Text l_Name(p_Unit->GetName(), *g_Font, SIZE_NAME_FONT);
         uint8 l_Color = 255.0f / 100.0f * p_Unit->GetResourceNb(eResourceType::Alignment);
         l_Name.setColor(sf::Color(l_Color, l_Color, l_Color, 255));
-        //l_Name.setColor(sf::Color::White);
         sf::Vector2f l_View(p_Unit->GetPosXAtIntant() + (p_Unit->GetSizeX() / 2), p_Unit->GetPosYAtIntant());
         sf::Vector2f l_Coord = m_Window.mapCoordsToPixelFloat(l_View, m_View);
         l_Name.setPosition((l_Coord.x - (l_Name.getGlobalBounds().width / 2.0f)), l_Coord.y);

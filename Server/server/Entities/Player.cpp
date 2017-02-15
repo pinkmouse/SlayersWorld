@@ -265,6 +265,10 @@ int16 Player::GetKeyBoardBind(eKeyBoardAction p_Action)
 void Player::AddQuest(Quest* p_Quest)
 {
     m_Quests[p_Quest->GetID()] = p_Quest;
+
+    PacketWarningMsg l_Packet;
+    l_Packet.BuildPacket(eTypeWarningMsg::Yellow, "Nouvelle Quete : " + p_Quest->GetName());
+    GetSession()->send(l_Packet.m_Packet);
 }
 
 void Player::CheckQuestObjective(eObjectifType p_EventType, int32 p_Data0)

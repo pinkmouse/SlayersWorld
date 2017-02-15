@@ -495,11 +495,13 @@ void PacketHandler::HandleLogDamage(WorldPacket &p_Packet)
 
 void PacketHandler::HandleWarningMsg(WorldPacket &p_Packet)
 {
-    uint8 l_WarningID;
+    uint8 l_Type;
+    std::string l_WarningMsg;
 
-    p_Packet >> l_WarningID;
+    p_Packet >> l_Type;
+    p_Packet >> l_WarningMsg;
 
-    m_InterfaceManager->AddWarningMsg((eWarningMsg)l_WarningID);
+    m_InterfaceManager->AddWarningMsg((eTypeWarningMsg)l_Type, l_WarningMsg);
 }
 
 void PacketHandler::HandleUnitPlayVisual(WorldPacket &p_Packet)

@@ -61,7 +61,7 @@ void  InterfaceManager::ManageEvent(sf::Event p_Event)
     {
         case sf::Event::KeyPressed: ///< Key Press
             if (IsBlockingBind(l_KeyBoardAction))
-                AddWarningMsg("Temps de recharge restant : " + std::to_string(uint8(m_BlockingBinds[l_KeyBoardAction] / 1000000)) + "s");
+                AddWarningMsg(eTypeWarningMsg::Red, "Temps de recharge restant : " + std::to_string(uint8(m_BlockingBinds[l_KeyBoardAction] / 1000000)) + "s");
             else
                 m_Events->NewKeyPressed(l_KeyBoardAction);
             break;
@@ -141,14 +141,17 @@ void InterfaceManager::Update(sf::Time p_Diff)
 {
     m_HistoryField->Update(p_Diff);
 
-    for (std::vector<std::pair<std::string, uint32>>::iterator l_It = m_WarningMsgs.begin(); l_It != m_WarningMsgs.end();)
+    for (std::map< eTypeWarningMsg, std::vector< std::pair<std::string, uint32> > >::iterator l_It = m_WarningMsgs.begin(); l_It != m_WarningMsgs.end(); ++l_It)
     {
-        if ((*l_It).second <= (p_Diff.asMicroseconds()))
-            l_It = m_WarningMsgs.erase(l_It);
-        else
+        for (std::vector<std::pair<std::string, uint32>>::iterator l_Itr = (*l_It).second.begin(); l_Itr != (*l_It).second.end();)
         {
-            (*l_It).second -= (p_Diff.asMicroseconds());
-            ++l_It;
+            if ((*l_Itr).second <= (p_Diff.asMicroseconds()))
+                l_Itr = (*l_It).second.erase(l_Itr);
+            else
+            {
+                (*l_Itr).second -= (p_Diff.asMicroseconds());
+                ++l_Itr;
+            }
         }
     }
 
@@ -204,16 +207,22 @@ void InterfaceManager::DrawClock(Window & p_Window)
 
 void InterfaceManager::DrawWarnings(Window & p_Window)
 {
-    for (uint8 i = 0; i < m_WarningMsgs.size(); ++i)
+    for (std::map< eTypeWarningMsg, std::vector< std::pair<std::string, uint32> > >::iterator l_It = m_WarningMsgs.begin(); l_It != m_WarningMsgs.end(); ++l_It)
     {
-        sf::Text    l_WarningMsg;
-        l_WarningMsg.setCharacterSize(22);
-        l_WarningMsg.setColor(sf::Color(255, 66, 66, 240));
-        l_WarningMsg.setString(m_WarningMsgs[i].first);
-        l_WarningMsg.setFont(*g_Font);
+        for (uint8 i = 0; i < (*l_It).second.size(); ++i)
+        {
+            sf::Text    l_WarningMsg;
+            l_WarningMsg.setCharacterSize(22);
+            if ((*l_It).first == eTypeWarningMsg::Red)
+                l_WarningMsg.setColor(sf::Color(255, 66, 66, 240));
+            else
+                l_WarningMsg.setColor(sf::Color(255, 239, 66, 240));
+            l_WarningMsg.setString((*l_It).second[i].first);
+            l_WarningMsg.setFont(*g_Font);
 
-        l_WarningMsg.setPosition((X_WINDOW / 2) - ((l_WarningMsg.getGlobalBounds().width) / 2), (Y_WINDOW / 2) - ((g_Font->getLineSpacing(l_WarningMsg.getCharacterSize())) / 2) + (g_Font->getLineSpacing(l_WarningMsg.getCharacterSize()) * i));
-        p_Window.draw(l_WarningMsg);
+            l_WarningMsg.setPosition((X_WINDOW / 2) - ((l_WarningMsg.getGlobalBounds().width) / 2), (Y_WINDOW / 2) - ((g_Font->getLineSpacing(l_WarningMsg.getCharacterSize())) / 2) + (g_Font->getLineSpacing(l_WarningMsg.getCharacterSize()) * i));
+            p_Window.draw(l_WarningMsg);
+        }
     }
 }
 
@@ -307,20 +316,20 @@ void InterfaceManager::Draw(Window & p_Window)
     DrawClock(p_Window);
 }
 
-void InterfaceManager::AddWarningMsg(const std::string & p_Msg)
+void InterfaceManager::AddWarningMsg(eTypeWarningMsg p_Type, const std::string & p_Msg)
 {
-    m_WarningMsgs.push_back(std::pair<std::string, uint32>(p_Msg, MAX_WARNING_LOG_TIME));
+    m_WarningMsgs[p_Type].push_back(std::pair<std::string, uint32>(p_Msg, MAX_WARNING_LOG_TIME));
 }
 
-void InterfaceManager::AddWarningMsg(eWarningMsg p_WarningMsg)
+void InterfaceManager::AddWarningMsg(eTypeWarningMsg p_Type, eWarningMsg p_WarningMsg)
 {
     if (m_WarningMsgsEnum.find(p_WarningMsg) == m_WarningMsgsEnum.end())
         return;
 
-    if (m_WarningMsgs.size() && (m_WarningMsgs[m_WarningMsgs.size() - 1].first == m_WarningMsgsEnum[p_WarningMsg]) && m_WarningMsgs[m_WarningMsgs.size() - 1].second >= MAX_WARNING_LOG_TIME_BETWEEN_SAME)
+    if (m_WarningMsgs.size() && (m_WarningMsgs[p_Type][m_WarningMsgs.size() - 1].first == m_WarningMsgsEnum[p_WarningMsg]) && m_WarningMsgs[p_Type][m_WarningMsgs.size() - 1].second >= MAX_WARNING_LOG_TIME_BETWEEN_SAME)
         return;
 
-    m_WarningMsgs.push_back(std::pair<std::string, uint32>(m_WarningMsgsEnum[p_WarningMsg], MAX_WARNING_LOG_TIME));
+    m_WarningMsgs[p_Type].push_back(std::pair<std::string, uint32>(m_WarningMsgsEnum[p_WarningMsg], MAX_WARNING_LOG_TIME));
 }
 
 void InterfaceManager::SetSystemMsg(const std::string & p_Msg)

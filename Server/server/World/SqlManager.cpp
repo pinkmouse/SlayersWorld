@@ -655,11 +655,12 @@ bool  SqlManager::InitializeSpellEffects()
 bool  SqlManager::InitializeQuests()
 {
     /// QUEST TEMPLATE
-    std::string l_Query = "SELECT `id`, `repetitionType` FROM quest_template";
+    std::string l_Query = "SELECT `id`, `repetitionType`, `name`  FROM quest_template";
     mysql_query(&m_MysqlWorld, l_Query.c_str());
 
     uint16 l_Id = 0;
     uint8 l_RepetitionType = 0;
+    std::string l_Name = "";
 
     MYSQL_RES *l_Result = NULL;
     MYSQL_ROW l_Row;
@@ -668,9 +669,10 @@ bool  SqlManager::InitializeQuests()
     {
         l_Id = atoi(l_Row[0]);
         l_RepetitionType = atoi(l_Row[1]);
+        l_Name = atoi(l_Row[2]);
 
         printf("Add Quest %d %d\n", l_Id, l_RepetitionType);
-        QuestTemplate* l_QuestTempalte = new QuestTemplate(l_Id, (eRepetitionType)l_RepetitionType);
+        QuestTemplate* l_QuestTempalte = new QuestTemplate(l_Id, (eRepetitionType)l_RepetitionType, l_Name);
         g_QuestManager->AddQuestTemplate(l_QuestTempalte);
     }
     mysql_free_result(l_Result);

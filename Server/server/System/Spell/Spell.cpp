@@ -32,7 +32,7 @@ bool Spell::Prepare(Unit* p_Caster)
         if (Player* l_Player = p_Caster->ToPlayer())
         {
             PacketWarningMsg l_Packet;
-            l_Packet.BuildPacket(1);
+            l_Packet.BuildPacket(eTypeWarningMsg::Red, "Tant de recharge restant");
             l_Player->GetSession()->send(l_Packet.m_Packet);
         }
         return false;
@@ -48,7 +48,7 @@ bool Spell::Prepare(Unit* p_Caster)
             if (Player* l_Player = p_Caster->ToPlayer())
             {
                 PacketWarningMsg l_Packet;
-                l_Packet.BuildPacket(0);
+                l_Packet.BuildPacket(eTypeWarningMsg::Red, "Resources insuffisantes");
                 l_Player->GetSession()->send(l_Packet.m_Packet);
                 /// TODO
             }

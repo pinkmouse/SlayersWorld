@@ -135,6 +135,12 @@ enum eRepetitionType
     Weekly
 };
 
+enum eTypeWarningMsg
+{
+    Red = 0,
+    Yellow
+};
+
 struct ObjectifQuestTemplate
 {
     uint8 m_Id;
@@ -162,10 +168,11 @@ struct QuestTemplate
 {
     uint16 m_Id;
     eRepetitionType m_RepetitionType;
+    std::string m_Name;
     std::map< uint8, ObjectifQuestTemplate* > m_ObjectifList;
 
-    QuestTemplate(uint16 p_Id, eRepetitionType p_RepetitionType) :
-        m_Id(p_Id), m_RepetitionType(p_RepetitionType) {}
+    QuestTemplate(uint16 p_Id, eRepetitionType p_RepetitionType, const std::string & p_Name) :
+        m_Id(p_Id), m_RepetitionType(p_RepetitionType), m_Name(p_Name) {}
 
     void AddObjectif(ObjectifQuestTemplate* p_Objecif)
     {

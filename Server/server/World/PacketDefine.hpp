@@ -308,15 +308,17 @@ struct PacketWarningMsg
 {
     WorldPacket m_Packet;
     uint8 m_PacketID;
-    uint8 m_MsgID;
+    std::string m_Msg;
+    uint8 m_Type;
 
     PacketWarningMsg() :
         m_PacketID(SMSG::S_WarningMsg) {}
 
-    void BuildPacket(const uint8 & p_MsgID)
+    void BuildPacket(const uint8 & p_Type, const std::string & p_Msg)
     {
-        m_Packet << m_PacketID << p_MsgID;
-        m_MsgID = p_MsgID;
+        m_Packet << m_PacketID << p_Type << p_Msg;
+        m_Msg = p_Msg;
+        m_Type = p_Type;
     }
 };
 

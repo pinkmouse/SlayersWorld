@@ -49,3 +49,8 @@ bool Quest::IsDone()
     }
     return true;
 }
+
+std::string Quest::GetName() const
+{
+    return m_QuestTemplate->m_Name;
+}

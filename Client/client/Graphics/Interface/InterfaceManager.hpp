@@ -27,8 +27,8 @@ public:
     void DrawWarnings(Window &);
     void DrawClock(Window &);
     HistoryField* GetHistoryField() const;
-    void AddWarningMsg(const std::string &);
-    void AddWarningMsg(eWarningMsg);
+    void AddWarningMsg(eTypeWarningMsg, const std::string &);
+    void AddWarningMsg(eTypeWarningMsg, eWarningMsg);
     void AddKeyBind(uint8, uint8);
     int16 GetBindForKey(uint8);
     void SetSystemMsg(const std::string &);
@@ -46,7 +46,7 @@ private:
     HistoryField*                       m_HistoryField;
     sf::Text                            m_SystemMsg;
     sf::Text                            m_ClockTxt;
-    std::vector< std::pair<std::string, uint32> >     m_WarningMsgs;
+    std::map< eTypeWarningMsg, std::vector< std::pair<std::string, uint32> > >     m_WarningMsgs;
     std::map< eWarningMsg, std::string > m_WarningMsgsEnum;
     std::map< uint8, uint8 >             m_KeyBoardBind;
     std::map< uint8, uint64 >            m_BlockingBinds;

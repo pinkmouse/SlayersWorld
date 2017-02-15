@@ -109,6 +109,12 @@ enum TypeUnit
     PLAYER = 1
 };
 
+enum eTypeWarningMsg
+{
+    Red = 0,
+    Yellow
+};
+
 struct Position
 {
     uint32 x;
