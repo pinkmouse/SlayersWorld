@@ -29,6 +29,8 @@ public:
     TypeUnit GetType() const;
     uint8 GetOpacity();
     bool IsDeath();
+    float GetPosXAtIntant(); /// Use for drawing
+    float GetPosYAtIntant(); /// Use for drawing
 
     void SetName(const std::string &);
     void SetLevel(const uint8 &);

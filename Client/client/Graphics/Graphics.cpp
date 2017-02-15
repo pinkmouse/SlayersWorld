@@ -46,8 +46,8 @@ bool Graphics::CreateWindow(uint32 p_X, uint32 p_Y, float p_Zoom)
     m_ViewInterface = m_Window.getDefaultView();
 	m_View.zoom(p_Zoom);
 	m_Window.setView(m_View);
-    m_Window.setFramerateLimit(50);
-    //m_Window.setVerticalSyncEnabled(true);
+    //m_Window.setFramerateLimit(60);
+    m_Window.setVerticalSyncEnabled(true);
 
 	m_TileSet = new TileSet();
 	m_TileSet->BuildSprites();
@@ -99,8 +99,8 @@ Position Graphics::GetCenterPositionOnUnit(Unit* p_Unit, sf::Sprite* p_Sprite)
     int16 l_DiffSizeY = (p_Sprite->getTextureRect().height - p_Unit->GetSizeY()) / 2;
 
     Position l_Pos;
-    l_Pos.x = p_Unit->GetPosX() - l_DiffSizeX;
-    l_Pos.y = p_Unit->GetPosY() - l_DiffSizeY;
+    l_Pos.x = p_Unit->GetPosXAtIntant() - l_DiffSizeX;
+    l_Pos.y = p_Unit->GetPosYAtIntant() - l_DiffSizeY;
     return l_Pos;
 }
 
@@ -141,7 +141,7 @@ void Graphics::DrawUnitDetails(Unit* p_Unit)
             l_Text.setColor(sf::Color(255, 66, 66));
         else
             l_Text.setColor(sf::Color(164, 255, 6));
-        sf::Vector2f v1(p_Unit->GetPosX() + (p_Unit->GetSizeX() / 2), p_Unit->GetPosY() - p_Unit->GetSizeY() - 6 - 4 - ((MAX_HISTORY_LOG_TIME - l_DamageLog.second) / 100000));
+        sf::Vector2f v1(p_Unit->GetPosXAtIntant() + (p_Unit->GetSizeX() / 2), p_Unit->GetPosYAtIntant() - p_Unit->GetSizeY() - 6 - 4 - ((MAX_HISTORY_LOG_TIME - l_DamageLog.second) / 100000));
         sf::Vector2f l_Coord = m_Window.mapCoordsToPixelFloat(v1, m_View);
         l_Text.setPosition((l_Coord.x - (l_Text.getGlobalBounds().width / 2)), l_Coord.y);
         m_Window.draw(l_Text);
@@ -152,13 +152,13 @@ void Graphics::DrawUnitDetails(Unit* p_Unit)
         sf::Text l_Text(p_Unit->GetTalk(), *g_Font, SIZE_TALK_FONT);
 
         TileSprite l_Sprite = m_InterfaceManager->GetField(l_Text.getGlobalBounds().width + 8, (float)g_Font->getLineSpacing(l_Text.getCharacterSize()) + 8);
-        sf::Vector2f v1(p_Unit->GetPosX() + (p_Unit->GetSizeX() / 2), p_Unit->GetPosY() - p_Unit->GetSizeY() - 6 - 4);
+        sf::Vector2f v1(p_Unit->GetPosXAtIntant() + (p_Unit->GetSizeX() / 2), p_Unit->GetPosYAtIntant() - p_Unit->GetSizeY() - 6 - 4);
         sf::Vector2f l_Coord = m_Window.mapCoordsToPixelFloat(v1, m_View);
         l_Sprite.setPosition((l_Coord.x - ((l_Text.getGlobalBounds().width + 8) / 2)), l_Coord.y);
         m_Window.draw(l_Sprite);
 
         l_Text.setColor(sf::Color::White);
-        sf::Vector2f v12(p_Unit->GetPosX() + (p_Unit->GetSizeX() / 2), p_Unit->GetPosY() - p_Unit->GetSizeY());
+        sf::Vector2f v12(p_Unit->GetPosXAtIntant() + (p_Unit->GetSizeX() / 2), p_Unit->GetPosYAtIntant() - p_Unit->GetSizeY());
         l_Coord = m_Window.mapCoordsToPixelFloat(v1, m_View);
         l_Text.setPosition((l_Coord.x - (l_Text.getGlobalBounds().width / 2)), l_Coord.y);
         m_Window.draw(l_Text);
@@ -169,7 +169,7 @@ void Graphics::DrawUnitDetails(Unit* p_Unit)
     {
         sf::Text l_Name(p_Unit->GetName(), *g_Font, SIZE_NAME_FONT);
         l_Name.setColor(sf::Color::White);
-        sf::Vector2f l_View(p_Unit->GetPosX() + (p_Unit->GetSizeX() / 2), p_Unit->GetPosY());
+        sf::Vector2f l_View(p_Unit->GetPosXAtIntant() + (p_Unit->GetSizeX() / 2), p_Unit->GetPosYAtIntant());
         sf::Vector2f l_Coord = m_Window.mapCoordsToPixelFloat(l_View, m_View);
         l_Name.setPosition((l_Coord.x - (l_Name.getGlobalBounds().width / 2.0f)), l_Coord.y);
         m_Window.draw(l_Name);
@@ -184,7 +184,7 @@ void Graphics::DrawUnitDetails(Unit* p_Unit)
         TileSprite l_CastBar;
         l_CastBar.setTexture(m_CastBarTexture);
         l_CastBar.setTextureRect(sf::IntRect(0, 0, (m_CastBarTexture.getSize().x / 100.0f) * p_Unit->GetCastPct(), m_CastBarTexture.getSize().y));
-        l_CastBar.setPosition(p_Unit->GetPosX(), p_Unit->GetPosY() - p_Unit->GetSizeY());
+        l_CastBar.setPosition(p_Unit->GetPosXAtIntant(), p_Unit->GetPosYAtIntant() - p_Unit->GetSizeY());
         m_Window.draw(l_CastBar);
     }
 }
@@ -201,9 +201,9 @@ void Graphics::DrawWorldObjects(std::map<uint32, std::vector<WorldObject*> > *p_
                 continue;
 
             if (l_WorldObject->GetType() == TypeWorldObject::UNIT)
-                l_WorldObject->GetSprite()->setPosition((float)l_WorldObject->GetPosX(), (float)l_WorldObject->GetPosY() - l_WorldObject->GetSizeY());
+                l_WorldObject->GetSprite()->setPosition(l_WorldObject->GetPosXAtIntant(), l_WorldObject->GetPosYAtIntant() - l_WorldObject->GetSizeY());
             else
-                l_WorldObject->GetSprite()->setPosition((float)l_WorldObject->GetPosX(), (float)l_WorldObject->GetPosY());
+                l_WorldObject->GetSprite()->setPosition(l_WorldObject->GetPosXAtIntant(), l_WorldObject->GetPosYAtIntant());
             m_Window.draw(*l_WorldObject->GetSprite());
 
             /// Draw specificity of Unit (name, text, dmg ...)
@@ -319,7 +319,7 @@ void Graphics::DrawMap()
 
             l_Unit->SetSprite(l_SkinSprite);
 
-            l_ListWorldObjectByZ[l_Unit->GetPosY()].push_back(l_Unit);
+            l_ListWorldObjectByZ[l_Unit->GetPosYAtIntant()].push_back(l_Unit);
         }
     }
 
@@ -368,26 +368,13 @@ void Graphics::UpdateInterface(sf::Time p_Diff)
 void Graphics::UpdateWindow(sf::Time p_Diff)
 {
     if (g_Player != nullptr)
-    {
-        //sf::Vector2f v1((float)g_Player->GetPosX() + (g_Player->GetSizeX() / 2), (float)g_Player->GetPosY() - (g_Player->GetSizeY() / 2));
-        //sf::Vector2f l_Coord = m_Window.mapCoordsToPixelFloat(v1, m_View);
-        //m_View.setCenter(l_Coord.x, l_Coord.y);
-        m_View.setCenter(g_Player->GetMovementHandler()->GetPosXAtMoment() + (float)(g_Player->GetSizeX() / 2), g_Player->GetMovementHandler()->GetPosY() - (float)(g_Player->GetSizeY() / 2));
-        //m_View.setCenter((float)(g_Player->GetPosX() + (g_Player->GetSizeX() / 2)), ((float)(g_Player->GetPosY() - (g_Player->GetSizeY() / 2))));
-    }
-    Clear();
+        m_View.setCenter(g_Player->GetMovementHandler()->GetPosXAtIntant() + (float)(g_Player->GetSizeX() / 2), g_Player->GetMovementHandler()->GetPosYAtIntant() - (float)(g_Player->GetSizeY() / 2));
+    UpdateInterface(p_Diff);
     m_Window.setView(m_View);
+    Clear();
     DrawMap();
     m_Window.setView(m_ViewInterface);
-    UpdateInterface(p_Diff);
     DrawInterface();
-    if (g_Player != nullptr)
-    {
-        //sf::Vector2f v1((float)g_Player->GetPosX() + (g_Player->GetSizeX() / 2), (float)g_Player->GetPosY() - (g_Player->GetSizeY() / 2));
-        //sf::Vector2f l_Coord = m_Window.mapCoordsToPixelFloat(v1, m_View);
-        //m_View.setCenter(l_Coord.x, l_Coord.y);
-        //m_View.setCenter((float)(g_Player->GetPosX() + (g_Player->GetSizeX() / 2)), ((float)g_Player->GetPosY() - (g_Player->GetSizeY() / 2)));
-    }
     Display();
 }
 

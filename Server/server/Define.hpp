@@ -21,7 +21,7 @@
 #define REGEN_HEALTH_TIMER 5000
 
 #define UPDATE_TIME_MOVEMENT 200
-#define STEP_SIZE 10 /// In pixel
+#define STEP_SIZE 12 /// In pixel
 #define MAX_MOVEMENT_POSITION 3
 
 #define OUT_OF_COMBAT_TIME 7

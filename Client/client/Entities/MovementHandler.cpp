@@ -312,7 +312,7 @@ uint32 MovementHandler::GetPosY() const
     return m_Pos.y;
 }
 
-float MovementHandler::GetPosXAtMoment()
+float MovementHandler::GetPosXAtIntant()
 {
     switch (m_Orientation)
     {
@@ -329,7 +329,7 @@ float MovementHandler::GetPosXAtMoment()
     return (float)m_Pos.x;
 }
 
-float MovementHandler::GetPosYAtMoment()
+float MovementHandler::GetPosYAtIntant()
 {
     switch (m_Orientation)
     {

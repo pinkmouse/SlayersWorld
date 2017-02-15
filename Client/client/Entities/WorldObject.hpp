@@ -15,6 +15,8 @@ public:
     float GetDistance(const WorldObject*) const;
     uint8 GetSizeX() const;
     uint8 GetSizeY() const;
+    virtual float GetPosXAtIntant(); /// Use for drawing
+    virtual float GetPosYAtIntant(); /// Use for drawing
 
     sf::Sprite* GetSprite() const;
     void SetSprite(sf::Sprite*);

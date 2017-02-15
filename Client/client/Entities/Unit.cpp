@@ -342,3 +342,13 @@ void Unit::SetSpeed(float p_Speed)
 {
     m_Speed = p_Speed;
 }
+
+float Unit::GetPosXAtIntant()
+{
+    return m_MovementHandler->GetPosXAtIntant();
+}
+
+float Unit::GetPosYAtIntant()
+{
+    return m_MovementHandler->GetPosYAtIntant();
+}

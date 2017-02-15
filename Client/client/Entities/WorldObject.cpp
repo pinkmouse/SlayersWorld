@@ -64,3 +64,13 @@ uint8 WorldObject::GetSizeY() const
 {
     return m_SizeY;
 }
+
+float WorldObject::GetPosXAtIntant()
+{
+    return (float)GetPosX();
+}
+
+float WorldObject::GetPosYAtIntant()
+{
+    return (float)GetPosY();
+}
