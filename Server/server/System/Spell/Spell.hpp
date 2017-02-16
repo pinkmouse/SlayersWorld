@@ -20,6 +20,7 @@ public:
     uint64 GetCastTime() const;
     bool IsReadyToLaunch() const;
     SpellTemplate* GetTemplate() const;
+    void Interrupt();
 
 private:
     SpellTemplate* m_SpellTemplate;

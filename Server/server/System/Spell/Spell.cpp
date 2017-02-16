@@ -171,3 +171,8 @@ std::vector<Unit*> Spell::SearchTargets(SpellTarget p_TargetType, float p_Radius
     }
     return l_Targets;
 }
+
+void Spell::Interrupt()
+{
+    delete this;
+}

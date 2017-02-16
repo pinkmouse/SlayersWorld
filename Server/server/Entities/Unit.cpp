@@ -210,8 +210,12 @@ void Unit::Update(sf::Time p_Diff)
         return;
 
     m_MovementHandler->Update(p_Diff);
-    SetPosX(m_MovementHandler->GetPosX());
-    SetPosY(m_MovementHandler->GetPosY());
+    if (GetPosX() != m_MovementHandler->GetPosX() || GetPosY() != m_MovementHandler->GetPosY())
+    {
+        SetPosX(m_MovementHandler->GetPosX());
+        SetPosY(m_MovementHandler->GetPosY());
+        InterruptCast(); /// Interrupt Cast on Movement
+    }
 
     if (m_MovementHandler->IsDamageReady())
     {
@@ -850,6 +854,19 @@ void Unit::SetCurrentSpell(Spell* p_Spell)
     /// Send Cast Bar visual
     PacketUnitCastBar l_Packet;
     l_Packet.BuildPacket(GetType(), GetID(), (uint8)((p_Spell->GetCastTime() / 1000) / 100));
+    m_Map->SendToSet(l_Packet.m_Packet, this);
+}
+
+void Unit::InterruptCast()
+{
+    if (m_CurrentSpell == nullptr)
+        return;
+    
+    m_CurrentSpell->Interrupt();
+    m_CurrentSpell = nullptr;
+    /// Send Cast Bar visual
+    PacketUnitCastBar l_Packet;
+    l_Packet.BuildPacket(GetType(), GetID(), 0);
     m_Map->SendToSet(l_Packet.m_Packet, this);
 }
 

@@ -118,6 +118,7 @@ public:
     bool HasSpellCooldown(uint16);
     void SetCurrentSpell(Spell*);
     Spell* GetCurrentSpell() const;
+    void InterruptCast();
 
     /* GOSSIP*/
     void SetGossipList(std::vector<Gossip>*);
