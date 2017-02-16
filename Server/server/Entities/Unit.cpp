@@ -210,7 +210,8 @@ void Unit::Update(sf::Time p_Diff)
         return;
 
     m_MovementHandler->Update(p_Diff);
-    if (GetPosX() != m_MovementHandler->GetPosX() || GetPosY() != m_MovementHandler->GetPosY())
+
+    if (GetPosX() != m_MovementHandler->GetPosX() || GetPosY() != m_MovementHandler->GetPosY() || m_MovementHandler->IsInAttack())
     {
         SetPosX(m_MovementHandler->GetPosX());
         SetPosY(m_MovementHandler->GetPosY());
@@ -841,6 +842,7 @@ void Unit::CastSpell(uint16 p_ID)
     if (!l_Spell->Prepare(this))
         return;
 
+    InterruptCast();
     SetCurrentSpell(l_Spell);
 }
 

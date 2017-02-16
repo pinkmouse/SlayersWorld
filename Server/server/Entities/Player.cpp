@@ -224,6 +224,8 @@ void Player::EventAction(eKeyBoardAction p_PlayerAction)
         break;
     }
     case eKeyBoardAction::KeyBoardSpell0:
+        if (m_MovementHandler->IsInAttack())
+            return;
         CastSpell(1);
         break;
     case eKeyBoardAction::KeyBoardSpell1:

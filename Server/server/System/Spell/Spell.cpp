@@ -56,16 +56,6 @@ bool Spell::Prepare(Unit* p_Caster)
         }
     }
 
-    /// Consume Cooldown
-    p_Caster->AddSpellCooldown(m_SpellTemplate->GetID(), m_SpellTemplate->GetCooldown() * 1000 /* MILLISECOND TO MICROSECOND*/);
-
-    /// Consume Resources
-    for (std::vector<ResourceNeed>::iterator l_It = l_ResourcesNeed->begin(); l_It != l_ResourcesNeed->end(); ++l_It)
-    {
-        ResourceNeed l_ResourceNedd = (*l_It);
-        p_Caster->AddResourceNb(l_ResourceNedd.m_ResourceType, -l_ResourceNedd.m_Nb);
-    }
-
     /// ADD CAST TIME
     SetCastTime((uint64)m_SpellTemplate->GetCastTime() * 1000);
     return true;
@@ -117,6 +107,20 @@ void Spell::EffectHeal(Unit* p_Target, SpellEffect* p_SpellEffect)
 
 void Spell::LaunchEffects()
 {
+    if (m_Caster == nullptr)
+        return;
+
+    /// Consume Resources
+    std::vector<ResourceNeed>* l_ResourcesNeed = m_SpellTemplate->GetReousrcesNeed();
+    for (std::vector<ResourceNeed>::iterator l_It = l_ResourcesNeed->begin(); l_It != l_ResourcesNeed->end(); ++l_It)
+    {
+        ResourceNeed l_ResourceNedd = (*l_It);
+        m_Caster->AddResourceNb(l_ResourceNedd.m_ResourceType, -l_ResourceNedd.m_Nb);
+    }
+
+    /// Consume Cooldown
+    m_Caster->AddSpellCooldown(m_SpellTemplate->GetID(), m_SpellTemplate->GetCooldown() * 1000 /* MILLISECOND TO MICROSECOND*/);
+
     std::vector<SpellEffect*>* l_SpellEffects = m_SpellTemplate->GetListEffect();
     for (std::vector<SpellEffect*>::iterator l_It = l_SpellEffects->begin(); l_It != l_SpellEffects->end(); ++l_It)
     {
