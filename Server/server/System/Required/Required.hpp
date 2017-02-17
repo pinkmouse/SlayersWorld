@@ -8,10 +8,10 @@ class Required
 public:
     Required();
     ~Required();
-    void AddSubRequired(SubRequired);
+    void AddSubRequired(SubRequired*);
     bool IsValid(const Player*) const;
 
 private:
     uint16 m_Id;
-    std::vector< SubRequired > m_SubRequiredList;
+    std::vector< SubRequired* > m_SubRequiredList;
 };

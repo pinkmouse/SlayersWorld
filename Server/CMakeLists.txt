@@ -42,6 +42,8 @@ add_executable(${EXECUTABLE_NAME}
 
 	      server/System/Required/Required.cpp
               server/System/Required/Required.hpp
+	      server/System/Required/RequiredManager.cpp
+              server/System/Required/RequiredManager.hpp
 	      server/System/Required/SubRequired.cpp
               server/System/Required/SubRequired.hpp
 	      server/System/Required/SubRequiredQuest.cpp

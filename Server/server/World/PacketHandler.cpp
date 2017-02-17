@@ -157,7 +157,6 @@ void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldS
     p_Packet >> l_Password;
 
     int32 l_Id = g_SqlManager->GetIDLogin(l_Login, l_Password);
-    printf("===>Auth %d\n", l_Id);
 
     if (l_Id < 0)
     {
@@ -184,23 +183,26 @@ void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldS
             return;
         }
     }
-    /// Auth Success
-    p_WorldSocket->SendAuthResponse(1); ///< Auth Success
 
     /// Keep Log of Connection
     g_SqlManager->AddConnectionLogin(l_Id);
 
     /// Creation Player
     Player* l_Player = g_SqlManager->GetNewPlayer(l_Id);
+    if (l_Player == nullptr)
+    {
+        p_WorldSocket->SendAuthResponse(3); ///< Auth Success
+        return;
+    }
+
+    /// Auth Success
+    p_WorldSocket->SendAuthResponse(1); ///< Auth Success
 
     Map* l_Map = g_MapManager->GetMap(l_Player->GetMapID());
 
-    if (l_Player == nullptr || l_Map == nullptr)
+    if (l_Map == nullptr)
     {
-        printf("Failed load player");
-        if (l_Player != nullptr)
-            printf(": Map = %d", l_Player->GetMapID());
-        printf("\n");
+        printf("Failed load map\n");
         return;
     }
 

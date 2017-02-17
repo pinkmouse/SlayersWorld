@@ -29,3 +29,18 @@ bool SubRequiredQuestNotDone::IsValid(const Player* p_Player) const
 {
     return true;
 }
+
+SubRequiredQuestAllObjectiveDone::SubRequiredQuestAllObjectiveDone(uint16 p_QuestID, uint16 p_Nb) :
+    m_QuestID(p_QuestID),
+    m_Number(p_Nb)
+{
+}
+
+SubRequiredQuestAllObjectiveDone::~SubRequiredQuestAllObjectiveDone()
+{
+}
+
+bool SubRequiredQuestAllObjectiveDone::IsValid(const Player* p_Player) const
+{
+    return true;
+}

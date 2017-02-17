@@ -15,6 +15,18 @@ private:
     uint16 m_Number;
 };
 
+class SubRequiredQuestAllObjectiveDone : public SubRequired
+{
+public:
+    SubRequiredQuestAllObjectiveDone(uint16, uint16);
+    ~SubRequiredQuestAllObjectiveDone();
+    bool IsValid(const Player*) const;
+
+private:
+    uint16 m_QuestID;
+    uint16 m_Number;
+};
+
 class SubRequiredQuestNotDone : public SubRequired
 {
 public:

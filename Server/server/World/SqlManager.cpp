@@ -183,6 +183,11 @@ Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
         return GetNewPlayer(p_AccountID);
     }
     eAccessType l_PlayerAccessType = GetAccessType(p_AccountID);
+    eAccessType l_AccessRequired = (eAccessType)atoi(g_Config->GetValue("AccessLevel").c_str());
+
+    if (l_AccessRequired > l_PlayerAccessType)
+        return nullptr;
+
     l_Player = new Player(p_AccountID, l_ID, l_Name, l_Lvl, l_Health, l_Mana, l_Alignment, l_SkinID, l_MapID, l_PosX, l_PosY, (Orientation)l_Orientation, l_Xp, l_PlayerAccessType);
 	l_Player->SetPointsSet(GetPointsSetForPlayer(l_ID));
     l_Player->SetRespawnPosition(GetRespawnPositionForPlayer(l_ID));
@@ -496,16 +501,17 @@ bool SqlManager::InitializeKeyBindsForAccount(uint32 p_Account, Player* p_Player
     return true;
 }
 
-bool SqlManager::InitializeGossip(UnitManager* p_CreatureManager)
+bool SqlManager::InitializeGossip(UnitManager* p_CreatureManager, RequiredManager* p_RequiredManager)
 {
-    std::string l_Query = "SELECT `id`, `typeUnit`, `unitEntry`, `type`, `data1`, `msg` FROM gossip";
+    std::string l_Query = "SELECT `id`, `requiredID`, `typeUnit`, `unitEntry`, `type`, `data0`, `msg` FROM gossip";
     mysql_query(&m_MysqlWorld, l_Query.c_str());
 
     uint16 l_ID = 0;
+    int32 l_RequiredID = -1;
     uint8 l_TypeUnit = 0;
     uint16 l_UnitEntry = 0;
     uint8 l_GossipType = 0;
-    uint32 l_Data1 = 0;
+    uint32 l_Data0 = 0;
     std::string l_Msg = "";
 
     MYSQL_RES *l_Result = NULL;
@@ -514,12 +520,16 @@ bool SqlManager::InitializeGossip(UnitManager* p_CreatureManager)
     while ((l_Row = mysql_fetch_row(l_Result)))
     {
         l_ID = atoi(l_Row[0]);
-        l_TypeUnit = atoi(l_Row[1]);
-        l_UnitEntry = atoi(l_Row[2]);
-        l_GossipType = atoi(l_Row[3]);
-        l_Data1 = atoi(l_Row[4]);
-        l_Msg = std::string(l_Row[5]);
-        p_CreatureManager->AddGossip(Gossip(l_ID, (TypeUnit)l_TypeUnit, l_UnitEntry, (eGossipType)l_GossipType, l_Data1, l_Msg));
+        l_RequiredID = atoi(l_Row[1]);
+        l_TypeUnit = atoi(l_Row[2]);
+        l_UnitEntry = atoi(l_Row[3]);
+        l_GossipType = atoi(l_Row[4]);
+        l_Data0 = atoi(l_Row[5]);
+        l_Msg = std::string(l_Row[6]);
+        Required* l_Required = nullptr;
+        if (l_RequiredID >= 0) /// -1 if no required
+            l_Required = p_RequiredManager->GetRequiered(l_RequiredID);
+        p_CreatureManager->AddGossip(Gossip(l_ID, l_Required, (TypeUnit)l_TypeUnit, l_UnitEntry, (eGossipType)l_GossipType, l_Data0, l_Msg));
     }
     mysql_free_result(l_Result);
 
@@ -647,6 +657,34 @@ bool  SqlManager::InitializeSpellEffects()
 
         SpellEffect l_SpellEffect(l_Id, (SpellEffectType)l_EffectType, (SpellTarget)l_Target, l_BasePoint1, l_BasePoint2, l_BasePoint3, l_BasePoint4, l_RadiusMin, l_RadiusMax);
         g_SpellManager->AddSpellEffect(l_SpellEffect);
+    }
+    mysql_free_result(l_Result);
+    return true;
+}
+
+bool SqlManager::InitializeRequired(RequiredManager* p_RequiredManager)
+{
+    std::string l_Query = "SELECT `id`, `requiredID`, `typeID`, `data0`, `data1` FROM sub_required";
+    mysql_query(&m_MysqlWorld, l_Query.c_str());
+
+    uint16 l_Id = 0;
+    uint16 l_RequiredID = 0;
+    eRequiredType l_TypeID;
+    uint32 l_Data0 = 0;
+    uint32 l_Data1 = 0;
+
+    MYSQL_RES *l_Result = NULL;
+    MYSQL_ROW l_Row;
+    l_Result = mysql_use_result(&m_MysqlWorld);
+    while ((l_Row = mysql_fetch_row(l_Result)))
+    {
+        l_Id = atoi(l_Row[0]);
+        l_RequiredID = atoi(l_Row[1]);
+        l_TypeID = (eRequiredType)atoi(l_Row[2]);
+        l_Data0 = atoi(l_Row[3]);
+        l_Data1 = atoi(l_Row[4]);
+
+        p_RequiredManager->AddSubRequiered(l_RequiredID, (eRequiredType)l_TypeID, l_Data0, l_Data1);
     }
     mysql_free_result(l_Result);
     return true;

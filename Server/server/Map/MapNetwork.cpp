@@ -21,10 +21,7 @@ void Map::SendToSet(WorldPacket p_Packet, Unit* p_Unit)
                 continue;
 
             if (Player* l_Player = l_Unit->ToPlayer())
-            {
-                ///printf("Send to %s\n", l_Player->GetName().c_str());
                 l_Player->GetSession()->send(p_Packet);
-            }
         }
     }
 }

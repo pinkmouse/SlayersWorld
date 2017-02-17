@@ -56,7 +56,6 @@ uint16 Map::GetSquareID(uint16 p_X, uint16 p_Y) const
     uint16 l_XSquare = (uint16)ceil((p_X / TILE_SIZE) / GRID_SIZE);
     uint16 l_YSquare = (uint16)ceil((p_Y / TILE_SIZE) / GRID_SIZE);
 
-    //printf("Calc %d %d %d", l_TotalSquareWidth, l_YSquare, l_XSquare);
     return (l_TotalSquareWidth * l_YSquare) + l_XSquare;
 }
 
@@ -79,11 +78,6 @@ void Map::Update(sf::Time p_Diff)
             if (l_Unit == nullptr)
                 continue;
 
-            /*if (l_Type == TypeUnit::PLAYER)
-                l_Unit->ToPlayer()->Update(p_Diff);
-            else if (l_Type == TypeUnit::CREATURE)
-                l_Unit->ToCreature()->Update(p_Diff);
-            else*/
             l_Unit->Update(p_Diff);
             if (l_Unit->GetMapID() != m_ID)
                 m_UnitSwitchMapQueue.push(l_Unit);
@@ -267,8 +261,6 @@ void Map::AddUnit(Unit* p_Unit)
 
     /// Add to square
     uint16 l_SquareId = GetSquareID(p_Unit->GetPosX(), p_Unit->GetPosY());
-    //if (p_Unit->GetType() == TypeUnit::CREATURE)
-     //   printf("Add creature:%s to square %d\n", p_Unit->GetName().c_str(), l_SquareId);
     AddToSquare(p_Unit, l_SquareId);
     UpdateForPlayersInNewSquare(p_Unit, true);
     if (p_Unit->GetType() == TypeUnit::PLAYER)
@@ -278,6 +270,7 @@ void Map::AddUnit(Unit* p_Unit)
 void Map::RemoveUnit(Unit* p_Unit)
 {
     m_ListUnitZone[p_Unit->GetType()].erase(p_Unit->GetID());
+
     /// Remove from square
     RemoveFromSquare(p_Unit);
 

@@ -86,7 +86,9 @@ enum eFactionType
 enum eGossipType
 {
     Whisp = 0,
-    Yell = 1
+    Yell = 1,
+    LaunchQuest = 2,
+    ValidQuest = 3
 };
 
 enum eRequiredType
@@ -94,7 +96,8 @@ enum eRequiredType
     QuestDone = 0,
     QuestNotDone = 1,
     LevelMin = 2,
-    LevelMax = 3
+    LevelMax = 3,
+    QuestAllObjectiveDone = 4,
 };
 
 enum eResourceType
@@ -241,6 +244,7 @@ struct Position
 
 typedef std::vector<Position> Path;
 
+class Required; /// Double inclusion
 struct Gossip
 {
     uint16 m_ID;
@@ -250,15 +254,16 @@ struct Gossip
     uint32 m_Data1;
     std::string m_Msg;
     uint64 m_GossipTimer;
+    Required* m_Required;
 
     Gossip() :
-        m_ID(0), m_TypeUnit(TypeUnit::CREATURE), m_UnitEntry(0), m_GossipType(eGossipType::Whisp), m_Data1(0), m_Msg(""), m_GossipTimer(0) {}
+        m_ID(0), m_TypeUnit(TypeUnit::CREATURE), m_UnitEntry(0), m_GossipType(eGossipType::Whisp), m_Data1(0), m_Msg(""), m_GossipTimer(0), m_Required(nullptr) {}
 
     Gossip(const Gossip & p_Gossip) :
-        m_ID(p_Gossip.m_ID), m_TypeUnit(p_Gossip.m_TypeUnit), m_UnitEntry(p_Gossip.m_UnitEntry), m_GossipType(p_Gossip.m_GossipType), m_Data1(p_Gossip.m_Data1), m_Msg(p_Gossip.m_Msg), m_GossipTimer(p_Gossip.m_GossipTimer){}
+        m_ID(p_Gossip.m_ID), m_Required(p_Gossip.m_Required), m_TypeUnit(p_Gossip.m_TypeUnit), m_UnitEntry(p_Gossip.m_UnitEntry), m_GossipType(p_Gossip.m_GossipType), m_Data1(p_Gossip.m_Data1), m_Msg(p_Gossip.m_Msg), m_GossipTimer(p_Gossip.m_GossipTimer){}
         
-    Gossip(uint16 p_ID, TypeUnit p_TypeUnit, uint16 p_UnitEntry, eGossipType p_GossipType, uint32 p_Data1, std::string p_Msg) :
-        m_ID(p_ID), m_TypeUnit(p_TypeUnit), m_UnitEntry(p_UnitEntry), m_GossipType(p_GossipType), m_Data1(p_Data1), m_Msg(p_Msg), m_GossipTimer(0){}
+    Gossip(uint16 p_ID, Required* p_Required, TypeUnit p_TypeUnit, uint16 p_UnitEntry, eGossipType p_GossipType, uint32 p_Data1, std::string p_Msg) :
+        m_ID(p_ID), m_Required(p_Required), m_TypeUnit(p_TypeUnit), m_UnitEntry(p_UnitEntry), m_GossipType(p_GossipType), m_Data1(p_Data1), m_Msg(p_Msg), m_GossipTimer(0){}
 };
 
 struct SpellEffect

@@ -15,6 +15,7 @@
 #include "../Entities/Player.hpp"
 #include "../System/WorldPosition.hpp"
 #include "../Map/MapManager.hpp"
+#include "../System/Required/RequiredManager.hpp"
 #include "UnitManager.hpp"
 
 class SqlManager
@@ -49,7 +50,8 @@ public:
     bool InitializeSpells();
     bool InitializeSpellEffects();
     bool InitializeCreatureTemplate(UnitManager*);
-    bool InitializeGossip(UnitManager*);
+    bool InitializeRequired(RequiredManager*);
+    bool InitializeGossip(UnitManager*, RequiredManager*);
     bool InitializeSpellsForPlayer(Player*);
     bool InitializeKeyBindsForAccount(uint32, Player*);
     bool InitializeSpellsBinds(Player*);

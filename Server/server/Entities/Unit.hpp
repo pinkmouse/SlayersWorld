@@ -170,5 +170,5 @@ private:
     Spell* m_CurrentSpell; ///< Current spell if casting
 
     /* GOSSIP */
-    std::map< eGossipType, std::vector<Gossip*> > m_ListGossip;
+    std::map< eGossipType, std::vector<Gossip> > m_ListGossip;
 };

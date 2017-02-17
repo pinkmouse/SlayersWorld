@@ -289,6 +289,10 @@ void PacketHandler::HandleConnexion(WorldPacket &p_Packet)
         m_InterfaceManager->SetSystemMsg("Already connected");
         printf("Already connected\n");
         break;
+    case 3:
+        m_InterfaceManager->SetSystemMsg("Access denied");
+        printf("Access denied\n");
+        break;
     }
 }
 

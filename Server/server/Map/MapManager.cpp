@@ -40,7 +40,6 @@ bool MapManager::IsOnline(TypeUnit p_TypeID, uint16 p_UnitID)
         if (l_Map == nullptr)
             continue;
 
-        printf("Get Unit type %d id:%d\n", p_TypeID, p_UnitID);
         if (l_Map->GetUnit(p_TypeID, p_UnitID))
             return true;
     }

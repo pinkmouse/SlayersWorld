@@ -17,6 +17,8 @@ Unit::Unit(uint16 p_ID)
 
 Unit::Unit(uint16 p_ID, TypeUnit p_Type, eFactionType p_FactionType)
 {
+    /// Constructor
+
     m_Type = p_Type;
     m_FactionType = p_FactionType;
     m_Name = "";
@@ -47,6 +49,8 @@ Unit::Unit(uint16 p_ID, TypeUnit p_Type, eFactionType p_FactionType)
 
 Player* Unit::ToPlayer()
 {
+    /// Convert to Player
+
     if (m_Type == TypeUnit::PLAYER)
         return  reinterpret_cast<Player*>(this);
     else
@@ -55,6 +59,8 @@ Player* Unit::ToPlayer()
 
 Creature* Unit::ToCreature()
 {
+    /// Convert to Creature
+
     if (m_Type == TypeUnit::CREATURE)
         return  reinterpret_cast<Creature*>(this);
     else
@@ -78,6 +84,8 @@ Unit::~Unit()
 
 void Unit::UpdateDeathState(sf::Time p_Diff)
 {
+    /// Check if Unit is death to respawn it after timer
+
     if (IsDeath())
     {
         m_ResTimer += p_Diff.asMicroseconds();
@@ -101,6 +109,8 @@ void Unit::UpdateDeathState(sf::Time p_Diff)
 
 void Unit::UpdateCombat(sf::Time p_Diff)
 {
+    /// Update timer of Combat
+
     if (!IsInWorld())
         return;
 
@@ -115,19 +125,21 @@ void Unit::UpdateCombat(sf::Time p_Diff)
 
 void Unit::UpdateGossip(sf::Time p_Diff)
 {
+    /// Update differents timers of Gossips
+
     if (!IsInWorld())
         return;
 
     if (IsDeath())
         return;
 
-    for (Gossip *l_Gossip : m_ListGossip[eGossipType::Yell])
+    for (std::vector<Gossip>::iterator l_It = m_ListGossip[eGossipType::Yell].begin(); l_It != m_ListGossip[eGossipType::Yell].end(); ++l_It)
     {
-        l_Gossip->m_GossipTimer += p_Diff.asMicroseconds();
-        if (l_Gossip->m_GossipTimer >= l_Gossip->m_Data1 * IN_MICROSECOND)
+        (*l_It).m_GossipTimer += p_Diff.asMicroseconds();
+        if ((*l_It).m_GossipTimer >= (*l_It).m_Data1 * IN_MICROSECOND)
         {
-            Talk(l_Gossip->m_Msg);
-            l_Gossip->m_GossipTimer -= l_Gossip->m_Data1 * IN_MICROSECOND;
+            Talk((*l_It).m_Msg);
+            (*l_It).m_GossipTimer -= (*l_It).m_Data1 * IN_MICROSECOND;
         }
     }
 }
@@ -135,6 +147,9 @@ void Unit::UpdateGossip(sf::Time p_Diff)
 
 void Unit::UpdateRegen(sf::Time p_Diff)
 {
+    /// Update the differents resources
+    /// If resource are diferents after Update and Unit is a Player, it's send to player
+
     if (!IsInWorld())
         return;
 
@@ -145,13 +160,14 @@ void Unit::UpdateRegen(sf::Time p_Diff)
     {
         uint8 l_Before = l_Resource.second->GetNumber();
         l_Resource.second->Update(p_Diff);
-        if (l_Before != l_Resource.second->GetNumber()) ///> Hacky to send for player when resource change
+        if (l_Before != l_Resource.second->GetNumber()) ///< Hacky to send for player when resource change
             SetResourceNb(l_Resource.first, l_Resource.second->GetNumber());
     }
 }
 
 void Unit::UpdateSpell(sf::Time p_Diff)
 {
+    /// Update current spell and check if it's ready to launch
     if (m_CurrentSpell == nullptr)
         return;
 
@@ -163,7 +179,7 @@ void Unit::UpdateSpell(sf::Time p_Diff)
 
     if (m_CurrentSpell->IsReadyToLaunch())
     {
-        /// Send caster visual
+        /* Send caster visual */
         if (m_CurrentSpell->GetTemplate()->GetVisualID() >= 0)
         {
             PacketUnitPlayVisual l_Packet;
@@ -178,6 +194,8 @@ void Unit::UpdateSpell(sf::Time p_Diff)
 
 void Unit::UpdateCooldowns(sf::Time p_Diff)
 {
+    /// Update spells cooldowns
+
     for (std::map< uint16, uint64 >::iterator l_It = m_ListSpellID.begin(); l_It != m_ListSpellID.end(); ++l_It)
     {
         if ((*l_It).second == 0)
@@ -195,6 +213,7 @@ void Unit::UpdateCooldowns(sf::Time p_Diff)
 
 void Unit::Update(sf::Time p_Diff)
 {
+    ///  Launch every updates
     UpdateDeathState(p_Diff);
     UpdateCombat(p_Diff);
     UpdateRegen(p_Diff);
@@ -231,6 +250,7 @@ void Unit::Update(sf::Time p_Diff)
 
 bool Unit::IsInFront(const Position & p_Position) const
 {
+    /// Check if Unit is in front of a position
     switch (GetOrientation())
     {
         case Orientation::Down:
@@ -255,8 +275,16 @@ bool Unit::IsInFront(const Position & p_Position) const
     return false;
 }
 
+bool Unit::IsInFront(Unit const* p_Unit) const
+{
+    /// Check if Unit is in front of a Unit
+    return IsInFront(p_Unit->GetPosition());
+}
+
 void Unit::DealHeal(Unit* p_Victim, DamageInfo p_DamageInfo)
 {
+    /// Heal a target for the value in DamageInfo
+    /// Log are send to victim if it's a player
     if (p_DamageInfo.m_Result == DamageResult::Miss)
         p_DamageInfo.m_Damage = 0;
 
@@ -282,6 +310,8 @@ void Unit::DealHeal(Unit* p_Victim, DamageInfo p_DamageInfo)
 
 void Unit::DealDamage(Unit* p_Victim, DamageInfo p_DamageInfo)
 {
+    /// Damage a target for the value in DamageInfo
+    /// Log are send to victim if it's a player
     if (p_DamageInfo.m_Result == DamageResult::Miss)
         p_DamageInfo.m_Damage = 0;
 
@@ -339,7 +369,9 @@ void Unit::DealDamage(Unit* p_Victim, DamageInfo p_DamageInfo)
 
 void Unit::AutoAttack(Unit* p_Victim)
 {
-	/// DAMAGE
+    /// This fonction is call everytime autoattack are ready 
+    /// It's calling deal damage
+
 	uint16 l_ForceAttacker = m_PointsSet.m_Force;
 	uint16 l_StaminaDefenser = p_Victim->GetPointsSet().m_Stamina;
 	int16 l_Balance = l_ForceAttacker - l_StaminaDefenser;
@@ -347,7 +379,6 @@ void Unit::AutoAttack(Unit* p_Victim)
 	l_Damage += (l_Balance * 2);
 	l_Damage = std::max(l_Damage, (int8)0);
 
-	/// MISS CHANCE
 	uint16 l_DexterityAttacker = m_PointsSet.m_Dexterity;
 	uint16 l_DexterityDefenser = p_Victim->GetPointsSet().m_Dexterity;
 	l_Balance = l_DexterityDefenser - l_DexterityAttacker;
@@ -363,18 +394,17 @@ void Unit::AutoAttack(Unit* p_Victim)
     DealDamage(p_Victim, l_DamageInfo);
 }
 
-bool Unit::IsInFront(Unit const* p_Unit) const
-{
-    return IsInFront(p_Unit->GetPosition());
-}
-
 bool Unit::IsInWorld() const
 {
+    /// Check if Unit is actually in world
+
     return m_InWorld;
 }
 
 void Unit::SetInWorld(bool p_InWorld)
 {
+    /// Set the inworld state of Unit
+
     m_InWorld = p_InWorld;
     if (!p_InWorld)
     {
@@ -627,21 +657,26 @@ void Unit::TeleportTo(uint16 p_MapID, uint32 p_X, uint32 p_Y)
     TeleportTo(WorldPosition(p_X, p_Y, p_MapID, Orientation::Down));
 }
 
-/// COMBAT
 bool Unit::IsInCombat() const
 {
+    /// Check if Unit is in Combat state
     return m_InCombat;
 }
 
 void Unit::InCombat()
 {
+    /// Reset combat timer to 0
+    /// Call at each combat action
+
     m_InCombat = true;
     m_CombatTimer = 0;
 }
 
 void Unit::OutOfCombat()
 {
-    //m_MovementHandler->StopAttack();
+    /// Out of combat
+    /// Remove all the attackers, victims ...
+
     m_InCombat = false;
     m_Victim = nullptr;
     CleanAttackers();
@@ -650,6 +685,8 @@ void Unit::OutOfCombat()
 
 void Unit::EnterInCombat(Unit* p_Victim)
 {
+    /// Enter in combat state
+
     p_Victim->AddAttacker(this);
     SetVictim(p_Victim);
     AddVictim(p_Victim);
@@ -659,12 +696,16 @@ void Unit::EnterInCombat(Unit* p_Victim)
 
 void Unit::EnterInEvade()
 {
+    /// Enter in Evade state, it's no more possible to target this Unit
+
     RegenerateAll();
     m_Evade = true;
 }
 
 void Unit::RegenerateAll()
 {
+    /// Regenerate all resources
+
     for (auto l_Resource : m_Resources)
     {
         if (l_Resource.second->GetNumber() == 100) /// Already max
@@ -676,17 +717,23 @@ void Unit::RegenerateAll()
 
 void Unit::OutOfEvade()
 {
+    /// Out of evade state
+
     m_Evade = false;
-  //  m_MovementHandler->SetStopPoint(false);
+  /*  m_MovementHandler->SetStopPoint(false);*/
 }
 
 bool Unit::IsInEvade() const
 {
+    /// Check if Unit is in Evade state
+
     return m_Evade;
 }
 
 bool Unit::CanAttack(Unit* p_Unit) const
 {
+    /// Check if target is a valid attack target
+
     if (!p_Unit->IsInWorld() || p_Unit->IsDeath() || !p_Unit->IsInWorld())
         return false;
 
@@ -713,18 +760,35 @@ bool Unit::IsHostileTo(Unit* p_Unit)
 
 void Unit::SetGossipList(std::vector<Gossip>* p_GossipList)
 {
+    /// Set the gossip list of Unit
+
    for (Gossip l_Gossip : *p_GossipList)
     {
-       /// TODO Free on delete Unit
-        m_ListGossip[l_Gossip.m_GossipType].push_back(new Gossip(l_Gossip.m_ID, l_Gossip.m_TypeUnit, l_Gossip.m_UnitEntry, l_Gossip.m_GossipType, l_Gossip.m_Data1, l_Gossip.m_Msg));
+       m_ListGossip[l_Gossip.m_GossipType].push_back(l_Gossip);
     }
 
 }
 
 void Unit::GossipTo(Player* p_Player)
 {
-    for (Gossip* l_Gossip : m_ListGossip[eGossipType::Whisp])
-        p_Player->SendMsg(GetName() + ": " + l_Gossip->m_Msg);
+    /// Send a gossip wisp to a Player
+    /// We launch actions of wisp here
+
+    if (IsPlayer())
+        return;
+
+    std::string l_GossipMsg = "";
+    for (Gossip l_Gossip : m_ListGossip[eGossipType::Whisp]) ///< Only one Wisp can be done
+    {
+        if (l_Gossip.m_Required != nullptr && !l_Gossip.m_Required->IsValid(p_Player))
+            continue;
+        l_GossipMsg = l_Gossip.m_Msg;
+        if (l_Gossip.m_Required != nullptr && l_Gossip.m_Required->IsValid(p_Player)) ///< Priority for Wisp with Valid Required
+            break;
+    }
+    if (l_GossipMsg != "")
+        p_Player->SendMsg(GetName() + ": " + l_GossipMsg);
+
 }
 
 void Unit::AddAttacker(Unit* p_Attacker) 

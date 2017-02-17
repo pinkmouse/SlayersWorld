@@ -9,6 +9,7 @@
 #include "PacketHandler.hpp"
 #include "ClockHandler.hpp"
 #include "../Map/MapManager.hpp"
+#include "../System/Required/RequiredManager.hpp"
 #include "UnitManager.hpp"
 
 class World
@@ -26,8 +27,9 @@ private:
     std::vector<std::pair<WorldSocket*, WorldPacket> > m_PaquetQueue;
     PacketHandler* m_PacketHandler;
 
-    /// CREATURE MANAGER
+    /// MANAGERS
     UnitManager* m_CreatureManager;
+    RequiredManager* m_RequiredManager;
 
 	/// NETWORK
 	void NetworkLoop();
