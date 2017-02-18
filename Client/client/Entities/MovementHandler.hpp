@@ -61,6 +61,7 @@ private:
     Position m_Pos;
     uint64 m_DiffTime;
     uint64 m_DiffTimeAnim;
+    bool m_AnimPeriodAsc;
     uint64 m_DiffTimeAnimAttack;
     uint8 m_SizeX;
     uint8 m_SizeY;

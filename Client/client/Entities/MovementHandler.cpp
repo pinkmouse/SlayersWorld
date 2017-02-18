@@ -10,6 +10,7 @@ MovementHandler::MovementHandler(uint8 p_SizeX, uint8 p_SizeY) :
     m_InAttack = false;
     m_StopAttack = false;
     m_InColision = false;
+    m_AnimPeriodAsc = true;
     m_Orientation = Orientation::Down;
     m_Pos.x = 0;
     m_Pos.y = 0;
@@ -167,12 +168,32 @@ void MovementHandler::UpdateAnimationWalk(sf::Time p_Diff)
     while (m_DiffTimeAnim > ((UPDATE_TIME_MOVEMENT / m_Speed) * 1000)) ///< 1000 because microsecond
     {
         /// UPDATE ANIMATION
-        if (m_MovementPosition <= 0)
+        if (m_AnimPeriodAsc)
+        {
+            if (m_MovementPosition >= 2)
+            {
+                m_AnimPeriodAsc = false;
+                m_MovementPosition--;
+            }
+            else
+                m_MovementPosition++;
+        }
+        else
+        {
+            if (m_MovementPosition <= 0)
+            {
+                m_AnimPeriodAsc = true;
+                m_MovementPosition++;
+            }
+            else
+                m_MovementPosition--;
+        }
+       /* if (m_MovementPosition <= 0)
             m_MovementPosition = 1;
         else if (m_MovementPosition == 1)
             m_MovementPosition = 2;
         else
-            m_MovementPosition = 0;
+            m_MovementPosition = 0;*/
 
         m_DiffTimeAnim = 0;
     }
