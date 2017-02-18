@@ -11,7 +11,7 @@ Quest::~Quest()
 {
 }
 
-uint16 Quest::GetID()
+uint16 Quest::GetID() const
 {
     return m_QuestTemplate->m_Id;
 }
@@ -22,6 +22,31 @@ void Quest::SetObjectifProgress(ObjectifProgess* p_ObjectifProgress)
         delete m_ObjectifProgressList[p_ObjectifProgress->m_Id];
     m_ObjectifProgressList[p_ObjectifProgress->m_Id] = p_ObjectifProgress;
 }
+
+QuestTemplate* Quest::GetQuestTemplate() const
+{
+    return m_QuestTemplate;
+}
+
+void Quest::SetDataOfObjectif(uint8 p_ObjectifID,  uint8 p_DataID, int16 p_Data)
+{
+    if (m_ObjectifProgressList.find(p_ObjectifID) == m_ObjectifProgressList.end())
+        return;
+
+    /* Actually there is only Data0 */
+    switch (p_DataID)
+    {
+    case 0:
+        m_ObjectifProgressList[p_ObjectifID]->m_Data0 = p_Data;
+        break;
+    }
+}
+
+std::map< uint8, ObjectifProgess* >* Quest::GetObjectifsProgress()
+{
+    return &m_ObjectifProgressList;
+}
+
 
 std::vector<std::string> Quest::CheckAtEvent(eObjectifType p_ObjectifType, int32 p_Data0)
 {

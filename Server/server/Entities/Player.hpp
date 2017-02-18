@@ -34,7 +34,9 @@ public:
 
     /* QUEST */
     void UpdateQuests();
-    void AddQuest(Quest*);
+    void AddQuest(Quest*, bool p_New = true);
+    Quest* GetQuest(uint16);
+    std::map< uint16, Quest* >* GetQuestList();
     void CheckQuestObjective(eObjectifType, int32);
 
     /* KEYBOARD */
@@ -61,6 +63,7 @@ public:
     bool HandleCommandWho(std::vector<std::string>);
     bool HandleCommandTeleport(std::vector<std::string>);
     bool HandleCommandSpeed(std::vector<std::string>);
+    bool HandleCommandQuests(std::vector<std::string>);
     bool HandleRegen(std::vector<std::string>);
     bool HandleBind(std::vector<std::string>);
     bool HandleTest(std::vector<std::string>);

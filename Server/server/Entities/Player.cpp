@@ -264,9 +264,29 @@ int16 Player::GetKeyBoardBind(eKeyBoardAction p_Action)
     return m_KeyBoardBinds[p_Action];
 }
 
-void Player::AddQuest(Quest* p_Quest)
+std::map< uint16, Quest* >* Player::GetQuestList()
 {
+    return &m_Quests;
+}
+
+Quest* Player::GetQuest(uint16 p_QuestID)
+{
+    if (m_Quests.find(p_QuestID) != m_Quests.end())
+        return m_Quests[p_QuestID];
+    return nullptr;
+}
+
+void Player::AddQuest(Quest* p_Quest, bool p_New /*= true*/) /* False when load at conection*/
+{
+    if (m_Quests.find(p_Quest->GetID()) != m_Quests.end())
+    {
+        delete p_Quest;
+        return;
+    }
     m_Quests[p_Quest->GetID()] = p_Quest;
+
+    if (!p_New)
+        return;
 
     PacketWarningMsg l_Packet;
     l_Packet.BuildPacket(eTypeWarningMsg::Yellow, "Nouvelle Quete : " + p_Quest->GetName());

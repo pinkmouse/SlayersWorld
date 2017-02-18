@@ -778,6 +778,26 @@ void Unit::GossipTo(Player* p_Player)
         return;
 
     std::string l_GossipMsg = "";
+    uint32 l_Data1 = 0;
+
+    /* QUEST LAUNCHER*/
+    for (Gossip l_Gossip : m_ListGossip[eGossipType::LaunchQuest]) ///< Only one Wisp can be done
+    {
+        if (l_Gossip.m_Required != nullptr && !l_Gossip.m_Required->IsValid(p_Player))
+            continue;
+        l_GossipMsg = l_Gossip.m_Msg;
+        l_Data1 = l_Gossip.m_Data1;
+        if (l_Gossip.m_Required != nullptr && l_Gossip.m_Required->IsValid(p_Player)) ///< Priority for Wisp with Valid Required
+            break;
+    }
+    if (l_GossipMsg != "")
+    {
+        p_Player->AddQuest(new Quest(g_QuestManager->GetQuestTemplate(l_Data1)));
+        p_Player->SendMsg(GetName() + ": " + l_GossipMsg);
+        return;
+    }
+
+    /* SIMPLE WHISP */
     for (Gossip l_Gossip : m_ListGossip[eGossipType::Whisp]) ///< Only one Wisp can be done
     {
         if (l_Gossip.m_Required != nullptr && !l_Gossip.m_Required->IsValid(p_Player))

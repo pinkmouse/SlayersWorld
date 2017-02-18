@@ -194,6 +194,7 @@ Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
     InitializeSpellsForPlayer(l_Player);
     InitializeKeyBindsForAccount(p_AccountID, l_Player);
     InitializeSpellsBinds(l_Player);
+    InitializeQuestsProgessForPlayer(l_Player);
 
     return l_Player;
 }
@@ -287,6 +288,20 @@ void SqlManager::SavePlayer(Player* p_Player)
         /// CHECK 
         std::string l_Query = "UPDATE characters_spells SET `cooldown` = '" + std::to_string((*l_It).second) + "' WHERE spellID = '" + std::to_string((*l_It).first) + "' AND characterID = '" + std::to_string(p_Player->GetID()) + "';";
         mysql_query(&m_MysqlCharacters, l_Query.c_str());
+    }
+
+    /// Save QuestsProgess
+    std::map< uint16, Quest* >* l_QuestList = p_Player->GetQuestList();
+    for (std::map< uint16, Quest* >::iterator l_It = l_QuestList->begin(); l_It != l_QuestList->end(); ++l_It)
+    {
+        /// Save Objectf Progress
+        std::map< uint8, ObjectifProgess* >* l_ObjectProgressList = (*l_It).second->GetObjectifsProgress();
+        for (std::map< uint8, ObjectifProgess* >::iterator l_Itr = l_ObjectProgressList->begin(); l_Itr != l_ObjectProgressList->end(); ++l_Itr)
+        {
+        /// CHECK 
+            std::string l_Query = "REPLACE INTO quest_objectif_progress (characterID, questID, objectifID, data0) VALUES ('" + std::to_string(p_Player->GetID()) + "', '" + std::to_string((*l_It).first) + "', '" + std::to_string((*l_Itr).first) + "', '" + std::to_string((*l_Itr).second->m_Data0) + "');";
+            mysql_query(&m_MysqlCharacters, l_Query.c_str());
+        }
     }
 
 	std::string l_Query = "UPDATE characters SET `posX` = '" + std::to_string(p_Player->GetPosX()) + "', `posY` = '" + std::to_string(p_Player->GetPosY()) + "', `mapID` = '" + std::to_string(p_Player->GetMapID()) + "', `orientation` = '" + std::to_string(p_Player->GetOrientation()) + "', `health` = '" + std::to_string(p_Player->GetResourceNb(eResourceType::Health)) + "', `mana` = '" + std::to_string(p_Player->GetResourceNb(eResourceType::Mana)) + "', `alignment` = '" + std::to_string(p_Player->GetResourceNb(eResourceType::Alignment)) + "', `xp` = '" + std::to_string(p_Player->GetXp()) + "', `level` = '" + std::to_string(p_Player->GetLevel()) + "', skinID = '" + std::to_string(p_Player->GetSkinID()) + "' WHERE characterID = '" + std::to_string(p_Player->GetID()) + "';";
@@ -456,6 +471,44 @@ bool SqlManager::InitializeSpellsForPlayer(Player* p_Player)
 
     return true;
 }
+
+bool SqlManager::InitializeQuestsProgessForPlayer(Player* p_Player)
+{
+    std::string l_Query = "SELECT `questID`, `objectifID`, `data0`, `data1`, `data2`, `data3` FROM quest_objectif_progress WHERE `characterID` = '" + std::to_string(p_Player->GetID()) + "'";
+    mysql_query(&m_MysqlCharacters, l_Query.c_str());
+
+    uint16 l_QuestID = 0;
+    uint8 l_ObjectifID = 0;
+    int16 l_Data0 = -1;
+    int16 l_Data1 = -1;
+    int16 l_Data2 = -1;
+    int16 l_Data3 = -1;
+
+    MYSQL_RES *l_Result = NULL;
+    MYSQL_ROW l_Row;
+    l_Result = mysql_use_result(&m_MysqlCharacters);
+    while ((l_Row = mysql_fetch_row(l_Result)))
+    {
+        l_QuestID = atoi(l_Row[0]);
+        l_ObjectifID = atoi(l_Row[1]);
+        l_Data0 = atoi(l_Row[2]);
+        l_Data1 = atoi(l_Row[3]);
+        l_Data2 = atoi(l_Row[4]);
+        l_Data3 = atoi(l_Row[5]);
+
+        Quest* l_Quest = p_Player->GetQuest(l_QuestID);
+        if (l_Quest == nullptr)
+        {
+            l_Quest = new Quest(g_QuestManager->GetQuestTemplate(l_QuestID));
+            p_Player->AddQuest(l_Quest, false);
+        }
+        l_Quest->SetDataOfObjectif(l_ObjectifID, 0, l_Data0); /* Actually we only use data0 */
+    }
+    mysql_free_result(l_Result);
+
+    return true;
+}
+
 
 bool SqlManager::InitializeSpellsBinds(Player* p_Player)
 {
