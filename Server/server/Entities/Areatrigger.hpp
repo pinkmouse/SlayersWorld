@@ -16,5 +16,6 @@ private:
     std::map<uint8, uint32> m_Datas;
     eAreatriggerType m_Type;
     float m_Radius;
+    uint64 m_Timer;
 };
 

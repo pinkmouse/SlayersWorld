@@ -94,7 +94,8 @@ enum eGossipType
 
 enum eAreatriggerType
 {
-    AreatriggerTeleport = 0
+    AreatriggerTeleport = 0,
+    AreatriggerPeriodicDamage = 1
 };
 
 enum eRequiredType

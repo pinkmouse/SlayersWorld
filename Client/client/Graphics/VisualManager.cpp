@@ -33,7 +33,7 @@ Visual* VisualManager::GetVisual(eVisualType p_Type, uint8 p_VisualID)
 bool VisualManager::LoadSkins()
 {
     sf::Texture *l_Texture = nullptr;
-    for (uint8 i = 0; i < 69; ++i)
+    for (uint8 i = 0; i < 70; ++i)
     {
         l_Texture = new sf::Texture();
         std::string l_FileName = std::to_string(i) + ".png";
