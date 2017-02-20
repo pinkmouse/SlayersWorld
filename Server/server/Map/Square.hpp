@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include "Case.hpp"
 #include "../Entities/Unit.hpp"
 
 class Square

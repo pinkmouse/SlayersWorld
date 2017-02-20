@@ -293,6 +293,13 @@ void Player::AddQuest(Quest* p_Quest, bool p_New /*= true*/) /* False when load 
     GetSession()->send(l_Packet.m_Packet);
 }
 
+bool Player::HasQuestInProgress(uint16 p_QuestID)
+{
+    if (m_Quests.find(p_QuestID) != m_Quests.end())
+        return true;
+    return false;
+}
+
 void Player::CheckQuestObjective(eObjectifType p_EventType, int32 p_Data0)
 {
     for (std::map< uint16, Quest* >::iterator l_It = m_Quests.begin(); l_It != m_Quests.end(); ++l_It)

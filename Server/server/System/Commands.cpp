@@ -205,7 +205,7 @@ bool Player::HandleCommandWisp(std::vector<std::string> p_ListCmd)
     for (uint8 i = 1; i < p_ListCmd.size(); ++i)
         l_Msg += " " + p_ListCmd[i];
 
-    l_Player->SendMsg(GetName() + ": " + l_Msg);
+    l_Player->SendMsg(GetName() + "(msg): " + l_Msg);
 
     return true;
 }

@@ -9,9 +9,13 @@ Case::Case(uint16 p_ID, uint16 p_X, uint16 p_Y) :
     SetPosY(p_Y);
 }
 
-
 Case::~Case()
 {
+}
+
+uint16 Case::GetID() const
+{
+    return m_ID;
 }
 
 bool Case::IsBlocking() const

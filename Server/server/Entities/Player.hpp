@@ -38,6 +38,7 @@ public:
     Quest* GetQuest(uint16);
     std::map< uint16, Quest* >* GetQuestList();
     void CheckQuestObjective(eObjectifType, int32);
+    bool HasQuestInProgress(uint16);
 
     /* KEYBOARD */
     void AddKeyBoardBind(eKeyBoardAction, uint8);

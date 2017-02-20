@@ -783,7 +783,7 @@ void Unit::GossipTo(Player* p_Player)
     /* QUEST LAUNCHER*/
     for (Gossip l_Gossip : m_ListGossip[eGossipType::LaunchQuest]) ///< Only one Wisp can be done
     {
-        if (l_Gossip.m_Required != nullptr && !l_Gossip.m_Required->IsValid(p_Player))
+        if (l_Gossip.m_Required != nullptr && (!l_Gossip.m_Required->IsValid(p_Player) || p_Player->HasQuestInProgress(l_Gossip.m_Data1)))
             continue;
         l_GossipMsg = l_Gossip.m_Msg;
         l_Data1 = l_Gossip.m_Data1;

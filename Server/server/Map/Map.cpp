@@ -273,7 +273,7 @@ void Map::RemoveUnit(Unit* p_Unit)
 
     /// Remove from square
     RemoveFromSquare(p_Unit);
-
+    
     PacketUnitRemove l_Packet;
     l_Packet.BuildPacket(p_Unit->GetType(), p_Unit->GetID());
     SendToSet(l_Packet.m_Packet, p_Unit);

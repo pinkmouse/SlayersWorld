@@ -91,6 +91,11 @@ enum eGossipType
     ValidQuest = 3
 };
 
+enum eAreatriggerType
+{
+    AreatriggerTeleport = 0
+};
+
 enum eRequiredType
 {
     QuestDone = 0,
