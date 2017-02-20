@@ -26,18 +26,16 @@ bool MovementHandler::IsInColision(int64 p_PosX, int64 p_PosY) const
     if (m_Map == nullptr)
         return true;
 
-    if (p_PosX < 0 || p_PosY < 0)
+    if (p_PosX + (SKIN_OFFSET_SIZE_X / 2) < 0 || p_PosY < 0)
         return true;
 
-    if (p_PosX + m_SizeX >= m_Map->GetSizeX() * TILE_SIZE || p_PosY >= m_Map->GetSizeY() * TILE_SIZE)
+    if (p_PosX + m_SizeX - (SKIN_OFFSET_SIZE_X / 2) >= m_Map->GetSizeX() * TILE_SIZE || p_PosY >= m_Map->GetSizeY() * TILE_SIZE)
         return true;
-
 
     std::vector<Case*> l_CaseList;
-    uint8 i = 0;
-    for (uint8 i = 0; i < m_SizeX; i += TILE_SIZE)
-        l_CaseList.push_back(m_Map->GetCase((uint32)p_PosX + i, (uint32)p_PosY));
-    l_CaseList.push_back(m_Map->GetCase((uint32)p_PosX + m_SizeX, (uint32)p_PosY));
+    for (uint8 i = 0; i <= m_SizeX - SKIN_OFFSET_SIZE_X; i += TILE_SIZE)
+        l_CaseList.push_back(m_Map->GetCase((uint32)p_PosX + i + (SKIN_OFFSET_SIZE_X / 2), (uint32)p_PosY));
+    l_CaseList.push_back(m_Map->GetCase((uint32)p_PosX + m_SizeX - SKIN_OFFSET_SIZE_X + (SKIN_OFFSET_SIZE_X / 2), (uint32)p_PosY));
 
     for (Case* l_Case : l_CaseList)
     {
@@ -83,6 +81,9 @@ bool MovementHandler::CheckNextMovement(uint32 p_PosX, uint32 p_PosY)
         default:
             break;
         }
+
+        if (!l_NextMovement && !IsInMovement())
+            StartMovement(GetOrientation());
     }
 
         if (!l_NextMovement)

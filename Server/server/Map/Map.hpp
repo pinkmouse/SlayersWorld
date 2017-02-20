@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include "../Entities/DynamicObject.hpp"
 #include "../Entities/Player.hpp"
 #include "../Entities/Creature.hpp"
 #include "Square.hpp"
@@ -19,6 +20,7 @@ public:
     void Update(sf::Time);
     void AddUnit(Unit*);
     void RemoveUnit(Unit*);
+    void AddDynamicObject(DynamicObject*);
     uint16  GetSquareID(uint16 , uint16) const;
     Unit* GetUnit(TypeUnit, uint16);
     uint16 GetID() const;
@@ -33,6 +35,7 @@ public:
 
     Unit* GetCloserUnit(Unit const*, float p_Range = 2.0f, bool p_OnlyInLife = false, bool p_InFront = true, bool p_Attackable = false);
     std::vector<Unit*> GetUnitsInRadius(Unit const*, float p_RangeMin = 0.0f, float p_RangeMax = 2.0f, bool p_OnlyInLife = false, bool p_Attackable = false, float p_Angle = 360.0f);
+    std::vector<Unit*> GetUnitsInRadius(WorldObject*, float p_RangeMin = 0.0f, float p_RangeMax = 2.0f, bool p_OnlyInLife = false, float p_Angle = 360.0f);
 
     uint16 GetSizeX() const;
     uint16 GetSizeY() const;
@@ -54,6 +57,7 @@ private:
     std::queue<Unit*>  m_UnitSwitchMapQueue;
 	std::vector<Case*>	m_ListCase;
     std::map<TypeUnit, std::map<uint16, Unit*> > m_ListUnitZone;
+    std::vector<DynamicObject*> m_ListDynamicObjects;
 
     std::map<uint16, Square> m_ListSquare;
 

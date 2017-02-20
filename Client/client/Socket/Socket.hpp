@@ -16,6 +16,7 @@ public:
     void SendStopMovement(const uint32&, const uint32&);
     void SendStartAttack(const uint32&, const uint32&);
     void SendStopAttack();
+    void SendLoadingPong();
     void SendEventAction(const uint8&);
     void SendUnitUnknow(const uint8&, const uint16&);
     void SendTalk(const std::string &);

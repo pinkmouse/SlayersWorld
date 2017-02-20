@@ -1,20 +1,23 @@
 #pragma once
 #include "WorldObject.hpp"
 #include "../Define.hpp"
-#include "../Map/Case.hpp"
+#include "Unit.hpp"
 #include <SFML/System/Time.hpp>
 
+class Map;
 class DynamicObject : public WorldObject
 {
 public:
-    DynamicObject(Case*);
+    DynamicObject(Map*, uint32, uint32);
     ~DynamicObject();
     virtual void Update(sf::Time) = 0;
     void SetInWorld(bool);
     bool IsInWorld() const;
+    Map* GetMap() const;
+    virtual void UnitEnterInCase(Unit*) = 0;
 
 private:
-    Case* m_Case;
+    Map* m_Map;
     bool m_InWorld;
 };
 

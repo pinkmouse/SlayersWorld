@@ -13,7 +13,7 @@ Unit::Unit(uint16 p_ID, TypeUnit p_Type) :
     m_Name = "";
     m_Type = p_Type;
     m_ID = p_ID;
-    m_Opacity = 0;
+    m_Opacity = MAX_OPACITY;
     m_DiffTimeOpactiy = 0;
 
     m_CastTime.first = 0;

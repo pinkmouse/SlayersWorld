@@ -36,6 +36,7 @@ public:
     void HandleUpdateSpeed(WorldPacket &);
     void HandleKeyBoardBind(WorldPacket &);
     void HandleKeyBindBlock(WorldPacket &);
+    void HandleLoadingPing(WorldPacket &);
     void HandleCastBar(WorldPacket &);
 
 private:

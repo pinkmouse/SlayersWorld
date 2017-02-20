@@ -40,6 +40,7 @@ void PacketHandler::LoadPacketHandlerMap()
     m_PacketHandleMap[SMSG::S_KeyBoardBind] = &PacketHandler::HandleKeyBoardBind;
     m_PacketHandleMap[SMSG::S_BlockBind] = &PacketHandler::HandleKeyBindBlock;
     m_PacketHandleMap[SMSG::S_CastBar] = &PacketHandler::HandleCastBar;
+    m_PacketHandleMap[SMSG::S_LoadingPing] = &PacketHandler::HandleLoadingPing;
 }
 
 void PacketHandler::HandleRemoveUnit(WorldPacket &p_Packet)
@@ -457,6 +458,8 @@ void PacketHandler::HandleSwitchMap(WorldPacket &p_Packet)
 
     if (Map* l_ActualMap = m_MapManager->GetActualMap())
     {
+        g_Player->GetMovementHandler()->StopMovement();
+        g_Player->GetMovementHandler()->StopAttack();
         g_Player->SetMap(l_ActualMap);
         l_ActualMap->AddUnit(g_Player);
     }
@@ -601,4 +604,9 @@ void PacketHandler::HandleCastBar(WorldPacket &p_Packet)
         }
         l_Unit->LaunchCastBar((uint16)l_Time * 100);
     }
+}
+
+void PacketHandler::HandleLoadingPing(WorldPacket &p_Packet)
+{
+    g_Socket->SendLoadingPong();
 }

@@ -57,6 +57,7 @@ public:
     bool InitializeKeyBindsForAccount(uint32, Player*);
     bool InitializeSpellsBinds(Player*);
     bool InitializeQuests();
+    bool InitializeAreatrigger();
     CreatureTemplate GetCreatureTemplate(uint16);
     uint16 AddNewCreature(uint16, uint16, uint32, uint32);
     bool InitializeCreature(UnitManager*);

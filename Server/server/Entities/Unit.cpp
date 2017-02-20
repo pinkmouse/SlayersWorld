@@ -232,6 +232,8 @@ void Unit::Update(sf::Time p_Diff)
 
     if (GetPosX() != m_MovementHandler->GetPosX() || GetPosY() != m_MovementHandler->GetPosY() || m_MovementHandler->IsInAttack())
     {
+        if (((m_MovementHandler->GetPosY() / TILE_SIZE) * m_Map->GetSizeX()) + (m_MovementHandler->GetPosX() / TILE_SIZE) != ((GetPosY() / TILE_SIZE) * m_Map->GetSizeX()) + (GetPosX() / TILE_SIZE))
+            m_Map->GetCase(((m_MovementHandler->GetPosY() / TILE_SIZE) * m_Map->GetSizeX()) + (m_MovementHandler->GetPosX() / TILE_SIZE))->UnitEnterInCase(this);
         SetPosX(m_MovementHandler->GetPosX());
         SetPosY(m_MovementHandler->GetPosY());
         InterruptCast(); /// Interrupt Cast on Movement
@@ -632,7 +634,7 @@ void Unit::TeleportTo(const WorldPosition& p_WorldPosition)
     GetMovementHandler()->ClearMovementStack();
     GetMovementHandler()->StopMovement();
     GetMovementHandler()->StopAttack();
-
+    InterruptCast();
     SetPosX(p_WorldPosition.GetPosX());
     SetPosY(p_WorldPosition.GetPosY());
     SetOrientation(p_WorldPosition.GetOrientation());
@@ -645,16 +647,20 @@ void Unit::TeleportTo(const WorldPosition& p_WorldPosition)
     PacketUpdatePosition l_Packet;
     l_Packet.BuildPacket(GetType(), GetID(), GetMapID(), GetPosX(), GetPosY(), GetOrientation());
     m_Map->SendToSet(l_Packet.m_Packet, this);
+
+    /* To be sure that some packet are not receive between tp */
+    if (IsPlayer())
+        ToPlayer()->SetInLoading(true);
 }
 
-void Unit::TeleportTo(uint32 p_X, uint32 p_Y)
+void Unit::TeleportTo(uint32 p_X, uint32 p_Y, Orientation p_Orientation)
 {
-    TeleportTo(WorldPosition(p_X, p_Y, GetMapID(), Orientation::Down));
+    TeleportTo(WorldPosition(p_X, p_Y, GetMapID(), p_Orientation));
 }
 
-void Unit::TeleportTo(uint16 p_MapID, uint32 p_X, uint32 p_Y)
+void Unit::TeleportTo(uint16 p_MapID, uint32 p_X, uint32 p_Y, Orientation p_Orientation)
 {
-    TeleportTo(WorldPosition(p_X, p_Y, p_MapID, Orientation::Down));
+    TeleportTo(WorldPosition(p_X, p_Y, p_MapID, p_Orientation));
 }
 
 bool Unit::IsInCombat() const

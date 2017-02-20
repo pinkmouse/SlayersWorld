@@ -20,6 +20,7 @@ public:
     void HandleGoDirection(WorldPacket &, WorldSocket*);
     void HandleUnitUnknow(WorldPacket &, WorldSocket*);
     void HandleStopMovement(WorldPacket &, WorldSocket*);
+    void HandleLoadingPong(WorldPacket &, WorldSocket*);
     void HandleTalk(WorldPacket &, WorldSocket*);
     void HandleStartAttack(WorldPacket &, WorldSocket*);
     void HandleStopAttack(WorldPacket &, WorldSocket*);

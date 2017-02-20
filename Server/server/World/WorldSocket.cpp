@@ -118,7 +118,7 @@ void WorldSocket::SendLogDamage(uint8 p_TypeID, uint16 p_ID, DamageInfo p_Damage
 {
 	PacketLogDamage l_Packet;
 	l_Packet.BuildPacket(p_TypeID, p_ID, p_DamageInfo.m_Damage, p_DamageInfo.m_Result);
-	SendMsg(l_Packet.m_Packet);
+	SendPacket(l_Packet.m_Packet);
 }
 
 void WorldSocket::SendSwitchMap(uint16 p_MapID)
@@ -164,7 +164,7 @@ void WorldSocket::SetPlayer(Player* p_Player)
     m_Player = p_Player;
 }
 
-void WorldSocket::SendMsg(WorldPacket p_Packet)
+void WorldSocket::SendPacket(WorldPacket p_Packet)
 {
     send(p_Packet);
 }

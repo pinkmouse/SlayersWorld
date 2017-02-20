@@ -85,6 +85,10 @@ void Map::Update(sf::Time p_Diff)
                 ChangeSquare(l_Unit);
         }
     }
+    for (std::vector<DynamicObject*>::iterator l_It = m_ListDynamicObjects.begin(); l_It != m_ListDynamicObjects.end(); ++l_It)
+    {
+        (*l_It)->Update(p_Diff);
+    }
 }
 
 std::map<uint16, Unit*>* Map::GetListUnitType(TypeUnit p_Type)
@@ -207,6 +211,46 @@ Unit* Map::GetCloserUnit(Unit const* p_Unit, float p_Range /*= 2.0f*/, bool p_On
     return l_CloserUnit;
 }
 
+std::vector<Unit*> Map::GetUnitsInRadius(WorldObject* p_WorldObject, float p_RangeMin, float p_RangeMax, bool p_OnlyInLife, float p_Angle)
+{
+    /// TODO : QuadTree
+    std::vector<Square*> l_Grid = GetSquareSet(GetSquareID(p_WorldObject->GetPosX(), p_WorldObject->GetPosY()));
+    std::vector<Unit*> l_Result;
+
+    for (uint8 i = 0; i < l_Grid.size(); ++i)
+    {
+        Square* l_Square = l_Grid[i];
+
+        std::map<TypeUnit, std::map<uint16, Unit*>>* l_SquareList = l_Square->GetList();
+
+        for (std::pair<TypeUnit, std::map<uint16, Unit*>> l_SquareMap : *l_SquareList)
+        {
+            for (std::pair<uint16, Unit*> l_SquareList : l_SquareMap.second)
+            {
+                Unit* l_Unit = l_SquareList.second;
+
+                if (l_Unit == nullptr || !l_Unit->IsInWorld() || l_Unit->IsInEvade())
+                    continue;
+
+                if (p_OnlyInLife && l_Unit->IsDeath())
+                    continue;
+
+                float l_Dist = InYard(p_WorldObject->GetDistance(l_Unit));
+
+                if (l_Dist > p_RangeMax || l_Dist < p_RangeMin)
+                    continue;
+
+                /// TODO : cheack angle
+                /*if (p_InFront && !p_Unit->IsInFront(l_Unit))
+                continue;*/
+
+                l_Result.push_back(l_Unit);
+            }
+        }
+    }
+    return l_Result;
+}
+
 std::vector<Unit*> Map::GetUnitsInRadius(Unit const* p_Unit, float p_RangeMin, float p_RangeMax, bool p_OnlyInLife /*= false*/, bool p_Attackable /*= false*/, float p_Angle /*= 360.0f*/)
 {
     /// TODO : QuadTree
@@ -265,6 +309,11 @@ void Map::AddUnit(Unit* p_Unit)
     UpdateForPlayersInNewSquare(p_Unit, true);
     if (p_Unit->GetType() == TypeUnit::PLAYER)
         p_Unit->ToPlayer()->UpdateNewSquares(0, p_Unit->GetSquareID(), true);
+}
+
+void Map::AddDynamicObject(DynamicObject* p_DynamicObect)
+{
+    m_ListDynamicObjects.push_back(p_DynamicObect);
 }
 
 void Map::RemoveUnit(Unit* p_Unit)

@@ -10,6 +10,8 @@ public:
     ~WorldObject();
     float GetDistance(const Position &) const;
     float GetDistance(const WorldObject*) const;
+    uint16 GetSideDistance(const WorldObject*) const;
+    uint16 GetSideDistance(const Position &) const;
     uint32 GetDistanceEuclidienne(const Position &) const;
     bool IsValidOrientationToPoint(const Orientation &, const Position &) const;
     bool IsValidOrientationToPoint(const Orientation &, const WorldObject*) const;

@@ -24,6 +24,7 @@
 #define SKINS_FOLDER "img/skins/"
 #define SKIN_SIZE_X 24
 #define SKIN_SIZE_Y 32
+#define SKIN_OFFSET_SIZE_X 14
 #define MAX_MOVEMENT_POSITION 3
 #define UPDATE_TIME_MOVEMENT 200
 #define DEATH_OPACITY 100

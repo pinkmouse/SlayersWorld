@@ -20,6 +20,7 @@ Player::Player(uint32 p_AccountID, int32 p_ID, std::string p_Name, uint8 p_Level
     SetPosY(p_PosY);
     SetOrientation(p_Orientation);
     m_Session = nullptr;
+    m_InLoading = false;
     m_Initilize = false;
     SetResourceNb(eResourceType::Health, p_Health);
     SetResourceNb(eResourceType::Mana, p_Mana);
@@ -194,7 +195,7 @@ void Player::SendMsg(const std::string & p_Msg)
     PacketSrvPlayerMsg l_Packet;
     l_Packet.BuildPacket(p_Msg);
     WorldSocket* l_Session = GetSession();
-    l_Session->SendMsg(l_Packet.m_Packet);
+    l_Session->SendPacket(l_Packet.m_Packet);
 }
 
 void Player::Respawn()
@@ -331,7 +332,7 @@ void Player::AddSpellCooldown(uint16 p_SpellID, uint64 p_Time)
     PacketKeyBoardBlock l_Packet;
     l_Packet.BuildPacket((uint8)l_BindSpell, (uint16)(p_Time / 1000));
     WorldSocket* l_Session = GetSession();
-    l_Session->SendMsg(l_Packet.m_Packet);
+    l_Session->SendPacket(l_Packet.m_Packet);
 }
 
 void Player::AddSpellBindToKey(uint16 p_SpellID, uint8 p_Bind)
@@ -344,4 +345,24 @@ int32 Player::GetBindSpell(uint16 p_SpellID)
     if (m_SpellsBindToKey.find(p_SpellID) == m_SpellsBindToKey.end())
         return -1;
     return m_SpellsBindToKey[p_SpellID];
+}
+
+void Player::SetInLoading(bool p_InLoading)
+{
+    m_InLoading = p_InLoading;
+    if (!p_InLoading)
+    {
+        printf("No more in loading\n");
+        return;
+    }
+
+    PacketLoadingPing l_Packet;
+    l_Packet.BuildPacket();
+    WorldSocket* l_Session = GetSession();
+    l_Session->SendPacket(l_Packet.m_Packet);
+}
+
+bool Player::GetInLoading() const
+{
+    return m_InLoading;
 }

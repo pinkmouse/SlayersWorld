@@ -93,6 +93,7 @@ void Map::MoveUnitToDirection(TypeUnit p_TypeID, uint16 p_UnitID, Position p_Pos
 
 std::vector<Case*> Map::GetSquare(uint16 p_ID)
 {
+   // printf("Get list case %d\n", p_ID);
     if (m_MapListCase.find(p_ID) == m_MapListCase.end())
     {
         std::vector<Case*> l_Map;
@@ -157,6 +158,7 @@ std::vector<std::vector<Case*>> Map::GetSquareZone(uint16 p_ID)
 		l_SquareZone.push_back(GetSquare(p_ID + l_TotalSquareWidth + 1)); ///< Right Bottom
 	}
 
+
 	return l_SquareZone;
 }
 
@@ -217,7 +219,7 @@ bool Map::InitializeMap(const std::string & p_FileName)
 	l_File = fopen(l_MapPath.c_str(), "r");
     if (l_File == nullptr)
 	{
-		printf("Map File %s not open", l_MapPath.c_str());
+		printf("Map File %s not open\n", l_MapPath.c_str());
 		return false;
 	}
 

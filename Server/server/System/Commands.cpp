@@ -145,18 +145,20 @@ bool Player::HandleCommandWho(std::vector<std::string> p_ListCmd)
 
 bool Player::HandleCommandWhere(std::vector<std::string> p_ListCmd)
 {
-    if (p_ListCmd.empty())
-        return false;
+    Player* l_Player = this;
+    std::string l_Name = GetName();
+    if (!p_ListCmd.empty())
+    {
+        l_Name = p_ListCmd[0];
 
-    std::string l_Name = p_ListCmd[0];
+        int32 l_Id = g_SqlManager->GetPlayerID(l_Name);
+        if (l_Id <= 0)
+            return false;
 
-    int32 l_Id = g_SqlManager->GetPlayerID(l_Name);
-    if (l_Id <= 0)
-        return false;
+        Player* l_Player = g_MapManager->GetPlayer(l_Id);
+    }
 
-    Player* l_Player = g_MapManager->GetPlayer(l_Id);
-
-    SendMsg(l_Name + " -> Map:" + std::to_string(l_Player->GetMapID()) + " X:" + std::to_string(l_Player->GetPosX()) + " Y:" + std::to_string(l_Player->GetPosY()));
+    SendMsg(l_Name + " -> Map:" + std::to_string(l_Player->GetMapID()) + " X:" + std::to_string(l_Player->GetPosX()) + " Y:" + std::to_string(l_Player->GetPosY()) + " caseNb:" + std::to_string((uint16)((l_Player->GetPosY() / TILE_SIZE) * l_Player->GetMap()->GetSizeX()) + (l_Player->GetPosX() / TILE_SIZE)));
 
     return true;
 }
@@ -356,7 +358,7 @@ bool Player::HandleCommandTeleport(std::vector<std::string> p_ListCmd)
         uint32 l_X = atoi(p_ListCmd[0].c_str());
         uint32 l_Y = atoi(p_ListCmd[1].c_str());
 
-        TeleportTo(l_X, l_Y);
+        TeleportTo(l_X, l_Y, Orientation::Down);
         return true;
     }
     if (p_ListCmd.size() == 3)
@@ -365,7 +367,7 @@ bool Player::HandleCommandTeleport(std::vector<std::string> p_ListCmd)
         uint32 l_X = atoi(p_ListCmd[1].c_str());
         uint32 l_Y = atoi(p_ListCmd[2].c_str());
 
-        TeleportTo(l_Map, l_X, l_Y);
+        TeleportTo(l_Map, l_X, l_Y, Orientation::Down);
         return true;
     }
     return false;

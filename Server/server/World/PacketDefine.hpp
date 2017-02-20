@@ -5,6 +5,7 @@ enum CMSG : uint8
 {
     C_Connexion = 1,
     C_UnitCreate = 10,
+    C_LoadingPong = 11,
     C_UnitGoDirection = 20,
     C_UnitStopMovement = 21,
     C_UnitTalk = 23,
@@ -37,6 +38,7 @@ enum SMSG : uint8
     S_UnitUpdateSkin = 28,
     S_UnitPlayVisual = 30,
     S_UnitUpdateSpeed = 31,
+    S_LoadingPing = 32,
     S_BlockBind = 40
 };
 
@@ -416,5 +418,19 @@ struct PacketUnitUpdateSpeed
         m_TypeID = p_TypeID;
         m_ID = p_ID;
         m_Speed = p_Speed;
+    }
+};
+
+struct PacketLoadingPing
+{
+    WorldPacket m_Packet;
+    uint8 m_PacketID;
+
+    PacketLoadingPing() :
+        m_PacketID(SMSG::S_LoadingPing) {}
+
+    void BuildPacket()
+    {
+        m_Packet << m_PacketID;
     }
 };

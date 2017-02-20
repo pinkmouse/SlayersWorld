@@ -45,6 +45,10 @@ bool World::Initialize()
     if (!g_LevelManager->Initialize())
         printf("Error Initialize XpLevel...\n");
 
+    printf("Initialize Areatrigger\n");
+    if (!g_SqlManager->InitializeAreatrigger())
+        printf("Error Initialize Areatrigger...\n");
+
     printf("Initialize SpellEffects\n");
     if (!g_SqlManager->InitializeSpellEffects())
         printf("Error Initialize SpellEffects...\n");

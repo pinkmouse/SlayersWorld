@@ -21,6 +21,8 @@ public:
     void Respawn();
     void SendMsg(const std::string &);
     void Save();
+    void SetInLoading(bool);
+    bool GetInLoading() const;
 
     /* RESOURCES */
     uint32 GetXp() const;
@@ -76,6 +78,7 @@ private:
     uint8 m_Alignment;
     uint32 m_Xp;
     bool m_Initilize;
+    bool m_InLoading;
     eAccessType m_AccessType;
 
     std::map< uint16, Quest* > m_Quests;

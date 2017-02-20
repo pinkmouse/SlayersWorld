@@ -19,6 +19,15 @@ float WorldObject::GetDistance(const Position & p_Position) const
     return l_Dist;
 }
 
+uint16 WorldObject::GetSideDistance(const Position & p_Position) const
+{
+    uint32 l_X = std::max(GetPosX(), p_Position.m_X) - std::min(GetPosX(), p_Position.m_X);
+    uint32 l_Y = std::max(GetPosY(), p_Position.m_Y) - std::min(GetPosY(), p_Position.m_Y);
+
+    return ((l_X * l_X) + (l_Y * l_Y));
+}
+
+
 uint32 WorldObject::GetDistanceEuclidienne(const Position & p_Position) const
 {
     uint32 l_X = std::max(GetPosX(), p_Position.m_X) - std::min(GetPosX(), p_Position.m_X);
@@ -32,6 +41,10 @@ float WorldObject::GetDistance(const WorldObject* p_Object) const
     return GetDistance(p_Object->GetPosition());
 }
 
+uint16 WorldObject::GetSideDistance(const WorldObject* p_Object) const
+{
+    return GetSideDistance(p_Object->GetPosition());
+}
 
 Orientation  WorldObject::GetOrientationToPoint(const Position & p_Position) const
 {

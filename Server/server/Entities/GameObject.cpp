@@ -1,8 +1,8 @@
 #include "GameObject.hpp"
 
 
-GameObject::GameObject(Case* p_Case) :
-    DynamicObject(p_Case)
+GameObject::GameObject(Map* p_Map, uint32 p_PosX, uint32 p_PosY) :
+    DynamicObject(p_Map, p_PosX, p_PosY)
 {
 }
 

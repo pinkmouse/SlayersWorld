@@ -20,6 +20,7 @@ void PacketHandler::LoadPacketHandlerMap()
     m_PacketHandleMap[CMSG::C_UnitStartAttack] = &PacketHandler::HandleStartAttack;
     m_PacketHandleMap[CMSG::C_UnitEventAction] = &PacketHandler::HandleEventAction;
     m_PacketHandleMap[CMSG::C_UnitStopAttack] = &PacketHandler::HandleStopAttack;
+    m_PacketHandleMap[CMSG::C_LoadingPong] = &PacketHandler::HandleLoadingPong;
 }
 
 void PacketHandler::HandleUnitUnknow(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
@@ -91,6 +92,16 @@ void PacketHandler::HandleTalk(WorldPacket &p_Packet, WorldSocket* p_WorldSocket
         return;
 
     l_Player->GetSession()->SendUnitTalk((uint8)TypeUnit::PLAYER, l_Player->GetID(), l_String);
+}
+
+void PacketHandler::HandleLoadingPong(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
+{
+    Player* l_Player = p_WorldSocket->GetPlayer();
+
+    if (l_Player == nullptr)
+        return;
+
+    l_Player->SetInLoading(false);
 }
 
 void PacketHandler::HandleStartAttack(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
@@ -229,6 +240,10 @@ void PacketHandler::OperatePacket(WorldPacket &p_Packet, WorldSocket* p_WorldSoc
 {
     uint8 l_PacketID;
     p_Packet >> l_PacketID;
+
+    if (p_WorldSocket->GetPlayer() && p_WorldSocket->GetPlayer()->GetInLoading() && l_PacketID != CMSG::C_LoadingPong) ///< We should not conciderate packet while loading
+        return;
+    
     printf("Receive Packet %d\n", l_PacketID);
     m_Func l_Fun = m_PacketHandleMap[l_PacketID];
     if (l_Fun != nullptr)

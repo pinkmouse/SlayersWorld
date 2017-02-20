@@ -1,6 +1,7 @@
 #include "SqlManager.hpp"
 #include "../Define.hpp"
 #include "../Entities/Creature.hpp"
+#include "../Entities/Areatrigger.hpp"
 #include "../Global.hpp"
 #include <cstdlib>
 
@@ -824,6 +825,57 @@ std::map<uint8, uint16> SqlManager::GetXpLevel()
     mysql_free_result(l_Result);
 
     return l_XpLevel;
+}
+
+bool SqlManager::InitializeAreatrigger()
+{
+    std::string l_Query = "SELECT `id`, `typeID`, `mapID`, `caseNb`, `radius`, `data0`, `data1`, `data2`, `data3` FROM areatrigger";
+    mysql_query(&m_MysqlWorld, l_Query.c_str());
+
+    uint16 l_Id = 0;
+    uint16 l_TypeID = 0;
+    uint16 l_MapID = 0;
+    uint16 l_CaseNb = 0;
+    float l_Radius = 0;
+    uint32 l_Data0 = 0;
+    uint32 l_Data1 = 0;
+    uint32 l_Data2 = 0;
+    uint32 l_Data3 = 0;
+
+    uint32 l_PosX = 0;
+    uint32 l_PosY = 0;
+
+    MYSQL_RES *l_Result = NULL;
+    MYSQL_ROW l_Row;
+    l_Result = mysql_use_result(&m_MysqlWorld);
+    while ((l_Row = mysql_fetch_row(l_Result)))
+    {
+        l_Id = atoi(l_Row[0]);
+        l_TypeID = atoi(l_Row[1]);
+        l_MapID = atoi(l_Row[2]);
+        l_CaseNb = atoi(l_Row[3]);
+        l_Radius = (float)atof(l_Row[5]);
+        l_Data0 = atoi(l_Row[5]);
+        l_Data1 = atoi(l_Row[6]);
+        l_Data2 = atoi(l_Row[7]);
+        l_Data3 = atoi(l_Row[8]);
+
+        Map* l_Map = g_MapManager->GetMap(l_MapID);
+        if (l_Map == nullptr)
+            continue;
+        l_PosX = (l_CaseNb % l_Map->GetSizeX() * TILE_SIZE) + TILE_SIZE / 2;
+        l_PosY = (l_CaseNb / l_Map->GetSizeX() * TILE_SIZE) + TILE_SIZE / 2;
+        Areatrigger* l_Areatrigger = new Areatrigger(l_Map, l_PosX, l_PosY, l_Radius, (eAreatriggerType)l_TypeID);
+        l_Areatrigger->SetData(0, l_Data0);
+        l_Areatrigger->SetData(1, l_Data1);
+        l_Areatrigger->SetData(2, l_Data2);
+        l_Areatrigger->SetData(3, l_Data3);
+        l_Map->AddDynamicObject(l_Areatrigger);
+        l_Map->GetCase(l_CaseNb)->AddDynamicOject(l_Areatrigger);
+    }
+    mysql_free_result(l_Result);
+
+    return true;
 }
 
 int16 SqlManager::GetLevel(const std::string & p_PlayerName)

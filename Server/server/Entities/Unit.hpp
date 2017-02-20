@@ -61,13 +61,14 @@ public:
     uint8 GetOrientation() const;
     Map* GetMap() const;
     uint16 GetSquareID() const;
+    void SetSquareID(uint16);
+
     void SetPosX(const uint32 &);
     void SetPosY(const uint32 &);
     void SetSkinID(const uint8 &);
     void Talk(const std::string &);
     void SetOrientation(const Orientation &);
     void SetMap(Map*);
-    void SetSquareID(uint16);
     void SetRespawnPosition(const WorldPosition &);
     bool IsInFront(const Position &) const;
     bool IsInFront(Unit const*) const;
@@ -107,8 +108,8 @@ public:
 
     /* TELEPORT */
     void TeleportTo(const WorldPosition&);
-    void TeleportTo(uint32, uint32);
-    void TeleportTo(uint16, uint32, uint32);
+    void TeleportTo(uint32, uint32, Orientation);
+    void TeleportTo(uint16, uint32, uint32, Orientation);
 
     /* SPELL */
     void AddSpellID(uint16, uint64);

@@ -20,6 +20,7 @@
 
 #define REGEN_HEALTH_TIMER 5000
 
+#define SKIN_OFFSET_SIZE_X 14
 #define UPDATE_TIME_MOVEMENT 200
 #define STEP_SIZE 12 /// In pixel
 #define MAX_MOVEMENT_POSITION 3
@@ -345,4 +346,4 @@ struct PointsSet
 static uint32 PixelToCase(uint32 p_NbPixel) { return p_NbPixel / TILE_SIZE; }
 static uint32 CaseToPixel(uint32 p_NbCase) { return p_NbCase * TILE_SIZE; }
 static Position PositionToCasePosition(const Position & p_Pos) { return Position(PixelToCase(p_Pos.m_X), PixelToCase(p_Pos.m_Y)); }
-static float InYard(float p_YardInPixel) { return p_YardInPixel / TILE_SIZE; }
+static float InYard(float p_YardInPixel) { return p_YardInPixel / (float)TILE_SIZE; }

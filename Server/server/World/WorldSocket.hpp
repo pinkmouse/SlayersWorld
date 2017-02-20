@@ -23,7 +23,7 @@ public:
     void SendUnitTalk(uint8, uint16, const std::string &);
 	void SendLogDamage(uint8, uint16, DamageInfo);
 	void SendAuthResponse(uint8);
-    void SendMsg(WorldPacket);
+    void SendPacket(WorldPacket);
     void SendToSet(WorldPacket, bool p_ExcludePlayer = false);
     void SendSwitchMap(uint16);
     void SendKeyBoardBind(eKeyBoardAction, uint8);

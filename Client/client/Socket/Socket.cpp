@@ -123,3 +123,13 @@ sf::Socket::Status Socket::Receive(WorldPacket & p_Packet)
         m_Connected = false;
     return l_Status;
 }
+
+void Socket::SendLoadingPong()
+{
+    WorldPacket packet;
+    uint8 l_ID = CMSG::C_LoadingPong;
+
+    packet << l_ID;
+
+    send(packet);
+}
