@@ -37,10 +37,12 @@ public:
     /* QUEST */
     void UpdateQuests();
     void AddQuest(Quest*, bool p_New = true);
-    Quest* GetQuest(uint16);
+    void RemoveQuest(uint16);
+    Quest* GetQuest(uint16) const;
     std::map< uint16, Quest* >* GetQuestList();
     void CheckQuestObjective(eObjectifType, int32);
     bool HasQuestInProgress(uint16);
+    void ValidateQuest(Quest*);
 
     /* KEYBOARD */
     void AddKeyBoardBind(eKeyBoardAction, uint8);

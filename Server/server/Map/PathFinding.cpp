@@ -112,7 +112,6 @@ Path Map::LaunchPathFinding(const Position & p_PosStart, const Position & p_PosE
     AddToCloseList(l_Current);
     AddAdjacentCases(l_Current);
 
-    //printf("Launch Path Finding from %d %d to %d %d\n", p_PosStart.m_X, p_PosStart.m_Y, p_PosEnd.m_X, p_PosEnd.m_Y);
     while ((l_Current != m_EndPosition) && (!m_OpenList.empty()))
     {
         l_Current = BestNode(m_OpenList);

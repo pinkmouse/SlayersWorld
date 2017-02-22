@@ -243,11 +243,34 @@ void Player::Save()
 
 void Player::UpdateQuests()
 {
-    for (std::map< uint16, Quest* >::iterator l_It = m_Quests.begin(); l_It != m_Quests.end(); ++l_It)
+    /*for (std::map< uint16, Quest* >::iterator l_It = m_Quests.begin(); l_It != m_Quests.end(); ++l_It)
     {
         if ((*l_It).second->IsDone())
             printf("-----> Quest %d is DONE\n", (*l_It).first);
-    }
+    }*/
+}
+
+void Player::ValidateQuest(Quest* p_Quest)
+{
+    if (m_Quests.find(p_Quest->GetID()) == m_Quests.end())
+        return;
+
+    PacketWarningMsg l_Packet;
+    l_Packet.BuildPacket(eTypeWarningMsg::Yellow, "Quete : " + p_Quest->GetName() + " terminé");
+    GetSession()->send(l_Packet.m_Packet);
+
+    g_SqlManager->SaveQuestForPlayer(this, p_Quest);
+    RemoveQuest(p_Quest->GetID());
+}
+
+void Player::RemoveQuest(uint16 p_QuestID)
+{
+    auto l_It = m_Quests.find(p_QuestID);
+    if (l_It == m_Quests.end())
+        return;
+    
+    delete (*l_It).second;
+    m_Quests.erase(l_It);
 }
 
 void Player::AddKeyBoardBind(eKeyBoardAction p_Action, uint8 p_ID)
@@ -270,10 +293,10 @@ std::map< uint16, Quest* >* Player::GetQuestList()
     return &m_Quests;
 }
 
-Quest* Player::GetQuest(uint16 p_QuestID)
+Quest* Player::GetQuest(uint16 p_QuestID) const
 {
     if (m_Quests.find(p_QuestID) != m_Quests.end())
-        return m_Quests[p_QuestID];
+        return m_Quests.at(p_QuestID);
     return nullptr;
 }
 

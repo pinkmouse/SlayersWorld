@@ -119,7 +119,7 @@ void Graphics::DrawUnitDetails(Unit* p_Unit)
         {
             l_SkinSprite->setScale(sf::Vector2f(p_Unit->GetSkinZoomFactor(), p_Unit->GetSkinZoomFactor()));
             Position l_Pos = GetCenterPositionOnUnit(p_Unit, l_SkinSprite);
-            l_SkinSprite->setPosition(l_Pos.x, l_Pos.y - p_Unit->GetSizeY());
+            l_SkinSprite->setPosition(l_Pos.x - (p_Unit->GetSizeX() / 2), l_Pos.y - p_Unit->GetSizeY());
             m_Window.draw(*l_SkinSprite);
         }
     }
@@ -141,7 +141,7 @@ void Graphics::DrawUnitDetails(Unit* p_Unit)
             l_Text.setColor(sf::Color(255, 66, 66));
         else
             l_Text.setColor(sf::Color(164, 255, 6));
-        sf::Vector2f v1(p_Unit->GetPosXAtIntant() + (p_Unit->GetSizeX() / 2), p_Unit->GetPosYAtIntant() - p_Unit->GetSizeY() - 6 - 4 - ((MAX_HISTORY_LOG_TIME - l_DamageLog.second) / 100000));
+        sf::Vector2f v1(p_Unit->GetPosXAtIntant(), p_Unit->GetPosYAtIntant() - p_Unit->GetSizeY() - 6 - 4 - ((MAX_HISTORY_LOG_TIME - l_DamageLog.second) / 100000));
         sf::Vector2f l_Coord = m_Window.mapCoordsToPixelFloat(v1, m_View);
         l_Text.setPosition((l_Coord.x - (l_Text.getGlobalBounds().width / 2)), l_Coord.y);
         m_Window.draw(l_Text);
@@ -152,15 +152,15 @@ void Graphics::DrawUnitDetails(Unit* p_Unit)
         sf::Text l_Text(p_Unit->GetTalk(), *g_Font, SIZE_TALK_FONT);
 
         TileSprite l_Sprite = m_InterfaceManager->GetField(l_Text.getGlobalBounds().width + 8, (float)g_Font->getLineSpacing(l_Text.getCharacterSize()) + 8);
-        sf::Vector2f v1(p_Unit->GetPosXAtIntant() + (p_Unit->GetSizeX() / 2), p_Unit->GetPosYAtIntant() - p_Unit->GetSizeY() - 6 - 4);
+        sf::Vector2f v1(p_Unit->GetPosXAtIntant() + (p_Unit->GetSizeX() / 4), p_Unit->GetPosYAtIntant() - p_Unit->GetSizeY() - 6 - 4);
         sf::Vector2f l_Coord = m_Window.mapCoordsToPixelFloat(v1, m_View);
-        l_Sprite.setPosition((l_Coord.x - ((l_Text.getGlobalBounds().width + 8) / 2)), l_Coord.y);
+        l_Sprite.setPosition((l_Coord.x - ((l_Text.getGlobalBounds().width + 8) / 2)) - (p_Unit->GetSizeX() / 2), l_Coord.y);
         m_Window.draw(l_Sprite);
 
         l_Text.setColor(sf::Color::White);
-        sf::Vector2f v12(p_Unit->GetPosXAtIntant() + (p_Unit->GetSizeX() / 2), p_Unit->GetPosYAtIntant() - p_Unit->GetSizeY());
+        sf::Vector2f v12(p_Unit->GetPosXAtIntant(), p_Unit->GetPosYAtIntant() - p_Unit->GetSizeY());
         l_Coord = m_Window.mapCoordsToPixelFloat(v1, m_View);
-        l_Text.setPosition((l_Coord.x - (l_Text.getGlobalBounds().width / 2)), l_Coord.y);
+        l_Text.setPosition((l_Coord.x - (l_Text.getGlobalBounds().width / 2)) - (p_Unit->GetSizeX() / 2), l_Coord.y);
         m_Window.draw(l_Text);
     }
 
@@ -170,7 +170,7 @@ void Graphics::DrawUnitDetails(Unit* p_Unit)
         sf::Text l_Name(p_Unit->GetName(), *g_Font, SIZE_NAME_FONT);
         uint8 l_Color = 255.0f / 100.0f * p_Unit->GetResourceNb(eResourceType::Alignment);
         l_Name.setColor(sf::Color(l_Color, l_Color, l_Color, 255));
-        sf::Vector2f l_View(p_Unit->GetPosXAtIntant() + (p_Unit->GetSizeX() / 2), p_Unit->GetPosYAtIntant());
+        sf::Vector2f l_View(p_Unit->GetPosXAtIntant(), p_Unit->GetPosYAtIntant());
         sf::Vector2f l_Coord = m_Window.mapCoordsToPixelFloat(l_View, m_View);
         l_Name.setPosition((l_Coord.x - (l_Name.getGlobalBounds().width / 2.0f)), l_Coord.y);
         m_Window.draw(l_Name);
@@ -185,7 +185,7 @@ void Graphics::DrawUnitDetails(Unit* p_Unit)
         TileSprite l_CastBar;
         l_CastBar.setTexture(m_CastBarTexture);
         l_CastBar.setTextureRect(sf::IntRect(0, 0, (m_CastBarTexture.getSize().x / 100.0f) * p_Unit->GetCastPct(), m_CastBarTexture.getSize().y));
-        l_CastBar.setPosition(p_Unit->GetPosXAtIntant(), p_Unit->GetPosYAtIntant() - p_Unit->GetSizeY());
+        l_CastBar.setPosition(p_Unit->GetPosXAtIntant() - (p_Unit->GetSizeX() / 2), p_Unit->GetPosYAtIntant() - p_Unit->GetSizeY());
         m_Window.draw(l_CastBar);
     }
 }
@@ -202,7 +202,7 @@ void Graphics::DrawWorldObjects(std::map<uint32, std::vector<WorldObject*> > *p_
                 continue;
 
             if (l_WorldObject->GetType() == TypeWorldObject::UNIT)
-                l_WorldObject->GetSprite()->setPosition(l_WorldObject->GetPosXAtIntant(), l_WorldObject->GetPosYAtIntant() - l_WorldObject->GetSizeY());
+                l_WorldObject->GetSprite()->setPosition(l_WorldObject->GetPosXAtIntant() - (l_WorldObject->GetSizeX() / 2), l_WorldObject->GetPosYAtIntant() - l_WorldObject->GetSizeY());
             else
                 l_WorldObject->GetSprite()->setPosition(l_WorldObject->GetPosXAtIntant(), l_WorldObject->GetPosYAtIntant());
             m_Window.draw(*l_WorldObject->GetSprite());
@@ -369,7 +369,7 @@ void Graphics::UpdateInterface(sf::Time p_Diff)
 void Graphics::UpdateWindow(sf::Time p_Diff)
 {
     if (g_Player != nullptr)
-        m_View.setCenter(g_Player->GetMovementHandler()->GetPosXAtIntant() + (float)(g_Player->GetSizeX() / 2), g_Player->GetMovementHandler()->GetPosYAtIntant() - (float)(g_Player->GetSizeY() / 2));
+        m_View.setCenter(g_Player->GetMovementHandler()->GetPosXAtIntant(), g_Player->GetMovementHandler()->GetPosYAtIntant() - (float)(g_Player->GetSizeY() / 2));
     UpdateInterface(p_Diff);
     m_Window.setView(m_View);
     Clear();

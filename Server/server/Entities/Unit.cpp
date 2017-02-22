@@ -786,13 +786,38 @@ void Unit::GossipTo(Player* p_Player)
     std::string l_GossipMsg = "";
     uint32 l_Data1 = 0;
 
+    /* QUEST VALIDATE*/
+    for (Gossip l_Gossip : m_ListGossip[eGossipType::ValidQuest]) ///< Only one Wisp can be done
+    {
+        if (l_Gossip.m_Required != nullptr && (!l_Gossip.m_Required->IsValid(p_Player)))
+            continue;
+        l_GossipMsg = l_Gossip.m_Msg;
+        l_Data1 = l_Gossip.m_Data1;
+        if (l_Gossip.m_Required != nullptr && l_Gossip.m_Required->IsValid(p_Player)) ///< Priority for Wisp with Valid Required
+            break;
+    }
+    if (l_GossipMsg != "")
+    {
+        Quest* l_Quest = p_Player->GetQuest(l_Data1);
+        if (l_Quest == nullptr)
+            return;
+
+        p_Player->ValidateQuest(l_Quest);
+        p_Player->SendMsg(GetName() + ": " + l_GossipMsg);
+        return;
+    }
     /* QUEST LAUNCHER*/
     for (Gossip l_Gossip : m_ListGossip[eGossipType::LaunchQuest]) ///< Only one Wisp can be done
     {
         if (l_Gossip.m_Required != nullptr && (!l_Gossip.m_Required->IsValid(p_Player) || p_Player->HasQuestInProgress(l_Gossip.m_Data1)))
             continue;
-        l_GossipMsg = l_Gossip.m_Msg;
+
         l_Data1 = l_Gossip.m_Data1;
+        if (g_SqlManager->GetHoursSinceLastQuestDone(p_Player, l_Data1) >= 0) ///< TODO check repetition
+            continue; 
+        if (p_Player->GetQuest(l_Data1) != nullptr) ///< Only if we have not it already
+            continue;
+        l_GossipMsg = l_Gossip.m_Msg;
         if (l_Gossip.m_Required != nullptr && l_Gossip.m_Required->IsValid(p_Player)) ///< Priority for Wisp with Valid Required
             break;
     }

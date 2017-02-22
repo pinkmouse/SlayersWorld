@@ -299,8 +299,11 @@ void SqlManager::SavePlayer(Player* p_Player)
         std::map< uint8, ObjectifProgess* >* l_ObjectProgressList = (*l_It).second->GetObjectifsProgress();
         for (std::map< uint8, ObjectifProgess* >::iterator l_Itr = l_ObjectProgressList->begin(); l_Itr != l_ObjectProgressList->end(); ++l_Itr)
         {
+            /// Remove it from quest in Progress
+            std::string l_Query = "DELETE FROM quest_objectif_progress WHERE characterID = '" + std::to_string(p_Player->GetID()) + "' AND questID = '" + std::to_string((*l_It).first) + "';";
+            mysql_query(&m_MysqlCharacters, l_Query.c_str());
         /// CHECK 
-            std::string l_Query = "REPLACE INTO quest_objectif_progress (characterID, questID, objectifID, data0) VALUES ('" + std::to_string(p_Player->GetID()) + "', '" + std::to_string((*l_It).first) + "', '" + std::to_string((*l_Itr).first) + "', '" + std::to_string((*l_Itr).second->m_Data0) + "');";
+            l_Query = "REPLACE INTO quest_objectif_progress (characterID, questID, objectifID, data0) VALUES ('" + std::to_string(p_Player->GetID()) + "', '" + std::to_string((*l_It).first) + "', '" + std::to_string((*l_Itr).first) + "', '" + std::to_string((*l_Itr).second->m_Data0) + "');";
             mysql_query(&m_MysqlCharacters, l_Query.c_str());
         }
     }
@@ -308,6 +311,38 @@ void SqlManager::SavePlayer(Player* p_Player)
 	std::string l_Query = "UPDATE characters SET `posX` = '" + std::to_string(p_Player->GetPosX()) + "', `posY` = '" + std::to_string(p_Player->GetPosY()) + "', `mapID` = '" + std::to_string(p_Player->GetMapID()) + "', `orientation` = '" + std::to_string(p_Player->GetOrientation()) + "', `health` = '" + std::to_string(p_Player->GetResourceNb(eResourceType::Health)) + "', `mana` = '" + std::to_string(p_Player->GetResourceNb(eResourceType::Mana)) + "', `alignment` = '" + std::to_string(p_Player->GetResourceNb(eResourceType::Alignment)) + "', `xp` = '" + std::to_string(p_Player->GetXp()) + "', `level` = '" + std::to_string(p_Player->GetLevel()) + "', skinID = '" + std::to_string(p_Player->GetSkinID()) + "' WHERE characterID = '" + std::to_string(p_Player->GetID()) + "';";
     mysql_query(&m_MysqlCharacters, l_Query.c_str());
 	UpdatePointsSet(p_Player);
+}
+
+void SqlManager::SaveQuestForPlayer(Player const* p_Player,  Quest const* p_Quest)
+{
+    /// Save Quest
+    std::string l_Query = "INSERT INTO quests_done (characterID, questID) VALUES ('" + std::to_string(p_Player->GetID()) + "', '" + std::to_string(p_Quest->GetID()) + "');";
+    mysql_query(&m_MysqlCharacters, l_Query.c_str());
+
+    /// Remove it from quest in Progress
+    l_Query = "DELETE FROM quest_objectif_progress WHERE characterID = '" + std::to_string(p_Player->GetID()) + "' AND questID = '" + std::to_string(p_Quest->GetID()) + "';";
+    mysql_query(&m_MysqlCharacters, l_Query.c_str());
+}
+
+int32 SqlManager::GetHoursSinceLastQuestDone(Player const* p_Player, uint16 p_QuestID)
+{
+    std::string l_Query = "SELECT `dateValidate` FROM quests_done WHERE characterID = '" + std::to_string(p_Player->GetID()) + "' AND questID = '" + std::to_string(p_QuestID)  + "'";
+    mysql_query(&m_MysqlCharacters, l_Query.c_str());
+
+    int16 l_Hours = -1;
+
+    MYSQL_RES *l_Result = NULL;
+    MYSQL_ROW l_Row;
+    bool l_Exist = false;
+    l_Result = mysql_use_result(&m_MysqlCharacters);
+    while ((l_Row = mysql_fetch_row(l_Result)))
+    {
+        l_Hours = atoi(l_Row[0]);
+        printf("---> Quest Done = %s\n", l_Row[0]);
+    }
+    mysql_free_result(l_Result);
+
+    return l_Hours;
 }
 
 void SqlManager::UpdatePointsSet(Player const* p_Player)

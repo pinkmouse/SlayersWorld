@@ -44,8 +44,10 @@ public:
 	PointsSet GetPointsSetForPlayer(uint32);
 	void AddNewPointsSetForPlayer(uint32);
     void SavePlayer(Player*);
+    void SaveQuestForPlayer(Player const*, Quest const*);
 	void UpdatePointsSet(Player const*);
     void AddConnectionLogin(uint32);
+    int32 GetHoursSinceLastQuestDone(Player const*,  uint16);
 
     bool InitializeSpells();
     bool InitializeSpellEffects();

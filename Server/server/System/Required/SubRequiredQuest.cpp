@@ -42,5 +42,10 @@ SubRequiredQuestAllObjectiveDone::~SubRequiredQuestAllObjectiveDone()
 
 bool SubRequiredQuestAllObjectiveDone::IsValid(const Player* p_Player) const
 {
-    return true;
+    Quest* l_Quest = p_Player->GetQuest(m_QuestID);
+    if (l_Quest == nullptr)
+        return false;
+    if (l_Quest->IsDone())
+        return true;
+    return false;
 }
