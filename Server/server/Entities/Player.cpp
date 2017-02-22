@@ -224,12 +224,12 @@ void Player::EventAction(eKeyBoardAction p_PlayerAction)
         l_Unit->GossipTo(this);
         break;
     }
+    case eKeyBoardAction::KeyBoardSpell1:
     case eKeyBoardAction::KeyBoardSpell0:
         if (m_MovementHandler->IsInAttack())
             return;
-        CastSpell(1);
-        break;
-    case eKeyBoardAction::KeyBoardSpell1:
+        if (GetSpellOnBind(p_PlayerAction) > 0)
+            CastSpell(GetSpellOnBind(p_PlayerAction));
         break;
     default:
         break;
@@ -240,6 +240,12 @@ void Player::Save()
 {
     g_SqlManager->SavePlayer(this);
 }
+
+void Player::LearnSpell(uint16 p_SpellID)
+{
+    ;
+}
+
 
 void Player::UpdateQuests()
 {
@@ -363,6 +369,21 @@ void Player::AddSpellBindToKey(uint16 p_SpellID, uint8 p_Bind)
     m_SpellsBindToKey[p_SpellID] = p_Bind;
 }
 
+int32 Player::GetSpellOnBind(uint8 p_Bind)
+{
+    int32 l_Spell = -1;
+    for (std::map<uint16, uint8>::iterator l_It = m_SpellsBindToKey.begin();  l_It != m_SpellsBindToKey.end(); ++l_It)
+    {
+        if ((*l_It).second == p_Bind)
+        {
+            l_Spell = (*l_It).first;
+            break;
+        }
+    }
+
+    return l_Spell;
+}
+
 int32 Player::GetBindSpell(uint16 p_SpellID)
 {
     if (m_SpellsBindToKey.find(p_SpellID) == m_SpellsBindToKey.end())
@@ -374,10 +395,7 @@ void Player::SetInLoading(bool p_InLoading)
 {
     m_InLoading = p_InLoading;
     if (!p_InLoading)
-    {
-        printf("No more in loading\n");
         return;
-    }
 
     PacketLoadingPing l_Packet;
     l_Packet.BuildPacket();

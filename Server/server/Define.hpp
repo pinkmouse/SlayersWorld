@@ -105,6 +105,7 @@ enum eRequiredType
     LevelMin = 2,
     LevelMax = 3,
     QuestAllObjectiveDone = 4,
+    QuestInProgress = 5
 };
 
 enum eResourceType
@@ -140,9 +141,9 @@ enum eObjectifType
 
 enum eRepetitionType
 {
-    Never = 0,
-    Daily,
-    Weekly
+    Never = -1,
+    Daily = 1,
+    Weekly = 7
 };
 
 enum eTypeWarningMsg

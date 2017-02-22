@@ -50,9 +50,11 @@ public:
     void AddSpellBindToKey(uint16, uint8);
     int32 GetBindSpell(uint16);
     std::map< eKeyBoardAction, uint8 >* GetKeyBoardBinds();
+    int32 GetSpellOnBind(uint8);
 
     /* SPELL */
     void AddSpellCooldown(uint16, uint64);
+    void LearnSpell(uint16);
 
     /* COMMANDS */
     bool CheckCommand(const std::string &);

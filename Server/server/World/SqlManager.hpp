@@ -33,6 +33,8 @@ public:
     Player* GetNewPlayer(uint32);
     void AddNewPlayer(uint32);
     void AddKeyDefaultBindsForAccount(uint32);
+    void AddSpellBind(Player*, uint16, uint8);
+    void AddSpellForPlayer(Player*, uint16);
     void ReplaceKeyBindsForAccount(uint32, eKeyBoardAction, uint8);
     std::string GetLoginName(uint32);
     int16 GetLevel(const std::string &);
@@ -47,7 +49,7 @@ public:
     void SaveQuestForPlayer(Player const*, Quest const*);
 	void UpdatePointsSet(Player const*);
     void AddConnectionLogin(uint32);
-    int32 GetHoursSinceLastQuestDone(Player const*,  uint16);
+    int32 GetDaysSinceLastQuestDone(Player const*,  uint16);
 
     bool InitializeSpells();
     bool InitializeSpellEffects();

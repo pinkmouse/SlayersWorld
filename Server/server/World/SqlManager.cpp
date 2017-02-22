@@ -176,18 +176,25 @@ Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
     }
     mysql_free_result(l_Result);
 
-    if (!l_Exist)
-    {
-        printf("Create new Player %d", p_AccountID);
-        AddNewPlayer(p_AccountID);
-        AddKeyDefaultBindsForAccount(p_AccountID);
-        return GetNewPlayer(p_AccountID);
-    }
     eAccessType l_PlayerAccessType = GetAccessType(p_AccountID);
     eAccessType l_AccessRequired = (eAccessType)atoi(g_Config->GetValue("AccessLevel").c_str());
 
     if (l_AccessRequired > l_PlayerAccessType)
         return nullptr;
+
+    if (!l_Exist)
+    {
+        printf("Create new Player %d", p_AccountID);
+        AddNewPlayer(p_AccountID);
+        AddKeyDefaultBindsForAccount(p_AccountID);
+        Player* l_Player = GetNewPlayer(p_AccountID);
+        /* FOR TEST*/
+        AddSpellForPlayer(l_Player, 1);
+        AddSpellForPlayer(l_Player, 2);
+        AddSpellBind(l_Player, 1, 9);
+        AddSpellBind(l_Player, 2, 10);
+        return l_Player;
+    }
 
     l_Player = new Player(p_AccountID, l_ID, l_Name, l_Lvl, l_Health, l_Mana, l_Alignment, l_SkinID, l_MapID, l_PosX, l_PosY, (Orientation)l_Orientation, l_Xp, l_PlayerAccessType);
 	l_Player->SetPointsSet(GetPointsSetForPlayer(l_ID));
@@ -324,12 +331,12 @@ void SqlManager::SaveQuestForPlayer(Player const* p_Player,  Quest const* p_Ques
     mysql_query(&m_MysqlCharacters, l_Query.c_str());
 }
 
-int32 SqlManager::GetHoursSinceLastQuestDone(Player const* p_Player, uint16 p_QuestID)
+int32 SqlManager::GetDaysSinceLastQuestDone(Player const* p_Player, uint16 p_QuestID)
 {
-    std::string l_Query = "SELECT `dateValidate` FROM quests_done WHERE characterID = '" + std::to_string(p_Player->GetID()) + "' AND questID = '" + std::to_string(p_QuestID)  + "'";
+    std::string l_Query = "SELECT DATEDIFF(NOW(), MAX(`dateValidate`)) FROM quests_done WHERE characterID = '" + std::to_string(p_Player->GetID()) + "' AND questID = '" + std::to_string(p_QuestID)  + "'";
     mysql_query(&m_MysqlCharacters, l_Query.c_str());
 
-    int16 l_Hours = -1;
+    int16 l_Days = -1;
 
     MYSQL_RES *l_Result = NULL;
     MYSQL_ROW l_Row;
@@ -337,12 +344,14 @@ int32 SqlManager::GetHoursSinceLastQuestDone(Player const* p_Player, uint16 p_Qu
     l_Result = mysql_use_result(&m_MysqlCharacters);
     while ((l_Row = mysql_fetch_row(l_Result)))
     {
-        l_Hours = atoi(l_Row[0]);
-        printf("---> Quest Done = %s\n", l_Row[0]);
+        if (l_Row == NULL)
+            break;
+        if (l_Row[0])
+            l_Days = atoi(l_Row[0]);
     }
     mysql_free_result(l_Result);
 
-    return l_Hours;
+    return l_Days;
 }
 
 void SqlManager::UpdatePointsSet(Player const* p_Player)
@@ -566,6 +575,21 @@ bool SqlManager::InitializeSpellsBinds(Player* p_Player)
     mysql_free_result(l_Result);
 
     return true;
+}
+
+void SqlManager::AddSpellForPlayer(Player* p_Player, uint16 l_SpellID)
+{
+    std::string l_Query = "REPLACE INTO `characters_spells` (characterID, spellID) VALUES ('" + std::to_string(p_Player->GetID()) + "', '" + std::to_string(l_SpellID) + "');";
+    mysql_query(&m_MysqlCharacters, l_Query.c_str());
+}
+
+void SqlManager::AddSpellBind(Player* p_Player, uint16 l_SpellID, uint8 l_BindID)
+{
+    std::string l_Query = "DELETE FROM `characters_spell_binds` WHERE bindID = '" + std::to_string(l_BindID) + "' AND characterID = '" + std::to_string(p_Player->GetID()) + "';";
+    mysql_query(&m_MysqlCharacters, l_Query.c_str());
+    l_Query = "INSERT INTO `characters_spell_binds` (characterID, spellID, bindID) VALUES ('" + std::to_string(p_Player->GetID()) + "', '" + std::to_string(l_SpellID) + "', '" + std::to_string(l_BindID) + "');";
+    mysql_query(&m_MysqlCharacters, l_Query.c_str());
+    p_Player->AddSpellBindToKey(l_SpellID, l_BindID);
 }
 
 bool SqlManager::InitializeKeyBindsForAccount(uint32 p_Account, Player* p_Player)

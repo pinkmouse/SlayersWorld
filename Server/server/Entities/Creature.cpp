@@ -42,7 +42,7 @@ void Creature::RandMoving()
         return;
 
     uint8 l_Orientation = rand() % 4;
-    if (GetDistance(m_RespawnPosition.GetPosition()) > CaseToPixel(m_CreatureTemplate.m_MaxRay))
+    if (GetMapID() == m_RespawnPosition.GetMapID() && GetDistance(m_RespawnPosition.GetPosition()) > CaseToPixel(m_CreatureTemplate.m_MaxRay))
         l_Orientation = GetOrientationToPoint(m_RespawnPosition.GetPosition());
     StartMovement((Orientation)l_Orientation);
 }
@@ -123,6 +123,9 @@ void Creature::ReturnToRespawnPoint()
 
 void Creature::ReturnInRay()
 {
+    if (GetMapID() == m_RespawnPosition.GetMapID())
+        return;
+
     if (IsFollowingPath() && GetDistance(m_RespawnPosition.GetPosition()) <= CaseToPixel(m_CreatureTemplate.m_MaxRay))
     {
         m_PathToTargetPosition.clear();

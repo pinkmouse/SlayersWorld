@@ -38,3 +38,15 @@ private:
     uint16 m_QuestID;
     uint16 m_Number;
 };
+
+class SubRequiredQuestInProgress : public SubRequired
+{
+public:
+    SubRequiredQuestInProgress(uint16, uint16);
+    ~SubRequiredQuestInProgress();
+    bool IsValid(const Player*) const;
+
+private:
+    uint16 m_QuestID;
+    uint16 m_Number;
+};

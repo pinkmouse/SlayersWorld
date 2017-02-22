@@ -34,6 +34,9 @@ void RequiredManager::AddSubRequiered(uint16 p_RequierdID, eRequiredType p_Type,
     case QuestAllObjectiveDone:
         m_RequiredList[p_RequierdID].AddSubRequired(new SubRequiredQuestAllObjectiveDone((uint16)p_Data0, (uint16)p_Data1));
         break;
+    case QuestInProgress:
+        m_RequiredList[p_RequierdID].AddSubRequired(new SubRequiredQuestInProgress((uint16)p_Data0, (uint16)p_Data1));
+        break;
     default:
         break;
     }

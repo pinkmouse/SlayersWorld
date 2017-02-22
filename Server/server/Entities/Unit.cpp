@@ -660,7 +660,8 @@ void Unit::TeleportTo(uint32 p_X, uint32 p_Y, Orientation p_Orientation)
 
 void Unit::TeleportTo(uint16 p_MapID, uint32 p_X, uint32 p_Y, Orientation p_Orientation)
 {
-    TeleportTo(WorldPosition(p_X, p_Y, p_MapID, p_Orientation));
+    if (IsPlayer())
+        TeleportTo(WorldPosition(p_X, p_Y, p_MapID, p_Orientation));
 }
 
 bool Unit::IsInCombat() const
@@ -786,6 +787,9 @@ void Unit::GossipTo(Player* p_Player)
     std::string l_GossipMsg = "";
     uint32 l_Data1 = 0;
 
+    if (IsCreature())
+        p_Player->CheckQuestObjective(eObjectifType::SpeackMob, ToCreature()->GetEntry());
+
     /* QUEST VALIDATE*/
     for (Gossip l_Gossip : m_ListGossip[eGossipType::ValidQuest]) ///< Only one Wisp can be done
     {
@@ -813,7 +817,7 @@ void Unit::GossipTo(Player* p_Player)
             continue;
 
         l_Data1 = l_Gossip.m_Data1;
-        if (g_SqlManager->GetHoursSinceLastQuestDone(p_Player, l_Data1) >= 0) ///< TODO check repetition
+        if (g_SqlManager->GetDaysSinceLastQuestDone(p_Player, l_Data1) >= 0) ///< TODO check repetition
             continue; 
         if (p_Player->GetQuest(l_Data1) != nullptr) ///< Only if we have not it already
             continue;
