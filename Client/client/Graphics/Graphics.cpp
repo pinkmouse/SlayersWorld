@@ -109,21 +109,6 @@ void Graphics::DrawUnitDetails(Unit* p_Unit)
     if (p_Unit == nullptr)
         return;
 
-    std::vector<VisualEffect>  *l_VisualsEffect = p_Unit->GetVisualsEffect();
-
-    /// VISUAL EFFECT
-    for (std::vector<VisualEffect>::iterator l_It = l_VisualsEffect->begin(); l_It != l_VisualsEffect->end(); ++l_It)
-    {
-        SkinSprite* l_SkinSprite = m_VisualManager->GetVisualSprite((*l_It).GetType(), (*l_It).GetID(), (*l_It).GetFrame());
-        if (l_SkinSprite)
-        {
-            l_SkinSprite->setScale(sf::Vector2f(p_Unit->GetSkinZoomFactor(), p_Unit->GetSkinZoomFactor()));
-            Position l_Pos = GetCenterPositionOnUnit(p_Unit, l_SkinSprite);
-            l_SkinSprite->setPosition(l_Pos.x - (p_Unit->GetSizeX() / 2), l_Pos.y - p_Unit->GetSizeY());
-            m_Window.draw(*l_SkinSprite);
-        }
-    }
-
     /// Set view to don t have a zoom on text
     m_Window.setView(m_ViewFont);
 
@@ -192,8 +177,6 @@ void Graphics::DrawUnitDetails(Unit* p_Unit)
 
 void Graphics::DrawWorldObjects(std::map<uint32, std::vector<WorldObject*> > *p_ListWorldObjectsByZ)
 {
-    Map* l_Map = m_MapManager->GetActualMap();
-
     for (std::map<uint32, std::vector<WorldObject*> >::iterator l_It = p_ListWorldObjectsByZ->begin(); l_It != p_ListWorldObjectsByZ->end(); ++l_It)
     {
         for (auto l_WorldObject : (*l_It).second)
@@ -207,12 +190,46 @@ void Graphics::DrawWorldObjects(std::map<uint32, std::vector<WorldObject*> > *p_
                 l_WorldObject->GetSprite()->setPosition(l_WorldObject->GetPosXAtIntant(), l_WorldObject->GetPosYAtIntant());
             m_Window.draw(*l_WorldObject->GetSprite());
 
-            /// Draw specificity of Unit (name, text, dmg ...)
             if (l_WorldObject->GetType() == TypeWorldObject::UNIT)
-                DrawUnitDetails(l_WorldObject->ToUnit());
+            {
+                Unit* l_Unit = l_WorldObject->ToUnit();
+                std::vector<VisualEffect>  *l_VisualsEffect = l_Unit->GetVisualsEffect();
+
+                /// VISUAL EFFECT
+                for (std::vector<VisualEffect>::iterator l_It = l_VisualsEffect->begin(); l_It != l_VisualsEffect->end(); ++l_It)
+                {
+                    SkinSprite* l_SkinSprite = m_VisualManager->GetVisualSprite((*l_It).GetType(), (*l_It).GetID(), (*l_It).GetFrame());
+                    if (l_SkinSprite)
+                    {
+                        l_SkinSprite->setScale(sf::Vector2f(l_Unit->GetSkinZoomFactor(), l_Unit->GetSkinZoomFactor()));
+                        Position l_Pos = GetCenterPositionOnUnit(l_Unit, l_SkinSprite);
+                        l_SkinSprite->setPosition(l_Pos.x - (l_Unit->GetSizeX() / 2), l_Pos.y - l_Unit->GetSizeY());
+                        m_Window.draw(*l_SkinSprite);
+                    }
+                }
+            }
         }
     }
 }
+
+void Graphics::DrawWorldObjectsTxt(std::map<uint32, std::vector<WorldObject*> > *p_ListWorldObjectsByZ)
+{
+    for (std::map<uint32, std::vector<WorldObject*> >::iterator l_It = p_ListWorldObjectsByZ->begin(); l_It != p_ListWorldObjectsByZ->end(); ++l_It)
+    {
+        for (auto l_WorldObject : (*l_It).second)
+        {
+            if (l_WorldObject == nullptr)
+                continue;
+
+            if (!l_WorldObject->GetType() == TypeWorldObject::UNIT)
+                continue;
+
+            /// Draw specificity of Unit (name, text, dmg ...)
+            DrawUnitDetails(l_WorldObject->ToUnit());
+        }
+    }
+}
+
 
 bool Graphics::IsInRayWindow(WorldObject* p_Center, WorldObject* p_Obj)
 {
@@ -346,6 +363,7 @@ void Graphics::DrawMap()
             }
         }
     }
+    DrawWorldObjectsTxt(&l_ListWorldObjectByZ);
 }
 
 void Graphics::DrawInterface()

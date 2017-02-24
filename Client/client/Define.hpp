@@ -38,7 +38,7 @@
 #define TALK_TIME_SHOW 5000
 
 /// CHATBAR
-#define MAX_LETTER_STR 30
+#define MAX_LETTER_STR 60
 
 /// FONT
 #define FONT_FOLDER "font/"

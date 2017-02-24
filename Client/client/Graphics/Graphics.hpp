@@ -37,6 +37,7 @@ public:
     /// Draw Methods
     void DrawMap();
     void DrawWorldObjects(std::map<uint32, std::vector<WorldObject*> >*);
+    void DrawWorldObjectsTxt(std::map<uint32, std::vector<WorldObject*> >*);
     void DrawUnitDetails(Unit*);
     void DrawInterface();
 
