@@ -124,7 +124,7 @@ void SqlManager::AddNewPlayer(uint32 p_AccountID)
 
 void SqlManager::AddKeyDefaultBindsForAccount(uint32 p_AccountID)
 {
-    std::string l_Query = "INSERT INTO `account_key_binds` VALUES (" + std::to_string(p_AccountID) + ", 1, 74), (" + std::to_string(p_AccountID) + ", 2, 73), (" + std::to_string(p_AccountID) + ", 3, 71), (" + std::to_string(p_AccountID) + ", 4, 72), (" + std::to_string(p_AccountID) + ", 5, 57), (" + std::to_string(p_AccountID) + ", 6, 58), (" + std::to_string(p_AccountID) + ", 7, 96), (" + std::to_string(p_AccountID) + ", 8, 18), (" + std::to_string(p_AccountID) + ", 9, 25), (" + std::to_string(p_AccountID) + ", 10, 4);";
+    std::string l_Query = "INSERT INTO `account_key_binds` VALUES (" + std::to_string(p_AccountID) + ", 1, 74), (" + std::to_string(p_AccountID) + ", 2, 73), (" + std::to_string(p_AccountID) + ", 3, 71), (" + std::to_string(p_AccountID) + ", 4, 72), (" + std::to_string(p_AccountID) + ", 5, 57), (" + std::to_string(p_AccountID) + ", 6, 58), (" + std::to_string(p_AccountID) + ", 7, 85), (" + std::to_string(p_AccountID) + ", 8, 18), (" + std::to_string(p_AccountID) + ", 9, 25), (" + std::to_string(p_AccountID) + ", 10, 4);";
     mysql_query(&m_MysqlCharacters, l_Query.c_str());
 }
 
