@@ -88,6 +88,7 @@ void Unit::UpdateDeathState(sf::Time p_Diff)
 
     if (IsDeath())
     {
+        InterruptCast();
         m_ResTimer += p_Diff.asMicroseconds();
         if (m_ResTimer >= m_RespawnTime)
         {
