@@ -323,9 +323,7 @@ void Graphics::DrawMap()
             l_ListWorldObjectByZ[l_Unit->GetPosYAtIntant()].push_back(l_Unit);
         }
     }
-
     DrawWorldObjects(&l_ListWorldObjectByZ);
-
     /// Level 3 and 4
     for (std::vector<std::vector<Case*>>::iterator l_It = l_SquareZone.begin(); l_It != l_SquareZone.end(); ++l_It)
     {

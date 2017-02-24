@@ -173,7 +173,7 @@ void InterfaceManager::Update(sf::Time p_Diff)
         (*l_It).second -= p_Diff.asMicroseconds();
         ++l_It;
     }
-    m_ClockTxt.setString(std::to_string(1000 / p_Diff.asMilliseconds()));
+    /*m_ClockTxt.setString(std::to_string(1000 / p_Diff.asMilliseconds()));*/
 }
 
 void InterfaceManager::DrawStartingPage(Window & p_Window)

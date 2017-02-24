@@ -8,7 +8,7 @@
 #include "../System/Spell/Spell.hpp"
 #include "../Global.hpp"
 #include <cstdlib>
-
+#include <new>  
 
 Unit::Unit(uint16 p_ID)
 {
@@ -957,7 +957,15 @@ void Unit::CastSpell(uint16 p_ID)
     if (l_SpellTemplate == nullptr)
         return;
 
-    Spell* l_Spell = new Spell(l_SpellTemplate);
+    Spell* l_Spell = nullptr;
+    try
+    {
+        l_Spell = new Spell(l_SpellTemplate);
+    }
+    catch (std::bad_alloc& ba)
+    {
+        printf("-> bad_alloc on spell caught: %d\n", ba.what());
+    }
     if (!l_Spell->Prepare(this))
         return;
 

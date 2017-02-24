@@ -213,26 +213,29 @@ eAccessType Player::GetAccessType() const
 
 void Player::EventAction(eKeyBoardAction p_PlayerAction)
 {
+    if (m_MovementHandler == nullptr)
+        return;
+
     switch (p_PlayerAction)
     {
-    case eKeyBoardAction::KeyBoardAction: /// GOSSIP
-    {
-        Unit* l_Unit = m_Map->GetCloserUnit(this, MELEE_RANGE, true);
-        if (l_Unit == nullptr)
-            return;
+        case eKeyBoardAction::KeyBoardAction: /// GOSSIP
+        {
+            Unit* l_Unit = m_Map->GetCloserUnit(this, MELEE_RANGE, true);
+            if (l_Unit == nullptr)
+                return;
 
-        l_Unit->GossipTo(this);
-        break;
-    }
-    case eKeyBoardAction::KeyBoardSpell1:
-    case eKeyBoardAction::KeyBoardSpell0:
-        if (m_MovementHandler->IsInAttack())
-            return;
-        if (GetSpellOnBind(p_PlayerAction) > 0)
-            CastSpell(GetSpellOnBind(p_PlayerAction));
-        break;
-    default:
-        break;
+            l_Unit->GossipTo(this);
+            break;
+        }
+        case eKeyBoardAction::KeyBoardSpell1:
+        case eKeyBoardAction::KeyBoardSpell0:
+            if (m_MovementHandler->IsInAttack())
+                return;
+            if (GetSpellOnBind(p_PlayerAction) > 0)
+                CastSpell(GetSpellOnBind(p_PlayerAction));
+            break;
+        default:
+            break;
     }
 }
 
