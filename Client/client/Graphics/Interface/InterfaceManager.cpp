@@ -360,3 +360,32 @@ bool InterfaceManager::IsBlockingBind(uint8 p_BindType)
         return false;
     return true;
 }
+
+sf::Vector2i InterfaceManager::TextSplitToFit(uint16 p_MaxSizeX, sf::Text & p_Txt)
+{
+    sf::Vector2i l_FinalSquare;
+    l_FinalSquare.x = 0;
+    l_FinalSquare.y = 0;
+
+    sf::Text l_TxtSpliter = p_Txt;
+    std::string l_ActualString = p_Txt.getString();
+    std::string l_FinalString = "";
+    std::string l_StringSplitter = "";
+    l_TxtSpliter.setString(l_StringSplitter);
+    for (uint16 i = 0; i < l_ActualString.size(); ++i)
+    {
+        if (l_TxtSpliter.getGlobalBounds().width > (float)p_MaxSizeX)
+        {
+            l_FinalString += "\n";
+            l_StringSplitter = "";
+        }
+        l_FinalString += l_ActualString[i];
+        l_StringSplitter += l_ActualString[i];
+        l_TxtSpliter.setString(l_StringSplitter);
+    }
+    p_Txt.setString(l_FinalString);
+    l_FinalSquare.x = (uint16)p_Txt.getGlobalBounds().width;
+    l_FinalSquare.y = (uint16)p_Txt.getGlobalBounds().height;
+
+    return l_FinalSquare;
+}
