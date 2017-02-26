@@ -181,6 +181,9 @@ void Player::SetXp(uint32 p_Xp)
 		/// Earn new point
 		m_PointsSet.SetFreePoints(m_PointsSet.m_FreePoints + 1);
 
+        PacketUnitPlayVisual l_Packet;
+        l_Packet.BuildPacket(GetType(), GetID(), 4);
+        GetMap()->SendToSet(l_Packet.m_Packet, this);
 		SendMsg("Level UP : " + std::to_string(GetLevel()));
     }
 

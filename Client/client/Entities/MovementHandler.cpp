@@ -89,6 +89,9 @@ bool MovementHandler::CheckNextMovement(uint32 p_PosX, uint32 p_PosY)
             break;
         }
     }
+    else if (IsInAttack()) ///< To secure and break infinite attack
+        StopAttack();
+
     if (!l_NextMovement)
         return false;
 
