@@ -30,6 +30,7 @@ public:
 	bool WindowIsOpen() const;
     Position GetCenterPositionOnUnit(Unit*, sf::Sprite*);
     bool IsInRayWindow(WorldObject*, WorldObject*);
+    sf::Vector2f CoordFromViewToView(const sf::Vector2f &, const sf::View &, const sf::View &);
 
     /// DRAW THREAD
     void DrawLoop();

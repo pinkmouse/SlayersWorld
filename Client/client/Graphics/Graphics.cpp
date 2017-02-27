@@ -126,8 +126,8 @@ void Graphics::DrawUnitDetails(Unit* p_Unit)
             l_Text.setColor(sf::Color(255, 66, 66));
         else
             l_Text.setColor(sf::Color(164, 255, 6));
-        sf::Vector2f v1(p_Unit->GetPosXAtIntant(), p_Unit->GetPosYAtIntant() - p_Unit->GetSizeY() - 6 - 4 - ((MAX_HISTORY_LOG_TIME - l_DamageLog.second) / 100000));
-        sf::Vector2f l_Coord = m_Window.mapCoordsToPixelFloat(v1, m_View);
+        sf::Vector2f l_V1(p_Unit->GetPosXAtIntant(), p_Unit->GetPosYAtIntant() - p_Unit->GetSizeY() - 6 - 4 - ((MAX_HISTORY_LOG_TIME - l_DamageLog.second) / 100000));
+        sf::Vector2f l_Coord = CoordFromViewToView(l_V1, m_View, m_ViewInterface);
         l_Text.setPosition((l_Coord.x - (l_Text.getGlobalBounds().width / 2)), l_Coord.y);
         m_Window.draw(l_Text);
     }
@@ -138,14 +138,12 @@ void Graphics::DrawUnitDetails(Unit* p_Unit)
         sf::Vector2i l_FieldSize = m_InterfaceManager->TextSplitToFit(SIZE_TALK_TEXT_SIZE, l_Text);
 
         TileSprite l_Sprite = m_InterfaceManager->GetField(l_FieldSize.x + 8, l_FieldSize.y + 10);
-        sf::Vector2f v1(p_Unit->GetPosXAtIntant() + (p_Unit->GetSizeX() / 4), p_Unit->GetPosYAtIntant() - p_Unit->GetSizeY() - 4 - (l_FieldSize.y / 2));
-        sf::Vector2f l_Coord = m_Window.mapCoordsToPixelFloat(v1, m_View);
+        sf::Vector2f l_V1(p_Unit->GetPosXAtIntant() + (p_Unit->GetSizeX() / 4), p_Unit->GetPosYAtIntant() - p_Unit->GetSizeY() - 4 - (l_FieldSize.y / 2));
+        sf::Vector2f l_Coord = CoordFromViewToView(l_V1, m_View, m_ViewInterface);
         l_Sprite.setPosition((l_Coord.x - ((l_FieldSize.x + 8) / 2)) - (p_Unit->GetSizeX() / 2), l_Coord.y);
         m_Window.draw(l_Sprite);
 
         l_Text.setColor(sf::Color::White);
-        sf::Vector2f v12(p_Unit->GetPosXAtIntant(), p_Unit->GetPosYAtIntant() - p_Unit->GetSizeY());
-        l_Coord = m_Window.mapCoordsToPixelFloat(v1, m_View);
         l_Text.setPosition((l_Coord.x - (l_FieldSize.x / 2)) - (p_Unit->GetSizeX() / 2), l_Coord.y);
         m_Window.draw(l_Text);
     }
@@ -157,7 +155,10 @@ void Graphics::DrawUnitDetails(Unit* p_Unit)
         uint8 l_Color = 255.0f / 100.0f * p_Unit->GetResourceNb(eResourceType::Alignment);
         l_Name.setColor(sf::Color(l_Color, l_Color, l_Color, 255));
         sf::Vector2f l_View(p_Unit->GetPosXAtIntant(), p_Unit->GetPosYAtIntant());
-        sf::Vector2f l_Coord = m_Window.mapCoordsToPixelFloat(l_View, m_View);
+
+        sf::Vector2f l_Coord = CoordFromViewToView(l_View, m_View, m_ViewInterface);
+
+        //sf::Vector2f l_Coord = m_Window.mapCoordsToPixelFloat(l_View, m_View);
         l_Name.setPosition((l_Coord.x - (l_Name.getGlobalBounds().width / 2.0f)), l_Coord.y);
         m_Window.draw(l_Name);
     }
@@ -404,4 +405,9 @@ void Graphics::Clear()
 void Graphics::Display()
 {
 	m_Window.display();
+}
+
+sf::Vector2f Graphics::CoordFromViewToView(const sf::Vector2f & p_ActualCoord, const sf::View & p_View1, const sf::View & p_View2)
+{
+    return m_Window.mapPixelToCoords(m_Window.mapCoordsToPixel(p_ActualCoord, p_View1), p_View2);
 }

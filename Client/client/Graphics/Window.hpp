@@ -9,5 +9,6 @@ public:
 	Window();
 	~Window();
 
-	sf::Vector2f mapCoordsToPixelFloat(const sf::Vector2f& point, const sf::View& view) const;
+	sf::Vector2f mapCoordsToPixel(const sf::Vector2f& point, const sf::View& view) const;
+    sf::Vector2f mapPixelToCoords(const sf::Vector2f& point, const sf::View& view) const;
 };
