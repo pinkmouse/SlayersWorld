@@ -123,7 +123,7 @@ uint8 Unit::GetOpacity()
         }
     }
 
-    return m_Opacity;
+    return 255;
 }
 
 std::string Unit::GetName() const
