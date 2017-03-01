@@ -19,6 +19,7 @@
 #define MAX_EFFECTS_FOR_SPELL 4
 
 #define REGEN_HEALTH_TIMER 5000
+#define REGEN_ALIGN_TIMER 10000
 
 #define SKIN_OFFSET_SIZE_X 14
 #define UPDATE_TIME_MOVEMENT 200
@@ -55,6 +56,12 @@ enum TypeUnit
     PLAYER = 1
 };
 
+enum eGroupType
+{
+    SIMPLE = 0,
+    GUILD = 1
+};
+
 enum eAiType
 {
     PASSIVE = 0,
@@ -68,6 +75,11 @@ enum eActionType
     Attack = 1,
     Stop = 2,
     StopAttack = 3
+};
+
+enum eInterMapAction
+{
+    SwitchMap = 0
 };
 
 enum eAccessType

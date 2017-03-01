@@ -22,6 +22,12 @@ void Player::InitializeCommands()
     m_CmdHandleMap["msg"].second = &Player::HandleCommandWisp;
     m_CmdHandleMap["quests"].first = eAccessType::Dummy;
     m_CmdHandleMap["quests"].second = &Player::HandleCommandQuests;
+    m_CmdHandleMap["join"].first = eAccessType::Dummy;
+    m_CmdHandleMap["join"].second = &Player::HandleCommandJoin;
+    m_CmdHandleMap["gr"].first = eAccessType::Dummy;
+    m_CmdHandleMap["gr"].second = &Player::HandleCommandGroupWisp;
+    m_CmdHandleMap["leave"].first = eAccessType::Dummy;
+    m_CmdHandleMap["leave"].second = &Player::HandleCommandLeave;
     m_CmdHandleMap["npc"].first = eAccessType::Moderator;
     m_CmdHandleMap["npc"].second = &Player::HandleCommandCreature;
     m_CmdHandleMap["who"].first = eAccessType::Moderator;
@@ -179,6 +185,39 @@ bool Player::HandleCommandLevel(std::vector<std::string> p_ListCmd)
 
     Player* l_Player = g_MapManager->GetPlayer(l_Id);
     SendMsg(l_Name + " est de niveau " + std::to_string(l_Player->GetLevel()));
+
+    return true;
+}
+
+bool Player::HandleCommandGroupWisp(std::vector<std::string> p_ListCmd)
+{
+    if (p_ListCmd.empty())
+        return false;
+
+    std::string l_Msg = "";
+    for (uint8 i = 0; i < p_ListCmd.size(); ++i)
+        l_Msg += " " + p_ListCmd[i];
+
+    std::vector< std::string >* l_Groups = GetAllGroupsForType(eGroupType::SIMPLE);
+    if (l_Groups == nullptr)
+    {
+        SendMsg("Vous ne faite pas partie d'un groupe");
+        return true;
+    }
+    for (std::vector< std::string >::iterator l_It = l_Groups->begin(); l_It != l_Groups->end(); ++l_It)
+    {
+        std::vector< Player* >* l_Players = g_GroupManager->GetPlayerForGroup(eGroupType::SIMPLE, (*l_It));
+        if (l_Players == nullptr)
+            continue;
+        for (std::vector< Player* >::iterator l_Itr = l_Players->begin(); l_Itr != l_Players->end(); ++l_Itr)
+        {
+            Player* l_Player = (*l_Itr);
+            if (l_Player == nullptr)
+                continue;
+
+            l_Player->SendMsg(GetName() + "(gr): " + l_Msg);
+        }
+    }
 
     return true;
 }
@@ -372,4 +411,49 @@ bool Player::HandleCommandTeleport(std::vector<std::string> p_ListCmd)
         return true;
     }
     return false;
+}
+
+bool Player::HandleCommandJoin(std::vector<std::string> p_ListCmd)
+{
+    if (p_ListCmd.empty())
+        return false;
+
+
+    if (p_ListCmd.size() > 1)
+        return false;
+
+    LeaveAllGroups();
+    std::vector< Player* >* l_Players = g_GroupManager->GetPlayerForGroup(eGroupType::SIMPLE, p_ListCmd[0]);
+    if (l_Players != nullptr)
+    {
+        for (std::vector< Player* >::iterator l_Itr = l_Players->begin(); l_Itr != l_Players->end(); ++l_Itr)
+        {
+            Player* l_Player = (*l_Itr);
+            if (l_Player == nullptr)
+                continue;
+
+            l_Player->SendMsg(GetName() + " vient de rejoindre le groupe '" + p_ListCmd[0] + "'");
+        }
+    }
+
+    EnterInGroup(eGroupType::SIMPLE, p_ListCmd[0]);
+    SendMsg("Vous venez de rejoindre le groupe '" + p_ListCmd[0] + "'");
+
+    return true;
+}
+
+bool Player::HandleCommandLeave(std::vector<std::string> p_ListCmd)
+{
+    if (!p_ListCmd.empty())
+        return false;
+
+    std::vector< std::string >* l_Groups = GetAllGroupsForType(eGroupType::SIMPLE);
+    if (l_Groups == nullptr)
+    {
+        SendMsg("Vous ne faite pas partie d'un groupe");
+        return true;
+    }
+    LeaveAllGroups();
+
+    return true;
 }

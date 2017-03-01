@@ -14,6 +14,7 @@ World::World()
     g_LevelManager = new LevelManager();
     g_SpellManager = new SpellManager();
     g_QuestManager = new QuestManager();
+    g_GroupManager = new GroupManager();
 }
 
 

@@ -15,6 +15,9 @@ InterfaceManager::InterfaceManager(Events* p_Events) :
     m_ClockTxt.setCharacterSize(20);
     m_ClockTxt.setColor(sf::Color::Red);
 
+    m_Align.setCharacterSize(20);
+    m_Align.setColor(sf::Color::Black);
+
     InitializeWarningMsgs();
 }
 
@@ -198,11 +201,17 @@ void InterfaceManager::DrawStartingPage(Window & p_Window)
 
 void InterfaceManager::DrawClock(Window & p_Window)
 {
-    sf::Text    l_WarningMsg;
-
     m_ClockTxt.setFont(*g_Font);
     m_ClockTxt.setPosition(0.0f, 0.0f);
     p_Window.draw(m_ClockTxt);
+}
+
+void InterfaceManager::DrawAlign(Window & p_Window)
+{
+    m_Align.setString("Align: " + std::to_string(g_Player->GetResourceNb(eResourceType::Alignment)));
+    m_Align.setFont(*g_Font);
+    m_Align.setPosition(X_WINDOW - 140.0f, 20.0f);
+    p_Window.draw(m_Align);
 }
 
 void InterfaceManager::DrawWarnings(Window & p_Window)
@@ -312,8 +321,9 @@ void InterfaceManager::Draw(Window & p_Window)
         }
         //p_Window.draw(m_WritingField->GetText());
     }
+    DrawAlign(p_Window);
     DrawWarnings(p_Window);
-    DrawClock(p_Window);
+    //DrawClock(p_Window);
 }
 
 void InterfaceManager::AddWarningMsg(eTypeWarningMsg p_Type, const std::string & p_Msg)

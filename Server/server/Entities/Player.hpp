@@ -24,6 +24,14 @@ public:
     void SetInLoading(bool);
     bool GetInLoading() const;
 
+    /* GROUP */
+    bool EnterInGroup(eGroupType, const std::string &);
+    void LeaveGroup(eGroupType, const std::string &);
+    std::vector< std::string >* GetAllGroupsForType(eGroupType);
+    std::map<eGroupType, std::vector< std::string > >* GetAllGroups();
+    void LeaveAllGroups();
+    void LeaveGroupsType(eGroupType);
+
     /* RESOURCES */
     uint32 GetXp() const;
     void SetXp(uint32);
@@ -71,6 +79,9 @@ public:
     bool HandleCommandTeleport(std::vector<std::string>);
     bool HandleCommandSpeed(std::vector<std::string>);
     bool HandleCommandQuests(std::vector<std::string>);
+    bool HandleCommandJoin(std::vector<std::string>);
+    bool HandleCommandLeave(std::vector<std::string>);
+    bool HandleCommandGroupWisp(std::vector<std::string>);
     bool HandleRegen(std::vector<std::string>);
     bool HandleBind(std::vector<std::string>);
     bool HandleTest(std::vector<std::string>);
@@ -86,6 +97,7 @@ private:
     eAccessType m_AccessType;
 
     std::map< uint16, Quest* > m_Quests;
+    std::map<eGroupType, std::vector< std::string > > m_GroupList;
 
     typedef bool(Player::*m_Func)(std::vector<std::string>);
     std::map < std::string, std::pair < eAccessType,  m_Func > > m_CmdHandleMap;

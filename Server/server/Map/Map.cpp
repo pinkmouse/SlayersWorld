@@ -80,7 +80,7 @@ void Map::Update(sf::Time p_Diff)
 
             l_Unit->Update(p_Diff);
             if (l_Unit->GetMapID() != m_ID)
-                m_UnitSwitchMapQueue.push(l_Unit);
+                m_UnitInterMapActionQueue[eInterMapAction::SwitchMap].push(l_Unit);
             else if (l_Unit->GetSquareID() != GetSquareID(l_Unit->GetPosX(), l_Unit->GetPosY()))
                 ChangeSquare(l_Unit);
         }
@@ -98,9 +98,16 @@ std::map<uint16, Unit*>* Map::GetListUnitType(TypeUnit p_Type)
     return &m_ListUnitZone[p_Type];
 }
 
-std::queue<Unit*>* Map::GetUnitSwitchMapQueue()
+std::queue<Unit*>* Map::GetUnitInterMapAction(eInterMapAction p_ID)
 {
-    return &m_UnitSwitchMapQueue;
+    if (m_UnitInterMapActionQueue.find(p_ID) == m_UnitInterMapActionQueue.end())
+        return nullptr;
+    return &m_UnitInterMapActionQueue[p_ID];
+}
+
+void Map::AddUnitInterMapAction(eInterMapAction p_Action, Unit* p_Unit)
+{
+    m_UnitInterMapActionQueue[p_Action].push(p_Unit);
 }
 
 uint16 Map::ChangeSquare(Unit* p_Unit)

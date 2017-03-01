@@ -89,6 +89,8 @@ add_executable(${EXECUTABLE_NAME}
               server/Entities/Player.hpp
               server/Entities/Unit.cpp
               server/Entities/Unit.hpp
+              server/Entities/GroupManager.cpp
+              server/Entities/GroupManager.hpp
               server/Entities/WorldObject.cpp
               server/Entities/WorldObject.hpp
               server/Entities/DynamicObject.cpp

@@ -56,31 +56,47 @@ void MapManager::Update(sf::Time p_Diff)
 
         l_Map->Update(p_Diff);
     }
-    /// Switch Unit of map
+
     for (std::map<uint16, Map*>::iterator l_It = m_MapList.begin(); l_It != m_MapList.end(); ++l_It)
     {
         Map* l_Map = (*l_It).second;
         if (l_Map == nullptr)
             continue;
 
-        std::queue<Unit*>* l_UnitSwitchMapQueue = l_Map->GetUnitSwitchMapQueue();
-        while (!l_UnitSwitchMapQueue->empty())
+        /// Switch Unit of map
+        std::queue<Unit*>* l_UnitInterMapAction = l_Map->GetUnitInterMapAction(eInterMapAction::SwitchMap);
+        while (l_UnitInterMapAction != nullptr && !l_UnitInterMapAction->empty())
         {
-            Unit* l_Unit = l_UnitSwitchMapQueue->front();
+            Unit* l_Unit = l_UnitInterMapAction->front();
             Map* l_NewMap = GetMap(l_Unit->GetMapID());
 
             if (l_NewMap == nullptr || l_NewMap->GetID() == l_Map->GetID()) /// If new map doesn't exist, we don't switch it
             {
                 l_Unit->SetMapID(l_Map->GetID());
-                l_UnitSwitchMapQueue->pop();
+                l_UnitInterMapAction->pop();
                 continue;
             }
             l_Map->RemoveUnit(l_Unit);
             if (Player* l_Player = l_Unit->ToPlayer())
                 l_Player->GetSession()->SendSwitchMap(l_NewMap->GetID());
             l_NewMap->AddUnit(l_Unit);
-            l_UnitSwitchMapQueue->pop();
+            l_UnitInterMapAction->pop();
         }
+        /// SendMsg
+        /*l_UnitInterMapAction = l_Map->GetUnitInterMapAction(eInterMapAction::SendMsg);
+        while (l_UnitInterMapAction != nullptr && !l_UnitInterMapAction->empty())
+        {
+            Unit* l_Unit = l_UnitInterMapAction->front();
+
+            if (!l_Unit->IsPlayer())
+            {
+                l_UnitInterMapAction->pop();
+                continue;
+            }
+
+            RemovePlayerFromGroup(l_Unit->ToPlayer());
+            l_UnitInterMapAction->pop();
+        }*/
     }
 }
 

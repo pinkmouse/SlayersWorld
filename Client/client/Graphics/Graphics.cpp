@@ -148,21 +148,6 @@ void Graphics::DrawUnitDetails(Unit* p_Unit)
         m_Window.draw(l_Text);
     }
 
-    /// NAME
-    if (p_Unit->IsPlayer())
-    {
-        sf::Text l_Name(p_Unit->GetName(), *g_Font, SIZE_NAME_FONT);
-        uint8 l_Color = 255.0f / 100.0f * p_Unit->GetResourceNb(eResourceType::Alignment);
-        l_Name.setColor(sf::Color(l_Color, l_Color, l_Color, 255));
-        sf::Vector2f l_View(p_Unit->GetPosXAtIntant(), p_Unit->GetPosYAtIntant());
-
-        sf::Vector2f l_Coord = CoordFromViewToView(l_View, m_View, m_ViewInterface);
-
-        //sf::Vector2f l_Coord = m_Window.mapCoordsToPixelFloat(l_View, m_View);
-        l_Name.setPosition((l_Coord.x - (l_Name.getGlobalBounds().width / 2.0f)), l_Coord.y);
-        m_Window.draw(l_Name);
-    }
-
     /// Reset the view
     m_Window.setView(m_View);
 
@@ -209,6 +194,23 @@ void Graphics::DrawWorldObjects(std::map<uint32, std::vector<WorldObject*> > *p_
                         m_Window.draw(*l_SkinSprite);
                     }
                 }
+                m_Window.setView(m_ViewFont);
+                /// NAME
+                if (l_Unit->IsPlayer())
+                {
+                    sf::Text l_Name(l_Unit->GetName(), *g_Font, SIZE_NAME_FONT);
+                    uint8 l_Color = 255.0f / 100.0f * l_Unit->GetResourceNb(eResourceType::Alignment);
+                    l_Name.setColor(sf::Color(l_Color, l_Color, l_Color, 255));
+                    sf::Vector2f l_View(l_Unit->GetPosXAtIntant(), l_Unit->GetPosYAtIntant());
+
+                    sf::Vector2f l_Coord = CoordFromViewToView(l_View, m_View, m_ViewInterface);
+
+                    //sf::Vector2f l_Coord = m_Window.mapCoordsToPixelFloat(l_View, m_View);
+                    l_Name.setPosition((l_Coord.x - (l_Name.getGlobalBounds().width / 2.0f)), l_Coord.y);
+                    m_Window.draw(l_Name);
+                }
+                m_Window.setView(m_View);
+
             }
         }
     }

@@ -39,7 +39,8 @@ public:
 
     uint16 GetSizeX() const;
     uint16 GetSizeY() const;
-    std::queue<Unit*>* GetUnitSwitchMapQueue();
+    void AddUnitInterMapAction(eInterMapAction, Unit*);
+    std::queue<Unit*>* GetUnitInterMapAction(eInterMapAction);
     void UpdateForPlayersInNewSquare(Unit*, bool p_UpdateAll = false);
     std::map<uint16, Unit*>* GetListUnitType(TypeUnit);
 
@@ -54,7 +55,7 @@ private:
 	uint16 m_SizeX;
 	uint16 m_SizeY;
 
-    std::queue<Unit*>  m_UnitSwitchMapQueue;
+    std::map< eInterMapAction, std::queue<Unit* > > m_UnitInterMapActionQueue;
 	std::vector<Case*>	m_ListCase;
     std::map<TypeUnit, std::map<uint16, Unit*> > m_ListUnitZone;
     std::vector<DynamicObject*> m_ListDynamicObjects;

@@ -26,6 +26,7 @@ public:
     void DrawStartingPage(Window &);
     void DrawWarnings(Window &);
     void DrawClock(Window &);
+    void DrawAlign(Window &);
     HistoryField* GetHistoryField() const;
     void AddWarningMsg(eTypeWarningMsg, const std::string &);
     void AddWarningMsg(eTypeWarningMsg, eWarningMsg);
@@ -47,6 +48,7 @@ private:
     HistoryField*                       m_HistoryField;
     sf::Text                            m_SystemMsg;
     sf::Text                            m_ClockTxt;
+    sf::Text                            m_Align;
     std::map< eTypeWarningMsg, std::vector< std::pair<std::string, uint32> > >     m_WarningMsgs;
     std::map< eWarningMsg, std::string > m_WarningMsgsEnum;
     std::map< uint8, uint8 >             m_KeyBoardBind;
