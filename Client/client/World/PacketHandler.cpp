@@ -51,6 +51,8 @@ void PacketHandler::HandleRemoveUnit(WorldPacket &p_Packet)
     p_Packet >> l_TypeID;
     p_Packet >> l_ID;
 
+    printf("----> Remove %d %d \n", l_TypeID, l_ID);
+
     if (Map* l_Map = m_MapManager->GetActualMap())
     {
         Unit* l_Unit = l_Map->GetUnit((TypeUnit)l_TypeID, l_ID);

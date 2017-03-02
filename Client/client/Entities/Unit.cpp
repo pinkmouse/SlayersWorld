@@ -223,7 +223,6 @@ bool Unit::IsInRayVisible(Unit* p_Unit)
 {
     if (p_Unit->GetMapID() != GetMapID())
     {
-        printf("----> NOT IN RAY %d %d\n", p_Unit->GetMapID(), GetMapID());
         return false;
     }
 

@@ -69,7 +69,7 @@ Creature* Unit::ToCreature()
 
 Unit::~Unit()
 {
-    m_InWorld = false;
+    LeaveAllGroups();
     CleanAttackers();
     CleanVictims();
     m_MovementHandler->StopMovement();
@@ -80,6 +80,7 @@ Unit::~Unit()
 
     for (auto l_Resource : m_Resources)
         delete l_Resource.second;
+    m_InWorld = false;
 }
 
 void Unit::UpdateDeathState(sf::Time p_Diff)
@@ -745,25 +746,32 @@ bool Unit::CanAttack(Unit* p_Unit) const
     if (!p_Unit->IsInWorld() || p_Unit->IsDeath() || !p_Unit->IsInWorld())
         return false;
 
-    if (GetFaction() == eFactionType::Neutral || p_Unit->GetFaction() == eFactionType::Neutral)
-        return false;
-
-    if (this == p_Unit)
-        return false;
-
-    if (IsPlayer() && p_Unit->IsPlayer())
-        return true;
-
-    if (GetFaction() != p_Unit->GetFaction())
-        return true;
-
-    return false;
+    return IsHostileTo(p_Unit);
 }
 
-bool Unit::IsHostileTo(Unit* p_Unit)
+bool Unit::IsFriendlyTo(const Unit* p_Unit) const
 {
-    /// TODO
-    return false;
+    if (GetFaction() == eFactionType::Neutral || p_Unit->GetFaction() == eFactionType::Neutral)
+        return true;
+
+    if (this == p_Unit)
+        return true;
+
+    if (IsInGroupWith(p_Unit))
+        return true;
+
+    if (IsPlayer() && p_Unit->IsPlayer())
+        return false;
+
+    if (GetFaction() != p_Unit->GetFaction())
+        return false;
+
+    return true;
+}
+
+bool Unit::IsHostileTo(const Unit* p_Unit) const
+{
+    return !IsFriendlyTo(p_Unit);
 }
 
 void Unit::SetGossipList(std::vector<Gossip>* p_GossipList)
@@ -1057,4 +1065,106 @@ void Unit::SetSpeed(float p_Speed)
     PacketUnitUpdateSpeed l_Packet;
     l_Packet.BuildPacket(GetType(), GetID(), (uint8)(p_Speed * 10.0f));
     m_Map->SendToSet(l_Packet.m_Packet, this);
+}
+
+
+bool Unit::EnterInGroup(eGroupType p_Type, const std::string & p_GroupeName)
+{
+    if (m_GroupList.find(p_Type) != m_GroupList.end()) ///< If already exist
+    {
+        if (std::find(m_GroupList[p_Type].begin(), m_GroupList[p_Type].end(), p_GroupeName) != m_GroupList[p_Type].end())
+            return false;
+    }
+    m_GroupList[p_Type].push_back(p_GroupeName);
+    g_GroupManager->AddUnitToGroup(p_Type, p_GroupeName, this);
+    return true;
+}
+
+void Unit::LeaveGroup(eGroupType p_Type, const std::string & p_GroupeName)
+{
+    if (m_GroupList.find(p_Type) == m_GroupList.end()) ///< If already exist
+        return;
+
+    std::vector<std::string>::iterator l_It = std::find(m_GroupList[p_Type].begin(), m_GroupList[p_Type].end(), p_GroupeName);
+    if (l_It == m_GroupList[p_Type].end())
+        return;
+
+    m_GroupList[p_Type].erase(l_It);
+    g_GroupManager->RemoveUnitFromGroup(p_Type, p_GroupeName, this);
+}
+
+void Unit::LeaveGroupsType(eGroupType p_Type)
+{
+    if (m_GroupList.find(p_Type) == m_GroupList.end()) ///< If already exist
+        return;
+
+    for (auto l_Groups : m_GroupList[p_Type])
+    {
+        LeaveGroup(p_Type, l_Groups);
+    }
+}
+
+void Unit::LeaveAllGroups()
+{
+    std::vector< std::string >* l_Groups = GetAllGroupsForType(eGroupType::SIMPLE);
+    if (l_Groups == nullptr)
+        return;
+    for (std::vector< std::string >::iterator l_It = l_Groups->begin(); l_It != l_Groups->end();)
+    {
+        std::string l_GroupName = (*l_It);
+        LeaveGroup(eGroupType::SIMPLE, l_GroupName);
+        l_It = l_Groups->begin();
+        if (IsPlayer())
+            ToPlayer()->SendMsg("Vous venez de quitter le groupe '" + l_GroupName + "'");
+        std::vector< Unit* >* l_Units = g_GroupManager->GetUnitForGroup(eGroupType::SIMPLE, l_GroupName);
+        if (l_Units == nullptr)
+            continue;
+        for (std::vector< Unit* >::iterator l_Itr = l_Units->begin(); l_Itr != l_Units->end(); ++l_Itr)
+        {
+            Player* l_Player = (*l_Itr)->ToPlayer();
+            if (l_Player == nullptr)
+                continue;
+
+            l_Player->SendMsg(GetName() + " vient de quitter le groupe '" + l_GroupName + "'");
+        }
+    }
+}
+
+bool Unit::IsInGroup(eGroupType p_Type, const std::string & p_GroupeName) const
+{
+    auto l_It = m_GroupList.find(p_Type); ///< If already exist
+
+    if (l_It != m_GroupList.end())
+    {
+        if (std::find((*l_It).second.begin(), (*l_It).second.end(), p_GroupeName) != (*l_It).second.end())
+            return true;
+    }
+    return false;
+}
+
+std::vector< std::string >* Unit::GetAllGroupsForType(eGroupType p_Type)
+{
+    if (m_GroupList.find(p_Type) == m_GroupList.end()) ///< If already exist
+        return nullptr;
+
+    return &m_GroupList[p_Type];
+}
+
+std::map<eGroupType, std::vector< std::string > >* Unit::GetAllGroups()
+{
+    return &m_GroupList;
+}
+
+
+bool Unit::IsInGroupWith(const Unit* p_Unit) const
+{
+    for (auto l_Gr : m_GroupList)
+    {
+        for (std::string l_GroupName : l_Gr.second)
+        {
+            if (p_Unit->IsInGroup(l_Gr.first, l_GroupName))
+                return true;
+        }
+    }
+    return false;
 }

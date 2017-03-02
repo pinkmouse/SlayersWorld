@@ -48,7 +48,6 @@ Player::~Player()
 {
     printf("Erase Player %d:%s\n", m_ID, m_Name.c_str());
 
-    LeaveAllGroups();
     for (std::map< uint16, Quest* >::iterator l_It = m_Quests.begin(); l_It != m_Quests.end(); ++l_It)
     {
         delete (*l_It).second;
@@ -128,80 +127,6 @@ void Player::AddResourceNb(eResourceType p_Resource, uint8 p_Nb)
     if (!m_Initilize)
         return;
     m_Session->SendUpdateUnitResource(GetType(), GetID(), p_Resource, GetResourceNb(p_Resource));
-}
-
-bool Player::EnterInGroup(eGroupType p_Type, const std::string & p_GroupeName)
-{
-    if (m_GroupList.find(p_Type) != m_GroupList.end()) ///< If already exist
-    {
-        if (std::find(m_GroupList[p_Type].begin(), m_GroupList[p_Type].end(), p_GroupeName) != m_GroupList[p_Type].end())
-            return false;
-    }
-    m_GroupList[p_Type].push_back(p_GroupeName);
-    g_GroupManager->AddPlayerToGroup(p_Type, p_GroupeName, this);
-    return true;
-}
-
-void Player::LeaveGroup(eGroupType p_Type, const std::string & p_GroupeName)
-{
-    if (m_GroupList.find(p_Type) == m_GroupList.end()) ///< If already exist
-        return;
-
-    std::vector<std::string>::iterator l_It = std::find(m_GroupList[p_Type].begin(), m_GroupList[p_Type].end(), p_GroupeName);
-    if (l_It == m_GroupList[p_Type].end())
-        return;
-
-    m_GroupList[p_Type].erase(l_It);
-    g_GroupManager->RemovePlayerFromGroup(p_Type, p_GroupeName, this);
-}
-
-void Player::LeaveGroupsType(eGroupType p_Type)
-{
-    if (m_GroupList.find(p_Type) == m_GroupList.end()) ///< If already exist
-        return;
-
-    for (auto l_Groups : m_GroupList[p_Type])
-    {
-        LeaveGroup(p_Type, l_Groups);
-    }
-}
-
-void Player::LeaveAllGroups()
-{
-    std::vector< std::string >* l_Groups = GetAllGroupsForType(eGroupType::SIMPLE);
-    if (l_Groups == nullptr)
-        return;
-    for (std::vector< std::string >::iterator l_It = l_Groups->begin(); l_It != l_Groups->end();)
-    {
-        std::string l_GroupName = (*l_It);
-        LeaveGroup(eGroupType::SIMPLE, l_GroupName);
-        l_It = l_Groups->begin();
-        SendMsg("Vous venez de quitter le groupe '" + l_GroupName + "'");
-        std::vector< Player* >* l_Players = g_GroupManager->GetPlayerForGroup(eGroupType::SIMPLE, l_GroupName);
-        if (l_Players == nullptr)
-            continue;
-        for (std::vector< Player* >::iterator l_Itr = l_Players->begin(); l_Itr != l_Players->end(); ++l_Itr)
-        {
-            Player* l_Player = (*l_Itr);
-            if (l_Player == nullptr)
-                continue;
-
-            l_Player->SendMsg(GetName() + " vient de quitter le groupe '" + l_GroupName + "'");
-        }
-    }
-}
-
-std::vector< std::string >* Player::GetAllGroupsForType(eGroupType p_Type)
-{
-    if (m_GroupList.find(p_Type) == m_GroupList.end()) ///< If already exist
-        return nullptr;
-
-    return &m_GroupList[p_Type];
-}
-
-std::map<eGroupType, std::vector< std::string > >* Player::GetAllGroups()
-{
-    return &m_GroupList;
 }
 
 bool Player::CheckCommand(const std::string & p_String)

@@ -206,12 +206,12 @@ bool Player::HandleCommandGroupWisp(std::vector<std::string> p_ListCmd)
     }
     for (std::vector< std::string >::iterator l_It = l_Groups->begin(); l_It != l_Groups->end(); ++l_It)
     {
-        std::vector< Player* >* l_Players = g_GroupManager->GetPlayerForGroup(eGroupType::SIMPLE, (*l_It));
-        if (l_Players == nullptr)
+        std::vector< Unit* >* l_Units = g_GroupManager->GetUnitForGroup(eGroupType::SIMPLE, (*l_It));
+        if (l_Units == nullptr)
             continue;
-        for (std::vector< Player* >::iterator l_Itr = l_Players->begin(); l_Itr != l_Players->end(); ++l_Itr)
+        for (std::vector< Unit* >::iterator l_Itr = l_Units->begin(); l_Itr != l_Units->end(); ++l_Itr)
         {
-            Player* l_Player = (*l_Itr);
+            Player* l_Player = (*l_Itr)->ToPlayer();
             if (l_Player == nullptr)
                 continue;
 
@@ -423,12 +423,12 @@ bool Player::HandleCommandJoin(std::vector<std::string> p_ListCmd)
         return false;
 
     LeaveAllGroups();
-    std::vector< Player* >* l_Players = g_GroupManager->GetPlayerForGroup(eGroupType::SIMPLE, p_ListCmd[0]);
-    if (l_Players != nullptr)
+    std::vector< Unit* >* l_Units = g_GroupManager->GetUnitForGroup(eGroupType::SIMPLE, p_ListCmd[0]);
+    if (l_Units != nullptr)
     {
-        for (std::vector< Player* >::iterator l_Itr = l_Players->begin(); l_Itr != l_Players->end(); ++l_Itr)
+        for (std::vector< Unit* >::iterator l_Itr = l_Units->begin(); l_Itr != l_Units->end(); ++l_Itr)
         {
-            Player* l_Player = (*l_Itr);
+            Player* l_Player = (*l_Itr)->ToPlayer();
             if (l_Player == nullptr)
                 continue;
 

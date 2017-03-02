@@ -95,7 +95,8 @@ public:
     void AddThreadFromAttacker(Unit*, uint16);
     Unit* GetVictim() const;
     bool CanAttack(Unit*) const;
-    bool IsHostileTo(Unit*);
+    bool IsHostileTo(const Unit*) const;
+    bool IsFriendlyTo(const Unit*) const;
 
     /* UPDATE */
     virtual void Update(sf::Time);
@@ -125,6 +126,17 @@ public:
     void SetGossipList(std::vector<Gossip>*);
     void GossipTo(Player *);
     void UpdateGossip(sf::Time);
+
+
+    /* GROUP */
+    bool EnterInGroup(eGroupType, const std::string &);
+    void LeaveGroup(eGroupType, const std::string &);
+    std::vector< std::string >* GetAllGroupsForType(eGroupType);
+    std::map<eGroupType, std::vector< std::string > >* GetAllGroups();
+    void LeaveAllGroups();
+    void LeaveGroupsType(eGroupType);
+    bool IsInGroupWith(const Unit*) const;
+    bool IsInGroup(eGroupType, const std::string &) const;
 
 protected:
     /* BASIC*/
@@ -172,4 +184,7 @@ private:
 
     /* GOSSIP */
     std::map< eGossipType, std::vector<Gossip> > m_ListGossip;
+
+    /* GROUP*/
+    std::map<eGroupType, std::vector< std::string > > m_GroupList;
 };

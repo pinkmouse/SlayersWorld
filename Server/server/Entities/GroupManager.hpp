@@ -3,18 +3,18 @@
 #include <map>
 #include <vector>
 
-class Player;
+class Unit;
 class GroupManager
 {
 public:
     GroupManager();
     ~GroupManager();
-    void AddPlayerToGroup(eGroupType, const std::string &, Player*);
-    void RemovePlayerFromGroup(eGroupType, const std::string &, Player*);
-    void RemovePlayerFromAllGroupType(eGroupType, Player*);
-    std::vector< Player* >* GetPlayerForGroup(eGroupType, const std::string &);
+    void AddUnitToGroup(eGroupType, const std::string &, Unit*);
+    void RemoveUnitFromGroup(eGroupType, const std::string &, Unit*);
+    void RemoveUnitFromAllGroupType(eGroupType, Unit*);
+    std::vector< Unit* >* GetUnitForGroup(eGroupType, const std::string &);
 
 private:
-    std::map<eGroupType, std::map<std::string, std::vector< Player* > > > m_GroupList;
+    std::map<eGroupType, std::map<std::string, std::vector< Unit* > > > m_GroupList;
 };
 
