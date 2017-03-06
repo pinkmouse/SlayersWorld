@@ -90,13 +90,84 @@ TileSprite InterfaceManager::GetField(uint16 p_SizeX, uint16 p_SizeY)
     return l_TileSprite;
 }
 
-TileSprite InterfaceManager::GetBorderField(uint16 p_SizeX, uint16 p_SizeY)
+void InterfaceManager::DrawField(Window & p_Window, const float & p_PosX, const float & p_PosY, uint16 p_SizeX, uint16 p_SizeY, bool p_WithBorder /*= true*/)
 {
     TileSprite l_TileSprite;
+
+    uint16 l_SizeX = p_SizeX;
+    uint16 l_SizeY = p_SizeY;
+
+    if (p_WithBorder)
+    {
+        l_SizeX -= 6;
+        l_SizeY -= 6;
+    }
+
     l_TileSprite.setTexture(m_SystemTexture);
-    l_TileSprite.setTextureRect(sf::IntRect(FONT_FIELD_SIZE, 0, FONT_FIELD_BORDER_SIZE, FONT_FIELD_BORDER_SIZE));
-    l_TileSprite.setScale((float)p_SizeX / FONT_FIELD_BORDER_SIZE, (float)p_SizeY / FONT_FIELD_BORDER_SIZE);
-    return l_TileSprite;
+    l_TileSprite.setTextureRect(sf::IntRect(0, 0, FONT_FIELD_SIZE, FONT_FIELD_SIZE));
+    l_TileSprite.setScale((float)l_SizeX / FONT_FIELD_SIZE, (float)l_SizeY / FONT_FIELD_SIZE);
+
+    if (p_WithBorder)
+        l_TileSprite.setPosition(p_PosX + 3, p_PosY + 3);
+    else
+        l_TileSprite.setPosition(p_PosX, p_PosY);
+
+    p_Window.draw(l_TileSprite);
+
+    if (p_WithBorder)
+        DrawBorderField(p_Window, p_PosX, p_PosY, p_SizeX, p_SizeY);
+}
+
+void InterfaceManager::DrawBorderField(Window & p_Window, const float & p_PosX, const float & p_PosY, uint16 p_SizeX, uint16 p_SizeY)
+{
+    /* CORNER TOP LEFT */
+    TileSprite l_TileSprite;
+    l_TileSprite.setTexture(m_SystemTexture);
+    l_TileSprite.setTextureRect(sf::IntRect(FONT_FIELD_SIZE, 0, 10, 10));
+    l_TileSprite.setPosition(p_PosX, p_PosY);
+    p_Window.draw(l_TileSprite);
+
+    /* TOP */
+    l_TileSprite.setTextureRect(sf::IntRect(FONT_FIELD_SIZE + 10, 0, 10, 3));
+    l_TileSprite.setPosition(p_PosX + 10, p_PosY);
+    l_TileSprite.setScale((float)(p_SizeX - 20) / 10, 1.0f);
+    p_Window.draw(l_TileSprite);
+
+    /* CORNER TOP RIGHT */
+    l_TileSprite.setTextureRect(sf::IntRect(FONT_FIELD_SIZE + 64 - 10, 0, 10, 10));
+    l_TileSprite.setPosition(p_PosX + p_SizeX - 10, p_PosY);
+    l_TileSprite.setScale(1.0f, 1.0f);
+    p_Window.draw(l_TileSprite);
+
+    /* RIGHT */
+    l_TileSprite.setTextureRect(sf::IntRect(FONT_FIELD_SIZE + 64 - 3, 10, 3, 10));
+    l_TileSprite.setPosition(p_PosX + p_SizeX - 3, p_PosY + 10);
+    l_TileSprite.setScale(1.0f, (float)(p_SizeY - 20) / 10);
+    p_Window.draw(l_TileSprite);
+
+    /* CORNER BOTTOM RIGHT */
+    l_TileSprite.setTextureRect(sf::IntRect(FONT_FIELD_SIZE + 64 - 10, 64 - 10, 10, 10));
+    l_TileSprite.setPosition(p_PosX + p_SizeX - 10, p_PosY + p_SizeY - 10);
+    l_TileSprite.setScale(1.0f, 1.0f);
+    p_Window.draw(l_TileSprite);
+
+    /* BOTTOM */
+    l_TileSprite.setTextureRect(sf::IntRect(FONT_FIELD_SIZE + 10, 64 - 3, 10, 3));
+    l_TileSprite.setPosition(p_PosX + 10, p_PosY + p_SizeY - 3);
+    l_TileSprite.setScale((float)(p_SizeX - 20) / 10, 1.0f);
+    p_Window.draw(l_TileSprite);
+
+    /* CORNER BOTTOM LEFT */
+    l_TileSprite.setTextureRect(sf::IntRect(FONT_FIELD_SIZE, 64 - 10, 10, 10));
+    l_TileSprite.setPosition(p_PosX, p_PosY + p_SizeY - 10);
+    l_TileSprite.setScale(1.0f, 1.0f);
+    p_Window.draw(l_TileSprite);
+
+    /* LEFT */
+    l_TileSprite.setTextureRect(sf::IntRect(FONT_FIELD_SIZE, 10, 3, 10));
+    l_TileSprite.setPosition(p_PosX, p_PosY + 10);
+    l_TileSprite.setScale(1.0f, (float)(p_SizeY - 20) / 10);
+    p_Window.draw(l_TileSprite);
 }
 
 TileSprite InterfaceManager::GetFlask(uint8 p_ID, bool p_Full, uint8 p_Pct)
@@ -188,10 +259,7 @@ void InterfaceManager::DrawStartingPage(Window & p_Window)
 
     if (m_SystemMsg.getString() != "")
     {
-        TileSprite l_Sprite = GetField(m_SystemMsg.getGlobalBounds().width + 8, (float)g_Font->getLineSpacing(m_SystemMsg.getCharacterSize()) + 8);
-        l_Sprite.setPosition((X_WINDOW / 2) - ((m_SystemMsg.getGlobalBounds().width + 8) / 2), (Y_WINDOW / 2) - ((g_Font->getLineSpacing(m_SystemMsg.getCharacterSize()) + 8) / 2));
-
-        p_Window.draw(l_Sprite);
+        DrawField(p_Window, (X_WINDOW / 2) - ((m_SystemMsg.getGlobalBounds().width + 8) / 2), (Y_WINDOW / 2) - ((g_Font->getLineSpacing(m_SystemMsg.getCharacterSize()) + 8) / 2), m_SystemMsg.getGlobalBounds().width + 8, (float)g_Font->getLineSpacing(m_SystemMsg.getCharacterSize()) + 8);
 
         m_SystemMsg.setPosition((X_WINDOW / 2) - ((m_SystemMsg.getGlobalBounds().width) / 2), (Y_WINDOW / 2) - ((g_Font->getLineSpacing(m_SystemMsg.getCharacterSize())) / 2));
         m_SystemMsg.setFont(*g_Font);
@@ -298,17 +366,14 @@ void InterfaceManager::Draw(Window & p_Window)
     /// Draw chat bar
     if (m_WritingField->IsFieldOpen())
     {
-        TileSprite l_Sprite = GetField(X_WINDOW, SIZE_FILED_TALK_Y);
-        l_Sprite.setPosition(0, Y_WINDOW - SIZE_FILED_TALK_Y);
-        p_Window.draw(l_Sprite);
+        DrawField(p_Window, 0, Y_WINDOW - SIZE_FILED_TALK_Y, X_WINDOW, SIZE_FILED_TALK_Y);
         p_Window.draw(m_WritingField->GetText());
     }
     /// Draw history
     if (m_HistoryField->IsFieldOpen())
     {
-        TileSprite l_Sprite = GetField(X_WINDOW - (FLASK_SIZE_X * 2 * FLASK_SCALE), SIZE_FILED_TALK_Y * m_HistoryField->GetLineHistory());
-        l_Sprite.setPosition(FLASK_SIZE_X * FLASK_SCALE, Y_WINDOW - SIZE_FILED_TALK_Y - (SIZE_FILED_TALK_Y * m_HistoryField->GetLineHistory()));
-        p_Window.draw(l_Sprite);
+        DrawField(p_Window, FLASK_SIZE_X * FLASK_SCALE, Y_WINDOW - SIZE_FILED_TALK_Y - (SIZE_FILED_TALK_Y * m_HistoryField->GetLineHistory()), X_WINDOW - (FLASK_SIZE_X * 2 * FLASK_SCALE), SIZE_FILED_TALK_Y * m_HistoryField->GetLineHistory());
+        
         uint8 l_HistorySize = m_HistoryField->GetHistory().size();
         uint8 m_LineMax = std::min(m_HistoryField->GetLineHistory(), l_HistorySize);
         for (uint8 i = 0; i < m_LineMax; ++i)

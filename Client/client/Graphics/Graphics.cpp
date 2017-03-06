@@ -137,14 +137,13 @@ void Graphics::DrawUnitDetails(Unit* p_Unit)
         sf::Text l_Text(p_Unit->GetTalk(), *g_Font, SIZE_TALK_FONT);
         sf::Vector2i l_FieldSize = m_InterfaceManager->TextSplitToFit(SIZE_TALK_TEXT_SIZE, l_Text);
 
-        TileSprite l_Sprite = m_InterfaceManager->GetField(l_FieldSize.x + 8, l_FieldSize.y + 10);
         sf::Vector2f l_V1(p_Unit->GetPosXAtIntant() + (p_Unit->GetSizeX() / 4), p_Unit->GetPosYAtIntant() - p_Unit->GetSizeY() - 4 - (l_FieldSize.y / 2));
         sf::Vector2f l_Coord = CoordFromViewToView(l_V1, m_View, m_ViewInterface);
-        l_Sprite.setPosition((l_Coord.x - ((l_FieldSize.x + 8) / 2)) - (p_Unit->GetSizeX() / 2), l_Coord.y);
-        m_Window.draw(l_Sprite);
+        m_InterfaceManager->DrawField(m_Window, (l_Coord.x - ((l_FieldSize.x + 8) / 2)) - (p_Unit->GetSizeX() / 2), l_Coord.y, l_FieldSize.x + 14, l_FieldSize.y + 14);
+
 
         l_Text.setColor(sf::Color::White);
-        l_Text.setPosition((l_Coord.x - (l_FieldSize.x / 2)) - (p_Unit->GetSizeX() / 2), l_Coord.y);
+        l_Text.setPosition((l_Coord.x - (l_FieldSize.x / 2)) - (p_Unit->GetSizeX() / 2) + 2.0f, l_Coord.y + 2.0f);
         m_Window.draw(l_Text);
     }
 

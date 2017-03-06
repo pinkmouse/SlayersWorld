@@ -18,7 +18,8 @@ public:
     void Update(sf::Time);
     void ManageEvent(sf::Event);
     TileSprite GetField(uint16, uint16);
-    TileSprite GetBorderField(uint16, uint16);
+    void DrawField(Window &, const float &, const float &, uint16, uint16, bool p_WithBorder = true);
+    void DrawBorderField(Window &, const float &, const float &, uint16, uint16);
     TileSprite GetFlask(uint8, bool, uint8 p_Pct = 100);
     TileSprite GetXpBar(bool, uint8 p_Pct = 100);
     TileSprite GetCastBar(bool, uint8 p_Pct = 100);

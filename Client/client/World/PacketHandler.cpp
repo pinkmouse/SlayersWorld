@@ -399,7 +399,7 @@ void PacketHandler::HandleCreateUnit(WorldPacket &p_Packet)
         l_NewUnit->SetSpeed(l_SpeedFloat);
         l_NewUnit->SetMap(l_ActualMap);
         l_ActualMap->AddUnit(l_NewUnit);
-        printf("Create new Unit DONE: %d %s %d %d %d %d\n", l_ID, l_Name.c_str(), l_SkinID, l_MapID, l_Pos.x, l_Pos.y);
+        //printf("Create new Unit DONE: %d %s %d %d %d %d\n", l_ID, l_Name.c_str(), l_SkinID, l_MapID, l_Pos.x, l_Pos.y);
         if (l_IsInMovement)
             l_NewUnit->GetMovementHandler()->AddMovementToStack(eActionType::Go, l_Pos, (Orientation)l_NewUnit->GetOrientation());
         if (l_IsInAttack)

@@ -60,7 +60,7 @@ bool Player::HandleCommandQuests(std::vector<std::string> p_ListCmd)
     for (std::map< uint16, Quest* >::iterator l_It = l_QuestList->begin(); l_It != l_QuestList->end(); ++l_It)
     {
         SendMsg("-> " + (*l_It).second->GetName());
-        /// Save Objectf Progress
+
         std::map< uint8, ObjectifProgess* >* l_ObjectProgressList = (*l_It).second->GetObjectifsProgress();
         for (std::map< uint8, ObjectifProgess* >::iterator l_Itr = l_ObjectProgressList->begin(); l_Itr != l_ObjectProgressList->end(); ++l_Itr)
             SendMsg("---> " + (*l_It).second->GetQuestTemplate()->m_ObjectifList[(*l_Itr).first]->m_Entitled + " " + std::to_string((*l_Itr).second->m_Data0) + "/" + std::to_string((*l_It).second->GetQuestTemplate()->m_ObjectifList[(*l_Itr).first]->m_Data0));
