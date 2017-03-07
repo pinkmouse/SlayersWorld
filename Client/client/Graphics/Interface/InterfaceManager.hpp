@@ -4,6 +4,7 @@
 #include "../../Define.hpp"
 #include "../Window.hpp"
 #include "../../World/Events/Events.hpp"
+#include "MenuManager.hpp"
 #include "WritingField.hpp"
 #include "HistoryField.hpp"
 
@@ -37,6 +38,7 @@ public:
     void AddBlockingBind(uint8, uint16);
     bool IsBlockingBind(uint8);
     sf::Vector2i TextSplitToFit(uint16, sf::Text &);
+    void DrawMenu(Window &, Menu *);
 
 private:
     sf::Texture                         m_SystemTexture;
@@ -54,4 +56,6 @@ private:
     std::map< eWarningMsg, std::string > m_WarningMsgsEnum;
     std::map< uint8, uint8 >             m_KeyBoardBind;
     std::map< uint8, uint64 >            m_BlockingBinds;
+
+    MenuManager                          m_MenuManager;
 };

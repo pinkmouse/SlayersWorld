@@ -68,6 +68,9 @@
 #define MAX_WARNING_LOG_TIME 5000000
 #define MAX_WARNING_LOG_TIME_BETWEEN_SAME 2000000
 
+#define MENU_COLUMN_SIZE 100
+#define MENU_ROW_SIZE 20
+
 /// EVENT
 #define MAX_KEY_SAVE 4
 
@@ -156,6 +159,11 @@ enum eTimeSpellAttribute
     CastimeAttribute = 1
 };
 
+enum eMenuType
+{
+    MainMenu = 0
+};
+
 enum eKeyBoardAction
 {
     NoneAction = 0,
@@ -169,6 +177,7 @@ enum eKeyBoardAction
     KeyBoardAutoAttack,
     KeyBoardSpell0,
     KeyBoardSpell1,
+    KeyEscape,
     MaxKeyBoard
 };
 

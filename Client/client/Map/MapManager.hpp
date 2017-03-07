@@ -35,4 +35,3 @@ private:
     std::vector<Player*> m_ListPlayer;
     Events* m_Events;
 };
-

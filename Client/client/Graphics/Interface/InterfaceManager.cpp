@@ -81,6 +81,29 @@ void  InterfaceManager::ManageEvent(sf::Event p_Event)
     }
 }
 
+void InterfaceManager::DrawMenu(Window & p_Window, Menu * p_Menu)
+{
+    DrawField(p_Window, p_Menu->GetPosition().x, p_Menu->GetPosition().y, p_Menu->GetColumn() * MENU_COLUMN_SIZE, p_Menu->GetRow() * MENU_ROW_SIZE);
+    std::map<uint8, std::map<uint8, MenuElement> >* m_Elements = p_Menu->GetElements();
+
+    for (std::map<uint8, std::map<uint8, MenuElement> >::iterator l_It = m_Elements->begin(); l_It != m_Elements->end(); ++l_It)
+    {
+        for (std::map<uint8, MenuElement>::iterator l_Itr = (*l_It).second.begin(); l_Itr != (*l_It).second.end(); l_Itr++)
+        {
+            sf::Text    l_Label;
+            l_Label.setCharacterSize(18);
+            l_Label.setColor(sf::Color::White);
+            l_Label.setString((*l_Itr).second.GetLabel());
+            l_Label.setFont(*g_Font);
+
+            l_Label.setPosition(p_Menu->GetPosition().x + (*l_It).first * MENU_COLUMN_SIZE + 10, p_Menu->GetPosition().y + (*l_Itr).first * MENU_ROW_SIZE + 5);
+            p_Window.draw(l_Label);
+        }
+    }
+    std::pair<uint8, uint8> l_SelectedElement = p_Menu->GetSelectedElement();
+    DrawBorderField(p_Window, p_Menu->GetPosition().x + l_SelectedElement.first * MENU_COLUMN_SIZE, p_Menu->GetPosition().y + l_SelectedElement.second * MENU_ROW_SIZE + 5, MENU_COLUMN_SIZE, MENU_ROW_SIZE);
+}
+
 TileSprite InterfaceManager::GetField(uint16 p_SizeX, uint16 p_SizeY)
 {
     TileSprite l_TileSprite;
@@ -314,6 +337,10 @@ void InterfaceManager::Draw(Window & p_Window)
         DrawStartingPage(p_Window);
         return;
     }
+
+    std::vector<Menu*> l_ListOpenMenu = m_MenuManager.GetOpenMenus();
+    for (std::vector<Menu*>::iterator l_It = l_ListOpenMenu.begin(); l_It != l_ListOpenMenu.end(); ++l_It)
+        DrawMenu(p_Window, (*l_It));
 
     /// Draw Flask Life
     TileSprite l_FlaskEmpty = GetFlask(0, false);

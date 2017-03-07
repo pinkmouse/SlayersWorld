@@ -58,6 +58,13 @@ add_executable(${EXECUTABLE_NAME}
               client/Graphics/Interface/WritingField.hpp
               client/Graphics/Interface/HistoryField.cpp
               client/Graphics/Interface/HistoryField.hpp
+              client/Graphics/Interface/Menu.cpp
+              client/Graphics/Interface/Menu.hpp
+              client/Graphics/Interface/MenuManager.cpp
+              client/Graphics/Interface/MenuManager.hpp
+              client/Graphics/Interface/MenuMain.cpp
+              client/Graphics/Interface/MenuMain.hpp
+
               client/Graphics/Graphics.cpp
               client/Graphics/Graphics.hpp
               client/Graphics/Visual.cpp
