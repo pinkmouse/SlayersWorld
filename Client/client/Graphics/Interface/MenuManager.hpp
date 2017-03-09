@@ -8,8 +8,9 @@ class MenuManager : public Menu
 public:
     MenuManager();
     ~MenuManager();
-    void KeyPress(const eKeyBoardAction &);
+    void KeyPress(const sf::Keyboard::Key &);
     std::vector<Menu*> GetOpenMenus();
+    void OpenMenu(const uint16 &);
 
 private:
     std::map<eMenuType, Menu> m_ListMenu;

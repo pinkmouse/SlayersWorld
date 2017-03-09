@@ -161,7 +161,8 @@ enum eTimeSpellAttribute
 
 enum eMenuType
 {
-    MainMenu = 0
+    MainMenu = 0,
+    QuestMenu
 };
 
 enum eKeyBoardAction

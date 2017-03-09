@@ -63,6 +63,20 @@ void  InterfaceManager::ManageEvent(sf::Event p_Event)
     switch (p_Event.type)
     {
         case sf::Event::KeyPressed: ///< Key Press
+            if (p_Event.key.code == sf::Keyboard::Escape) ///< Bypass for Menu
+            {
+                if (m_MenuManager.IsOpen())
+                    m_MenuManager.Close();
+                else
+                    m_MenuManager.Open();
+                break;
+            }
+            if (m_MenuManager.IsOpen())
+            {
+                m_MenuManager.KeyPress(p_Event.key.code);
+                break;
+            }
+
             if (IsBlockingBind(l_KeyBoardAction))
                 AddWarningMsg(eTypeWarningMsg::Red, "Temps de recharge restant : " + std::to_string(uint8(m_BlockingBinds[l_KeyBoardAction] / 1000000)) + "s");
             else
@@ -83,7 +97,7 @@ void  InterfaceManager::ManageEvent(sf::Event p_Event)
 
 void InterfaceManager::DrawMenu(Window & p_Window, Menu * p_Menu)
 {
-    DrawField(p_Window, p_Menu->GetPosition().x, p_Menu->GetPosition().y, p_Menu->GetColumn() * MENU_COLUMN_SIZE, p_Menu->GetRow() * MENU_ROW_SIZE);
+    DrawField(p_Window, p_Menu->GetPosition().x, p_Menu->GetPosition().y, p_Menu->GetColumn() * MENU_COLUMN_SIZE, p_Menu->GetRow() * MENU_ROW_SIZE + 20);
     std::map<uint8, std::map<uint8, MenuElement> >* m_Elements = p_Menu->GetElements();
 
     for (std::map<uint8, std::map<uint8, MenuElement> >::iterator l_It = m_Elements->begin(); l_It != m_Elements->end(); ++l_It)

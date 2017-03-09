@@ -27,6 +27,12 @@ void MenuElement::SetFunc(m_Func p_Func, const uint16 & p_Id)
     m_IdLabel = p_Id;
 }
 
+void MenuElement::LaunchFunc(const uint16 & p_Id, Menu * p_Menu)
+{
+    if (m_Function != nullptr)
+        (p_Menu->*(m_Function))(p_Id);
+}
+
 Menu::Menu() :
     Menu(1, 1)
 {
@@ -44,7 +50,7 @@ Menu::~Menu()
 {
 }
 
-void Menu::KeyPress(const eKeyBoardAction & p_Key)
+void Menu::KeyPress(const sf::Keyboard::Key & p_Key)
 {
 }
 
@@ -89,6 +95,10 @@ void Menu::Close()
     m_Open = false;
 }
 
+void Menu::OpenMenu(const uint16 & p_MenuID)
+{
+}
+
 std::map<uint8, std::map<uint8, MenuElement> >* Menu::GetElements()
 {
     return &m_Elements;
@@ -106,4 +116,40 @@ MenuElement* Menu::GetElement(const uint8 & p_Col, const uint8 & p_Row)
 void Menu::AddElement(const uint8 & p_Col, const uint8 & p_Row, const std::string & p_Label)
 {
     m_Elements[p_Col][p_Row] = MenuElement(p_Label);
+}
+
+void Menu::SelectNextElementOn(Orientation p_Orientation)
+{
+    switch (p_Orientation)
+    {
+        case Orientation::Up:
+        {
+            if (m_Elements.find(m_SelectedElement.first) == m_Elements.end())
+                break;
+            std::map<uint8, MenuElement>::iterator l_It = m_Elements[m_SelectedElement.first].find(m_SelectedElement.second);
+            if (l_It == m_Elements[m_SelectedElement.first].end())
+                break;
+            l_It--;
+            if (l_It == m_Elements[m_SelectedElement.first].end())
+            {
+                l_It = m_Elements[m_SelectedElement.first].end();
+                l_It--;
+            }
+            m_SelectedElement.second = (*l_It).first;
+            break;
+        }
+        case Orientation::Down :
+        {
+            if (m_Elements.find(m_SelectedElement.first) == m_Elements.end())
+                break;
+            std::map<uint8, MenuElement>::iterator l_It = m_Elements[m_SelectedElement.first].find(m_SelectedElement.second);
+            if (l_It == m_Elements[m_SelectedElement.first].end())
+                break;
+            ++l_It;
+            if (l_It == m_Elements[m_SelectedElement.first].end())
+                l_It = m_Elements[m_SelectedElement.first].begin();
+            m_SelectedElement.second = (*l_It).first;
+            break;
+        }
+    }
 }

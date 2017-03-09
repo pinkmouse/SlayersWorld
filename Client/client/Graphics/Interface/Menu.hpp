@@ -2,6 +2,7 @@
 #include "../../Define.hpp"
 #include <string>
 #include <map>
+#include <SFML/Window/Keyboard.hpp>
 
 class Menu;
 class MenuElement
@@ -15,6 +16,7 @@ public:
     ~MenuElement();
     std::string GetLabel() const;
     void SetFunc(m_Func, const uint16 &);
+    void LaunchFunc(const uint16 &, Menu *);
 
 private:
     std::string     m_Label;
@@ -28,7 +30,7 @@ public:
     Menu();
     Menu(const uint8 &, const uint8 &);
     ~Menu();
-    virtual void KeyPress(const eKeyBoardAction &);
+    virtual void KeyPress(const sf::Keyboard::Key &);
     MenuElement* GetElement(const uint8 &, const uint8 &);
     std::map<uint8, std::map<uint8, MenuElement> >* GetElements();
     void AddElement(const uint8 &, const uint8 &, const std::string &);
@@ -38,8 +40,11 @@ public:
     bool IsOpen() const;
     std::pair<uint8, uint8> GetSelectedElement() const;
     void SetSelectedElement(uint8, uint8);
+    void SelectNextElementOn(Orientation);
     void Open();
     void Close();
+
+    virtual void OpenMenu(const uint16 &);
 
 protected:
     Position m_Pos;

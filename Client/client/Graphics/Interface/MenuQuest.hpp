@@ -2,11 +2,11 @@
 #include "../../Define.hpp"
 #include "Menu.hpp"
 
-class MenuMain : public Menu
+class MenuQuest : public Menu
 {
 public:
-    MenuMain();
-    ~MenuMain();
+    MenuQuest();
+    ~MenuQuest();
     void KeyPress(const eKeyBoardAction &);
 
 private:

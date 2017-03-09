@@ -1,24 +1,65 @@
 #include "MenuManager.hpp"
-#include "MenuMain.hpp"
+#include "MenuQuest.hpp"
 #include "../../Global.hpp"
 
 MenuManager::MenuManager() :
     Menu(1, 6)
 {
-    m_Pos.x = 30;
+    m_Pos.x = 10;
     m_Pos.y = 30;
     AddElement(0, 0, "Quests");
+    GetElement(0, 0)->SetFunc(&Menu::OpenMenu, 0);
     AddElement(0, 1, "Save");
-    AddElement(0, 2, "Escape");
+    GetElement(0, 1)->SetFunc(&Menu::OpenMenu, 1);
+    AddElement(0, 5, "Escape");
+    GetElement(0, 5)->SetFunc(&Menu::OpenMenu, 2);
     SetSelectedElement(0, 0);
+
+    m_ListMenu[eMenuType::QuestMenu] = MenuQuest();
 }
 
 MenuManager::~MenuManager()
 {
 }
 
-void MenuManager::KeyPress(const eKeyBoardAction & p_Key)
+void MenuManager::OpenMenu(const uint16 & p_MenuID)
 {
+
+    switch (p_MenuID)
+    {
+        case 0:
+            m_ListMenu[eMenuType::QuestMenu].Open();
+            break;
+        case 5:
+            Close();
+            break;
+    }
+}
+
+void MenuManager::KeyPress(const sf::Keyboard::Key & p_Key)
+{
+    switch (p_Key)
+    {
+        case sf::Keyboard::Return:
+        {
+            std::pair<uint8, uint8> l_SelectedElem = GetSelectedElement();
+            MenuElement* l_Elem = GetElement(l_SelectedElem.first, l_SelectedElem.second);
+            if (l_Elem == nullptr)
+                break;
+            l_Elem->LaunchFunc(l_SelectedElem.second, this);
+            break;
+        }
+        case sf::Keyboard::Up :
+        {
+            SelectNextElementOn(Orientation::Up);
+            break;
+        }
+        case sf::Keyboard::Down:
+        {
+            SelectNextElementOn(Orientation::Down);
+            break;
+        }
+    }
 }
 
 std::vector<Menu*> MenuManager::GetOpenMenus()
