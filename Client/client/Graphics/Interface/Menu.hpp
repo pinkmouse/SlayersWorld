@@ -17,6 +17,7 @@ public:
     std::string GetLabel() const;
     void SetFunc(m_Func, const uint16 &);
     void LaunchFunc(const uint16 &, Menu *);
+    uint16 GetIDLabel() const;
 
 private:
     std::string     m_Label;
@@ -34,6 +35,8 @@ public:
     MenuElement* GetElement(const uint8 &, const uint8 &);
     std::map<uint8, std::map<uint8, MenuElement> >* GetElements();
     void AddElement(const uint8 &, const uint8 &, const std::string &);
+    void RemoveElement(const uint8 &, const uint8 &);
+    void ClearElements();
     uint8 GetColumn() const;
     uint8 GetRow() const;
     Position GetPosition() const;
@@ -44,7 +47,7 @@ public:
     void Open();
     void Close();
 
-    virtual void OpenMenu(const uint16 &);
+    virtual void GenericAction(const uint16 &);
 
 protected:
     Position m_Pos;

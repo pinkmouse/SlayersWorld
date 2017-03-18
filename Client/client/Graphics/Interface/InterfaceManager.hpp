@@ -39,6 +39,7 @@ public:
     bool IsBlockingBind(uint8);
     sf::Vector2i TextSplitToFit(uint16, sf::Text &);
     void DrawMenu(Window &, Menu *);
+    MenuManager* GetMenuManager();
 
 private:
     sf::Texture                         m_SystemTexture;

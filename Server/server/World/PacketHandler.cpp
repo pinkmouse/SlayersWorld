@@ -13,6 +13,8 @@ PacketHandler::~PacketHandler()
 void PacketHandler::LoadPacketHandlerMap()
 {
     m_PacketHandleMap[CMSG::C_Connexion] = &PacketHandler::HandleConnexion;
+    m_PacketHandleMap[CMSG::C_Save] = &PacketHandler::HandleSave;
+    m_PacketHandleMap[CMSG::C_StatAction] = &PacketHandler::HandleStatAction;
     m_PacketHandleMap[CMSG::C_UnitCreate] = &PacketHandler::HandleUnitUnknow;
     m_PacketHandleMap[CMSG::C_UnitGoDirection] = &PacketHandler::HandleGoDirection;
     m_PacketHandleMap[CMSG::C_UnitStopMovement] = &PacketHandler::HandleStopMovement;
@@ -76,6 +78,19 @@ void PacketHandler::HandleStopMovement(WorldPacket &p_Packet, WorldSocket* p_Wor
 
     l_Player->GetMovementHandler()->AddMovementToStack(eActionType::Stop, l_Pos, (Orientation)l_Player->GetOrientation());
     l_Player->GetSession()->SendUnitStopMovement((uint8)TypeUnit::PLAYER, l_Player->GetID(), l_Pos, l_Player->GetOrientation());
+}
+
+void PacketHandler::HandleSave(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
+{
+    Player* l_Player = p_WorldSocket->GetPlayer();
+
+    if (l_Player == nullptr)
+        return;
+
+    l_Player->Save();
+    PacketWarningMsg l_Packet;
+    l_Packet.BuildPacket(eTypeWarningMsg::Yellow, "Sauvegarde effectué");
+    l_Player->GetSession()->send(l_Packet.m_Packet);
 }
 
 void PacketHandler::HandleTalk(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
@@ -142,6 +157,26 @@ void PacketHandler::HandleEventAction(WorldPacket &p_Packet, WorldSocket* p_Worl
         return;
 
     l_Player->EventAction((eKeyBoardAction)l_ActionID);
+}
+
+void PacketHandler::HandleStatAction(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
+{
+    Player* l_Player = p_WorldSocket->GetPlayer();
+    uint8 l_TypeStat;
+    bool l_Add;
+    uint8 l_Nb;
+
+    p_Packet >> l_TypeStat;
+    p_Packet >> l_Add;
+    p_Packet >> l_Nb;
+
+    if (l_Player == nullptr)
+        return;
+
+    if (l_Add)
+        l_Player->AddPointsStat((eStats)l_TypeStat, l_Nb);
+    else
+        l_Player->SubPointsStat((eStats)l_TypeStat, l_Nb);
 }
 
 void PacketHandler::HandleDisconnected(WorldSocket* p_WorldSocket)
@@ -223,6 +258,7 @@ void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldS
     /// Send to Player
     p_WorldSocket->SendPlayerCreate(l_Player->GetID(), l_Player->GetName(), l_Player->GetLevel(), l_Player->GetResourceNb(eResourceType::Health), l_Player->GetResourceNb(eResourceType::Mana), l_Player->GetResourceNb(eResourceType::Alignment), l_Player->GetSkinID(), l_Player->GetMapID(), l_Player->GetPosX(), l_Player->GetPosY(), l_Player->GetOrientation());
     p_WorldSocket->SendUpdateXpPct(g_LevelManager->XpPct(l_Player->GetLevel(), l_Player->GetXp()));
+    l_Player->SetPointsSet(g_SqlManager->GetPointsSetForPlayer(l_Player->GetID()));
 
     /// Send KeyBoard Binds
     for (std::map< eKeyBoardAction, uint8 >::iterator l_It = l_Player->GetKeyBoardBinds()->begin(); l_It != l_Player->GetKeyBoardBinds()->end(); ++l_It)

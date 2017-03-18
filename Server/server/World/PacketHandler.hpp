@@ -17,6 +17,8 @@ public:
 
     void OperatePacket(WorldPacket &, WorldSocket*);
     void HandleConnexion(WorldPacket &, WorldSocket*);
+    void HandleSave(WorldPacket &, WorldSocket*);
+    void HandleStatAction(WorldPacket &, WorldSocket*);
     void HandleGoDirection(WorldPacket &, WorldSocket*);
     void HandleUnitUnknow(WorldPacket &, WorldSocket*);
     void HandleStopMovement(WorldPacket &, WorldSocket*);

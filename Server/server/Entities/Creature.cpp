@@ -20,7 +20,11 @@ Creature::Creature(uint16 p_ID, uint16 p_Entry, CreatureTemplate p_CreatureTempl
     m_MovementHandler->SetSpeed(0.5f);
     ResetRandMovementTime(false);
 
-	SetPointsSet(PointsSet(m_CreatureTemplate.m_Force, m_CreatureTemplate.m_Stamina, m_CreatureTemplate.m_Dexterity));
+    PointsSet l_PointsSet;
+    l_PointsSet.SetStat(eStats::Force, m_CreatureTemplate.m_Force);
+    l_PointsSet.SetStat(eStats::Stamina, m_CreatureTemplate.m_Stamina);
+    l_PointsSet.SetStat(eStats::Dexterity, m_CreatureTemplate.m_Dexterity);
+	SetPointsSet(l_PointsSet);
     m_RespawnTime = m_CreatureTemplate.m_RespawnTime * IN_MILLISECOND;
 }
 

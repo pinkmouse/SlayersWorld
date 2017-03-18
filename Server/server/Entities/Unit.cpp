@@ -376,15 +376,15 @@ void Unit::AutoAttack(Unit* p_Victim)
     /// This fonction is call everytime autoattack are ready 
     /// It's calling deal damage
 
-	uint16 l_ForceAttacker = m_PointsSet.m_Force;
-	uint16 l_StaminaDefenser = p_Victim->GetPointsSet().m_Stamina;
+	uint16 l_ForceAttacker = m_PointsSet.GetStat(eStats::Force);
+	uint16 l_StaminaDefenser = p_Victim->GetPointsSet().GetStat(eStats::Stamina);
 	int16 l_Balance = l_ForceAttacker - l_StaminaDefenser;
     int8 l_Damage = rand() %  2 + 10;
 	l_Damage += (l_Balance * 2);
 	l_Damage = std::max(l_Damage, (int8)0);
 
-	uint16 l_DexterityAttacker = m_PointsSet.m_Dexterity;
-	uint16 l_DexterityDefenser = p_Victim->GetPointsSet().m_Dexterity;
+	uint16 l_DexterityAttacker = m_PointsSet.GetStat(eStats::Dexterity);
+	uint16 l_DexterityDefenser = p_Victim->GetPointsSet().GetStat(eStats::Dexterity);
 	l_Balance = l_DexterityDefenser - l_DexterityAttacker;
 	int8 l_MissChance = 20 + (l_Balance * 4);
 	l_MissChance = std::max(l_MissChance, (int8)0);
@@ -1062,11 +1062,37 @@ void Unit::SetSpeed(float p_Speed)
 {
     m_MovementHandler->SetSpeed(p_Speed);
 
-    PacketUnitUpdateSpeed l_Packet;
-    l_Packet.BuildPacket(GetType(), GetID(), (uint8)(p_Speed * 10.0f));
+    GetPointsSet().SetStat(eStats::Speed, (uint16)(p_Speed * 10.0f));
+    PacketUnitUpdateStat l_Packet;
+    l_Packet.BuildPacket(GetType(), GetID(), eStats::Speed, (uint16)(p_Speed * 10.0f));
     m_Map->SendToSet(l_Packet.m_Packet, this);
 }
 
+bool Unit::AddPointsStat(eStats p_TypeStat, uint8 p_NbPoints)
+{
+    if (m_PointsSet.GetStat(eStats::Free) <= 0)
+        return false;
+
+    if (p_NbPoints > m_PointsSet.GetStat(eStats::Free))
+        p_NbPoints = m_PointsSet.GetStat(eStats::Free);
+
+    m_PointsSet.SetStat(p_TypeStat, m_PointsSet.GetStat(p_TypeStat) + p_NbPoints);
+    m_PointsSet.SetStat(eStats::Free, m_PointsSet.GetStat(eStats::Free) - p_NbPoints);
+    return true;
+}
+
+bool Unit::SubPointsStat(eStats p_TypeStat, uint8 p_NbPoints)
+{
+    if (m_PointsSet.GetStat(p_TypeStat) <= 0)
+        return false;
+
+    if (p_NbPoints > m_PointsSet.GetStat(p_TypeStat))
+        p_NbPoints = m_PointsSet.GetStat(p_TypeStat);
+
+    m_PointsSet.SetStat(p_TypeStat, m_PointsSet.GetStat(p_TypeStat) - p_NbPoints);
+    m_PointsSet.SetStat(eStats::Free, m_PointsSet.GetStat(eStats::Free) + p_NbPoints);
+    return true;
+}
 
 bool Unit::EnterInGroup(eGroupType p_Type, const std::string & p_GroupeName)
 {

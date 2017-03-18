@@ -197,7 +197,6 @@ Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
     }
 
     l_Player = new Player(p_AccountID, l_ID, l_Name, l_Lvl, l_Health, l_Mana, l_Alignment, l_SkinID, l_MapID, l_PosX, l_PosY, (Orientation)l_Orientation, l_Xp, l_PlayerAccessType);
-	l_Player->SetPointsSet(GetPointsSetForPlayer(l_ID));
     l_Player->SetRespawnPosition(GetRespawnPositionForPlayer(l_ID));
     InitializeSpellsForPlayer(l_Player);
     InitializeKeyBindsForAccount(p_AccountID, l_Player);
@@ -283,7 +282,12 @@ PointsSet SqlManager::GetPointsSetForPlayer(uint32 p_PlayerID)
 		return GetPointsSetForPlayer(p_PlayerID);
 	}
 
-	PointsSet l_PointsSet(l_FreePoints, l_Force, l_Stamina, l_Dexterity);
+	PointsSet l_PointsSet;
+    l_PointsSet.SetStat(eStats::Free, l_FreePoints);
+    l_PointsSet.SetStat(eStats::Force, l_Force);
+    l_PointsSet.SetStat(eStats::Stamina, l_Stamina);
+    l_PointsSet.SetStat(eStats::Dexterity, l_Dexterity);
+
 	return l_PointsSet;
 }
 
@@ -356,7 +360,7 @@ int32 SqlManager::GetDaysSinceLastQuestDone(Player const* p_Player, uint16 p_Que
 
 void SqlManager::UpdatePointsSet(Player const* p_Player)
 {
-	std::string l_Query = "UPDATE `characters_point` SET `free_point` = '" + std::to_string(p_Player->GetPointsSet().m_FreePoints) + "', `force` = '" + std::to_string(p_Player->GetPointsSet().m_Force) + "', `stamina` = '" + std::to_string(p_Player->GetPointsSet().m_Stamina) + "', `dexterity` = '" + std::to_string(p_Player->GetPointsSet().m_Dexterity) + "' WHERE characterID = '" + std::to_string(p_Player->GetID()) + "';";
+	std::string l_Query = "UPDATE `characters_point` SET `free_point` = '" + std::to_string(p_Player->GetPointsSet().GetStat(eStats::Free)) + "', `force` = '" + std::to_string(p_Player->GetPointsSet().GetStat(eStats::Force)) + "', `stamina` = '" + std::to_string(p_Player->GetPointsSet().GetStat(eStats::Stamina)) + "', `dexterity` = '" + std::to_string(p_Player->GetPointsSet().GetStat(eStats::Dexterity)) + "' WHERE characterID = '" + std::to_string(p_Player->GetID()) + "';";
 	mysql_query(&m_MysqlCharacters, l_Query.c_str());
 }
 

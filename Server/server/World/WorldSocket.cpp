@@ -14,12 +14,9 @@ WorldSocket::~WorldSocket()
         return;
 
     /// Save Player
-    printf("DELETE PLAYER\n");
     delete m_Player;
     //m_Player->SetInWorld(false);
     m_Player = nullptr;
-    if (m_Player == nullptr)
-        printf("PLAYER IS NULL\n");
 }
 
 void WorldSocket::SendAuthResponse(uint8 p_Status)

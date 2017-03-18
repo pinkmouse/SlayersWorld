@@ -133,3 +133,27 @@ void Socket::SendLoadingPong()
 
     send(packet);
 }
+
+void Socket::SendSave()
+{
+    WorldPacket packet;
+    uint8 l_ID = CMSG::C_Save;
+
+    packet << l_ID;
+
+    send(packet);
+}
+
+void Socket::SendStatAction(eStats p_Stat, bool p_Add, uint8 p_Nb)
+{
+    WorldPacket packet;
+    uint8 l_ID = CMSG::C_StatAction;
+    uint8 l_TypeStat = (uint8)p_Stat;
+
+    packet << l_ID;
+    packet << l_TypeStat;
+    packet << p_Add;
+    packet << p_Nb;
+
+    send(packet);
+}

@@ -284,7 +284,7 @@ bool Player::HandleCommandAddPoint(std::vector<std::string> p_ListCmd)
 {
 	if (p_ListCmd.empty())
 	{
-		SendMsg("Vos points-> " + std::to_string(GetPointsSet().m_FreePoints) + "|" + std::to_string(GetPointsSet().m_Force) + "|" + std::to_string(GetPointsSet().m_Stamina) + "|" + std::to_string(GetPointsSet().m_Dexterity));
+		SendMsg("Vos points-> " + std::to_string(GetPointsSet().GetStat(eStats::Free)) + "|" + std::to_string(GetPointsSet().GetStat(eStats::Force)) + "|" + std::to_string(GetPointsSet().GetStat(eStats::Stamina)) + "|" + std::to_string(GetPointsSet().GetStat(eStats::Dexterity)));
 		return true;
 	}
 	if (p_ListCmd.size() < 2)
@@ -321,7 +321,7 @@ bool Player::HandleCommandAddPoint(std::vector<std::string> p_ListCmd)
 
 	if (l_IndexCmd == 0)
 	{
-		if (l_NbPoints > m_PointsSet.m_FreePoints)
+		if (l_NbPoints > m_PointsSet.GetStat(eStats::Free))
 		{
 			SendMsg("Vous n'avez pas assez de points");
 			return true;
@@ -330,21 +330,21 @@ bool Player::HandleCommandAddPoint(std::vector<std::string> p_ListCmd)
 		{
 			case 0:
 			{
-				m_PointsSet.m_Force += l_NbPoints;
+                m_PointsSet.SetStat(eStats::Force, m_PointsSet.GetStat(eStats::Force) + l_NbPoints);
 				break;
 			}
 			case 1:
 			{
-				m_PointsSet.m_Stamina += l_NbPoints;
+                m_PointsSet.SetStat(eStats::Stamina, m_PointsSet.GetStat(eStats::Stamina) + l_NbPoints);
 				break;
 			}
 			case 2:
 			{
-				m_PointsSet.m_Dexterity += l_NbPoints;
+                m_PointsSet.SetStat(eStats::Dexterity, m_PointsSet.GetStat(eStats::Dexterity) + l_NbPoints);
 				break;
 			}
 		}
-		m_PointsSet.m_FreePoints -= l_NbPoints;
+        m_PointsSet.SetStat(eStats::Free, m_PointsSet.GetStat(eStats::Free) - l_NbPoints);
 	}
 
 	if (l_IndexCmd == 1)
@@ -353,36 +353,36 @@ bool Player::HandleCommandAddPoint(std::vector<std::string> p_ListCmd)
 		{
 			case 0:
 			{
-				if (l_NbPoints > m_PointsSet.m_Force)
+				if (l_NbPoints > m_PointsSet.GetStat(eStats::Force))
 				{
 					SendMsg("Vous n'avez pas assez de points en force");
 					return true;
 				}
-				m_PointsSet.m_Force -= l_NbPoints;
+                m_PointsSet.SetStat(eStats::Force, m_PointsSet.GetStat(eStats::Force) - l_NbPoints);
 				break;
 			}
 			case 1:
 			{
-				if (l_NbPoints > m_PointsSet.m_Stamina)
+				if (l_NbPoints > m_PointsSet.GetStat(eStats::Stamina))
 				{
 					SendMsg("Vous n'avez pas assez de points en stamina");
 					return true;
 				}
-				m_PointsSet.m_Stamina -= l_NbPoints;
+                m_PointsSet.SetStat(eStats::Stamina, m_PointsSet.GetStat(eStats::Stamina) - l_NbPoints);
 				break;
 			}
 			case 2:
 			{
-				if (l_NbPoints > m_PointsSet.m_Dexterity)
+				if (l_NbPoints > m_PointsSet.GetStat(eStats::Dexterity))
 				{
 					SendMsg("Vous n'avez pas assez de points en dexterity");
 					return true;
 				}
-				m_PointsSet.m_Dexterity -= l_NbPoints;
-				break;
+                m_PointsSet.SetStat(eStats::Dexterity, m_PointsSet.GetStat(eStats::Dexterity) - l_NbPoints);
+                break;
 			}
 		}
-		m_PointsSet.m_FreePoints += l_NbPoints;
+        m_PointsSet.SetStat(eStats::Free, m_PointsSet.GetStat(eStats::Free) + l_NbPoints);
 	}
 
 	return true;

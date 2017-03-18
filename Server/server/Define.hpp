@@ -77,6 +77,16 @@ enum eActionType
     StopAttack = 3
 };
 
+enum eStats
+{
+    Free = 0,
+    Dexterity,
+    Force,
+    Stamina,
+    Speed,
+    MaxStat
+};
+
 enum eInterMapAction
 {
     SwitchMap = 0
@@ -336,24 +346,27 @@ struct CreatureTemplate
 
 struct PointsSet
 {
-	uint16 m_FreePoints;
-	uint16 m_Force;
-	uint16 m_Stamina;
-	uint16 m_Dexterity;
+    std::map<eStats, uint16> m_Points;
 
-	PointsSet() :
-		m_FreePoints(0), m_Force(0), m_Stamina(0), m_Dexterity(0){}
+	PointsSet()
+    {
+        for (uint8 i = 0; i < eStats::MaxStat; ++i)
+            m_Points[(eStats)i] = 0;
+    }
 
-	PointsSet(uint16 p_FreePoints, uint16 p_Force, uint16 p_Stamina, uint16 p_Dexterity) :
-		m_FreePoints(p_FreePoints), m_Force(p_Force), m_Stamina(p_Stamina), m_Dexterity(p_Dexterity) {}
+	void SetStat(eStats p_Stat, uint16 p_Points) 
+    {
+        if (p_Stat > eStats::MaxStat)
+            return;
+        m_Points[p_Stat] = p_Points;
+    };
 
-	PointsSet(uint16 p_Force, uint16 p_Stamina, uint16 p_Dexterity) :
-		m_FreePoints(0), m_Force(p_Force), m_Stamina(p_Stamina), m_Dexterity(p_Dexterity) {}
-
-	void SetFreePoints(uint16 p_FreePoints) { m_FreePoints = p_FreePoints; };
-	void SetForce(uint16 p_Force) { m_Force = p_Force; };
-	void SetStamina(uint16 p_Stamina) { m_Stamina = p_Stamina; };
-	void SetDexterity(uint16 p_Dexterity) { m_Dexterity = p_Dexterity; };
+    uint16 GetStat(eStats p_Stat)
+    {
+        if (p_Stat > eStats::MaxStat)
+            return 0;
+        return m_Points[p_Stat];
+    };
 };
 
 

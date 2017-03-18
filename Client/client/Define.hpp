@@ -132,6 +132,16 @@ enum DamageResult
     Miss = 1
 };
 
+enum eStats
+{
+    Free = 0,
+    Dexterity,
+    Force,
+    Stamina,
+    Speed,
+    MaxStat
+};
+
 struct DamageInfo
 {
 	int8 m_Damage;
@@ -162,7 +172,8 @@ enum eTimeSpellAttribute
 enum eMenuType
 {
     MainMenu = 0,
-    QuestMenu
+    QuestMenu,
+    StatsMenu
 };
 
 enum eKeyBoardAction

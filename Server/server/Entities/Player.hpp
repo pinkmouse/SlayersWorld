@@ -23,6 +23,9 @@ public:
     void Save();
     void SetInLoading(bool);
     bool GetInLoading() const;
+    void SetPointsSet(const PointsSet &);
+    bool AddPointsStat(eStats, uint8);
+    bool SubPointsStat(eStats, uint8);
 
     /* RESOURCES */
     uint32 GetXp() const;

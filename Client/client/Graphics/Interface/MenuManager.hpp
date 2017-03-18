@@ -10,8 +10,9 @@ public:
     ~MenuManager();
     void KeyPress(const sf::Keyboard::Key &);
     std::vector<Menu*> GetOpenMenus();
-    void OpenMenu(const uint16 &);
+    void GenericAction(const uint16 &);
+    void AddElementToMenu(eMenuType, const uint8 &, const uint8 &, const std::string &);
 
 private:
-    std::map<eMenuType, Menu> m_ListMenu;
+    std::map<eMenuType, Menu*> m_ListMenu;
 };

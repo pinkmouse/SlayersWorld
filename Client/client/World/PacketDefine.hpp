@@ -3,14 +3,16 @@
 enum CMSG : uint8
 {
     C_Connexion = 1,
+    C_Save = 2,
     C_UnitCreate = 10,
     C_LoadingPong = 11,
+    C_StatAction = 12,
     C_UnitGoDirection = 20,
     C_UnitStopMovement = 21,
     C_UnitTalk = 23,
     C_UnitStartAttack = 24,
     C_UnitStopAttack = 25,
-    C_UnitEventAction = 26
+    C_UnitEventAction = 26,
 };
 
 enum SMSG : uint8
@@ -36,7 +38,7 @@ enum SMSG : uint8
     S_UnitStopAttack = 27,
     S_UnitUpdateSkin = 28,
     S_UnitPlayVisual = 30,
-    S_UnitUpdateSpeed = 31,
+    S_UnitUpdateStat = 31,
     S_LoadingPing = 32,
     S_BlockBind = 40
 };

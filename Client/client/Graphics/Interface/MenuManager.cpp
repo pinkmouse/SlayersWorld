@@ -1,5 +1,6 @@
 #include "MenuManager.hpp"
 #include "MenuQuest.hpp"
+#include "MenuStats.hpp"
 #include "../../Global.hpp"
 
 MenuManager::MenuManager() :
@@ -7,28 +8,32 @@ MenuManager::MenuManager() :
 {
     m_Pos.x = 10;
     m_Pos.y = 30;
-    AddElement(0, 0, "Quests");
-    GetElement(0, 0)->SetFunc(&Menu::OpenMenu, 0);
+    AddElement(0, 0, "Stats");
+    GetElement(0, 0)->SetFunc(&Menu::GenericAction, 0);
     AddElement(0, 1, "Save");
-    GetElement(0, 1)->SetFunc(&Menu::OpenMenu, 1);
+    GetElement(0, 1)->SetFunc(&Menu::GenericAction, 1);
     AddElement(0, 5, "Escape");
-    GetElement(0, 5)->SetFunc(&Menu::OpenMenu, 2);
+    GetElement(0, 5)->SetFunc(&Menu::GenericAction, 5);
     SetSelectedElement(0, 0);
 
-    m_ListMenu[eMenuType::QuestMenu] = MenuQuest();
+    m_ListMenu[eMenuType::QuestMenu] = new MenuQuest();
+    m_ListMenu[eMenuType::StatsMenu] = new MenuStats();
 }
 
 MenuManager::~MenuManager()
 {
 }
 
-void MenuManager::OpenMenu(const uint16 & p_MenuID)
+void MenuManager::GenericAction(const uint16 & p_MenuID)
 {
-
     switch (p_MenuID)
     {
         case 0:
-            m_ListMenu[eMenuType::QuestMenu].Open();
+            m_ListMenu[eMenuType::StatsMenu]->Open();
+            break;
+        case 1:
+            g_Socket->SendSave();
+            Close();
             break;
         case 5:
             Close();
@@ -38,15 +43,30 @@ void MenuManager::OpenMenu(const uint16 & p_MenuID)
 
 void MenuManager::KeyPress(const sf::Keyboard::Key & p_Key)
 {
+    for (std::map<eMenuType, Menu*>::iterator l_It = m_ListMenu.begin(); l_It != m_ListMenu.end(); ++l_It)
+    {
+        if ((*l_It).second->IsOpen())
+        {
+            (*l_It).second->KeyPress(p_Key);
+            return;
+        }
+    }
+
     switch (p_Key)
     {
+        case sf::Keyboard::Escape:
+        {
+            if (IsOpen())
+                Close();
+            break;
+        }
         case sf::Keyboard::Return:
         {
             std::pair<uint8, uint8> l_SelectedElem = GetSelectedElement();
             MenuElement* l_Elem = GetElement(l_SelectedElem.first, l_SelectedElem.second);
             if (l_Elem == nullptr)
                 break;
-            l_Elem->LaunchFunc(l_SelectedElem.second, this);
+            l_Elem->LaunchFunc(l_Elem->GetIDLabel(), this);
             break;
         }
         case sf::Keyboard::Up :
@@ -69,10 +89,19 @@ std::vector<Menu*> MenuManager::GetOpenMenus()
         return l_Result;
 
     l_Result.push_back(this);
-    for (std::map<eMenuType, Menu>::iterator l_It = m_ListMenu.begin(); l_It != m_ListMenu.end(); ++l_It)
+    for (std::map<eMenuType, Menu*>::iterator l_It = m_ListMenu.begin(); l_It != m_ListMenu.end(); ++l_It)
     {
-        if ((*l_It).second.IsOpen())
-            l_Result.push_back(&(*l_It).second);
+        if ((*l_It).second->IsOpen())
+            l_Result.push_back((*l_It).second);
     }
     return l_Result;
 }
+
+void MenuManager::AddElementToMenu(eMenuType p_MenuType, const uint8 & p_Col, const uint8 & p_Row, const std::string & p_Label)
+{
+    if (m_ListMenu.find(p_MenuType) == m_ListMenu.end())
+        return;
+
+    m_ListMenu[p_MenuType]->AddElement(p_Col, p_Row, p_Label);
+}
+

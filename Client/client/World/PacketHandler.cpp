@@ -36,7 +36,7 @@ void PacketHandler::LoadPacketHandlerMap()
 	m_PacketHandleMap[SMSG::S_LogDamage] = &PacketHandler::HandleLogDamage;
     m_PacketHandleMap[SMSG::S_WarningMsg] = &PacketHandler::HandleWarningMsg;
     m_PacketHandleMap[SMSG::S_UnitPlayVisual] = &PacketHandler::HandleUnitPlayVisual;
-    m_PacketHandleMap[SMSG::S_UnitUpdateSpeed] = &PacketHandler::HandleUpdateSpeed;
+    m_PacketHandleMap[SMSG::S_UnitUpdateStat] = &PacketHandler::HandleUpdateStat;
     m_PacketHandleMap[SMSG::S_KeyBoardBind] = &PacketHandler::HandleKeyBoardBind;
     m_PacketHandleMap[SMSG::S_BlockBind] = &PacketHandler::HandleKeyBindBlock;
     m_PacketHandleMap[SMSG::S_CastBar] = &PacketHandler::HandleCastBar;
@@ -538,15 +538,17 @@ void PacketHandler::HandleUnitPlayVisual(WorldPacket &p_Packet)
     }
 }
 
-void PacketHandler::HandleUpdateSpeed(WorldPacket &p_Packet)
+void PacketHandler::HandleUpdateStat(WorldPacket &p_Packet)
 {
     uint8 l_TypeID;
     uint16 l_ID;
-    uint8 l_Speed;
+    uint8 l_TypeStat;
+    uint16 l_StatNb;
 
     p_Packet >> l_TypeID;
     p_Packet >> l_ID;
-    p_Packet >> l_Speed;
+    p_Packet >> l_TypeStat;
+    p_Packet >> l_StatNb;
 
     if (Map* l_Map = m_MapManager->GetActualMap())
     {
@@ -558,8 +560,15 @@ void PacketHandler::HandleUpdateSpeed(WorldPacket &p_Packet)
             return;
         }
 
-        float l_SpeedFloat = (float)l_Speed / 10.0f;
-        l_Unit->SetSpeed(l_SpeedFloat);
+        if (l_TypeStat == eStats::Speed)
+        {
+            float l_SpeedFloat = (float)l_StatNb / 10.0f;
+            l_Unit->SetSpeed(l_SpeedFloat);
+        }
+        MenuManager* l_MenuManager = m_InterfaceManager->GetMenuManager();
+        if (l_MenuManager == nullptr)
+            return;
+        l_MenuManager->AddElementToMenu(eMenuType::StatsMenu, 1, l_TypeStat + 2, std::to_string(l_StatNb));
     }
 }
 

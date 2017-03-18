@@ -20,6 +20,8 @@ public:
     void SendEventAction(const uint8&);
     void SendUnitUnknow(const uint8&, const uint16&);
     void SendTalk(const std::string &);
+    void SendSave();
+    void SendStatAction(eStats, bool, uint8);
     bool IsConnected() const;
 
 private:

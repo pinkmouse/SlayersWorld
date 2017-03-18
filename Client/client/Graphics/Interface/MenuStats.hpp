@@ -2,12 +2,13 @@
 #include "../../Define.hpp"
 #include "Menu.hpp"
 
-class MenuQuest : public Menu
+class MenuStats : public Menu
 {
 public:
-    MenuQuest();
-    ~MenuQuest();
+    MenuStats();
+    ~MenuStats();
     void KeyPress(const sf::Keyboard::Key &);
+    void GenericAction(const uint16 &);
 
 private:
 

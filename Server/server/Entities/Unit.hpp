@@ -45,6 +45,10 @@ public:
     Player* ToPlayer();
     MovementHandler* GetMovementHandler();
     eFactionType GetFaction() const;
+    virtual void SetPointsSet(const PointsSet &);
+    PointsSet GetPointsSet() const;
+    virtual bool AddPointsStat(eStats, uint8);
+    virtual bool SubPointsStat(eStats, uint8);
 
     /* RESOURCE */
     Resource* GetResource(eResourceType);
@@ -52,10 +56,6 @@ public:
     virtual void SetResourceNb(eResourceType, uint8);
     virtual void AddResourceNb(eResourceType, uint8);
     void RegenerateAll();
-
-    /* PATHFINDING */
-    PointsSet GetPointsSet() const;
-    void SetPointsSet(const PointsSet &);
 
     /* POSITION */
     uint8 GetOrientation() const;
@@ -127,7 +127,6 @@ public:
     void GossipTo(Player *);
     void UpdateGossip(sf::Time);
 
-
     /* GROUP */
     bool EnterInGroup(eGroupType, const std::string &);
     void LeaveGroup(eGroupType, const std::string &);
@@ -150,6 +149,7 @@ protected:
     bool m_InWorld;
     MovementHandler* m_MovementHandler;
     float m_Speed;
+    PointsSet m_PointsSet;
 
     /* RESOURCE */
     std::map< eResourceType, Resource* > m_Resources;
@@ -159,7 +159,6 @@ protected:
     uint16 m_MapID;
     uint16 m_SquareID;
     WorldPosition m_RespawnPosition;
-	PointsSet m_PointsSet;
 
     /* COMBAT */
     bool m_Evade;

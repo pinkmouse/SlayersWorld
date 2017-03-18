@@ -179,7 +179,7 @@ void Player::SetXp(uint32 p_Xp)
         SetLevel(GetLevel() + 1);
 
 		/// Earn new point
-		m_PointsSet.SetFreePoints(m_PointsSet.m_FreePoints + 1);
+        m_PointsSet.SetStat(eStats::Free, m_PointsSet.GetStat(eStats::Free) + 1);
 
         PacketUnitPlayVisual l_Packet;
         l_Packet.BuildPacket(GetType(), GetID(), 4);
@@ -412,4 +412,46 @@ void Player::SetInLoading(bool p_InLoading)
 bool Player::GetInLoading() const
 {
     return m_InLoading;
+}
+
+void Player::SetPointsSet(const PointsSet & p_PointSet)
+{
+    Unit::SetPointsSet(p_PointSet);
+
+    for (uint8 i = 0; i < eStats::MaxStat; ++i)
+    {
+        if (i == eStats::Speed)
+            continue;
+        PacketUnitUpdateStat l_Packet;
+        l_Packet.BuildPacket(GetType(), GetID(), i, GetPointsSet().GetStat((eStats)i));
+        GetSession()->send(l_Packet.m_Packet);
+    }
+}
+
+bool Player::AddPointsStat(eStats p_TypeStat, uint8 p_Nb)
+{
+    if (!Unit::AddPointsStat(p_TypeStat, p_Nb))
+        return false;
+
+    PacketUnitUpdateStat l_Packet;
+    l_Packet.BuildPacket(GetType(), GetID(), p_TypeStat, GetPointsSet().GetStat(p_TypeStat));
+    GetSession()->send(l_Packet.m_Packet);
+    PacketUnitUpdateStat l_Packet2;
+    l_Packet2.BuildPacket(GetType(), GetID(), eStats::Free, GetPointsSet().GetStat(eStats::Free));
+    GetSession()->send(l_Packet2.m_Packet);
+    return true;
+}
+
+bool Player::SubPointsStat(eStats p_TypeStat, uint8 p_Nb)
+{
+    if (!Unit::SubPointsStat(p_TypeStat, p_Nb))
+        return false;
+
+    PacketUnitUpdateStat l_Packet;
+    l_Packet.BuildPacket(GetType(), GetID(), p_TypeStat, GetPointsSet().GetStat(p_TypeStat));
+    GetSession()->send(l_Packet.m_Packet);
+    PacketUnitUpdateStat l_Packet2;
+    l_Packet2.BuildPacket(GetType(), GetID(), eStats::Free, GetPointsSet().GetStat(eStats::Free));
+    GetSession()->send(l_Packet2.m_Packet);
+    return true;
 }

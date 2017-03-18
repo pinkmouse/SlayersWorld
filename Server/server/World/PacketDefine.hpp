@@ -4,14 +4,16 @@
 enum CMSG : uint8
 {
     C_Connexion = 1,
+    C_Save = 2,
     C_UnitCreate = 10,
     C_LoadingPong = 11,
+    C_StatAction = 12,
     C_UnitGoDirection = 20,
     C_UnitStopMovement = 21,
     C_UnitTalk = 23,
     C_UnitStartAttack = 24,
     C_UnitStopAttack = 25,
-    C_UnitEventAction = 26
+    C_UnitEventAction = 26,
 };
 
 enum SMSG : uint8
@@ -37,7 +39,7 @@ enum SMSG : uint8
     S_UnitStopAttack = 27,
     S_UnitUpdateSkin = 28,
     S_UnitPlayVisual = 30,
-    S_UnitUpdateSpeed = 31,
+    S_UnitUpdateStat = 31,
     S_LoadingPing = 32,
     S_BlockBind = 40
 };
@@ -401,23 +403,25 @@ struct PacketUnitCastBar
     }
 };
 
-struct PacketUnitUpdateSpeed
+struct PacketUnitUpdateStat
 {
     WorldPacket m_Packet;
     uint8 m_PacketID;
     uint8 m_TypeID;
     uint16 m_ID;
-    uint8 m_Speed;
+    uint8 m_TypeStat;
+    uint16 m_StatNb;
 
-    PacketUnitUpdateSpeed() :
-        m_PacketID(SMSG::S_UnitUpdateSpeed) {}
+    PacketUnitUpdateStat() :
+        m_PacketID(SMSG::S_UnitUpdateStat) {}
 
-    void BuildPacket(uint8 p_TypeID, uint16 p_ID, uint8 p_Speed)
+    void BuildPacket(uint8 p_TypeID, uint16 p_ID, uint8 p_TypeStat, uint16 p_StatNb)
     {
-        m_Packet << m_PacketID << p_TypeID << p_ID << p_Speed;
+        m_Packet << m_PacketID << p_TypeID << p_ID << p_TypeStat << p_StatNb;
         m_TypeID = p_TypeID;
         m_ID = p_ID;
-        m_Speed = p_Speed;
+        m_TypeStat = p_TypeStat;
+        m_StatNb = p_StatNb;
     }
 };
 

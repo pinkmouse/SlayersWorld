@@ -63,15 +63,9 @@ void  InterfaceManager::ManageEvent(sf::Event p_Event)
     switch (p_Event.type)
     {
         case sf::Event::KeyPressed: ///< Key Press
-            if (p_Event.key.code == sf::Keyboard::Escape) ///< Bypass for Menu
-            {
-                if (m_MenuManager.IsOpen())
-                    m_MenuManager.Close();
-                else
+            if (p_Event.key.code == sf::Keyboard::Escape && !m_MenuManager.IsOpen()) ///< Bypass for Menu
                     m_MenuManager.Open();
-                break;
-            }
-            if (m_MenuManager.IsOpen())
+            else if (m_MenuManager.IsOpen())
             {
                 m_MenuManager.KeyPress(p_Event.key.code);
                 break;
@@ -504,4 +498,9 @@ sf::Vector2i InterfaceManager::TextSplitToFit(uint16 p_MaxSizeX, sf::Text & p_Tx
     l_FinalSquare.y = (uint16)p_Txt.getGlobalBounds().height;
 
     return l_FinalSquare;
+}
+
+MenuManager* InterfaceManager::GetMenuManager()
+{
+    return &m_MenuManager;
 }
