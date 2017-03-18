@@ -179,7 +179,7 @@ void Player::SetXp(uint32 p_Xp)
         SetLevel(GetLevel() + 1);
 
 		/// Earn new point
-        m_PointsSet.SetStat(eStats::Free, m_PointsSet.GetStat(eStats::Free) + 1);
+        AddPointsStat(eStats::Free, 1);
 
         PacketUnitPlayVisual l_Packet;
         l_Packet.BuildPacket(GetType(), GetID(), 4);
@@ -192,6 +192,16 @@ void Player::SetXp(uint32 p_Xp)
         m_Session->SendUpdateXpPct(l_Pct);
     m_Xp = p_Xp;
 }
+
+void Player::SetLevel(const uint8 & p_Level)
+{
+    Unit::SetLevel(p_Level);
+
+    PacketUnitUpdateStat l_Packet2;
+    l_Packet2.BuildPacket(GetType(), GetID(), eStats::Level, p_Level);
+    GetSession()->send(l_Packet2.m_Packet);
+}
+
 
 void Player::SendMsg(const std::string & p_Msg)
 {
@@ -433,9 +443,12 @@ bool Player::AddPointsStat(eStats p_TypeStat, uint8 p_Nb)
     if (!Unit::AddPointsStat(p_TypeStat, p_Nb))
         return false;
 
-    PacketUnitUpdateStat l_Packet;
-    l_Packet.BuildPacket(GetType(), GetID(), p_TypeStat, GetPointsSet().GetStat(p_TypeStat));
-    GetSession()->send(l_Packet.m_Packet);
+    if (p_TypeStat != eStats::Free)
+    {
+        PacketUnitUpdateStat l_Packet;
+        l_Packet.BuildPacket(GetType(), GetID(), p_TypeStat, GetPointsSet().GetStat(p_TypeStat));
+        GetSession()->send(l_Packet.m_Packet);
+    }
     PacketUnitUpdateStat l_Packet2;
     l_Packet2.BuildPacket(GetType(), GetID(), eStats::Free, GetPointsSet().GetStat(eStats::Free));
     GetSession()->send(l_Packet2.m_Packet);

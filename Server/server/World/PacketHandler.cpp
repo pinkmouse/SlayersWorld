@@ -258,7 +258,10 @@ void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldS
     /// Send to Player
     p_WorldSocket->SendPlayerCreate(l_Player->GetID(), l_Player->GetName(), l_Player->GetLevel(), l_Player->GetResourceNb(eResourceType::Health), l_Player->GetResourceNb(eResourceType::Mana), l_Player->GetResourceNb(eResourceType::Alignment), l_Player->GetSkinID(), l_Player->GetMapID(), l_Player->GetPosX(), l_Player->GetPosY(), l_Player->GetOrientation());
     p_WorldSocket->SendUpdateXpPct(g_LevelManager->XpPct(l_Player->GetLevel(), l_Player->GetXp()));
+
+    /// Trick to send stats to player
     l_Player->SetPointsSet(g_SqlManager->GetPointsSetForPlayer(l_Player->GetID()));
+    l_Player->SetLevel(l_Player->GetLevel());
 
     /// Send KeyBoard Binds
     for (std::map< eKeyBoardAction, uint8 >::iterator l_It = l_Player->GetKeyBoardBinds()->begin(); l_It != l_Player->GetKeyBoardBinds()->end(); ++l_It)

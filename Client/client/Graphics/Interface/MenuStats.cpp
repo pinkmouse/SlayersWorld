@@ -8,6 +8,8 @@ MenuStats::MenuStats() :
     m_Pos.y = 30;
 
     AddElement(0, 0, "Stats");
+    AddElement(0, 1, "Level");
+    AddElement(0, 2, "0");
     AddElement(0, 2, "Free");
     AddElement(1, 2, "0");
     AddElement(0, 3, "Dexterity");

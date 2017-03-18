@@ -84,6 +84,7 @@ enum eStats
     Force,
     Stamina,
     Speed,
+    Level,
     MaxStat
 };
 

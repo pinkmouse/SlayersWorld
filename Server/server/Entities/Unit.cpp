@@ -1070,6 +1070,12 @@ void Unit::SetSpeed(float p_Speed)
 
 bool Unit::AddPointsStat(eStats p_TypeStat, uint8 p_NbPoints)
 {
+    if (p_TypeStat == eStats::Free)
+    {
+        m_PointsSet.SetStat(p_TypeStat, m_PointsSet.GetStat(p_TypeStat) + p_NbPoints);
+        return true;
+    }
+
     if (m_PointsSet.GetStat(eStats::Free) <= 0)
         return false;
 

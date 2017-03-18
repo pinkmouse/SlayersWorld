@@ -26,6 +26,7 @@ public:
     void SetPointsSet(const PointsSet &);
     bool AddPointsStat(eStats, uint8);
     bool SubPointsStat(eStats, uint8);
+    void SetLevel(const uint8 &);
 
     /* RESOURCES */
     uint32 GetXp() const;

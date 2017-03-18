@@ -35,7 +35,7 @@ public:
     uint8 GetSpeedUint8() const;
     bool IsDeath();
     void SetName(const std::string &);
-    void SetLevel(const uint8 &);
+    virtual void SetLevel(const uint8 &);
     virtual void Respawn();
     bool IsInWorld() const;
     void SetInWorld(bool);

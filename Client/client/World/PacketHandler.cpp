@@ -559,15 +559,20 @@ void PacketHandler::HandleUpdateStat(WorldPacket &p_Packet)
             g_Socket->SendUnitUnknow(l_TypeID, l_ID); ///< Ask for unknow unit to server
             return;
         }
-
         if (l_TypeStat == eStats::Speed)
         {
             float l_SpeedFloat = (float)l_StatNb / 10.0f;
             l_Unit->SetSpeed(l_SpeedFloat);
         }
+
         MenuManager* l_MenuManager = m_InterfaceManager->GetMenuManager();
         if (l_MenuManager == nullptr)
             return;
+        if (l_TypeStat == eStats::Level)
+        {
+            l_MenuManager->AddElementToMenu(eMenuType::StatsMenu, 1, 1, std::to_string(l_StatNb));
+            return;
+        }
         l_MenuManager->AddElementToMenu(eMenuType::StatsMenu, 1, l_TypeStat + 2, std::to_string(l_StatNb));
     }
 }
