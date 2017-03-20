@@ -50,7 +50,7 @@ void Events::Update()
     }
 
     /// Need update to check if when attack is finish we have direction key press
-    if (!l_MovementHandler->IsInMovement() && !l_MovementHandler->IsInAttack() && !l_MovementHandler->GetInColision())
+    if (!l_MovementHandler->IsInMovement() && !l_MovementHandler->GetInColision())
     {
         if (m_KeyPressed.size() > 0) ///< Check the others action
         {
@@ -102,12 +102,7 @@ void Events::KeyRelease(eKeyBoardAction p_NewKey)
         m_KeyPressed.erase(l_It);
         MovementHandler* l_MovementHandler = g_Player->GetMovementHandler();
 
-        if (p_NewKey == eKeyBoardAction::KeyBoardAutoAttack)
-        {
-            g_Socket->SendStopAttack();
-            l_MovementHandler->StopAttack();
-        }
-        else if (m_KeyPressed.size() > 0  && !l_MovementHandler->IsInAttack()) ///< Check the others action
+        if (m_KeyPressed.size() > 0) ///< Check the others action
         {
             switch (m_KeyPressed.back())
             {
@@ -133,10 +128,15 @@ void Events::KeyRelease(eKeyBoardAction p_NewKey)
         else if ((p_NewKey == eKeyBoardAction::KeyBoardDown ||
             p_NewKey == eKeyBoardAction::KeyBoardUp ||
             p_NewKey == eKeyBoardAction::KeyBoardLeft ||
-            p_NewKey == eKeyBoardAction::KeyBoardRight) && !l_MovementHandler->IsInAttack()) ///< If the last key release
+            p_NewKey == eKeyBoardAction::KeyBoardRight)) ///< If the last key release
         {
             g_Socket->SendStopMovement(l_MovementHandler->GetPosX(), l_MovementHandler->GetPosY());
             g_Player->GetMovementHandler()->StopMovement();
+        }
+        if (p_NewKey == eKeyBoardAction::KeyBoardAutoAttack)
+        {
+            g_Socket->SendStopAttack();
+            l_MovementHandler->StopAttack();
         }
     }
 }
@@ -177,35 +177,28 @@ void Events::NewKeyPressed(eKeyBoardAction p_NewKey)
             if (m_KeyPressed.size() > MAX_KEY_SAVE)
                 m_KeyPressed.erase(m_KeyPressed.begin());
             m_KeyPressed.push_back(p_NewKey);
-            if (!l_MovementHandler->IsInAttack())
-            {
-                g_Player->GetMovementHandler()->StartMovement((Orientation)m_DirectionMap[p_NewKey]);
-                g_Player->SetOrientation((Orientation)m_DirectionMap[p_NewKey]);
-                g_Socket->SendGoDirection((Orientation)m_DirectionMap[p_NewKey], g_Player->GetPosX(), g_Player->GetPosY());
-            }
+
+            g_Player->GetMovementHandler()->StartMovement((Orientation)m_DirectionMap[p_NewKey]);
+            g_Player->SetOrientation((Orientation)m_DirectionMap[p_NewKey]);
+            g_Socket->SendGoDirection((Orientation)m_DirectionMap[p_NewKey], g_Player->GetPosX(), g_Player->GetPosY());
             break;
         }
         /// Attack
         case eKeyBoardAction::KeyBoardAutoAttack:
         {
-        //case sf::Keyboard::Key::S:
-
             MovementHandler* l_MovementHandler = g_Player->GetMovementHandler();
 
             if (l_MovementHandler->IsInAttack())
                 return;
 
-            g_Socket->SendStopMovement(l_MovementHandler->GetPosX(), l_MovementHandler->GetPosY());
+            /*g_Socket->SendStopMovement(l_MovementHandler->GetPosX(), l_MovementHandler->GetPosY());
             l_MovementHandler->StopMovement();
             if (m_KeyPressed.size() > MAX_KEY_SAVE)
-                m_KeyPressed.erase(m_KeyPressed.begin());
+                m_KeyPressed.erase(m_KeyPressed.begin());*/
             m_KeyPressed.push_back(p_NewKey);
 
-            if (!l_MovementHandler->IsInAttack())
-            {
-                g_Socket->SendStartAttack(g_Player->GetPosX(), g_Player->GetPosY());
-                l_MovementHandler->StartAttack();
-            }
+            g_Socket->SendStartAttack(g_Player->GetPosX(), g_Player->GetPosY());
+            l_MovementHandler->StartAttack();
             break;
         }
         /// Action

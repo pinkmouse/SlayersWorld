@@ -60,7 +60,7 @@ bool MovementHandler::CheckNextMovement(uint32 p_PosX, uint32 p_PosY)
     MovementAction l_MovementAction = m_MovementStack.front();
     if (!l_MovementAction.m_PositionOptions)
         l_NextMovement = true;
-    else if (!IsInAttack())
+    else
     {
         switch (GetOrientation())
         {

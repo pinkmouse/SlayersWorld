@@ -346,10 +346,6 @@ void InterfaceManager::Draw(Window & p_Window)
         return;
     }
 
-    std::vector<Menu*> l_ListOpenMenu = m_MenuManager.GetOpenMenus();
-    for (std::vector<Menu*>::iterator l_It = l_ListOpenMenu.begin(); l_It != l_ListOpenMenu.end(); ++l_It)
-        DrawMenu(p_Window, (*l_It));
-
     /// Draw Flask Life
     TileSprite l_FlaskEmpty = GetFlask(0, false);
     l_FlaskEmpty.setPosition(0, Y_WINDOW - (FLASK_SIZE_Y * FLASK_SCALE) - (m_XpTexture.getSize().y / 2 * XP_BAR_SCALE));
@@ -424,6 +420,10 @@ void InterfaceManager::Draw(Window & p_Window)
     DrawAlign(p_Window);
     DrawWarnings(p_Window);
     //DrawClock(p_Window);
+
+    std::vector<Menu*> l_ListOpenMenu = m_MenuManager.GetOpenMenus();
+    for (std::vector<Menu*>::iterator l_It = l_ListOpenMenu.begin(); l_It != l_ListOpenMenu.end(); ++l_It)
+        DrawMenu(p_Window, (*l_It));
 }
 
 void InterfaceManager::AddWarningMsg(eTypeWarningMsg p_Type, const std::string & p_Msg)
