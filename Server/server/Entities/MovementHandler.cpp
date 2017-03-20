@@ -1,9 +1,10 @@
 #include "MovementHandler.hpp"
 #include "../Map/Map.hpp"
 
-MovementHandler::MovementHandler(uint8 p_SizeX, uint8 p_SizeY) :
+MovementHandler::MovementHandler(uint8 p_SizeX, uint8 p_SizeY, TypeUnit p_Type) :
     m_SizeX(p_SizeX),
-    m_SizeY(p_SizeY)
+    m_SizeY(p_SizeY),
+    m_Type(p_Type)
 {
     m_Speed = 1.0f;
     m_InMovement = false;
@@ -45,6 +46,9 @@ bool MovementHandler::IsInColision(int64 p_PosX, int64 p_PosY) const
             return true;
 
         if (l_Case->IsBlocking())
+            return true;
+
+        if (m_Type == TypeUnit::CREATURE && !l_Case->CanBeWalk())
             return true;
     }
 

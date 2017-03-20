@@ -15,6 +15,7 @@ public:
     bool IsInWorld() const;
     Map* GetMap() const;
     virtual void UnitEnterInCase(Unit*) = 0;
+    virtual bool CanBeWalk() = 0;
 
 private:
     Map* m_Map;

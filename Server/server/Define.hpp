@@ -1,4 +1,5 @@
 #pragma once
+#include <ctime>
 #include <string>
 #include <map>
 #include <vector>
@@ -375,3 +376,16 @@ static uint32 PixelToCase(uint32 p_NbPixel) { return p_NbPixel / TILE_SIZE; }
 static uint32 CaseToPixel(uint32 p_NbCase) { return p_NbCase * TILE_SIZE; }
 static Position PositionToCasePosition(const Position & p_Pos) { return Position(PixelToCase(p_Pos.m_X), PixelToCase(p_Pos.m_Y)); }
 static float InYard(float p_YardInPixel) { return p_YardInPixel / (float)TILE_SIZE; }
+
+static void Log(const std::string & p_Str)
+{
+    time_t l_Time;
+    struct tm l_TimeInfo;
+    char l_Format[32];
+
+    time(&l_Time);
+    localtime_s(&l_TimeInfo, &l_Time);
+
+    strftime(l_Format, 32, "%Y-%m-%d %H-%M", &l_TimeInfo);
+    printf("[%s] %s\n", l_Format, p_Str.c_str());
+}

@@ -33,7 +33,7 @@ void Map::AddAdjacentCases(const Position & p_Pos)
 
             Position l_Pos((uint32)i, (uint32)j);
             Case* l_Case = GetCase(l_Pos.m_X * TILE_SIZE, l_Pos.m_Y * TILE_SIZE);
-            if (l_Case == nullptr || l_Case->IsBlocking())
+            if (l_Case == nullptr || l_Case->IsBlocking() || !l_Case->CanBeWalk())
                 continue;
 
             if (!AlreadyInList(l_Pos, m_CloseList))

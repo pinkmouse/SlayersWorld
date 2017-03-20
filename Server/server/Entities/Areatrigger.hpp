@@ -11,6 +11,7 @@ public:
     void SetData(uint8, uint32);
     uint32 GetData(uint8);
     void UnitEnterInCase(Unit*);
+    bool CanBeWalk();
 
 private:
     std::map<uint8, uint32> m_Datas;

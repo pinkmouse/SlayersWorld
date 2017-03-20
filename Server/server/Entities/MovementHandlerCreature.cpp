@@ -4,7 +4,7 @@
 
 MovementHandlerCreature::MovementHandlerCreature(Unit* p_Creature, uint8 p_SizeX, uint8 p_SizeY) :
     m_Owner(p_Creature),
-    MovementHandler::MovementHandler(p_SizeX, p_SizeY)
+    MovementHandler::MovementHandler(p_SizeX, p_SizeY, TypeUnit::CREATURE)
 {
 }
 

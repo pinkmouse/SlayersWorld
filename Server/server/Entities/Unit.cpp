@@ -44,7 +44,7 @@ Unit::Unit(uint16 p_ID, TypeUnit p_Type, eFactionType p_FactionType)
     if (m_Type == TypeUnit::CREATURE)
         m_MovementHandler = new MovementHandlerCreature(this, m_SizeX, m_SizeY);
     else
-        m_MovementHandler = new MovementHandler(m_SizeX, m_SizeY);
+        m_MovementHandler = new MovementHandler(m_SizeX, m_SizeY, m_Type);
 }
 
 Player* Unit::ToPlayer()

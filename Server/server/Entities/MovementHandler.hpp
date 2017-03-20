@@ -9,7 +9,7 @@ class Map;
 class MovementHandler
 {
 public:
-    MovementHandler(uint8, uint8);
+    MovementHandler(uint8, uint8, TypeUnit);
     ~MovementHandler();
     virtual void StartMovement(Orientation p_Orientation);
     virtual void StopMovement();
@@ -52,6 +52,7 @@ protected:
     bool m_InAttack;
     bool m_StopAttack;
     float m_Speed;
+    TypeUnit m_Type;
     Orientation m_Orientation;
     
     Position m_Pos;

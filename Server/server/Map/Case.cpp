@@ -1,4 +1,5 @@
 #include "Case.hpp"
+#include "../Entities/Areatrigger.hpp"
 
 Case::Case(uint16 p_ID, uint16 p_X, uint16 p_Y) :
 	m_ID(p_ID),
@@ -20,6 +21,16 @@ uint16 Case::GetID() const
 bool Case::IsBlocking() const
 {
     return m_Block;
+}
+
+bool Case::CanBeWalk()
+{
+    for (uint8 i = 0; i < m_DynamicObjectList.size(); ++i)
+    {
+        if (!m_DynamicObjectList[i]->CanBeWalk())
+            return false;
+    }
+    return true;
 }
 
 void Case::SetBlock(bool p_Block)

@@ -32,6 +32,13 @@ void Areatrigger::Update(sf::Time m_Diff)
     }
 }
 
+bool Areatrigger::CanBeWalk()
+{
+    if (m_Type == eAreatriggerType::AreatriggerTeleport)
+        return false;
+    return true;
+}
+
 void Areatrigger::UnitEnterInCase(Unit* p_Unit)
 {
     if (m_Type == eAreatriggerType::AreatriggerTeleport)

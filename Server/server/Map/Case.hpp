@@ -10,6 +10,7 @@ public:
 	Case(uint16, uint16, uint16);
 	~Case();
 	void SetBlock(bool);
+    bool CanBeWalk();
     bool IsBlocking() const;
     uint16 GetID() const;
     void AddDynamicOject(DynamicObject*);
