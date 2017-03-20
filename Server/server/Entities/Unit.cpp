@@ -319,6 +319,8 @@ void Unit::DealDamage(Unit* p_Victim, DamageInfo p_DamageInfo)
     if (p_DamageInfo.m_Result == DamageResult::Miss)
         p_DamageInfo.m_Damage = 0;
 
+    if (IsCreature())
+        p_DamageInfo.m_Damage /= 2; ///< Damage from creature are lower
     int8 l_NewHealth = std::max(p_Victim->GetResourceNb(eResourceType::Health) - p_DamageInfo.m_Damage, 0);
 
     if (IsPlayer())
@@ -387,6 +389,8 @@ void Unit::AutoAttack(Unit* p_Victim)
 	uint16 l_DexterityDefenser = p_Victim->GetPointsSet().GetStat(eStats::Dexterity);
 	l_Balance = l_DexterityDefenser - l_DexterityAttacker;
 	int8 l_MissChance = 20 + (l_Balance * 4);
+    if (IsInFront(p_Victim))
+        l_MissChance += 15;
 	l_MissChance = std::max(l_MissChance, (int8)0);
 	l_MissChance = std::min(l_MissChance, (int8)100);
 	bool l_Miss = (rand() % 100) <= l_MissChance;
