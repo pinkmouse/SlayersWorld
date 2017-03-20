@@ -48,27 +48,6 @@ void Events::Update()
             l_MovementHandler->StopAttack();
         }
     }
-
-    /// Need update to check if when attack is finish we have direction key press
-    if (!l_MovementHandler->IsInMovement() && !l_MovementHandler->GetInColision())
-    {
-        if (m_KeyPressed.size() > 0) ///< Check the others action
-        {
-            switch (m_KeyPressed.back())
-            {
-                case eKeyBoardAction::KeyBoardUp:
-                case eKeyBoardAction::KeyBoardDown:
-                case eKeyBoardAction::KeyBoardLeft:
-                case eKeyBoardAction::KeyBoardRight:
-                {
-                    g_Socket->SendGoDirection((Orientation)m_DirectionMap[m_KeyPressed.back()], g_Player->GetPosX(), g_Player->GetPosY());
-                    g_Player->SetOrientation((Orientation)m_DirectionMap[m_KeyPressed.back()]);
-                    g_Player->StartMovement();
-                    break;
-                }
-            }
-        }
-    }
 }
 
 void Events::LostFocus()
@@ -102,6 +81,7 @@ void Events::KeyRelease(eKeyBoardAction p_NewKey)
         m_KeyPressed.erase(l_It);
         MovementHandler* l_MovementHandler = g_Player->GetMovementHandler();
 
+        bool l_DirectionKeyAfter = false;
         if (m_KeyPressed.size() > 0) ///< Check the others action
         {
             switch (m_KeyPressed.back())
@@ -114,18 +94,12 @@ void Events::KeyRelease(eKeyBoardAction p_NewKey)
                     g_Socket->SendGoDirection((Orientation)m_DirectionMap[m_KeyPressed.back()], g_Player->GetPosX(), g_Player->GetPosY());
                     g_Player->SetOrientation((Orientation)m_DirectionMap[m_KeyPressed.back()]);
                     g_Player->StartMovement();
-                    break;
-                }
-                case eKeyBoardAction::KeyBoardAutoAttack:
-                {           
-                    MovementHandler* l_MovementHandler = g_Player->GetMovementHandler();
-                    if (!l_MovementHandler->IsInAttack())
-                        l_MovementHandler->StartAttack();
+                    l_DirectionKeyAfter = true;
                     break;
                 }
             }
         }
-        else if ((p_NewKey == eKeyBoardAction::KeyBoardDown ||
+        if (!l_DirectionKeyAfter && (p_NewKey == eKeyBoardAction::KeyBoardDown ||
             p_NewKey == eKeyBoardAction::KeyBoardUp ||
             p_NewKey == eKeyBoardAction::KeyBoardLeft ||
             p_NewKey == eKeyBoardAction::KeyBoardRight)) ///< If the last key release
@@ -133,7 +107,7 @@ void Events::KeyRelease(eKeyBoardAction p_NewKey)
             g_Socket->SendStopMovement(l_MovementHandler->GetPosX(), l_MovementHandler->GetPosY());
             g_Player->GetMovementHandler()->StopMovement();
         }
-        if (p_NewKey == eKeyBoardAction::KeyBoardAutoAttack)
+        else if (p_NewKey == eKeyBoardAction::KeyBoardAutoAttack)
         {
             g_Socket->SendStopAttack();
             l_MovementHandler->StopAttack();
