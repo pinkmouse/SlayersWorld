@@ -13,7 +13,7 @@ GroupManager* g_GroupManager;
 
 int main()
 {
-	printf("Starting Slayers World...\n");
+    fprintf(stdout, "Starting Slayers World...\n");
 	World* l_World = new World();
 	l_World->Run();
 	return 0;
