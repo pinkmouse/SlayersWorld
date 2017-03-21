@@ -111,6 +111,7 @@ find_package(MySQL REQUIRED)
 include_directories(${SFML_INCLUDE_DIR}
                     ${MYSQL_INCLUDE_DIR})
 target_link_libraries(${EXECUTABLE_NAME} ${MYSQL_LIBRARY} ${SFML_LIBRARIES})
+add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 
 if(CMAKE_COMPILER_IS_GNUCXX)
     add_definitions(-std=gnu++0x)

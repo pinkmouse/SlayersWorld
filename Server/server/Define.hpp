@@ -379,14 +379,16 @@ static float InYard(float p_YardInPixel) { return p_YardInPixel / (float)TILE_SI
 
 static void Log(const std::string & p_Str)
 {
-    time_t l_Time;
-    struct tm l_TimeInfo;
+    time_t l_Time = time(NULL);;
+    //printf("local: %s", asctime(localtime(&l_Time)));
+
+    struct tm * l_TimeInfo;
     char l_Format[32];
 
     time(&l_Time);
-    localtime_s(&l_TimeInfo, &l_Time);
+    l_TimeInfo = localtime(&l_Time);
 
-    strftime(l_Format, 32, "%Y-%m-%d %H-%M", &l_TimeInfo);
+    strftime(l_Format, 32, "%Y-%m-%d %H-%M", l_TimeInfo);
     printf("[%s] %s\n", l_Format, p_Str.c_str());
     fwrite(p_Str.c_str(), sizeof(char), sizeof(p_Str.c_str()), stdout);
 }
