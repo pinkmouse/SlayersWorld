@@ -5,7 +5,7 @@
 #include <vector>
 
 #define MAP_PATH "map/"
-#define CONF_FILE "server.conf"
+#define CONF_FILE "conf/server.conf"
 
 #define GRID_SIZE 12
 #define TILE_SIZE 16
