@@ -390,8 +390,4 @@ static void Log(const std::string & p_Str)
 
     strftime(l_Format, 32, "%Y-%m-%d %H-%M", l_TimeInfo);
     printf("[%s] %s\n", l_Format, p_Str.c_str());
-    fwrite(p_Str.c_str(), sizeof(char), sizeof(p_Str.c_str()), stdout);
-    fwrite(p_Str.c_str(), sizeof(char), sizeof(p_Str.c_str()), stderr);
-    fprintf(stdout, "[Timed out] ");
-    fprintf(stderr, "[Timed out] ");
 }
