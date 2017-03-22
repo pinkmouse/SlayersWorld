@@ -95,10 +95,19 @@ bool MovementHandler::CheckNextMovement(uint32 p_PosX, uint32 p_PosY)
 
     if (l_MovementAction.m_PositionOptions)
     {
-        m_Pos.x = l_MovementAction.m_Pos.x;
-        m_Pos.y = l_MovementAction.m_Pos.y;
+        switch (m_Orientation)
+        {
+        case Orientation::Down:
+        case Orientation::Up:
+            m_Pos.y = l_MovementAction.m_Pos.y;
+            break;
+        case Orientation::Left:
+        case Orientation::Right:
+            m_Pos.x = l_MovementAction.m_Pos.x;
+            break;
+        }
     }
-    m_MovementStack.pop();
+    m_MovementStack.pop_front();
 
     if (l_MovementAction.m_ActionType == eActionType::Go)
         StartMovement((Orientation)l_MovementAction.m_Orientation);
@@ -124,6 +133,7 @@ void MovementHandler::Update(sf::Time p_Diff)
     int64 l_PosY = m_Pos.y;
 
     m_DiffTime += p_Diff.asMicroseconds();
+    MovementAction* l_NextMovementAction = GetNextMovementAction();
 
     while (m_DiffTime > ((UPDATE_TIME_MOVEMENT / (STEP_SIZE * m_Speed)) * 1000)) ///< 1000 because microsecond
     {
@@ -145,6 +155,30 @@ void MovementHandler::Update(sf::Time p_Diff)
         default:
             break;
         }
+        switch (m_Orientation)
+        {
+        case Orientation::Down:
+        case Orientation::Up:
+            if (l_NextMovementAction == nullptr)
+                break;
+
+            if (l_NextMovementAction->m_Pos.x > l_PosX)
+                l_PosX += (uint32)((STEP_SIZE / STEP_SIZE));
+            else if (l_NextMovementAction->m_Pos.x < l_PosX)
+                l_PosX -= (uint32)((STEP_SIZE / STEP_SIZE));
+            break;
+        case Orientation::Left:
+        case Orientation::Right:
+            if (l_NextMovementAction == nullptr)
+                break;
+
+            if (l_NextMovementAction->m_Pos.y > l_PosY)
+                l_PosY += (uint32)((STEP_SIZE / STEP_SIZE));
+            else if (l_NextMovementAction->m_Pos.y < l_PosY)
+                l_PosY -= (uint32)((STEP_SIZE / STEP_SIZE));
+            break;
+        }
+
         m_DiffTime -= (uint64)((UPDATE_TIME_MOVEMENT / (STEP_SIZE * m_Speed)) * 1000);
 
         if (!IsInColision(l_PosX, l_PosY))
@@ -278,7 +312,6 @@ void MovementHandler::StartAttack()
     if (m_InAttack)
         return;
    /* StopMovement();*/
-    printf("-> start attack \n"),
 
     m_DiffTimeAnim = 0;
     m_MovementPosition = 2;
@@ -389,7 +422,7 @@ void MovementHandler::AddMovementToStack(eActionType p_Action)
     MovementAction l_Act;
     l_Act.m_ActionType = p_Action;
     l_Act.m_PositionOptions = false;
-    m_MovementStack.push(l_Act);
+    m_MovementStack.push_back(l_Act);
 }
 
 void MovementHandler::AddMovementToStack(eActionType p_Action, Position p_Pos, Orientation p_Orientation)
@@ -399,11 +432,23 @@ void MovementHandler::AddMovementToStack(eActionType p_Action, Position p_Pos, O
     l_Act.m_PositionOptions = true;
     l_Act.m_Pos = p_Pos;
     l_Act.m_Orientation = p_Orientation;
-    m_MovementStack.push(l_Act);
+    m_MovementStack.push_back(l_Act);
 }
 
 void MovementHandler::ClearMovementStack()
 {
-    while (!m_MovementStack.empty())
-        m_MovementStack.pop();
+    m_MovementStack.clear();
+}
+
+MovementAction* MovementHandler::GetNextMovementAction()
+{
+    if (m_MovementStack.size() < 2)
+        return nullptr;
+
+    for (uint8 i = 1; i < m_MovementStack.size(); ++i)
+    {
+        if (m_MovementStack[1].m_PositionOptions)
+            return &m_MovementStack[i];
+    }
+    return nullptr;
 }

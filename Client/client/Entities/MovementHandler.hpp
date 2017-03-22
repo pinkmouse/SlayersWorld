@@ -2,9 +2,17 @@
 #include <SFML/System/Clock.hpp>
 #include "../Define.hpp"
 #include "../World/ClockHandler.hpp"
-#include <queue>
+#include <deque>
 
 class Map;
+
+struct MovementAction
+{
+    eActionType m_ActionType;
+    bool m_PositionOptions;
+    Position m_Pos;
+    Orientation m_Orientation;
+};
 
 class MovementHandler
 {
@@ -45,6 +53,7 @@ public:
     void AddMovementToStack(eActionType, Position, Orientation);
     void AddMovementToStack(eActionType);
     void ClearMovementStack();
+    MovementAction* GetNextMovementAction();
 
 private:
     bool IsInColision(int64, int64) const;
@@ -67,12 +76,6 @@ private:
     uint8 m_SizeY;
 
     Map* m_Map;
-    struct MovementAction
-    {
-        eActionType m_ActionType;
-        bool m_PositionOptions;
-        Position m_Pos;
-        Orientation m_Orientation;
-    };
-    std::queue<MovementAction> m_MovementStack;
+    std::deque<MovementAction> m_MovementStack;
+    MovementAction m_NextMovement;
 };
