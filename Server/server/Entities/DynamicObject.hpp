@@ -16,6 +16,7 @@ public:
     Map* GetMap() const;
     virtual void UnitEnterInCase(Unit*) = 0;
     virtual bool CanBeWalk() = 0;
+    virtual bool IsBlocking() = 0;
 
 private:
     Map* m_Map;

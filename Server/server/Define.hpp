@@ -116,6 +116,12 @@ enum eGossipType
     ValidQuest = 3
 };
 
+enum eDynamicObjectType
+{
+    AreaTriggerType = 0,
+    GameObjectType
+};
+
 enum eAreatriggerType
 {
     AreatriggerTeleport = 0,

@@ -6,7 +6,8 @@ World::World()
     m_Run(true),
     m_PacketHandler(new PacketHandler()),
     m_CreatureManager(new UnitManager()),
-    m_RequiredManager(new RequiredManager())
+    m_RequiredManager(new RequiredManager()),
+    m_DynamicObjectManager(new DynamicObjectManager())
 {
     g_MapManager = new MapManager();
 	g_Config = new ConfigHandler();
@@ -47,7 +48,7 @@ bool World::Initialize()
         printf("Error Initialize XpLevel...\n");
 
     printf("Initialize Areatrigger\n");
-    if (!g_SqlManager->InitializeAreatrigger())
+    if (!g_SqlManager->InitializeAreatrigger(m_DynamicObjectManager))
         printf("Error Initialize Areatrigger...\n");
 
     printf("Initialize SpellEffects\n");

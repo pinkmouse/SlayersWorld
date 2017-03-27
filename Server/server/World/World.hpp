@@ -9,6 +9,7 @@
 #include "PacketHandler.hpp"
 #include "ClockHandler.hpp"
 #include "../Map/MapManager.hpp"
+#include "../Entities/DynamicObjectManager.hpp"
 #include "../System/Required/RequiredManager.hpp"
 #include "UnitManager.hpp"
 
@@ -30,6 +31,7 @@ private:
     /// MANAGERS
     UnitManager* m_CreatureManager;
     RequiredManager* m_RequiredManager;
+    DynamicObjectManager *m_DynamicObjectManager;
 
 	/// NETWORK
 	void NetworkLoop();

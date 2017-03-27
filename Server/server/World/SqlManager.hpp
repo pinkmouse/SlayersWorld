@@ -15,6 +15,7 @@
 #include "../Entities/Player.hpp"
 #include "../System/WorldPosition.hpp"
 #include "../Map/MapManager.hpp"
+#include "../Entities/DynamicObjectManager.hpp"
 #include "../System/Required/RequiredManager.hpp"
 #include "UnitManager.hpp"
 
@@ -61,7 +62,7 @@ public:
     bool InitializeKeyBindsForAccount(uint32, Player*);
     bool InitializeSpellsBinds(Player*);
     bool InitializeQuests();
-    bool InitializeAreatrigger();
+    bool InitializeAreatrigger(DynamicObjectManager*);
     CreatureTemplate GetCreatureTemplate(uint16);
     uint16 AddNewCreature(uint16, uint16, uint32, uint32);
     bool InitializeCreature(UnitManager*);

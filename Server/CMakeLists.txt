@@ -95,6 +95,8 @@ add_executable(${EXECUTABLE_NAME}
               server/Entities/WorldObject.hpp
               server/Entities/DynamicObject.cpp
               server/Entities/DynamicObject.hpp
+              server/Entities/DynamicObjectManager.cpp
+              server/Entities/DynamicObjectManager.hpp
               server/Entities/GameObject.cpp
               server/Entities/GameObject.hpp
               server/Entities/Areatrigger.cpp
