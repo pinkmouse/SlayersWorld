@@ -5,7 +5,7 @@
 #include "../Map/Map.hpp"
 #include "../Global.hpp"
 
-Player::Player(uint32 p_AccountID, int32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_Health, uint8 p_Mana, uint8 p_Alignment, uint8 p_SkinID, uint16 p_MapID, uint32 p_PosX, uint32 p_PosY, Orientation p_Orientation, uint32 p_Xp, eAccessType p_AccessType) :
+Player::Player(uint32 p_AccountID, int32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_Health, uint8 p_Mana, uint8 p_Alignment, int16 p_SkinID, uint16 p_MapID, uint32 p_PosX, uint32 p_PosY, Orientation p_Orientation, uint32 p_Xp, eAccessType p_AccessType) :
     Unit(p_ID, TypeUnit::PLAYER, eFactionType::Ally),
     m_AccessType(p_AccessType),
     m_AccountID(p_AccountID)

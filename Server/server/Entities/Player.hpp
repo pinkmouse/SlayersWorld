@@ -9,7 +9,7 @@ class WorldSocket;
 class Player : public Unit
 {
 public:
-    Player(uint32, int32, std::string, uint8, uint8, uint8, uint8, uint8, uint16, uint32, uint32, Orientation, uint32, eAccessType);
+    Player(uint32, int32, std::string, uint8, uint8, uint8, uint8, int16, uint16, uint32, uint32, Orientation, uint32, eAccessType);
     ~Player();
 
     /* BASIC */

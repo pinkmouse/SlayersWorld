@@ -5,7 +5,7 @@
 class Player : public Unit
 {
 public:
-    Player(int32, std::string, uint8, uint8, uint8, uint8, uint8, uint8, uint8, uint16, uint32, uint32, Orientation);
+    Player(int32, std::string, uint8, uint8, uint8, uint8, int16, uint8, uint8, uint16, uint32, uint32, Orientation);
     ~Player();
     void SetAlignment(const uint8 &);
     uint8 GetAlignment() const;

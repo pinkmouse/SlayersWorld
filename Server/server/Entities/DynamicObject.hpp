@@ -8,7 +8,7 @@ class Map;
 class DynamicObject : public Unit
 {
 public:
-    DynamicObject(uint16, uint16, TypeUnit, Map*, uint32, uint32);
+    DynamicObject(uint16, uint16, TypeUnit, Map*, uint32, uint32, int16);
     ~DynamicObject();
     virtual void Update(sf::Time) = 0;
     void SetInWorld(bool);

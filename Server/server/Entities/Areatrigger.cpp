@@ -8,9 +8,10 @@ AreatriggerTemplate::AreatriggerTemplate() :
 {
 }
 
-AreatriggerTemplate::AreatriggerTemplate(uint16 p_Id, float p_Radius, eAreatriggerType p_Type) :
+AreatriggerTemplate::AreatriggerTemplate(uint16 p_Id, float p_Radius, eAreatriggerType p_Type, int16 p_SkinID) :
     m_Id(p_Id),
     m_Type(p_Type),
+    m_SkinID(p_SkinID),
     m_Radius(p_Radius)
 {
 }
@@ -41,17 +42,22 @@ float AreatriggerTemplate::GetRadius() const
     return m_Radius;
 }
 
+int16 AreatriggerTemplate::GetSkinID() const
+{
+    return m_SkinID;
+}
+
+
 eAreatriggerType AreatriggerTemplate::GetType() const
 {
     return m_Type;
 }
 
 Areatrigger::Areatrigger(uint16 p_Id, Map* p_Map, uint32 p_PosX, uint32 p_PosY, AreatriggerTemplate* p_AreatriggerTemplate) :
-    DynamicObject(p_Id, p_AreatriggerTemplate->GetID(), TypeUnit::AREATRIGGER ,p_Map, p_PosX, p_PosY),
+    DynamicObject(p_Id, p_AreatriggerTemplate->GetID(), TypeUnit::AREATRIGGER ,p_Map, p_PosX, p_PosY, p_AreatriggerTemplate->GetSkinID()),
     m_AreatriggerTemplate(p_AreatriggerTemplate)
 {
     m_Timer = 0;
-    m_SkinID = 1;
 }
 
 Areatrigger::~Areatrigger()

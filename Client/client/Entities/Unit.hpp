@@ -21,7 +21,7 @@ public:
     uint16 GetCasePosX() const;
     uint16 GetCasePosY() const;
     uint8 GetLevel() const;
-    uint8 GetSkinID() const;
+    int16 GetSkinID() const;
     uint16 GetID() const;
     float GetSkinZoomFactor() const;
     float GetSpeed() const;
@@ -36,7 +36,7 @@ public:
     void SetLevel(const uint8 &);
     void SetPosX(const uint32 &);
     void SetPosY(const uint32 &);
-    void SetSkinID(const uint8 &);
+    void SetSkinID(const int16 &);
     void SetOrientation(const Orientation &);
     void SetSkinZoomFactor(const float &);
     void SetMap(Map*);
@@ -70,7 +70,7 @@ protected:
     std::string m_Name;
     uint16 m_ID;
     uint8 m_Level;
-    uint8 m_SkinID;
+    int16 m_SkinID;
     float m_SkinZoomFactor;
     std::map< eResourceType, Resource* > m_Resources;
 

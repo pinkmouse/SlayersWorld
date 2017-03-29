@@ -136,7 +136,7 @@ uint8 Unit::GetLevel() const
     return m_Level;
 }
 
-uint8 Unit::GetSkinID() const
+int16 Unit::GetSkinID() const
 {
     return m_SkinID;
 }
@@ -197,7 +197,7 @@ void Unit::SetLevel(const uint8 & p_Level)
     m_Level = p_Level;
 }
 
-void Unit::SetSkinID(const uint8 & p_SkinID)
+void Unit::SetSkinID(const int16 & p_SkinID)
 {
     m_SkinID = p_SkinID;
 }

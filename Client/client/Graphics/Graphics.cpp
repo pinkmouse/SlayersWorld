@@ -326,6 +326,9 @@ void Graphics::DrawMap()
             if (!IsInRayWindow(g_Player, l_Unit))
                 continue;
 
+            if (l_Unit->GetSkinID() < 0)
+                continue;
+
             MovementHandler* l_MovementHandler = l_Unit->GetMovementHandler();
             uint8 l_SpriteNb = (l_Unit->GetOrientation() * MAX_MOVEMENT_POSITION) + l_MovementHandler->GetMovementPosition();
             if (l_MovementHandler->IsInAttack())

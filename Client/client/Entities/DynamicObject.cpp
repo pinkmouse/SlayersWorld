@@ -1,7 +1,7 @@
 #include "DynamicObject.hpp"
 #include "../Map/Map.hpp"
 
-DynamicObject::DynamicObject(int32 p_ID, TypeUnit p_Type, std::string p_Name, uint8 p_Level, uint8 p_Health, uint8 p_SkinID, uint8 p_SizeX, uint8 p_SizeY, uint16 p_MapID, uint32 p_PosX, uint32 p_PosY, Orientation p_Orientation) :
+DynamicObject::DynamicObject(int32 p_ID, TypeUnit p_Type, std::string p_Name, uint8 p_Level, uint8 p_Health, int16 p_SkinID, uint8 p_SizeX, uint8 p_SizeY, uint16 p_MapID, uint32 p_PosX, uint32 p_PosY, Orientation p_Orientation) :
     Unit(p_ID, p_Type, p_SizeX, p_SizeY)
 {
     m_Name = p_Name;

@@ -7,7 +7,7 @@
 class DynamicObject : public Unit
 {
 public:
-    DynamicObject(int32, TypeUnit, std::string, uint8, uint8, uint8, uint8, uint8, uint16, uint32, uint32, Orientation);
+    DynamicObject(int32, TypeUnit, std::string, uint8, uint8, int16, uint8, uint8, uint16, uint32, uint32, Orientation);
     ~DynamicObject();
 };
 

@@ -8,7 +8,7 @@ VisualManager::~VisualManager()
 {
 }
 
-SkinSprite* VisualManager::GetVisualSprite(eVisualType p_Type, uint8 p_VisualID, uint8 p_Position)
+SkinSprite* VisualManager::GetVisualSprite(eVisualType p_Type, int16 p_VisualID, uint8 p_Position)
 {
     if (m_VisualsMap.find(p_Type) == m_VisualsMap.end())
         return nullptr;
@@ -19,7 +19,7 @@ SkinSprite* VisualManager::GetVisualSprite(eVisualType p_Type, uint8 p_VisualID,
     return m_VisualsMap[p_Type][p_VisualID].GetSprite(p_Position);
 }
 
-Visual* VisualManager::GetVisual(eVisualType p_Type, uint8 p_VisualID)
+Visual* VisualManager::GetVisual(eVisualType p_Type, int16 p_VisualID)
 {
     if (m_VisualsMap.find(p_Type) == m_VisualsMap.end())
         return nullptr;

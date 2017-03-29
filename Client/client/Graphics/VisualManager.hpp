@@ -13,10 +13,10 @@ public:
     ~VisualManager();
     bool LoadSkins();
     bool LoadVisuals();
-    SkinSprite* GetVisualSprite(eVisualType, uint8, uint8);
-    Visual* GetVisual(eVisualType, uint8);
+    SkinSprite* GetVisualSprite(eVisualType, int16, uint8);
+    Visual* GetVisual(eVisualType, int16);
 
 private:
-    std::map< eVisualType , std::map<uint8, Visual> >m_VisualsMap;
-    std::map<uint8, sf::Texture*> m_TextureSkinsMap;
+    std::map< eVisualType , std::map<int16, Visual> >m_VisualsMap;
+    std::map<int16, sf::Texture*> m_TextureSkinsMap;
 };

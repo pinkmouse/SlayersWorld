@@ -186,7 +186,7 @@ struct PacketUnitCreate
     PacketUnitCreate() :
         m_PacketID(SMSG::S_UnitCreate) {}
 
-    void BuildPacket(uint8 p_TypeID, uint32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_Health, uint8 p_Mana, uint8 p_Alignment, uint8 p_SkinID, uint8 p_SizeX, uint8 p_SizeY, uint8 p_Speed, uint16 p_MapID, Position p_Pos, uint8 p_Orientation, bool p_IsInMovement, bool p_IsAttacking)
+    void BuildPacket(uint8 p_TypeID, uint32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_Health, uint8 p_Mana, uint8 p_Alignment, int16 p_SkinID, uint8 p_SizeX, uint8 p_SizeY, uint8 p_Speed, uint16 p_MapID, Position p_Pos, uint8 p_Orientation, bool p_IsInMovement, bool p_IsAttacking)
     {
         m_Packet << m_PacketID << p_TypeID << p_ID << p_Name << p_Level << p_Health << p_Mana << p_Alignment << p_SkinID << p_SizeX << p_SizeY << p_Speed << p_MapID << p_Pos.m_X << p_Pos.m_Y << p_Orientation << p_IsInMovement << p_IsAttacking;
         m_TypeID = p_TypeID;
@@ -220,12 +220,12 @@ struct PacketUpdateSkin
     uint8 m_PacketID;
     uint8 m_TypeID;
     uint16 m_ID;
-    uint8 m_Skin;
+    int16 m_Skin;
 
     PacketUpdateSkin() :
         m_PacketID(SMSG::S_UnitUpdateSkin) {}
 
-    void BuildPacket(uint8 p_TypeID, uint16 p_ID, uint8 p_Skin)
+    void BuildPacket(uint8 p_TypeID, uint16 p_ID, int16 p_Skin)
     {
         m_Packet << m_PacketID << p_TypeID << p_ID << p_Skin;
         m_Skin = p_Skin;

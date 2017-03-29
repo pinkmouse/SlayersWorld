@@ -29,7 +29,7 @@ void WorldSocket::SendAuthResponse(uint8 p_Status)
 	printf("Send Status Auth %d\n", p_Status);
 }
 
-void WorldSocket::SendPlayerCreate(uint32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_Health, uint8 p_Mana, uint8 p_Alignment, uint8 p_SkinID, uint16 p_MapID, uint32 p_PosX, uint32 p_PosY, uint8 p_Orientation)
+void WorldSocket::SendPlayerCreate(uint32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_Health, uint8 p_Mana, uint8 p_Alignment, int16 p_SkinID, uint16 p_MapID, uint32 p_PosX, uint32 p_PosY, uint8 p_Orientation)
 {
     WorldPacket l_Packet;
     uint8 l_ID = SMSG::S_PlayerCreate;
@@ -53,6 +53,9 @@ void WorldSocket::SendUnitCreate(uint8 p_Type, uint32 p_ID, std::string p_Name, 
 {
      if (p_Type == TypeUnit::PLAYER && p_ID == GetPlayer()->GetID())
         return;
+
+     if (p_SkinID < 0)
+         return;
 
      /*WorldPacket l_Packet;
      uint8 l_ID = SMSG::S_UnitCreate;*/

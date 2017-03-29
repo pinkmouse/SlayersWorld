@@ -2,7 +2,7 @@
 
 
 
-Creature::Creature(int32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_Health, uint8 p_SkinID, uint8 p_SizeX, uint8 p_SizeY, uint16 p_MapID, uint32 p_PosX, uint32 p_PosY, Orientation p_Orientation) :
+Creature::Creature(int32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_Health, int16 p_SkinID, uint8 p_SizeX, uint8 p_SizeY, uint16 p_MapID, uint32 p_PosX, uint32 p_PosY, Orientation p_Orientation) :
     Unit(p_ID, TypeUnit::CREATURE, p_SizeX, p_SizeY)
 {
     m_Name = p_Name;

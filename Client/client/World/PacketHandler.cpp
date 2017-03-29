@@ -306,7 +306,7 @@ void PacketHandler::HandleCreateMainPlayer(WorldPacket &p_Packet)
     uint8 l_Health;
     uint8 l_Mana;
     uint8 l_Alignment;
-    uint8 l_SkinID;
+    int16 l_SkinID;
     uint16 l_MapID;
     uint32 l_PosX;
     uint32 l_PosY;
@@ -350,7 +350,7 @@ void PacketHandler::HandleCreateUnit(WorldPacket &p_Packet)
     uint8 l_Health;
     uint8 l_Mana;
     uint8 l_Alignment;
-    uint8 l_SkinID;
+    int16 l_SkinID;
     uint8 l_SizeX;
     uint8 l_SizeY;
     uint8 l_Speed;
@@ -437,7 +437,7 @@ void PacketHandler::HandleUpdateSkin(WorldPacket &p_Packet)
 {
     uint8 l_TypeID;
     uint16 l_ID;
-    uint8 l_Skin;
+    int16 l_Skin;
 
     p_Packet >> l_TypeID;
     p_Packet >> l_ID;

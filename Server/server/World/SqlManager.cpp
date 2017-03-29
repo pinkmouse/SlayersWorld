@@ -145,7 +145,7 @@ Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
     uint8 l_Health = 0;
     uint8 l_Mana = 0;
     uint8 l_Alignment = 0;
-    uint8 l_SkinID = 0;
+    int16 l_SkinID = 0;
     uint16 l_MapID = 0;
     uint32 l_PosX = 0;
     uint32 l_PosY = 0;
@@ -369,7 +369,7 @@ CreatureTemplate SqlManager::GetCreatureTemplate(uint16 p_Entry)
     std::string l_Query = "SELECT `skinID`, `name`, `level`, `force`, `stamina`, `dexterity`, `xp`, `state`, `maxRay`, `maxVision`,`movingTimeMin`, `movingTimeMax`, `stopTimeMin`, `stopTimeMax`, `respawnTime`, `rank`, `aiType`, `faction` FROM creature_template WHERE `entry` = '" + std::to_string(p_Entry) + "'";
     mysql_query(&m_MysqlWorld, l_Query.c_str());
 
-    uint8 l_SkinID = 0;
+    int16 l_SkinID = 0;
     std::string l_Name = "";
     uint8 l_Lvl = 0;
     uint8 l_Force = 0;
@@ -892,11 +892,12 @@ std::map<uint8, uint16> SqlManager::GetXpLevel()
 
 bool SqlManager::InitializeAreatrigger(DynamicObjectManager* p_DynamicObjectManager)
 {
-    std::string l_Query = "SELECT `id`, `typeID`, `radius`, `data0`, `data1`, `data2`, `data3` FROM areatrigger_template";
+    std::string l_Query = "SELECT `id`, `typeID`,`skinID`, `radius`, `data0`, `data1`, `data2`, `data3` FROM areatrigger_template";
     mysql_query(&m_MysqlWorld, l_Query.c_str());
 
     uint16 l_Id = 0;
     uint16 l_TypeID = 0;
+    int16 l_SkinID = 0;
     float l_Radius = 0;
     uint32 l_Data0 = 0;
     uint32 l_Data1 = 0;
@@ -910,13 +911,14 @@ bool SqlManager::InitializeAreatrigger(DynamicObjectManager* p_DynamicObjectMana
     {
         l_Id = atoi(l_Row[0]);
         l_TypeID = atoi(l_Row[1]);
-        l_Radius = (float)atof(l_Row[2]);
-        l_Data0 = atoi(l_Row[3]);
-        l_Data1 = atoi(l_Row[4]);
-        l_Data2 = atoi(l_Row[5]);
-        l_Data3 = atoi(l_Row[6]);
+        l_SkinID = atoi(l_Row[2]);
+        l_Radius = (float)atof(l_Row[3]);
+        l_Data0 = atoi(l_Row[4]);
+        l_Data1 = atoi(l_Row[5]);
+        l_Data2 = atoi(l_Row[6]);
+        l_Data3 = atoi(l_Row[7]);
 
-        AreatriggerTemplate l_AreatriggerTemplate(l_Id, l_Radius, (eAreatriggerType)l_TypeID);
+        AreatriggerTemplate l_AreatriggerTemplate(l_Id, l_Radius, (eAreatriggerType)l_TypeID, l_SkinID);
         l_AreatriggerTemplate.SetData(0, l_Data0);
         l_AreatriggerTemplate.SetData(1, l_Data1);
         l_AreatriggerTemplate.SetData(2, l_Data2);

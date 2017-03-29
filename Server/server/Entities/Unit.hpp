@@ -29,7 +29,7 @@ public:
     uint8 GetSizeX() const;
     uint8 GetSizeY() const;
     uint8 GetLevel() const;
-    uint8 GetSkinID() const;
+    int16 GetSkinID() const;
     uint16 GetID() const;
     float GetSpeed() const;
     uint8 GetSpeedUint8() const;
@@ -65,7 +65,7 @@ public:
 
     void SetPosX(const uint32 &);
     void SetPosY(const uint32 &);
-    void SetSkinID(const uint8 &);
+    void SetSkinID(const int16 &);
     void Talk(const std::string &);
     void SetOrientation(const Orientation &);
     void SetMap(Map*);
@@ -145,7 +145,7 @@ protected:
     TypeUnit m_Type;
     uint8 m_SizeX;
     uint8 m_SizeY;
-    uint8 m_SkinID;
+    int16 m_SkinID;
     bool m_InWorld;
     MovementHandler* m_MovementHandler;
     float m_Speed;

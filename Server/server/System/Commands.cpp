@@ -112,7 +112,7 @@ bool Player::HandleCommandSkin(std::vector<std::string> p_ListCmd)
     if (p_ListCmd.empty())
         return false;
 
-    uint8 l_SkinID = atoi(p_ListCmd[0].c_str());
+    int16 l_SkinID = atoi(p_ListCmd[0].c_str());
     if (l_SkinID > 69)
         l_SkinID = 0;
 
