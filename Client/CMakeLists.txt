@@ -86,6 +86,8 @@ add_executable(${EXECUTABLE_NAME}
 
               client/Entities/Creature.cpp
               client/Entities/Creature.hpp
+              client/Entities/DynamicObject.cpp
+              client/Entities/DynamicObject.hpp
               client/Entities/MovementHandler.cpp
               client/Entities/MovementHandler.hpp
               client/Entities/Player.cpp

@@ -85,10 +85,10 @@ void Map::Update(sf::Time p_Diff)
                 ChangeSquare(l_Unit);
         }
     }
-    for (std::vector<DynamicObject*>::iterator l_It = m_ListDynamicObjects.begin(); l_It != m_ListDynamicObjects.end(); ++l_It)
+    /*for (std::vector<DynamicObject*>::iterator l_It = m_ListDynamicObjects.begin(); l_It != m_ListDynamicObjects.end(); ++l_It)
     {
         (*l_It)->Update(p_Diff);
-    }
+    }*/
 }
 
 std::map<uint16, Unit*>* Map::GetListUnitType(TypeUnit p_Type)
@@ -165,7 +165,7 @@ void Map::UpdateForPlayersInNewSquare(Unit* p_Unit, bool p_UpdateAll)
             if (l_Session == nullptr)
                 continue;
 
-            l_Session->SendUnitCreate(p_Unit->GetType(), p_Unit->GetID(), p_Unit->GetName(), p_Unit->GetLevel(), p_Unit->GetResourceNb(eResourceType::Health), p_Unit->GetResourceNb(eResourceType::Mana), p_Unit->GetResourceNb(eResourceType::Alignment), p_Unit->GetSkinID(), p_Unit->GetSpeedUint8(), p_Unit->GetMapID(), p_Unit->GetPosition(), p_Unit->GetOrientation(), p_Unit->IsInMovement(), p_Unit->GetMovementHandler()->IsInAttack());
+            l_Session->SendUnitCreate(p_Unit->GetType(), p_Unit->GetID(), p_Unit->GetName(), p_Unit->GetLevel(), p_Unit->GetResourceNb(eResourceType::Health), p_Unit->GetResourceNb(eResourceType::Mana), p_Unit->GetResourceNb(eResourceType::Alignment), p_Unit->GetSkinID(), p_Unit->GetSizeX(), p_Unit->GetSizeY(),  p_Unit->GetSpeedUint8(), p_Unit->GetMapID(), p_Unit->GetPosition(), p_Unit->GetOrientation(), p_Unit->IsInMovement(), p_Unit->GetMovementHandler()->IsInAttack());
         }
     }
 }
@@ -316,11 +316,6 @@ void Map::AddUnit(Unit* p_Unit)
     UpdateForPlayersInNewSquare(p_Unit, true);
     if (p_Unit->GetType() == TypeUnit::PLAYER)
         p_Unit->ToPlayer()->UpdateNewSquares(0, p_Unit->GetSquareID(), true);
-}
-
-void Map::AddDynamicObject(DynamicObject* p_DynamicObect)
-{
-    m_ListDynamicObjects.push_back(p_DynamicObect);
 }
 
 void Map::RemoveUnit(Unit* p_Unit)

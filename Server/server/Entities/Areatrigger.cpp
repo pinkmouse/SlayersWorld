@@ -46,11 +46,12 @@ eAreatriggerType AreatriggerTemplate::GetType() const
     return m_Type;
 }
 
-Areatrigger::Areatrigger(Map* p_Map, uint32 p_PosX, uint32 p_PosY, AreatriggerTemplate* p_AreatriggerTemplate) :
-    DynamicObject(p_Map, p_PosX, p_PosY),
+Areatrigger::Areatrigger(uint16 p_Id, Map* p_Map, uint32 p_PosX, uint32 p_PosY, AreatriggerTemplate* p_AreatriggerTemplate) :
+    DynamicObject(p_Id, p_AreatriggerTemplate->GetID(), TypeUnit::AREATRIGGER ,p_Map, p_PosX, p_PosY),
     m_AreatriggerTemplate(p_AreatriggerTemplate)
 {
     m_Timer = 0;
+    m_SkinID = 1;
 }
 
 Areatrigger::~Areatrigger()

@@ -54,7 +54,9 @@ enum Orientation
 enum TypeUnit
 {
     CREATURE = 0,
-    PLAYER = 1
+    PLAYER, 
+    AREATRIGGER,
+    GAMEOBJECT
 };
 
 enum eGroupType

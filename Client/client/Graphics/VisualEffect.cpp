@@ -47,6 +47,7 @@ void VisualEffect::Update(sf::Time p_Time)
             {
             case eTypeAnim::AnimLoop:
                 m_ActualFrame = 0;
+                m_DiffTimeAnim = 0;
                 break;
             default:
                 m_IsFinish = true;

@@ -46,7 +46,6 @@ bool World::Initialize()
     printf("Initialize XpLevel\n");
     if (!g_LevelManager->Initialize())
         printf("Error Initialize XpLevel...\n");
-
     printf("Initialize Areatrigger\n");
     if (!g_SqlManager->InitializeAreatrigger(m_DynamicObjectManager))
         printf("Error Initialize Areatrigger...\n");

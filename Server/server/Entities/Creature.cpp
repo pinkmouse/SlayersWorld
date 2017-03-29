@@ -199,7 +199,7 @@ void Creature::Respawn()
 
     /// Respawn creature for players
     PacketUnitCreate l_Packet;
-    l_Packet.BuildPacket((uint8)TypeUnit::CREATURE, GetID(), GetName(), GetLevel(), GetResourceNb(eResourceType::Health), GetResourceNb(eResourceType::Mana), GetResourceNb(eResourceType::Alignment), GetSkinID(), GetSpeedUint8(), GetMapID(), GetPosition(), GetOrientation(), m_MovementHandler->IsInMovement(), false);
+    l_Packet.BuildPacket((uint8)TypeUnit::CREATURE, GetID(), GetName(), GetLevel(), GetResourceNb(eResourceType::Health), GetResourceNb(eResourceType::Mana), GetResourceNb(eResourceType::Alignment), GetSkinID(), GetSizeX(), GetSizeY(), GetSpeedUint8(), GetMapID(), GetPosition(), GetOrientation(), m_MovementHandler->IsInMovement(), false);
     m_Map->SendToSet(l_Packet.m_Packet, this);
 }
 

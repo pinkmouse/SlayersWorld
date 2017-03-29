@@ -5,10 +5,10 @@
 #include <SFML/System/Time.hpp>
 
 class Map;
-class DynamicObject : public WorldObject
+class DynamicObject : public Unit
 {
 public:
-    DynamicObject(Map*, uint32, uint32);
+    DynamicObject(uint16, uint16, TypeUnit, Map*, uint32, uint32);
     ~DynamicObject();
     virtual void Update(sf::Time) = 0;
     void SetInWorld(bool);

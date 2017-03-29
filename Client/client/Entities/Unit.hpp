@@ -13,7 +13,7 @@ class Unit : public WorldObject
 {
 public:
     Unit(uint16);
-    Unit(uint16, TypeUnit);
+    Unit(uint16, TypeUnit, uint8, uint8);
     ~Unit();
 
     bool IsPlayer() const;

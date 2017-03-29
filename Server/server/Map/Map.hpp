@@ -20,7 +20,6 @@ public:
     void Update(sf::Time);
     void AddUnit(Unit*);
     void RemoveUnit(Unit*);
-    void AddDynamicObject(DynamicObject*);
     uint16  GetSquareID(uint16 , uint16) const;
     Unit* GetUnit(TypeUnit, uint16);
     uint16 GetID() const;
@@ -58,7 +57,6 @@ private:
     std::map< eInterMapAction, std::queue<Unit* > > m_UnitInterMapActionQueue;
 	std::vector<Case*>	m_ListCase;
     std::map<TypeUnit, std::map<uint16, Unit*> > m_ListUnitZone;
-    std::vector<DynamicObject*> m_ListDynamicObjects;
 
     std::map<uint16, Square> m_ListSquare;
 

@@ -24,7 +24,7 @@ private:
 class Areatrigger : public DynamicObject
 {
 public:
-    Areatrigger(Map*, uint32, uint32, AreatriggerTemplate*);
+    Areatrigger(uint16, Map*, uint32, uint32, AreatriggerTemplate*);
     ~Areatrigger();
     void Update(sf::Time);
     void UnitEnterInCase(Unit*);

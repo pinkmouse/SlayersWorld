@@ -331,8 +331,15 @@ void Graphics::DrawMap()
             if (l_MovementHandler->IsInAttack())
                 l_SpriteNb += (MAX_MOVEMENT_POSITION * Orientation::MAX);
 
-            SkinSprite* l_SkinSprite = m_VisualManager->GetVisualSprite(eVisualType::VisualSkin, l_Unit->GetSkinID(), l_SpriteNb);
+            SkinSprite* l_SkinSprite = nullptr;
+            if (l_Unit->GetType() == TypeUnit::CREATURE || l_Unit->GetType() == TypeUnit::PLAYER)
+                l_SkinSprite = m_VisualManager->GetVisualSprite(eVisualType::VisualSkin, l_Unit->GetSkinID(), l_SpriteNb);
+            else
+                l_SkinSprite = m_VisualManager->GetVisualSprite(eVisualType::VisualGob, l_Unit->GetSkinID(), l_SpriteNb);
+
             l_SkinSprite->setScale(sf::Vector2f(l_Unit->GetSkinZoomFactor(), l_Unit->GetSkinZoomFactor()));
+            if (l_SkinSprite == nullptr)
+                continue;
             if (l_Unit->IsPlayer())
                 l_SkinSprite->setColor(sf::Color(255, 255, 255, l_Unit->GetOpacity()));
             /*else

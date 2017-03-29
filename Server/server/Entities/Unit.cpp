@@ -18,7 +18,7 @@ Unit::Unit(uint16 p_ID)
 Unit::Unit(uint16 p_ID, TypeUnit p_Type, eFactionType p_FactionType)
 {
     /// Constructor
-
+    m_MovementHandler = nullptr;
     m_Type = p_Type;
     m_FactionType = p_FactionType;
     m_Name = "";

@@ -33,7 +33,7 @@ Visual* VisualManager::GetVisual(eVisualType p_Type, uint8 p_VisualID)
 bool VisualManager::LoadSkins()
 {
     sf::Texture *l_Texture = nullptr;
-    for (uint8 i = 0; i < 70; ++i)
+    for (uint8 i = 0; i < MAX_SKIN_IMG; ++i)
     {
         l_Texture = new sf::Texture();
         std::string l_FileName = std::to_string(i) + ".png";
@@ -67,7 +67,7 @@ bool VisualManager::LoadSkins()
 bool VisualManager::LoadVisuals()
 {
     sf::Texture *l_Texture = nullptr;
-    for (uint8 i = 0; i < 5; ++i)
+    for (uint8 i = 0; i < MAX_SPELL_IMG; ++i)
     {
         l_Texture = new sf::Texture();
         std::string l_FileName = std::to_string(i) + ".png";
@@ -81,6 +81,32 @@ bool VisualManager::LoadVisuals()
         uint32 l_NbVisuSizeX = l_Texture->getSize().x / MAX_VISUAL_IMG_X;
         uint32 l_NbVisuSizeY = l_Texture->getSize().y;
         Visual l_Visual(eVisualType::VisualSpell, MAX_VISUAL_IMG_X, 0);
+
+        for (uint8 i = 0; i < MAX_VISUAL_IMG_X; ++i)
+        {
+            SkinSprite l_SkinSprite(l_NbVisuSizeX, l_NbVisuSizeY);
+            l_SkinSprite.setTexture(*l_Texture);
+            l_SkinSprite.setTextureRect(sf::IntRect(i * l_NbVisuSizeX, 0, l_NbVisuSizeX, l_NbVisuSizeY));
+            l_Visual.AddSprite(l_SkinSprite);
+        }
+
+        m_VisualsMap[l_Visual.GetType()][i] = l_Visual;
+    }
+
+    for (uint8 i = 0; i < MAX_GOB_IMG; ++i)
+    {
+        l_Texture = new sf::Texture();
+        std::string l_FileName = std::to_string(i) + ".png";
+        if (!l_Texture->loadFromFile(GOBS_SKIN_FOLDER + l_FileName))
+        {
+            printf("Load Gob %s Failed\n", l_FileName.c_str());
+            return false;
+        }
+        m_TextureSkinsMap[i] = l_Texture;
+
+        uint32 l_NbVisuSizeX = l_Texture->getSize().x / MAX_VISUAL_IMG_X;
+        uint32 l_NbVisuSizeY = l_Texture->getSize().y;
+        Visual l_Visual(eVisualType::VisualGob, MAX_VISUAL_IMG_X, 0);
 
         for (uint8 i = 0; i < MAX_VISUAL_IMG_X; ++i)
         {

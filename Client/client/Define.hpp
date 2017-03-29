@@ -19,6 +19,7 @@
 #define GRID_SIZE 12
 
 /// SKIN
+#define MAX_SKIN_IMG 70
 #define SKIN_ZOOM_FACTOR_DEFAULT 1.0f
 #define UPDATE_OPACITY_TIME 250
 #define SKINS_FOLDER "img/skins/"
@@ -30,7 +31,12 @@
 #define DEATH_OPACITY 100
 #define MAX_OPACITY 255
 
+/// GOB
+#define MAX_GOB_IMG 2
+#define GOBS_SKIN_FOLDER "img/gobs/"
+
 /// SPELL
+#define MAX_SPELL_IMG 5
 #define SPELLS_FOLDER "img/spells/"
 #define MAX_VISUAL_IMG_X 3 
 
@@ -111,7 +117,9 @@ enum TypeWorldObject
 enum TypeUnit
 {
     CREATURE = 0,
-    PLAYER = 1
+    PLAYER,
+    AREATRIGGER,
+    GAMEOBJECT
 };
 
 enum eTypeWarningMsg
@@ -161,7 +169,8 @@ struct DamageInfo
 enum eVisualType
 {
     VisualSkin = 0,
-    VisualSpell = 1
+    VisualSpell = 1,
+    VisualGob = 2
 };
 
 enum eTimeSpellAttribute

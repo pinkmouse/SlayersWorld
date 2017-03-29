@@ -4,11 +4,11 @@
 Unit::Unit(uint16 p_ID) :
     WorldObject(TypeWorldObject::UNIT, 24, 32)
 {
-    Unit(p_ID, TypeUnit::CREATURE);
+    Unit(p_ID, TypeUnit::CREATURE, 24, 32);
 }
 
-Unit::Unit(uint16 p_ID, TypeUnit p_Type) :
-    WorldObject(TypeWorldObject::UNIT, 24, 32)
+Unit::Unit(uint16 p_ID, TypeUnit p_Type, uint8 p_SizeX, uint8 p_SizeY) :
+    WorldObject(TypeWorldObject::UNIT, p_SizeX, p_SizeY)
 {
     m_Name = "";
     m_Type = p_Type;

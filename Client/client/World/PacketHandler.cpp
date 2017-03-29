@@ -1,6 +1,7 @@
 #include "PacketHandler.hpp"
 #include "../Entities/Player.hpp"
 #include "../Entities/Creature.hpp"
+#include "../Entities/DynamicObject.hpp"
 #include "../Global.hpp"
 #include "PacketDefine.hpp"
 
@@ -50,8 +51,6 @@ void PacketHandler::HandleRemoveUnit(WorldPacket &p_Packet)
 
     p_Packet >> l_TypeID;
     p_Packet >> l_ID;
-
-    printf("----> Remove %d %d \n", l_TypeID, l_ID);
 
     if (Map* l_Map = m_MapManager->GetActualMap())
     {
@@ -328,7 +327,7 @@ void PacketHandler::HandleCreateMainPlayer(WorldPacket &p_Packet)
     if (!m_MapManager->LoadMap(l_MapID))
         return;
 
-    g_Player = new Player(l_ID, l_Name, l_Level, l_Health, l_Mana, l_Alignment, l_SkinID, l_MapID, l_PosX, l_PosY, (Orientation)l_Orientation);
+    g_Player = new Player(l_ID, l_Name, l_Level, l_Health, l_Mana, l_Alignment, l_SkinID, 24, 32, l_MapID, l_PosX, l_PosY, (Orientation)l_Orientation);
     m_MapManager->SetPosX(l_PosX);
     m_MapManager->SetPosY(l_PosY);
 
@@ -352,6 +351,8 @@ void PacketHandler::HandleCreateUnit(WorldPacket &p_Packet)
     uint8 l_Mana;
     uint8 l_Alignment;
     uint8 l_SkinID;
+    uint8 l_SizeX;
+    uint8 l_SizeY;
     uint8 l_Speed;
     uint16 l_MapID;
     Position l_Pos;
@@ -367,6 +368,8 @@ void PacketHandler::HandleCreateUnit(WorldPacket &p_Packet)
     p_Packet >> l_Mana;
     p_Packet >> l_Alignment;
     p_Packet >> l_SkinID;
+    p_Packet >> l_SizeX;
+    p_Packet >> l_SizeY;
     p_Packet >> l_Speed;
     p_Packet >> l_MapID;
     p_Packet >> l_Pos.x;
@@ -387,13 +390,19 @@ void PacketHandler::HandleCreateUnit(WorldPacket &p_Packet)
     if (l_ActualMap == nullptr)
         return;
 
-    printf("Map\n");
     if (l_ActualMap->GetID() == l_MapID && l_ActualMap->GetUnit((TypeUnit)l_TypeID, l_ID) == nullptr)
     {
         if (l_TypeID == (uint8)TypeUnit::PLAYER)
-            l_NewUnit = new Player(l_ID, l_Name, l_Level, l_Health, l_Mana, l_Alignment, l_SkinID, l_MapID, l_Pos.x, l_Pos.y, (Orientation)l_Orientation);
+            l_NewUnit = new Player(l_ID, l_Name, l_Level, l_Health, l_Mana, l_Alignment, l_SkinID, l_SizeX, l_SizeY, l_MapID, l_Pos.x, l_Pos.y, (Orientation)l_Orientation);
         else if (l_TypeID == (uint8)TypeUnit::CREATURE)
-            l_NewUnit = new Creature(l_ID, l_Name, l_Level, l_Health, l_SkinID, l_MapID, l_Pos.x, l_Pos.y, (Orientation)l_Orientation);
+            l_NewUnit = new Creature(l_ID, l_Name, l_Level, l_Health, l_SkinID, l_SizeX, l_SizeY, l_MapID, l_Pos.x, l_Pos.y, (Orientation)l_Orientation);
+        else if (l_TypeID == (uint8)TypeUnit::AREATRIGGER)
+        {
+            l_NewUnit = new DynamicObject(l_ID, (TypeUnit)l_TypeID, l_Name, l_Level, l_Health, l_SkinID, l_SizeX, l_SizeY, l_MapID, l_Pos.x, l_Pos.y, (Orientation)l_Orientation);
+            VisualEffect l_VisualEffect(eVisualType::VisualGob, l_SkinID, 3);
+            l_VisualEffect.StartAnim();
+            l_NewUnit->AddVisualEffect(l_VisualEffect);
+        }
 
         float l_SpeedFloat = (float)l_Speed / 10.0f;
         l_NewUnit->SetSpeed(l_SpeedFloat);

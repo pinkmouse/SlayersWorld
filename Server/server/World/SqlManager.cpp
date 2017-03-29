@@ -949,7 +949,7 @@ bool SqlManager::InitializeAreatrigger(DynamicObjectManager* p_DynamicObjectMana
         if (l_Map == nullptr)
             continue;
         l_PosX = (l_CaseNb % l_Map->GetSizeX() * TILE_SIZE) + TILE_SIZE / 2;
-        l_PosY = (l_CaseNb / l_Map->GetSizeX() * TILE_SIZE) + TILE_SIZE / 2;
+        l_PosY = (l_CaseNb / l_Map->GetSizeX() * TILE_SIZE) + TILE_SIZE;
 
 
         AreatriggerTemplate* l_AreatriggerTemplate = p_DynamicObjectManager->GetAreatriggerTemplate(l_AreatriggerID);
@@ -957,8 +957,8 @@ bool SqlManager::InitializeAreatrigger(DynamicObjectManager* p_DynamicObjectMana
         if (l_AreatriggerTemplate == nullptr)
             continue;
 
-        Areatrigger* l_Areatrigger = new Areatrigger(l_Map, l_PosX, l_PosY, l_AreatriggerTemplate);
-        l_Map->AddDynamicObject(l_Areatrigger);
+        Areatrigger* l_Areatrigger = new Areatrigger(l_Id, l_Map, l_PosX, l_PosY, l_AreatriggerTemplate);
+        l_Map->AddUnit(l_Areatrigger);
         l_Map->GetCase(l_CaseNb)->AddDynamicOject(l_Areatrigger);
     }
     mysql_free_result(l_Result);
