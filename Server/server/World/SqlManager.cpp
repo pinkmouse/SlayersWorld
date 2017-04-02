@@ -2,6 +2,7 @@
 #include "../Define.hpp"
 #include "../Entities/Creature.hpp"
 #include "../Entities/Areatrigger.hpp"
+#include "../Entities/GameObject.hpp"
 #include "../Global.hpp"
 #include <cstdlib>
 
@@ -826,7 +827,7 @@ bool  SqlManager::InitializeQuests()
         l_RepetitionType = atoi(l_Row[1]);
         l_Name = std::string(l_Row[2]);
 
-        printf("Add Quest %d %d %s\n", l_Id, l_RepetitionType, l_Name.c_str());
+        //printf("Add Quest %d %d %s\n", l_Id, l_RepetitionType, l_Name.c_str());
         QuestTemplate* l_QuestTempalte = new QuestTemplate(l_Id, (eRepetitionType)l_RepetitionType, l_Name);
         g_QuestManager->AddQuestTemplate(l_QuestTempalte);
     }
@@ -888,6 +889,85 @@ std::map<uint8, uint16> SqlManager::GetXpLevel()
     mysql_free_result(l_Result);
 
     return l_XpLevel;
+}
+
+bool SqlManager::InitializeGameObject(DynamicObjectManager* p_DynamicObjectManager)
+{
+    std::string l_Query = "SELECT `id`, `typeID`, `skinID`, `canBlock`, `duration`, `respawnTime`, `data0`, `data1`, `data2`, `data3` FROM gob_template";
+    mysql_query(&m_MysqlWorld, l_Query.c_str());
+
+    uint16 l_Id = 0;
+    uint16 l_TypeID = 0;
+    int16 l_SkinID = 0;
+    int32 l_Duration = 0;
+    int32 l_RespawnTime = 0;
+    uint32 l_Data0 = 0;
+    uint32 l_Data1 = 0;
+    uint32 l_Data2 = 0;
+    uint32 l_Data3 = 0;
+
+    MYSQL_RES *l_Result = NULL;
+    MYSQL_ROW l_Row;
+    l_Result = mysql_use_result(&m_MysqlWorld);
+    while ((l_Row = mysql_fetch_row(l_Result)))
+    {
+        l_Id = atoi(l_Row[0]);
+        l_TypeID = atoi(l_Row[1]);
+        l_SkinID = atoi(l_Row[2]);
+        l_Duration = atoi(l_Row[3]);
+        l_RespawnTime = atoi(l_Row[4]);
+        l_Data0 = atoi(l_Row[5]);
+        l_Data1 = atoi(l_Row[6]);
+        l_Data2 = atoi(l_Row[7]);
+        l_Data3 = atoi(l_Row[8]);
+        GameObjectTemplate l_GameObjectTemplate(l_Id, l_Duration, l_RespawnTime, (eGameObjectTemplate)l_TypeID, l_SkinID);
+        l_GameObjectTemplate.SetData(0, l_Data0);
+        l_GameObjectTemplate.SetData(1, l_Data1);
+        l_GameObjectTemplate.SetData(2, l_Data2);
+        l_GameObjectTemplate.SetData(3, l_Data3);
+        p_DynamicObjectManager->AddGameObjectTemplate(l_GameObjectTemplate);
+    }
+    mysql_free_result(l_Result);
+    
+
+    l_Query = "SELECT `id`, `gobID`, `mapID`, `caseNb` FROM gob";
+    mysql_query(&m_MysqlWorld, l_Query.c_str());
+
+    l_Id = 0;
+    uint16 l_GobID = 0;
+    uint16 l_MapID = 0;
+    uint16 l_CaseNb = 0;
+
+    uint32 l_PosX = 0;
+    uint32 l_PosY = 0;
+
+    l_Result = mysql_use_result(&m_MysqlWorld);
+    while ((l_Row = mysql_fetch_row(l_Result)))
+    {
+        l_Id = atoi(l_Row[0]);
+        l_GobID = atoi(l_Row[1]);
+        l_MapID = atoi(l_Row[2]);
+        l_CaseNb = atoi(l_Row[3]);
+
+        Map* l_Map = g_MapManager->GetMap(l_MapID);
+        if (l_Map == nullptr)
+            continue;
+        l_PosX = (l_CaseNb % l_Map->GetSizeX() * TILE_SIZE) + TILE_SIZE / 2;
+        l_PosY = (l_CaseNb / l_Map->GetSizeX() * TILE_SIZE) + TILE_SIZE;
+
+
+        GameObjectTemplate* l_GobTemplate = p_DynamicObjectManager->GetGameObjectTemplate(l_GobID);
+
+        if (l_GobTemplate == nullptr)
+            continue;
+
+        GameObject* l_Areatrigger = new GameObject(l_Id, l_Map, l_PosX, l_PosY, l_GobTemplate);
+        l_Map->AddUnit(l_Areatrigger);
+        l_Map->GetCase(l_CaseNb)->AddDynamicOject(l_Areatrigger);
+    }
+    mysql_free_result(l_Result);
+
+    return true;
 }
 
 bool SqlManager::InitializeAreatrigger(DynamicObjectManager* p_DynamicObjectManager)

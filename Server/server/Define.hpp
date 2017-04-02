@@ -130,6 +130,12 @@ enum eAreatriggerType
     AreatriggerPeriodicDamage = 1
 };
 
+enum eGameObjectTemplate
+{
+    GameObjectSpellLauncher = 0,
+    GameObjectQuest = 1
+};
+
 enum eRequiredType
 {
     QuestDone = 0,

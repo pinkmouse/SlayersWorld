@@ -396,7 +396,7 @@ void PacketHandler::HandleCreateUnit(WorldPacket &p_Packet)
             l_NewUnit = new Player(l_ID, l_Name, l_Level, l_Health, l_Mana, l_Alignment, l_SkinID, l_SizeX, l_SizeY, l_MapID, l_Pos.x, l_Pos.y, (Orientation)l_Orientation);
         else if (l_TypeID == (uint8)TypeUnit::CREATURE)
             l_NewUnit = new Creature(l_ID, l_Name, l_Level, l_Health, l_SkinID, l_SizeX, l_SizeY, l_MapID, l_Pos.x, l_Pos.y, (Orientation)l_Orientation);
-        else if (l_TypeID == (uint8)TypeUnit::AREATRIGGER)
+        else if (l_TypeID == (uint8)TypeUnit::AREATRIGGER || l_TypeID == (uint8)TypeUnit::GAMEOBJECT)
         {
             l_NewUnit = new DynamicObject(l_ID, (TypeUnit)l_TypeID, l_Name, l_Level, l_Health, l_SkinID, l_SizeX, l_SizeY, l_MapID, l_Pos.x, l_Pos.y, (Orientation)l_Orientation);
             VisualEffect l_VisualEffect(eVisualType::VisualGob, l_SkinID, 3);

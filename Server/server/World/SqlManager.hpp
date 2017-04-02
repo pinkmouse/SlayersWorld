@@ -63,6 +63,7 @@ public:
     bool InitializeSpellsBinds(Player*);
     bool InitializeQuests();
     bool InitializeAreatrigger(DynamicObjectManager*);
+    bool InitializeGameObject(DynamicObjectManager*);
     CreatureTemplate GetCreatureTemplate(uint16);
     uint16 AddNewCreature(uint16, uint16, uint32, uint32);
     bool InitializeCreature(UnitManager*);

@@ -340,9 +340,9 @@ void Graphics::DrawMap()
             else
                 l_SkinSprite = m_VisualManager->GetVisualSprite(eVisualType::VisualGob, l_Unit->GetSkinID(), l_SpriteNb);
 
-            l_SkinSprite->setScale(sf::Vector2f(l_Unit->GetSkinZoomFactor(), l_Unit->GetSkinZoomFactor()));
             if (l_SkinSprite == nullptr)
                 continue;
+            l_SkinSprite->setScale(sf::Vector2f(l_Unit->GetSkinZoomFactor(), l_Unit->GetSkinZoomFactor()));
             if (l_Unit->IsPlayer())
                 l_SkinSprite->setColor(sf::Color(255, 255, 255, l_Unit->GetOpacity()));
             /*else
