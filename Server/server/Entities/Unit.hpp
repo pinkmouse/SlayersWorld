@@ -36,7 +36,6 @@ public:
     bool IsDeath();
     void SetName(const std::string &);
     virtual void SetLevel(const uint8 &);
-    virtual void Respawn();
     bool IsInWorld() const;
     void SetInWorld(bool);
     void SetSpeed(float);
@@ -49,6 +48,10 @@ public:
     PointsSet GetPointsSet() const;
     virtual bool AddPointsStat(eStats, uint8);
     virtual bool SubPointsStat(eStats, uint8);
+    virtual void ActionFrom(Player*);
+    virtual void Respawn();
+    virtual void Unspawn();
+    virtual bool IsBlocking() const;
 
     /* RESOURCE */
     Resource* GetResource(eResourceType);
@@ -97,6 +100,7 @@ public:
     bool CanAttack(Unit*) const;
     bool IsHostileTo(const Unit*) const;
     bool IsFriendlyTo(const Unit*) const;
+    bool IsAttackableTarget() const;
 
     /* UPDATE */
     virtual void Update(sf::Time);
@@ -163,7 +167,7 @@ protected:
     /* COMBAT */
     bool m_Evade;
     uint64 m_ResTimer;
-    uint64 m_RespawnTime;
+    int64 m_RespawnTime;
 
 private:
     /* COMBAT */

@@ -1,4 +1,5 @@
 #include "GameObject.hpp"
+#include "../System/Required/Required.hpp"
 
 
 GameObjectTemplate::GameObjectTemplate() :
@@ -9,12 +10,14 @@ GameObjectTemplate::GameObjectTemplate() :
 {
 }
 
-GameObjectTemplate::GameObjectTemplate(uint16 p_Id, int32 p_Duration, int32 p_RespawnTime, eGameObjectTemplate p_Type, int16 p_SkinID) :
+GameObjectTemplate::GameObjectTemplate(uint16 p_Id, int32 p_Duration, int32 p_RespawnTime, eGameObjectTemplate p_Type, int16 p_SkinID, bool p_Blocking, Required* p_Required) :
     m_Id(p_Id),
     m_Type(p_Type),
     m_SkinID(p_SkinID),
     m_Duration(p_Duration),
-    m_RespawnTime(p_RespawnTime)
+    m_RespawnTime(p_RespawnTime * IN_MILLISECOND),
+    m_Blocking(p_Blocking),
+    m_Required(p_Required)
 {
 }
 
@@ -54,6 +57,15 @@ int16 GameObjectTemplate::GetSkinID() const
     return m_SkinID;
 }
 
+bool GameObjectTemplate::GetBlocking() const
+{
+    return m_Blocking;
+}
+
+Required* GameObjectTemplate::GetRequired()
+{
+    return m_Required;
+}
 
 eGameObjectTemplate GameObjectTemplate::GetType() const
 {
@@ -64,6 +76,7 @@ GameObject::GameObject(uint16 p_Id,  Map* p_Map, uint32 p_PosX, uint32 p_PosY, G
     DynamicObject(p_Id, p_GobTemplate->GetID(), TypeUnit::GAMEOBJECT, p_Map, p_PosX, p_PosY, p_GobTemplate->GetSkinID()),
     m_GobTemplate(p_GobTemplate)
 {
+    m_RespawnTime = p_GobTemplate->GetRespawnTime();
 }
 
 GameObject::~GameObject()
@@ -72,19 +85,49 @@ GameObject::~GameObject()
 
 void GameObject::Update(sf::Time m_Diff)
 {
+    Unit::Update(m_Diff);
 }
 
-bool GameObject::IsBlocking()
+bool GameObject::IsBlocking() const
 {
-    return false;
+    return m_GobTemplate->GetBlocking();
 }
-
 
 void GameObject::UnitEnterInCase(Unit* p_Unit)
+{
+    switch (m_GobTemplate->GetType())
+    {
+    case eGameObjectTemplate::GameObjectTrap:
+        SetResourceNb(eResourceType::Health, 0);
+        break;
+    default:
+        break;
+    }
+}
+
+void GameObject::UnitAction(Unit* p_Unit)
 {
 }
 
 bool GameObject::CanBeWalk()
 {
     return true;
+}
+
+void GameObject::ActionFrom(Player* p_Player)
+{
+    Unit::ActionFrom(p_Player);
+
+    switch (m_GobTemplate->GetType())
+    {
+    case eGameObjectTemplate::GameObjectQuest:
+        if (m_GobTemplate->GetRequired() != nullptr && m_GobTemplate->GetRequired()->IsValid(p_Player))
+        {
+            if (p_Player->CheckQuestObjective(eObjectifType::RecoltGob, m_GobTemplate->GetID()))
+                SetResourceNb(eResourceType::Health, 0);
+        }
+        break;
+    default:
+        break;
+    }
 }

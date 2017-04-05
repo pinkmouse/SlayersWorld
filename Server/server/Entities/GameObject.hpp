@@ -5,7 +5,7 @@ class GameObjectTemplate
 {
 public:
     GameObjectTemplate();
-    GameObjectTemplate(uint16, int32, int32, eGameObjectTemplate, int16);
+    GameObjectTemplate(uint16, int32, int32, eGameObjectTemplate, int16, bool, Required*);
     ~GameObjectTemplate();
     void SetData(uint8, uint32);
     uint32 GetData(uint8);
@@ -14,6 +14,8 @@ public:
     int16 GetSkinID() const;
     eGameObjectTemplate GetType() const;
     uint16 GetID() const;
+    bool GetBlocking() const;
+    Required* GetRequired();
 
 private:
     uint16 m_Id;
@@ -22,6 +24,8 @@ private:
     int16 m_SkinID;
     int32 m_Duration;
     int32 m_RespawnTime;
+    bool m_Blocking;
+    Required* m_Required;
 };
 
 class GameObject : public DynamicObject
@@ -31,9 +35,11 @@ public:
     GameObject(uint16, Map*, uint32, uint32, GameObjectTemplate*);
     ~GameObject();
     void Update(sf::Time);
+    void ActionFrom(Player*);
     void UnitEnterInCase(Unit*);
+    void UnitAction(Unit*);
     bool CanBeWalk();
-    bool IsBlocking();
+    bool IsBlocking() const;
 
 private:
     /* BASIC */

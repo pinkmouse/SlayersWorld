@@ -22,7 +22,15 @@ int16 Case::GetTile(uint8 p_Level) const
 
 bool Case::IsBlocking() const
 {
-    return m_Block;
+    if (m_Block)
+        return true;
+
+    for (uint8 i = 0; i < m_DynamicObjectList.size(); ++i)
+    {
+        if (m_DynamicObjectList[i] != nullptr && m_DynamicObjectList[i]->IsBlocking())
+            return true;
+    }
+    return false;
 }
 
 void Case::SetTile(uint8 p_Level, int16 p_Value)
@@ -38,4 +46,17 @@ void Case::SetBlock(bool p_Block)
 uint8 Case::GetMaxTileLevel()
 {
 	return (uint8)m_TileList.size();
+}
+
+void Case::AddDynamicOject(DynamicObject* p_DynamicObject)
+{
+    m_DynamicObjectList.push_back(p_DynamicObject);
+}
+
+void Case::RemoveDynamicOject(DynamicObject* p_DynamicObject)
+{
+    std::vector<DynamicObject*>::iterator l_It = std::find(m_DynamicObjectList.begin(), m_DynamicObjectList.end(), p_DynamicObject);
+
+    if (l_It != m_DynamicObjectList.end())
+        m_DynamicObjectList.erase(l_It);
 }

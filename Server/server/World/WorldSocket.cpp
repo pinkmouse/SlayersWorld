@@ -39,17 +39,20 @@ void WorldSocket::SendPlayerCreate(uint32 p_ID, std::string p_Name, uint8 p_Leve
     printf("Send create\n");
 }
 
-void WorldSocket::SendUnitCreateToSet(uint8 p_Type, uint32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_Health, uint8 p_Mana, uint8 p_Alignment, uint8 p_SkinID, uint16 p_MapID, uint32 p_PosX, uint32 p_PosY, uint8 p_Orientation, bool p_InMovement, bool p_IsAttacking)
+void WorldSocket::SendUnitCreateToSet(uint8 p_Type, uint32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_Health, uint8 p_Mana, uint8 p_Alignment, uint8 p_SkinID, uint16 p_MapID, uint32 p_PosX, uint32 p_PosY, uint8 p_Orientation, bool p_InMovement, bool p_IsAttacking, bool p_IsBlocking)
 {
     WorldPacket l_Packet;
     uint8 l_ID = SMSG::S_UnitCreate;
 
-    l_Packet << l_ID << p_Type << p_ID << p_Name << p_Level << p_Health << p_Mana << p_Alignment << p_SkinID << p_MapID << p_PosX << p_PosY << p_Orientation << p_InMovement << p_IsAttacking;
+    if (p_Type < TypeUnit::AREATRIGGER)
+        l_Packet << l_ID << p_Type << p_ID << p_Name << p_Level << p_Health << p_Mana << p_Alignment << p_SkinID << p_MapID << p_PosX << p_PosY << p_Orientation << p_InMovement << p_IsAttacking;
+    else
+        l_Packet << l_ID << p_Type << p_ID << p_Name << p_SkinID << p_MapID << p_PosX << p_PosY << p_Orientation << p_InMovement << p_IsBlocking;
+
     SendToSet(l_Packet, true);
-    printf("Send create to square\n");
 }
 
-void WorldSocket::SendUnitCreate(uint8 p_Type, uint32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_Health,  uint8 p_Mana, uint8 p_Alignment, uint8 p_SkinID, uint8 p_SizeX, uint8 p_SizeY, uint8 p_Speed, uint16 p_MapID, Position p_Position, uint8 p_Orientation, bool p_InMovement, bool p_IsAttacking)
+void WorldSocket::SendUnitCreate(uint8 p_Type, uint32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_Health,  uint8 p_Mana, uint8 p_Alignment, uint8 p_SkinID, uint8 p_SizeX, uint8 p_SizeY, uint8 p_Speed, uint16 p_MapID, Position p_Position, uint8 p_Orientation, bool p_InMovement, bool p_IsAttacking, bool p_IsBlocking)
 {
      if (p_Type == TypeUnit::PLAYER && p_ID == GetPlayer()->GetID())
         return;
@@ -57,15 +60,14 @@ void WorldSocket::SendUnitCreate(uint8 p_Type, uint32 p_ID, std::string p_Name, 
      if (p_SkinID < 0)
          return;
 
-     /*WorldPacket l_Packet;
-     uint8 l_ID = SMSG::S_UnitCreate;*/
     PacketUnitCreate l_Packet;
-    l_Packet.BuildPacket(p_Type, p_ID, p_Name, p_Level, p_Level, p_Mana, p_Alignment, p_SkinID, p_SizeX, p_SizeY, p_Speed, p_MapID, p_Position, p_Orientation, p_InMovement, p_IsAttacking);
-    send(l_Packet.m_Packet);
 
-    /*l_Packet << l_ID << p_Type << p_ID << p_Name << p_Level << p_Health << p_Mana << p_Alignment << p_SkinID << p_MapID << p_PosX << p_PosY << p_Orientation << p_InMovement << p_IsAttacking;
-    send(l_Packet);
-    printf("Send create to unit\n");*/
+    if (p_Type < TypeUnit::AREATRIGGER)
+        l_Packet.BuildPacket(p_Type, p_ID, p_Name, p_Level, p_Health, p_Mana, p_Alignment, p_SkinID, p_SizeX, p_SizeY, p_Speed, p_MapID, p_Position, p_Orientation, p_InMovement, p_IsAttacking);
+    else
+        l_Packet.BuildPacket(p_Type, p_ID, p_Name, p_SkinID, p_SizeX, p_SizeY, p_Speed, p_MapID, p_Position, p_Orientation, p_InMovement, p_IsBlocking);
+
+    send(l_Packet.m_Packet);
 }
 
 void WorldSocket::SendUnitGoDirectionToSet(uint8 p_Type, uint16 p_UnitID, const Position & p_Pos, uint8 p_Direction)

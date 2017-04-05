@@ -1,7 +1,7 @@
 #include "DynamicObject.hpp"
 #include "../Map/Map.hpp"
 
-DynamicObject::DynamicObject(int32 p_ID, TypeUnit p_Type, std::string p_Name, uint8 p_Level, uint8 p_Health, int16 p_SkinID, uint8 p_SizeX, uint8 p_SizeY, uint16 p_MapID, uint32 p_PosX, uint32 p_PosY, Orientation p_Orientation) :
+DynamicObject::DynamicObject(int32 p_ID, TypeUnit p_Type, std::string p_Name, uint8 p_Level, uint8 p_Health, int16 p_SkinID, uint8 p_SizeX, uint8 p_SizeY, uint16 p_MapID, uint32 p_PosX, uint32 p_PosY, Orientation p_Orientation, bool p_Blocking) :
     Unit(p_ID, p_Type, p_SizeX, p_SizeY)
 {
     m_Name = p_Name;
@@ -15,8 +15,15 @@ DynamicObject::DynamicObject(int32 p_ID, TypeUnit p_Type, std::string p_Name, ui
     SetResourceNb(eResourceType::Health, p_Health);
     SetMapID(p_MapID);
     SetSpeed(0.0f);
+    m_Blocking = p_Blocking;
 }
 
 DynamicObject::~DynamicObject()
 {
+    m_Map->GetCase(GetPosX(), GetPosY() - TILE_SIZE)->RemoveDynamicOject(this);
+}
+
+bool DynamicObject::IsBlocking()
+{
+    return m_Blocking;
 }

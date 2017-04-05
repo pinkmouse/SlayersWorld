@@ -74,6 +74,8 @@ void Areatrigger::Update(sf::Time m_Diff)
             std::vector<Unit*> l_ListUnit = GetMap()->GetUnitsInRadius(this, 0.0f, 1.0f, true);
             for (uint8 i = 0; i < l_ListUnit.size(); i++)
             {
+                if (!l_ListUnit[i]->IsAttackableTarget())
+                    continue;
                 DamageInfo l_DamageInfo;
                 l_DamageInfo.m_Damage = m_AreatriggerTemplate->GetData(1);
                 l_ListUnit[i]->DealDamage(l_ListUnit[i], l_DamageInfo);
@@ -96,7 +98,12 @@ void Areatrigger::UnitEnterInCase(Unit* p_Unit)
         p_Unit->TeleportTo(m_AreatriggerTemplate->GetData(0), m_AreatriggerTemplate->GetData(1), m_AreatriggerTemplate->GetData(2), (Orientation)m_AreatriggerTemplate->GetData(3));
 }
 
-bool Areatrigger::IsBlocking()
+bool Areatrigger::IsBlocking() const
 {
     return false;
+}
+
+void Areatrigger::ActionFrom(Player* p_Player)
+{
+    ;
 }

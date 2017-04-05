@@ -8,13 +8,14 @@
 #include <string>
 
 class Player;
+class DynamicObject;
 
 class Unit : public WorldObject
 {
 public:
     Unit(uint16);
     Unit(uint16, TypeUnit, uint8, uint8);
-    ~Unit();
+    virtual ~Unit();
 
     bool IsPlayer() const;
     std::string GetName() const;
@@ -48,6 +49,7 @@ public:
 
     MovementHandler* GetMovementHandler();
     Player* ToPlayer();
+    DynamicObject* ToDynamicObject();
 
     Resource* GetResource(eResourceType);
     uint8 GetResourceNb(eResourceType);

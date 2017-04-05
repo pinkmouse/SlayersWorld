@@ -165,9 +165,31 @@ void Map::UpdateForPlayersInNewSquare(Unit* p_Unit, bool p_UpdateAll)
             if (l_Session == nullptr)
                 continue;
 
-            l_Session->SendUnitCreate(p_Unit->GetType(), p_Unit->GetID(), p_Unit->GetName(), p_Unit->GetLevel(), p_Unit->GetResourceNb(eResourceType::Health), p_Unit->GetResourceNb(eResourceType::Mana), p_Unit->GetResourceNb(eResourceType::Alignment), p_Unit->GetSkinID(), p_Unit->GetSizeX(), p_Unit->GetSizeY(),  p_Unit->GetSpeedUint8(), p_Unit->GetMapID(), p_Unit->GetPosition(), p_Unit->GetOrientation(), p_Unit->IsInMovement(), p_Unit->GetMovementHandler()->IsInAttack());
+            l_Session->SendUnitCreate(p_Unit->GetType(), p_Unit->GetID(), p_Unit->GetName(), p_Unit->GetLevel(), p_Unit->GetResourceNb(eResourceType::Health), p_Unit->GetResourceNb(eResourceType::Mana), p_Unit->GetResourceNb(eResourceType::Alignment), p_Unit->GetSkinID(), p_Unit->GetSizeX(), p_Unit->GetSizeY(),  p_Unit->GetSpeedUint8(), p_Unit->GetMapID(), p_Unit->GetPosition(), p_Unit->GetOrientation(), p_Unit->IsInMovement(), p_Unit->GetMovementHandler()->IsInAttack(), p_Unit->IsBlocking());
         }
     }
+}
+
+std::vector<Unit*> Map::GetUnitsInCase(uint32 p_PosX, uint32 p_PosY)
+{
+    uint16 l_SquareID = GetSquareID(p_PosX, p_PosY);
+    uint16 l_CaseNb = (uint16)((p_PosY / TILE_SIZE) * m_SizeX) + (p_PosX / TILE_SIZE);
+    Square* l_Square = GetSquare(l_SquareID);
+    std::vector<Unit*> l_List;
+
+    std::map<TypeUnit, std::map<uint16, Unit*>>* l_SquareList = l_Square->GetList();
+    for (std::pair<TypeUnit, std::map<uint16, Unit*>> l_SquareMap : *l_SquareList)
+    {
+        for (std::pair<uint16, Unit*> l_SquareList : l_SquareMap.second)
+        {
+            Unit* l_Unit = l_SquareList.second;
+            if (l_Unit->GetType() >= TypeUnit::GAMEOBJECT)
+                continue;
+            if (l_CaseNb == (uint16)((l_Unit->GetPosY() / TILE_SIZE) * m_SizeX) + (l_Unit->GetPosX() / TILE_SIZE))
+                l_List.push_back(l_Unit);
+        }
+    }
+    return l_List;
 }
 
 Unit* Map::GetCloserUnit(Unit const* p_Unit, float p_Range /*= 2.0f*/, bool p_OnlyInLife /*= flase*/, bool p_InFront /*= true*/, bool p_Attackable /*= false*/)

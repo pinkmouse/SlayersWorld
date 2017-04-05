@@ -346,10 +346,10 @@ void PacketHandler::HandleCreateUnit(WorldPacket &p_Packet)
     uint8 l_TypeID;
     uint32 l_ID;
     std::string l_Name;
-    uint8 l_Level;
-    uint8 l_Health;
-    uint8 l_Mana;
-    uint8 l_Alignment;
+    uint8 l_Level = 1;
+    uint8 l_Health = 100;
+    uint8 l_Mana = 100;
+    uint8 l_Alignment = 100;
     int16 l_SkinID;
     uint8 l_SizeX;
     uint8 l_SizeY;
@@ -358,15 +358,19 @@ void PacketHandler::HandleCreateUnit(WorldPacket &p_Packet)
     Position l_Pos;
     uint8 l_Orientation;
     bool l_IsInMovement;
-    bool l_IsInAttack;
+    bool l_IsInAttack = false;
+    bool l_IsBlocking = false;
 
     p_Packet >> l_TypeID;
     p_Packet >> l_ID;
     p_Packet >> l_Name;
-    p_Packet >> l_Level;
-    p_Packet >> l_Health;
-    p_Packet >> l_Mana;
-    p_Packet >> l_Alignment;
+    if (l_TypeID < 2) ///< Only Player and Creature
+    {
+        p_Packet >> l_Level;
+        p_Packet >> l_Health;
+        p_Packet >> l_Mana;
+        p_Packet >> l_Alignment;
+    }
     p_Packet >> l_SkinID;
     p_Packet >> l_SizeX;
     p_Packet >> l_SizeY;
@@ -376,7 +380,11 @@ void PacketHandler::HandleCreateUnit(WorldPacket &p_Packet)
     p_Packet >> l_Pos.y;
     p_Packet >> l_Orientation;
     p_Packet >> l_IsInMovement;
-    p_Packet >> l_IsInAttack;
+
+    if (l_TypeID < 2) ///< Only Player and Creature
+        p_Packet >> l_IsInAttack;
+    else
+        p_Packet >> l_IsBlocking;
 
     if (l_TypeID == (uint8)TypeUnit::PLAYER)
         printf("Create new Player: %d %s %d %d %d %d\n", l_ID, l_Name.c_str(), l_SkinID, l_MapID, l_Pos.x, l_Pos.y);
@@ -398,10 +406,12 @@ void PacketHandler::HandleCreateUnit(WorldPacket &p_Packet)
             l_NewUnit = new Creature(l_ID, l_Name, l_Level, l_Health, l_SkinID, l_SizeX, l_SizeY, l_MapID, l_Pos.x, l_Pos.y, (Orientation)l_Orientation);
         else if (l_TypeID == (uint8)TypeUnit::AREATRIGGER || l_TypeID == (uint8)TypeUnit::GAMEOBJECT)
         {
-            l_NewUnit = new DynamicObject(l_ID, (TypeUnit)l_TypeID, l_Name, l_Level, l_Health, l_SkinID, l_SizeX, l_SizeY, l_MapID, l_Pos.x, l_Pos.y, (Orientation)l_Orientation);
+           /* DynamicObject* l_DynIbj*/l_NewUnit = new DynamicObject(l_ID, (TypeUnit)l_TypeID, l_Name, l_Level, l_Health, l_SkinID, l_SizeX, l_SizeY, l_MapID, l_Pos.x, l_Pos.y, (Orientation)l_Orientation, l_IsBlocking);
             VisualEffect l_VisualEffect(eVisualType::VisualGob, l_SkinID, 3);
             l_VisualEffect.StartAnim();
             l_NewUnit->AddVisualEffect(l_VisualEffect);
+
+            l_ActualMap->GetCase(l_Pos.x, l_Pos.y - TILE_SIZE)->AddDynamicOject(l_NewUnit->ToDynamicObject());
         }
 
         float l_SpeedFloat = (float)l_Speed / 10.0f;

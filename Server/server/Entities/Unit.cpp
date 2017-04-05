@@ -92,20 +92,7 @@ void Unit::UpdateDeathState(sf::Time p_Diff)
         InterruptCast();
         m_ResTimer += p_Diff.asMicroseconds();
         if (m_ResTimer >= m_RespawnTime)
-        {
             Respawn();
-            /*switch (m_Type)
-            {
-            case TypeUnit::PLAYER:
-                ToPlayer()->Respawn();
-                break;
-            case TypeUnit::CREATURE:
-                ToCreature()->Respawn();
-                break;
-            default:
-                break;
-            }*/
-        }
     }
 }
 
@@ -146,7 +133,6 @@ void Unit::UpdateGossip(sf::Time p_Diff)
     }
 }
 
-
 void Unit::UpdateRegen(sf::Time p_Diff)
 {
     /// Update the differents resources
@@ -165,6 +151,13 @@ void Unit::UpdateRegen(sf::Time p_Diff)
         if (l_Before != l_Resource.second->GetNumber()) ///< Hacky to send for player when resource change
             SetResourceNb(l_Resource.first, l_Resource.second->GetNumber());
     }
+}
+
+bool Unit::IsAttackableTarget() const
+{
+    if (IsCreature() || IsPlayer())
+        return true;
+    return false;
 }
 
 void Unit::UpdateSpell(sf::Time p_Diff)
@@ -316,6 +309,9 @@ void Unit::DealDamage(Unit* p_Victim, DamageInfo p_DamageInfo)
 {
     /// Damage a target for the value in DamageInfo
     /// Log are send to victim if it's a player
+    if (!p_Victim->IsAttackableTarget())
+        return;
+
     if (p_DamageInfo.m_Result == DamageResult::Miss)
         p_DamageInfo.m_Damage = 0;
 
@@ -499,6 +495,19 @@ void Unit::AddResourceNb(eResourceType p_Resource, uint8 p_Nb)
     default:
         break;
     }
+}
+
+void Unit::Unspawn()
+{
+    m_MovementHandler->StopMovement();
+    m_MovementHandler->StopAttack();
+
+    /// Unspawn for players
+    PacketUnitRemove l_Packet;
+    l_Packet.BuildPacket(GetType(), GetID());
+    m_Map->SendToSet(l_Packet.m_Packet, this);
+
+    SetInWorld(false);
 }
 
 int16 Unit::GetSkinID() const
@@ -773,6 +782,11 @@ bool Unit::IsFriendlyTo(const Unit* p_Unit) const
     return true;
 }
 
+bool Unit::IsBlocking() const
+{
+    return false;
+}
+
 bool Unit::IsHostileTo(const Unit* p_Unit) const
 {
     return !IsFriendlyTo(p_Unit);
@@ -787,6 +801,11 @@ void Unit::SetGossipList(std::vector<Gossip>* p_GossipList)
        m_ListGossip[l_Gossip.m_GossipType].push_back(l_Gossip);
     }
 
+}
+
+void Unit::ActionFrom(Player* p_Player)
+{
+    GossipTo(p_Player);
 }
 
 void Unit::GossipTo(Player* p_Player)

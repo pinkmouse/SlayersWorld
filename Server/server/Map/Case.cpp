@@ -20,7 +20,15 @@ uint16 Case::GetID() const
 
 bool Case::IsBlocking() const
 {
-    return m_Block;
+    if (m_Block)
+        return true;
+
+    for (uint8 i = 0; i < m_DynamicObjectList.size(); ++i)
+    {
+        if (m_DynamicObjectList[i]->IsInWorld() && m_DynamicObjectList[i]->IsBlocking())
+            return true;
+    }
+    return false;
 }
 
 bool Case::CanBeWalk()

@@ -27,6 +27,7 @@ public:
     bool AddPointsStat(eStats, uint8);
     bool SubPointsStat(eStats, uint8);
     void SetLevel(const uint8 &);
+    void ActionFrom(Player*);
 
     /* RESOURCES */
     uint32 GetXp() const;
@@ -44,7 +45,7 @@ public:
     void RemoveQuest(uint16);
     Quest* GetQuest(uint16) const;
     std::map< uint16, Quest* >* GetQuestList();
-    void CheckQuestObjective(eObjectifType, int32);
+    bool CheckQuestObjective(eObjectifType, int32);
     bool HasQuestInProgress(uint16);
     void ValidateQuest(Quest*);
 

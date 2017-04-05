@@ -176,16 +176,8 @@ void Creature::ResetRandMovementTime(bool ForMoving)
 
 void Creature::Unspawn()
 {
-    m_MovementHandler->StopMovement();
-    m_MovementHandler->StopAttack();
+    Unit::Unspawn();
     ResetRandMovementTime(false);
-
-    /// Unspawn for players
-    PacketUnitRemove l_Packet;
-    l_Packet.BuildPacket((uint8)TypeUnit::CREATURE, GetID());
-    m_Map->SendToSet(l_Packet.m_Packet, this);
-
-    SetInWorld(false);
 }
 
 void Creature::Respawn()

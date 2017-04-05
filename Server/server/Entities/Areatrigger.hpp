@@ -31,7 +31,8 @@ public:
     void Update(sf::Time);
     void UnitEnterInCase(Unit*);
     bool CanBeWalk();
-    bool IsBlocking();
+    bool IsBlocking() const;
+    void ActionFrom(Player*);
 
 private:
     AreatriggerTemplate* m_AreatriggerTemplate;

@@ -102,7 +102,7 @@ void Player::UpdateNewSquares(uint16 p_OldSquareID, uint16 p_NewSquareID, bool p
                 if (l_Unit->IsPlayer() && l_Unit->GetID() == GetID())
                     continue;
 
-                GetSession()->SendUnitCreate(l_Unit->GetType(), l_Unit->GetID(), l_Unit->GetName(), l_Unit->GetLevel(), l_Unit->GetResourceNb(eResourceType::Health), l_Unit->GetResourceNb(eResourceType::Mana), l_Unit->GetResourceNb(eResourceType::Alignment), l_Unit->GetSkinID(), l_Unit->GetSizeX(), l_Unit->GetSizeY(), l_Unit->GetSpeedUint8(), l_Unit->GetMapID(), l_Unit->GetPosition(), l_Unit->GetOrientation(), l_Unit->IsInMovement(), l_Unit->GetMovementHandler()->IsInAttack());
+                    GetSession()->SendUnitCreate(l_Unit->GetType(), l_Unit->GetID(), l_Unit->GetName(), l_Unit->GetLevel(), l_Unit->GetResourceNb(eResourceType::Health), l_Unit->GetResourceNb(eResourceType::Mana), l_Unit->GetResourceNb(eResourceType::Alignment), l_Unit->GetSkinID(), l_Unit->GetSizeX(), l_Unit->GetSizeY(), l_Unit->GetSpeedUint8(), l_Unit->GetMapID(), l_Unit->GetPosition(), l_Unit->GetOrientation(), l_Unit->IsInMovement(), l_Unit->GetMovementHandler()->IsInAttack(), l_Unit->IsBlocking());
             }
         }
     }
@@ -224,6 +224,11 @@ eAccessType Player::GetAccessType() const
     return m_AccessType;
 }
 
+void Player::ActionFrom(Player* p_Player)
+{
+    ;
+}
+
 void Player::EventAction(eKeyBoardAction p_PlayerAction)
 {
     if (m_MovementHandler == nullptr)
@@ -237,7 +242,7 @@ void Player::EventAction(eKeyBoardAction p_PlayerAction)
             if (l_Unit == nullptr)
                 return;
 
-            l_Unit->GossipTo(this);
+            l_Unit->ActionFrom(this);
             break;
         }
         case eKeyBoardAction::KeyBoardSpell1:
@@ -346,8 +351,9 @@ bool Player::HasQuestInProgress(uint16 p_QuestID)
     return false;
 }
 
-void Player::CheckQuestObjective(eObjectifType p_EventType, int32 p_Data0)
+bool Player::CheckQuestObjective(eObjectifType p_EventType, int32 p_Data0)
 {
+    bool l_HasMadeObjectif = false;
     for (std::map< uint16, Quest* >::iterator l_It = m_Quests.begin(); l_It != m_Quests.end(); ++l_It)
     {
         std::vector<std::string> l_ListMsg = (*l_It).second->CheckAtEvent(p_EventType, p_Data0);
@@ -356,8 +362,10 @@ void Player::CheckQuestObjective(eObjectifType p_EventType, int32 p_Data0)
             PacketWarningMsg l_Packet;
             l_Packet.BuildPacket(eTypeWarningMsg::Yellow, (*l_It));
             GetSession()->send(l_Packet.m_Packet);
+            l_HasMadeObjectif = true;
         }
     }
+    return l_HasMadeObjectif;
 }
 
 std::map< eKeyBoardAction, uint8 >* Player::GetKeyBoardBinds()

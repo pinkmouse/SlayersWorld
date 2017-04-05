@@ -12,8 +12,8 @@ public:
 	~WorldSocket();
 
     void SendPlayerCreate(uint32, std::string, uint8, uint8, uint8, uint8, int16, uint16, uint32, uint32, uint8);
-    void SendUnitCreateToSet(uint8, uint32, std::string, uint8, uint8, uint8, uint8, uint8, uint16, uint32, uint32, uint8, bool, bool);
-    void SendUnitCreate(uint8, uint32, std::string, uint8, uint8, uint8, uint8, uint8, uint8, uint8, uint8, uint16, Position, uint8, bool, bool);
+    void SendUnitCreateToSet(uint8, uint32, std::string, uint8, uint8, uint8, uint8, uint8, uint16, uint32, uint32, uint8, bool, bool, bool);
+    void SendUnitCreate(uint8, uint32, std::string, uint8, uint8, uint8, uint8, uint8, uint8, uint8, uint8, uint16, Position, uint8, bool, bool, bool);
     void SendUnitGoDirectionToSet(uint8, uint16, const Position &, uint8);
     void SendUnitStopMovement(uint8, uint16, const Position &, uint8);
     void SendUnitStartAttack(uint8, uint16, const Position &, uint8);

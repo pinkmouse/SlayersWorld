@@ -175,6 +175,14 @@ Player* Unit::ToPlayer()
         return nullptr;
 }
 
+DynamicObject* Unit::ToDynamicObject()
+{
+    if (m_Type == TypeUnit::AREATRIGGER || m_Type == TypeUnit::GAMEOBJECT)
+        return  reinterpret_cast<DynamicObject*>(this);
+    else
+        return nullptr;
+}
+
 uint16 Unit::GetID() const
 {
     return m_ID;

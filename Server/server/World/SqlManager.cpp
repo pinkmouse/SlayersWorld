@@ -384,7 +384,7 @@ CreatureTemplate SqlManager::GetCreatureTemplate(uint16 p_Entry)
     float l_MovingTimeMax = 0.0f;
     float l_StopTimeMin = 0.0f;
     float l_StopTimeMax = 0.0f;
-    uint16 l_RespawnTime = 0;
+    int32 l_RespawnTime = 0;
     uint8 l_Rank = 0;
     uint8 l_AiType = 0;
     uint8 l_Faction = 0;
@@ -464,7 +464,7 @@ bool SqlManager::InitializeCreatureTemplate(UnitManager* p_CreatureManager)
     float l_MovingTimeMax = 0.0f;
     float l_StopTimeMin = 0.0f;
     float l_StopTimeMax = 0.0f;
-    uint16 l_RespawnTime = 0;
+    int32 l_RespawnTime = 0;
     uint8 l_Rank = 0;
     uint8 l_AiType = 0;
     uint8 l_Faction = 0;
@@ -891,14 +891,16 @@ std::map<uint8, uint16> SqlManager::GetXpLevel()
     return l_XpLevel;
 }
 
-bool SqlManager::InitializeGameObject(DynamicObjectManager* p_DynamicObjectManager)
+bool SqlManager::InitializeGameObject(DynamicObjectManager* p_DynamicObjectManager, RequiredManager* p_RequiredManager)
 {
-    std::string l_Query = "SELECT `id`, `typeID`, `skinID`, `canBlock`, `duration`, `respawnTime`, `data0`, `data1`, `data2`, `data3` FROM gob_template";
+    std::string l_Query = "SELECT `id`, `typeID`, `requiredID`, `blocking`, `skinID`, `duration`, `respawnTime`, `data0`, `data1`, `data2`, `data3` FROM gob_template";
     mysql_query(&m_MysqlWorld, l_Query.c_str());
 
     uint16 l_Id = 0;
     uint16 l_TypeID = 0;
+    int32 l_RequiredID = -1;
     int16 l_SkinID = 0;
+    bool l_Blocking = false;
     int32 l_Duration = 0;
     int32 l_RespawnTime = 0;
     uint32 l_Data0 = 0;
@@ -913,14 +915,20 @@ bool SqlManager::InitializeGameObject(DynamicObjectManager* p_DynamicObjectManag
     {
         l_Id = atoi(l_Row[0]);
         l_TypeID = atoi(l_Row[1]);
-        l_SkinID = atoi(l_Row[2]);
-        l_Duration = atoi(l_Row[3]);
-        l_RespawnTime = atoi(l_Row[4]);
-        l_Data0 = atoi(l_Row[5]);
-        l_Data1 = atoi(l_Row[6]);
-        l_Data2 = atoi(l_Row[7]);
-        l_Data3 = atoi(l_Row[8]);
-        GameObjectTemplate l_GameObjectTemplate(l_Id, l_Duration, l_RespawnTime, (eGameObjectTemplate)l_TypeID, l_SkinID);
+        l_RequiredID = atoi(l_Row[2]);
+        l_Blocking = (bool)atoi(l_Row[3]);
+        l_SkinID = atoi(l_Row[4]);
+        l_Duration = atoi(l_Row[5]);
+        l_RespawnTime = atoi(l_Row[6]);
+        l_Data0 = atoi(l_Row[7]);
+        l_Data1 = atoi(l_Row[8]);
+        l_Data2 = atoi(l_Row[9]);
+        l_Data3 = atoi(l_Row[10]);
+
+        Required* l_Required = nullptr;
+        if (l_RequiredID >= 0) /// -1 if no required
+            l_Required = p_RequiredManager->GetRequiered(l_RequiredID);
+        GameObjectTemplate l_GameObjectTemplate(l_Id, l_Duration, l_RespawnTime, (eGameObjectTemplate)l_TypeID, l_SkinID, l_Blocking, l_Required);
         l_GameObjectTemplate.SetData(0, l_Data0);
         l_GameObjectTemplate.SetData(1, l_Data1);
         l_GameObjectTemplate.SetData(2, l_Data2);
