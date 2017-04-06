@@ -95,11 +95,19 @@ bool GameObject::IsBlocking() const
 
 void GameObject::UnitEnterInCase(Unit* p_Unit)
 {
+    if (!IsInWorld())
+        return;
+
     switch (m_GobTemplate->GetType())
     {
     case eGameObjectTemplate::GameObjectTrap:
+    {
+        std::vector<Unit*> l_TargetList;
+        l_TargetList.push_back(p_Unit);
+        CastSpell(m_GobTemplate->GetData(0), l_TargetList);
         SetResourceNb(eResourceType::Health, 0);
         break;
+    }
     default:
         break;
     }

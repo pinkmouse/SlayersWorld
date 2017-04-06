@@ -1014,12 +1014,42 @@ void Unit::CastSpell(uint16 p_ID)
     SetCurrentSpell(l_Spell);
 }
 
+void Unit::CastSpell(uint16 p_ID, std::vector<Unit*> p_ListTarget)
+{
+    if (g_SpellManager == nullptr)
+        return;
+
+    SpellTemplate* l_SpellTemplate = g_SpellManager->GetSpell(p_ID);
+    if (l_SpellTemplate == nullptr)
+        return;
+
+    Spell* l_Spell = nullptr;
+    try
+    {
+        l_Spell = new Spell(l_SpellTemplate);
+    }
+    catch (std::bad_alloc& ba)
+    {
+        printf("-> bad_alloc on spell caught: %d\n", ba.what());
+    }
+    if (!l_Spell->Prepare(this))
+        return;
+
+    InterruptCast();
+    l_Spell->SetTargetList(p_ListTarget);
+    SetCurrentSpell(l_Spell);
+}
+
 void Unit::SetCurrentSpell(Spell* p_Spell)
 {
     m_CurrentSpell = p_Spell; /// Casting
 
     if (p_Spell->GetCastTime() <= 0)
+    {
+        sf::Time l_Time;
+        UpdateSpell(l_Time);
         return;
+    }
 
     /// Send Cast Bar visual
     PacketUnitCastBar l_Packet;

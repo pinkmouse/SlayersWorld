@@ -738,6 +738,7 @@ bool  SqlManager::InitializeSpells()
         }
 
         g_SpellManager->AddSpell(l_Spell);
+        l_EffectList.clear();
     }
     mysql_free_result(l_Result);
     return true;

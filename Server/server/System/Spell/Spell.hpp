@@ -21,6 +21,7 @@ public:
     bool IsReadyToLaunch() const;
     SpellTemplate* GetTemplate() const;
     void Interrupt();
+    void SetTargetList(std::vector<Unit*>);
 
 private:
     SpellTemplate* m_SpellTemplate;
@@ -29,4 +30,5 @@ private:
 
     typedef void(Spell::*m_Func)(Unit*, SpellEffect*);
     std::map<SpellEffectType, m_Func> m_SpellEffectsMap;
+    std::vector<Unit*> m_TargetList;
 };

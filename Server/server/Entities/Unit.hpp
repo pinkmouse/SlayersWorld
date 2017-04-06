@@ -119,6 +119,7 @@ public:
     /* SPELL */
     void AddSpellID(uint16, uint64);
     void CastSpell(uint16);
+    void CastSpell(uint16, std::vector<Unit*>);
     std::map< uint16, uint64 >* GetSpellList();
     virtual void AddSpellCooldown(uint16, uint64);
     bool HasSpellCooldown(uint16);

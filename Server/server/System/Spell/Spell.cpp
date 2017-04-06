@@ -146,11 +146,15 @@ void Spell::LaunchEffects()
         else
             printf("Spell type: %d Unknow\n", l_SpellEffect->m_EffectID);
     }
+
     delete this;
 }
 
 std::vector<Unit*> Spell::SearchTargets(SpellTarget p_TargetType, float p_RadiusMax, float p_RadiusMin)
 {
+    if (!m_TargetList.empty())
+        return m_TargetList;
+
     std::vector<Unit*> l_Targets;
 
     switch (p_TargetType)
@@ -179,4 +183,9 @@ std::vector<Unit*> Spell::SearchTargets(SpellTarget p_TargetType, float p_Radius
 void Spell::Interrupt()
 {
     delete this;
+}
+
+void Spell::SetTargetList(std::vector<Unit*> p_TargetList)
+{
+    m_TargetList = p_TargetList;
 }
