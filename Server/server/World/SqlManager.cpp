@@ -979,6 +979,42 @@ bool SqlManager::InitializeGameObject(DynamicObjectManager* p_DynamicObjectManag
     return true;
 }
 
+bool SqlManager::InitializeZones()
+{
+    std::string l_Query = "SELECT `id`, `typeID`, `name`,`mapID`, `caseBegin`, `caseEnd` FROM zone";
+    mysql_query(&m_MysqlWorld, l_Query.c_str());
+
+    uint16 l_ID = 0;
+    uint16 l_TypeID = 0;
+    uint16 l_MapID = 0;
+    uint16 l_CaseNbBegin = 0;
+    uint16 l_CaseNbEnd = 0;
+    std::string l_Name = "";
+
+    MYSQL_RES *l_Result = NULL;
+    MYSQL_ROW l_Row;
+    l_Result = mysql_use_result(&m_MysqlWorld);
+    while ((l_Row = mysql_fetch_row(l_Result)))
+    {
+        l_ID = atoi(l_Row[0]);
+        l_TypeID = atoi(l_Row[1]);
+        l_Name = std::string(l_Row[2]);
+        l_MapID = atoi(l_Row[3]);
+        l_CaseNbBegin = atoi(l_Row[4]);
+        l_CaseNbEnd = atoi(l_Row[5]);
+
+        Map* l_Map = g_MapManager->GetMap(l_MapID);
+        if (l_Map == nullptr)
+            continue;
+
+        printf("-----> Ok %s", l_Name.c_str());
+        //l_Map->GetCase(l_CaseNb)->AddDynamicOject(l_Areatrigger);
+    }
+    mysql_free_result(l_Result);
+
+    return true;
+}
+
 bool SqlManager::InitializeAreatrigger(DynamicObjectManager* p_DynamicObjectManager)
 {
     std::string l_Query = "SELECT `id`, `typeID`,`skinID`, `radius`, `data0`, `data1`, `data2`, `data3` FROM areatrigger_template";

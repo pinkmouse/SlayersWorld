@@ -234,7 +234,7 @@ bool Map::InitializeMap(const std::string & p_FileName)
     t_Case *Buffer = (t_Case*)malloc(sizeof(t_Case) * l_NbCase);
     fread(Buffer, sizeof(*Buffer), l_NbCase, l_File);
 
-    for (uint16 i = 0; i < (m_SizeX * m_SizeY); ++i)
+    for (uint32 i = 0; i < (m_SizeX * m_SizeY); ++i)
     {
         Case* l_Case = new Case(i, i % m_SizeX, i / m_SizeX);
         l_Case->SetMapID(m_ID);

@@ -1,6 +1,6 @@
 #include "Case.hpp"
 
-Case::Case(uint16 p_ID, uint16 p_X, uint16 p_Y) :
+Case::Case(uint32 p_ID, uint16 p_X, uint16 p_Y) :
     WorldObject(TypeWorldObject::CASE, TILE_SIZE, TILE_SIZE),
 	m_ID(p_ID),
 	m_Block(false)

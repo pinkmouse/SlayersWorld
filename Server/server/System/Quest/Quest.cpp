@@ -62,6 +62,10 @@ std::vector<std::string> Quest::CheckAtEvent(eObjectifType p_ObjectifType, int32
         if (m_ObjectifProgressList[(*l_It).first]->m_Data0 >= (*l_It).second->m_Data1)
             continue;
 
+        /// Pct chance on KillMob
+        if (p_ObjectifType == eObjectifType::KillMob && (*l_It).second->m_Data2 && !RandChance((uint8)(*l_It).second->m_Data2))
+            continue;
+
         m_ObjectifProgressList[(*l_It).first]->m_Data0 += 1; /// TODO
         l_List.push_back((*l_It).second->m_Entitled + " " + std::to_string(m_ObjectifProgressList[(*l_It).first]->m_Data0) + "/" + std::to_string((*l_It).second->m_Data1));
     }

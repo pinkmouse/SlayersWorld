@@ -1,7 +1,7 @@
 #include "Case.hpp"
 #include "../Entities/Areatrigger.hpp"
 
-Case::Case(uint16 p_ID, uint16 p_X, uint16 p_Y) :
+Case::Case(uint32 p_ID, uint16 p_X, uint16 p_Y) :
 	m_ID(p_ID),
 	m_Block(false)
 {
@@ -13,7 +13,7 @@ Case::~Case()
 {
 }
 
-uint16 Case::GetID() const
+uint32 Case::GetID() const
 {
     return m_ID;
 }

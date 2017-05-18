@@ -390,7 +390,7 @@ bool Map::InitializeMap(const std::string & p_FileName)
 	m_SizeY = l_Param.l_Size[1];
 
 	/// Read Map
-	for (uint16 i = 0; i < (m_SizeX * m_SizeY); ++i)
+	for (uint32 i = 0; i < (m_SizeX * m_SizeY); ++i)
 	{
 		t_Case l_FluxCase;
 		fread(&l_FluxCase, sizeof(l_FluxCase), 1, l_File);
@@ -401,7 +401,8 @@ bool Map::InitializeMap(const std::string & p_FileName)
 		if (l_Block)
 			l_Case->SetBlock(true);
 		m_ListCase.push_back(l_Case);
-	}
+    }
+
 	return true;
 }
 

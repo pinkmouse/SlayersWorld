@@ -392,7 +392,7 @@ static uint32 PixelToCase(uint32 p_NbPixel) { return p_NbPixel / TILE_SIZE; }
 static uint32 CaseToPixel(uint32 p_NbCase) { return p_NbCase * TILE_SIZE; }
 static Position PositionToCasePosition(const Position & p_Pos) { return Position(PixelToCase(p_Pos.m_X), PixelToCase(p_Pos.m_Y)); }
 static float InYard(float p_YardInPixel) { return p_YardInPixel / (float)TILE_SIZE; }
-
+static bool RandChance(uint8 p_Rand) { return (rand() % 100) <= p_Rand ; }
 static void Log(const std::string & p_Str)
 {
     time_t l_Time = time(NULL);;

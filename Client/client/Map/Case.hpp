@@ -7,7 +7,7 @@
 class Case : public WorldObject
 {
 public:
-	Case(uint16, uint16, uint16);
+	Case(uint32, uint16, uint16);
 	~Case();
 	void SetBlock(bool);
 	uint8 GetMaxTileLevel();
@@ -19,7 +19,7 @@ public:
 
 private:
 	bool m_Block;
-	uint16 m_ID;
+	uint32 m_ID;
 	std::array<int16, MAX_TILE_LEVEL> m_TileList;
     std::vector<DynamicObject*> m_DynamicObjectList;
 };

@@ -102,6 +102,8 @@ void GameObject::UnitEnterInCase(Unit* p_Unit)
     {
     case eGameObjectTemplate::GameObjectTrap:
     {
+        if (m_GobTemplate->GetData(0) < 0) ///< No Spells
+            break;
         std::vector<Unit*> l_TargetList;
         l_TargetList.push_back(p_Unit);
         CastSpell(m_GobTemplate->GetData(0), l_TargetList);

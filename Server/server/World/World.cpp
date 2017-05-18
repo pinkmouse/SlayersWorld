@@ -67,6 +67,10 @@ bool World::Initialize()
     if (!g_SqlManager->InitializeQuests())
         printf("Error Initialize Quests...\n");
 
+    printf("Initialize Zones\n");
+    if (!g_SqlManager->InitializeZones())
+        printf("Error Initialize Zones...\n");
+
     printf("Initialize Spells\n");
     if (!g_SqlManager->InitializeSpells())
         printf("Error Initialize Spells...\n");
