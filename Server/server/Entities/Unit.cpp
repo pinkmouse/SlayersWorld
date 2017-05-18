@@ -227,8 +227,8 @@ void Unit::Update(sf::Time p_Diff)
 
     if (GetPosX() != m_MovementHandler->GetPosX() || GetPosY() != m_MovementHandler->GetPosY() || m_MovementHandler->IsInAttack())
     {
-        if (((m_MovementHandler->GetPosY() / TILE_SIZE) * m_Map->GetSizeX()) + (m_MovementHandler->GetPosX() / TILE_SIZE) != ((GetPosY() / TILE_SIZE) * m_Map->GetSizeX()) + (GetPosX() / TILE_SIZE))
-            m_Map->GetCase(((m_MovementHandler->GetPosY() / TILE_SIZE) * m_Map->GetSizeX()) + (m_MovementHandler->GetPosX() / TILE_SIZE))->UnitEnterInCase(this);
+        if (((m_MovementHandler->GetPosY() / TILE_SIZE) * (uint32)m_Map->GetSizeX()) + (m_MovementHandler->GetPosX() / TILE_SIZE) != ((GetPosY() / TILE_SIZE) * (uint32)m_Map->GetSizeX()) + (GetPosX() / TILE_SIZE))
+            m_Map->GetCase(((m_MovementHandler->GetPosY() / TILE_SIZE) * (uint32)m_Map->GetSizeX()) + (m_MovementHandler->GetPosX() / TILE_SIZE))->UnitEnterInCase(this, m_Map->GetCase(((GetPosY() / TILE_SIZE) * (uint32)m_Map->GetSizeX()) + (GetPosX() / TILE_SIZE)));
         SetPosX(m_MovementHandler->GetPosX());
         SetPosY(m_MovementHandler->GetPosY());
         InterruptCast(); /// Interrupt Cast on Movement

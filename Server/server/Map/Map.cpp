@@ -19,6 +19,11 @@ Map::~Map()
         for (std::pair< uint16, Unit* > l_Unit : l_ListUnit.second)
             delete l_Unit.second;
     }
+
+    for (std::pair< uint16, Zone* > l_Zone : m_ListZone)
+    {
+        delete l_Zone.second;
+    }
 }
 
 uint16 Map::GetSizeX() const
@@ -31,7 +36,7 @@ uint16 Map::GetSizeY() const
     return m_SizeY;
 }
 
-Case* Map::GetCase(uint16 p_ID) const
+Case* Map::GetCase(uint32 p_ID) const
 {
     return m_ListCase[p_ID];
 }
@@ -43,7 +48,7 @@ uint16 Map::GetID() const
 
 Case* Map::GetCase(uint32 p_PosX, uint32 p_PosY) const
 {
-    return m_ListCase[(uint16)((p_PosY / TILE_SIZE) * m_SizeX) + (p_PosX / TILE_SIZE)];
+    return m_ListCase[(uint32)((p_PosY / TILE_SIZE) * m_SizeX) + (p_PosX / TILE_SIZE)];
 }
 
 uint16 Map::GetSquareID(uint16 p_X, uint16 p_Y) const
@@ -447,6 +452,41 @@ std::vector<Square*> Map::GetSquareSet(uint16 p_SquareID)
         l_SquareSet.push_back(&m_ListSquare[p_SquareID + l_TotalSquareWidth + 1]);
 
     return l_SquareSet;
+}
+
+void Map::AddZone(Zone* p_Zone)
+{
+    m_ListZone[p_Zone->m_ID] = p_Zone;
+
+    uint16 l_XBeginLine = p_Zone->m_CaseBegin % GetSizeX();
+    uint16 l_XEndLine = p_Zone->m_CaseEnd % GetSizeX();
+
+    if (l_XEndLine < l_XBeginLine)
+        return;
+
+    for (uint32 i = p_Zone->m_CaseBegin; i <= p_Zone->m_CaseEnd;)
+    {
+        Case* l_Case = GetCase(i);
+
+        if (l_Case == nullptr)
+            continue;
+
+        printf("Add on Case %d\n", i);
+        l_Case->AddZone(p_Zone);
+
+        if ((i + 1) % GetSizeX() > l_XEndLine)
+            i += (GetSizeX() - (l_XEndLine - l_XBeginLine));
+        else
+            i++;
+    }
+}
+
+void Map::EnableZone(uint16 p_Id,  bool p_Enable)
+{
+    if (m_ListZone.find(p_Id) == m_ListZone.end())
+        return;
+
+    m_ListZone[p_Id]->m_enabled = p_Enable;
 }
 
 std::vector<uint16> Map::GetSquareSetID(uint16 p_SquareID)

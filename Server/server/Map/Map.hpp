@@ -24,7 +24,7 @@ public:
     Unit* GetUnit(TypeUnit, uint16);
     uint16 GetID() const;
     uint16 ChangeSquare(Unit*);
-    Case* GetCase(uint16) const;
+    Case* GetCase(uint32) const;
     Case* GetCase(uint32, uint32) const;
     void RemoveFromSquare(Unit*);
     void AddToSquare(Unit*, uint16);
@@ -44,6 +44,10 @@ public:
     void UpdateForPlayersInNewSquare(Unit*, bool p_UpdateAll = false);
     std::map<uint16, Unit*>* GetListUnitType(TypeUnit);
 
+    /// Enable Zone
+    void AddZone(Zone*);
+    void EnableZone(uint16, bool);
+
     /// Network
     void SendToSet(WorldPacket, Unit*);
 
@@ -57,6 +61,7 @@ private:
 
     std::map< eInterMapAction, std::queue<Unit* > > m_UnitInterMapActionQueue;
 	std::vector<Case*>	m_ListCase;
+    std::map<uint8, Zone*>	m_ListZone;
     std::map<TypeUnit, std::map<uint16, Unit*> > m_ListUnitZone;
 
     std::map<uint16, Square> m_ListSquare;

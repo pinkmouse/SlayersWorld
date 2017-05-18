@@ -332,6 +332,25 @@ struct SpellEffect
         m_ID(p_ID), m_EffectID(p_EffectID), m_Target(p_Target), m_BasePoint1(p_BP1), m_BasePoint2(p_BP2), m_BasePoint3(p_BP3), m_BasePoint4(p_BP4), m_RadiusMin(p_RadiusMin), m_RadiusMax(p_RadiusMax) {}
 };
 
+enum eTypeZone
+{
+    NoneZone = 0,
+    NeutralZone = 1, ///< Attack impossible
+    ArenaZone = 2
+};
+
+struct Zone
+{
+    uint16 m_ID;
+    eTypeZone m_TypeID;
+    std::string m_Name;
+    uint32 m_CaseBegin;
+    uint32 m_CaseEnd;
+    bool m_enabled;
+
+    Zone(uint16 p_ID, eTypeZone p_TypeID, std::string p_Name, uint32 p_CaseBegin, uint32 p_CaseEnd) :
+        m_ID(p_ID), m_TypeID(p_TypeID), m_Name(p_Name), m_CaseBegin(p_CaseBegin), m_CaseEnd(p_CaseEnd), m_enabled(true) {}
+};
 
 struct CreatureTemplate
 {

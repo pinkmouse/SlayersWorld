@@ -945,7 +945,7 @@ bool SqlManager::InitializeGameObject(DynamicObjectManager* p_DynamicObjectManag
     l_Id = 0;
     uint16 l_GobID = 0;
     uint16 l_MapID = 0;
-    uint16 l_CaseNb = 0;
+    uint32 l_CaseNb = 0;
 
     uint32 l_PosX = 0;
     uint32 l_PosY = 0;
@@ -1007,8 +1007,8 @@ bool SqlManager::InitializeZones()
         if (l_Map == nullptr)
             continue;
 
-        printf("-----> Ok %s", l_Name.c_str());
-        //l_Map->GetCase(l_CaseNb)->AddDynamicOject(l_Areatrigger);
+        Zone* l_Zone = new Zone(l_ID, (eTypeZone)l_TypeID, l_Name, l_CaseNbBegin, l_CaseNbEnd);
+        l_Map->AddZone(l_Zone);
     }
     mysql_free_result(l_Result);
 
@@ -1059,7 +1059,7 @@ bool SqlManager::InitializeAreatrigger(DynamicObjectManager* p_DynamicObjectMana
     l_Id = 0;
     uint16 l_AreatriggerID = 0;
     uint16 l_MapID = 0;
-    uint16 l_CaseNb = 0;
+    uint32 l_CaseNb = 0;
 
     uint32 l_PosX = 0;
     uint32 l_PosY = 0;
