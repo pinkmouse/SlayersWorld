@@ -38,6 +38,9 @@ uint16 Map::GetSizeY() const
 
 Case* Map::GetCase(uint32 p_ID) const
 {
+    if (p_ID >= m_ListCase.size())
+        return nullptr;
+
     return m_ListCase[p_ID];
 }
 
@@ -48,6 +51,9 @@ uint16 Map::GetID() const
 
 Case* Map::GetCase(uint32 p_PosX, uint32 p_PosY) const
 {
+    if ((uint32)((p_PosY / TILE_SIZE) * m_SizeX) + (p_PosX / TILE_SIZE) >= m_ListCase.size())
+        return nullptr;
+
     return m_ListCase[(uint32)((p_PosY / TILE_SIZE) * m_SizeX) + (p_PosX / TILE_SIZE)];
 }
 
@@ -343,11 +349,15 @@ void Map::AddUnit(Unit* p_Unit)
     UpdateForPlayersInNewSquare(p_Unit, true);
     if (p_Unit->GetType() == TypeUnit::PLAYER)
         p_Unit->ToPlayer()->UpdateNewSquares(0, p_Unit->GetSquareID(), true);
+
+    GetCase(((p_Unit->GetPosY() / TILE_SIZE) * (uint32)GetSizeX()) + (p_Unit->GetPosX() / TILE_SIZE))->UnitEnterInCase(p_Unit, nullptr);
 }
 
 void Map::RemoveUnit(Unit* p_Unit)
 {
     m_ListUnitZone[p_Unit->GetType()].erase(p_Unit->GetID());
+
+    GetCase(((p_Unit->GetPosY() / TILE_SIZE) * (uint32)GetSizeX()) + (p_Unit->GetPosX() / TILE_SIZE))->UnitOutOfCase(p_Unit, nullptr);
 
     /// Remove from square
     RemoveFromSquare(p_Unit);
@@ -471,7 +481,6 @@ void Map::AddZone(Zone* p_Zone)
         if (l_Case == nullptr)
             continue;
 
-        printf("Add on Case %d\n", i);
         l_Case->AddZone(p_Zone);
 
         if ((i + 1) % GetSizeX() > l_XEndLine)

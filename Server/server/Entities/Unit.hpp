@@ -68,6 +68,7 @@ public:
 
     void SetPosX(const uint32 &);
     void SetPosY(const uint32 &);
+    void SetPos(const uint32 &, const uint32 &);
     void SetSkinID(const int16 &);
     void Talk(const std::string &);
     void SetOrientation(const Orientation &);
@@ -141,6 +142,12 @@ public:
     void LeaveGroupsType(eGroupType);
     bool IsInGroupWith(const Unit*) const;
     bool IsInGroup(eGroupType, const std::string &) const;
+
+    /* ZONE */
+    void CheckEnterInZone(uint32, uint32, uint32, uint32);
+    void CheckOutOfZone(uint32, uint32, uint32, uint32);
+    virtual void EnterInZone(Zone*);
+    virtual void OutOfZone(Zone*);
 
 protected:
     /* BASIC*/

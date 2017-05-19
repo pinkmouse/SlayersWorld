@@ -55,6 +55,9 @@ void Case::AddDynamicOject(DynamicObject* p_DynamicObject)
 
 void Case::RemoveDynamicOject(DynamicObject* p_DynamicObject)
 {
+    if (p_DynamicObject == nullptr)
+        return;
+
     std::vector<DynamicObject*>::iterator l_It = std::find(m_DynamicObjectList.begin(), m_DynamicObjectList.end(), p_DynamicObject);
 
     if (l_It != m_DynamicObjectList.end())

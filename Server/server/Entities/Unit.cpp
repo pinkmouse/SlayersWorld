@@ -227,10 +227,7 @@ void Unit::Update(sf::Time p_Diff)
 
     if (GetPosX() != m_MovementHandler->GetPosX() || GetPosY() != m_MovementHandler->GetPosY() || m_MovementHandler->IsInAttack())
     {
-        if (((m_MovementHandler->GetPosY() / TILE_SIZE) * (uint32)m_Map->GetSizeX()) + (m_MovementHandler->GetPosX() / TILE_SIZE) != ((GetPosY() / TILE_SIZE) * (uint32)m_Map->GetSizeX()) + (GetPosX() / TILE_SIZE))
-            m_Map->GetCase(((m_MovementHandler->GetPosY() / TILE_SIZE) * (uint32)m_Map->GetSizeX()) + (m_MovementHandler->GetPosX() / TILE_SIZE))->UnitEnterInCase(this, m_Map->GetCase(((GetPosY() / TILE_SIZE) * (uint32)m_Map->GetSizeX()) + (GetPosX() / TILE_SIZE)));
-        SetPosX(m_MovementHandler->GetPosX());
-        SetPosY(m_MovementHandler->GetPosY());
+        SetPos(m_MovementHandler->GetPosX(), m_MovementHandler->GetPosY());
         InterruptCast(); /// Interrupt Cast on Movement
     }
 
@@ -589,6 +586,38 @@ void Unit::Talk(const std::string & p_Talk)
     m_Map->SendToSet(l_Packet.m_Packet, this);
 }
 
+void Unit::CheckEnterInZone(uint32 p_OldX, uint32 p_OldY, uint32 p_NewX, uint32 p_NewY)
+{
+    if (((p_NewY / TILE_SIZE) * (uint32)m_Map->GetSizeX()) + (p_NewX / TILE_SIZE) != ((p_OldY / TILE_SIZE) * (uint32)m_Map->GetSizeX()) + (p_OldX / TILE_SIZE))
+    {
+        Case* l_Case = m_Map->GetCase(((p_NewY / TILE_SIZE) * (uint32)m_Map->GetSizeX()) + (p_NewX / TILE_SIZE));
+        if (l_Case == nullptr)
+            return;
+
+        l_Case->UnitEnterInCase(this, m_Map->GetCase(((p_OldY / TILE_SIZE) * (uint32)m_Map->GetSizeX()) + (p_OldX / TILE_SIZE)));
+    }
+}
+
+void Unit::CheckOutOfZone(uint32 p_OldX, uint32 p_OldY, uint32 p_NewX, uint32 p_NewY)
+{
+    if (((p_NewY / TILE_SIZE) * (uint32)m_Map->GetSizeX()) + (p_NewX / TILE_SIZE) != ((p_OldY / TILE_SIZE) * (uint32)m_Map->GetSizeX()) + (p_OldX / TILE_SIZE))
+    {
+        Case* l_Case = m_Map->GetCase(((p_NewY / TILE_SIZE) * (uint32)m_Map->GetSizeX()) + (p_NewX / TILE_SIZE));
+        if (l_Case == nullptr)
+            return;
+
+        l_Case->UnitOutOfCase(this, m_Map->GetCase(((p_OldY / TILE_SIZE) * (uint32)m_Map->GetSizeX()) + (p_OldX / TILE_SIZE)));
+    }
+}
+
+void Unit::SetPos(const uint32 & p_PosX, const uint32 & p_PosY)
+{
+    CheckEnterInZone(GetPosX(), GetPosY(), p_PosX, p_PosY);
+    CheckOutOfZone(p_PosX, p_PosY, GetPosX(), GetPosY());
+    SetPosX(p_PosX);
+    SetPosY(p_PosY);
+}
+
 void Unit::SetPosX(const uint32 & p_PosX)
 {
     WorldObject::SetPosX(p_PosX);
@@ -650,8 +679,7 @@ void Unit::TeleportTo(const WorldPosition& p_WorldPosition)
     GetMovementHandler()->StopMovement();
     GetMovementHandler()->StopAttack();
     InterruptCast();
-    SetPosX(p_WorldPosition.GetPosX());
-    SetPosY(p_WorldPosition.GetPosY());
+    SetPos(p_WorldPosition.GetPosX(), p_WorldPosition.GetPosY());
     SetOrientation(p_WorldPosition.GetOrientation());
     SetMapID(p_WorldPosition.GetMapID());
 
@@ -921,6 +949,11 @@ void Unit::RemoveVictim(Unit* p_Victim)
 }
 
 void Unit::SetVictim(Unit* p_Victim) { m_Victim = p_Victim; }
+Unit* Unit::GetVictim() const { return m_Victim; }
+
+void Unit::EnterInZone(Zone* p_Zone) {}
+
+void Unit::OutOfZone(Zone* p_Zone) {}
 
 Unit* Unit::GetMaxThreatAttacker()
 {
@@ -936,7 +969,6 @@ Unit* Unit::GetMaxThreatAttacker()
     }
     return l_Attacker;
 }
-Unit* Unit::GetVictim() const { return m_Victim; }
 
 uint8 Unit::GetNbAttacker() const
 {

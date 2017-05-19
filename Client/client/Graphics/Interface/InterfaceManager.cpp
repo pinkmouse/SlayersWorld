@@ -328,7 +328,7 @@ void InterfaceManager::DrawWarnings(Window & p_Window)
             l_WarningMsg.setString((*l_It).second[i].first);
             l_WarningMsg.setFont(*g_Font);
 
-            l_WarningMsg.setPosition((X_WINDOW / 2) - ((l_WarningMsg.getGlobalBounds().width) / 2), (Y_WINDOW / 2) - ((g_Font->getLineSpacing(l_WarningMsg.getCharacterSize())) / 2) + (g_Font->getLineSpacing(l_WarningMsg.getCharacterSize()) * i));
+            l_WarningMsg.setPosition((X_WINDOW / 2) - ((l_WarningMsg.getGlobalBounds().width) / 2), (Y_WINDOW / 2) - 50 - ((g_Font->getLineSpacing(l_WarningMsg.getCharacterSize())) / 2) + (g_Font->getLineSpacing(l_WarningMsg.getCharacterSize()) * i));
             p_Window.draw(l_WarningMsg);
         }
     }

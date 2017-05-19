@@ -61,6 +61,10 @@ public:
     void AddSpellCooldown(uint16, uint64);
     void LearnSpell(uint16);
 
+    /* ZONE */
+    void EnterInZone(Zone*);
+    void OutOfZone(Zone*);
+
     /* COMMANDS */
     bool CheckCommand(const std::string &);
     void EventAction(eKeyBoardAction);

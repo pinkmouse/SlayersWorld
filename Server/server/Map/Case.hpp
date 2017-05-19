@@ -16,6 +16,8 @@ public:
     void AddDynamicOject(DynamicObject*);
     void AddZone(Zone*);
     void UnitEnterInCase(Unit*, Case*);
+    void UnitOutOfCase(Unit*, Case*);
+
     bool IsInZoneType(eTypeZone);
     bool HasZone(uint16);
     std::vector<Zone*> CompareZones(Case*);

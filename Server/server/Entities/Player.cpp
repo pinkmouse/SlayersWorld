@@ -368,6 +368,34 @@ bool Player::CheckQuestObjective(eObjectifType p_EventType, int32 p_Data0)
     return l_HasMadeObjectif;
 }
 
+void Player::EnterInZone(Zone* p_Zone)
+{
+    if (p_Zone == nullptr)
+        return;
+
+    printf("---> ENTER IN ZONE\n");
+    if (p_Zone->m_Name != "")
+    {
+        PacketWarningMsg l_Packet;
+        l_Packet.BuildPacket(eTypeWarningMsg::Yellow, p_Zone->m_Name);
+        GetSession()->send(l_Packet.m_Packet);
+    }
+}
+
+void Player::OutOfZone(Zone* p_Zone)
+{
+    if (p_Zone == nullptr)
+        return;
+
+    printf("---> OUT OF ZONE\n");
+    if (p_Zone->m_Name != "")
+    {
+        PacketWarningMsg l_Packet;
+        l_Packet.BuildPacket(eTypeWarningMsg::Yellow, "out of " + p_Zone->m_Name);
+        GetSession()->send(l_Packet.m_Packet);
+    }
+}
+
 std::map< eKeyBoardAction, uint8 >* Player::GetKeyBoardBinds()
 {
     return &m_KeyBoardBinds;
