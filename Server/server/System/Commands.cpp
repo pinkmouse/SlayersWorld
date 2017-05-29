@@ -113,7 +113,7 @@ bool Player::HandleCommandSkin(std::vector<std::string> p_ListCmd)
         return false;
 
     int16 l_SkinID = atoi(p_ListCmd[0].c_str());
-    if (l_SkinID > 69)
+    if (l_SkinID >= MAX_SKIN_IMG)
         l_SkinID = 0;
 
     SetSkinID(l_SkinID);

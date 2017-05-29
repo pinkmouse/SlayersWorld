@@ -30,6 +30,8 @@
 #define OUT_OF_COMBAT_TIME 7
 #define MELEE_RANGE TILE_SIZE
 
+#define MAX_SKIN_IMG 74
+
 typedef char int8;
 typedef short int16;
 typedef int int32;
@@ -425,4 +427,12 @@ static void Log(const std::string & p_Str)
 
     strftime(l_Format, 32, "%Y-%m-%d %H-%M", l_TimeInfo);
     printf("[%s] %s\n", l_Format, p_Str.c_str());
+}
+static bool replaceStr(std::string& str, const std::string& from, const std::string& to) 
+{
+    size_t start_pos = str.find(from);
+    if (start_pos == std::string::npos)
+        return false;
+    str.replace(start_pos, from.length(), to);
+    return true;
 }

@@ -205,10 +205,18 @@ void Player::SetLevel(const uint8 & p_Level)
 
 void Player::SendMsg(const std::string & p_Msg)
 {
+    std::string l_Msg = p_Msg;
+    ParseStringWithTag(l_Msg);
     PacketSrvPlayerMsg l_Packet;
-    l_Packet.BuildPacket(p_Msg);
+    l_Packet.BuildPacket(l_Msg);
     WorldSocket* l_Session = GetSession();
     l_Session->SendPacket(l_Packet.m_Packet);
+}
+
+void Player::ParseStringWithTag(std::string & p_Msg)
+{
+    replaceStr(p_Msg, "$name", GetName());
+    replaceStr(p_Msg, "$level", std::to_string(GetLevel()));
 }
 
 void Player::Respawn()

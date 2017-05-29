@@ -28,6 +28,7 @@ public:
     bool SubPointsStat(eStats, uint8);
     void SetLevel(const uint8 &);
     void ActionFrom(Player*);
+    void ParseStringWithTag(std::string &);
 
     /* RESOURCES */
     uint32 GetXp() const;

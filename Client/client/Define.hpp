@@ -19,7 +19,7 @@
 #define GRID_SIZE 12
 
 /// SKIN
-#define MAX_SKIN_IMG 70
+#define MAX_SKIN_IMG 74
 #define SKIN_ZOOM_FACTOR_DEFAULT 1.0f
 #define UPDATE_OPACITY_TIME 250
 #define SKINS_FOLDER "img/skins/"

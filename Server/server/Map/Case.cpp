@@ -53,7 +53,6 @@ void Case::AddDynamicOject(DynamicObject* p_DynamicObject)
 
 void Case::AddZone(Zone* p_Zone)
 {
-    printf("Add on Case %d\n", m_ID);
     m_ZoneList.push_back(p_Zone);
 }
 
