@@ -51,12 +51,16 @@ bool World::Initialize()
     if (!g_SqlManager->InitializeRequired(m_RequiredManager))
         printf("Error Initialize Required...\n");
 
+    printf("Initialize Gossip\n");
+    if (!g_SqlManager->InitializeGossip(m_CreatureManager, m_RequiredManager))
+        printf("Error Initialize Gossip...\n");
+
     printf("Initialize Areatrigger\n");
     if (!g_SqlManager->InitializeAreatrigger(m_DynamicObjectManager))
         printf("Error Initialize Areatrigger...\n");
 
     printf("Initialize GameObject\n");
-    if (!g_SqlManager->InitializeGameObject(m_DynamicObjectManager, m_RequiredManager))
+    if (!g_SqlManager->InitializeGameObject(m_DynamicObjectManager, m_RequiredManager, m_CreatureManager))
         printf("Error Initialize GameObject...\n");
 
     printf("Initialize SpellEffects\n");
@@ -78,10 +82,6 @@ bool World::Initialize()
     printf("Initialize CreatureTemplate\n");
     if (!g_SqlManager->InitializeCreatureTemplate(m_CreatureManager))
         printf("Error Initialize CreatureTemplate...\n");
-
-    printf("Initialize Gossip\n");
-    if (!g_SqlManager->InitializeGossip(m_CreatureManager, m_RequiredManager))
-        printf("Error Initialize Gossip...\n");
 
     printf("Initialize Creature\n");
     if (!g_SqlManager->InitializeCreature(m_CreatureManager))

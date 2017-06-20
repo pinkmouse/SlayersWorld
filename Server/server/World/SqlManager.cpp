@@ -892,7 +892,7 @@ std::map<uint8, uint16> SqlManager::GetXpLevel()
     return l_XpLevel;
 }
 
-bool SqlManager::InitializeGameObject(DynamicObjectManager* p_DynamicObjectManager, RequiredManager* p_RequiredManager)
+bool SqlManager::InitializeGameObject(DynamicObjectManager* p_DynamicObjectManager, RequiredManager* p_RequiredManager, UnitManager* p_UnitManager)
 {
     std::string l_Query = "SELECT `id`, `typeID`, `requiredID`, `blocking`, `skinID`, `duration`, `respawnTime`, `data0`, `data1`, `data2`, `data3` FROM gob_template";
     mysql_query(&m_MysqlWorld, l_Query.c_str());
@@ -970,9 +970,11 @@ bool SqlManager::InitializeGameObject(DynamicObjectManager* p_DynamicObjectManag
         if (l_GobTemplate == nullptr)
             continue;
 
-        GameObject* l_Areatrigger = new GameObject(l_Id, l_Map, l_PosX, l_PosY, l_GobTemplate);
-        l_Map->AddUnit(l_Areatrigger);
-        l_Map->GetCase(l_CaseNb)->AddDynamicOject(l_Areatrigger);
+        GameObject* l_Gob = new GameObject(l_Id, l_Map, l_PosX, l_PosY, l_GobTemplate);
+        if (p_UnitManager->GetGossipListFor(TypeUnit::GAMEOBJECT, l_GobID) != nullptr)
+            l_Gob->SetGossipList(p_UnitManager->GetGossipListFor(TypeUnit::GAMEOBJECT, l_GobID));
+        l_Map->AddUnit(l_Gob);
+        l_Map->GetCase(l_CaseNb)->AddDynamicOject(l_Gob);
     }
     mysql_free_result(l_Result);
 

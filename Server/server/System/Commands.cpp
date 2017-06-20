@@ -28,6 +28,8 @@ void Player::InitializeCommands()
     m_CmdHandleMap["gr"].second = &Player::HandleCommandGroupWisp;
     m_CmdHandleMap["leave"].first = eAccessType::Dummy;
     m_CmdHandleMap["leave"].second = &Player::HandleCommandLeave;
+    m_CmdHandleMap["kiss"].first = eAccessType::Dummy;
+    m_CmdHandleMap["kiss"].second = &Player::HandleCommandEmote;
     m_CmdHandleMap["npc"].first = eAccessType::Moderator;
     m_CmdHandleMap["npc"].second = &Player::HandleCommandCreature;
     m_CmdHandleMap["who"].first = eAccessType::Moderator;
@@ -185,6 +187,31 @@ bool Player::HandleCommandLevel(std::vector<std::string> p_ListCmd)
 
     Player* l_Player = g_MapManager->GetPlayer(l_Id);
     SendMsg(l_Name + " est de niveau " + std::to_string(l_Player->GetLevel()));
+
+    return true;
+}
+
+bool Player::HandleCommandEmote(std::vector<std::string> p_ListCmd)
+{
+    if (p_ListCmd.empty())
+        return false;
+
+    std::string l_Name = p_ListCmd[0];
+
+    int32 l_Id = g_SqlManager->GetPlayerID(l_Name);
+    if (l_Id <= 0)
+    {
+        SendMsg(l_Name + " est introuvable");
+        return true;
+    }
+
+    Player* l_Player = g_MapManager->GetPlayer(l_Id);
+    if (l_Player == nullptr)
+        return true;
+
+
+    SendMsg("*Vous embrassez " + l_Name + "*");
+    l_Player->SendMsg("*" + GetName() + " vous embrasse*");
 
     return true;
 }

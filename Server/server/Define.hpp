@@ -136,7 +136,8 @@ enum eGameObjectTemplate
 {
     GameObjectSpellLauncher = 0,
     GameObjectQuest = 1,
-    GameObjectTrap = 2
+    GameObjectTrap = 2,
+    GameObjectLaunchGossip = 3
 };
 
 enum eRequiredType

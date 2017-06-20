@@ -127,6 +127,7 @@ bool GameObject::CanBeWalk()
 void GameObject::ActionFrom(Player* p_Player)
 {
     Unit::ActionFrom(p_Player);
+    printf("Enter %d\n", m_GobTemplate->GetType());
 
     switch (m_GobTemplate->GetType())
     {
@@ -135,6 +136,13 @@ void GameObject::ActionFrom(Player* p_Player)
         {
             if (p_Player->CheckQuestObjective(eObjectifType::RecoltGob, m_GobTemplate->GetID()))
                 SetResourceNb(eResourceType::Health, 0);
+        }
+        break;
+    case eGameObjectTemplate::GameObjectLaunchGossip:
+        if ((m_GobTemplate->GetRequired() != nullptr && m_GobTemplate->GetRequired()->IsValid(p_Player)) || m_GobTemplate->GetRequired() == nullptr)
+        {
+            printf("Enter 2 %d\n", m_GobTemplate->GetType());
+            GossipTo(p_Player);
         }
         break;
     default:

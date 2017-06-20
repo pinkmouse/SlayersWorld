@@ -64,7 +64,7 @@ public:
     bool InitializeQuests();
     bool InitializeZones();
     bool InitializeAreatrigger(DynamicObjectManager*);
-    bool InitializeGameObject(DynamicObjectManager*, RequiredManager*);
+    bool InitializeGameObject(DynamicObjectManager*, RequiredManager*, UnitManager*);
     CreatureTemplate GetCreatureTemplate(uint16);
     uint16 AddNewCreature(uint16, uint16, uint32, uint32);
     bool InitializeCreature(UnitManager*);
