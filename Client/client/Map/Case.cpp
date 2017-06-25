@@ -9,6 +9,7 @@ Case::Case(uint32 p_ID, uint16 p_X, uint16 p_Y) :
     SetPosY(p_Y * TILE_SIZE);
 	for (uint8 i = 0; i < m_TileList.size(); ++i)
 		m_TileList[i] = -1;
+    m_DynamicObjectList.clear();
 }
 
 Case::~Case()
@@ -61,5 +62,8 @@ void Case::RemoveDynamicOject(DynamicObject* p_DynamicObject)
     std::vector<DynamicObject*>::iterator l_It = std::find(m_DynamicObjectList.begin(), m_DynamicObjectList.end(), p_DynamicObject);
 
     if (l_It != m_DynamicObjectList.end())
+    {
+        DynamicObject* l_DynObj = (*l_It);
         m_DynamicObjectList.erase(l_It);
+    }
 }

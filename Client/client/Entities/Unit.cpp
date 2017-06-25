@@ -47,6 +47,11 @@ bool Unit::IsPlayer() const
     return m_Type == TypeUnit::PLAYER;
 }
 
+bool Unit::IsDynamicObject() const
+{
+    return m_Type == TypeUnit::GAMEOBJECT || m_Type == TypeUnit::AREATRIGGER;
+}
+
 MovementHandler* Unit::GetMovementHandler()
 {
     return m_MovementHandler;
@@ -245,7 +250,7 @@ bool Unit::IsInRayVisible(Unit* p_Unit)
         if (l_Id == l_UnitSquareID)
             return true;
     }
-    printf("----> NOT IN RAY %d %d : %d %d\n", GetCasePosX(), GetCasePosY(), p_Unit->GetCasePosX(), p_Unit->GetCasePosY());
+    //printf("----> NOT IN RAY %d %d : %d %d\n", GetCasePosX(), GetCasePosY(), p_Unit->GetCasePosX(), p_Unit->GetCasePosY());
     return false;
 }
 

@@ -30,7 +30,7 @@
 #define OUT_OF_COMBAT_TIME 7
 #define MELEE_RANGE TILE_SIZE
 
-#define MAX_SKIN_IMG 74
+#define MAX_SKIN_IMG 80
 
 typedef char int8;
 typedef short int16;
@@ -179,7 +179,8 @@ enum eObjectifType
 {
     KillMob = 0,
     SpeackMob = 1,
-    RecoltGob = 2
+    RecoltGob = 2,
+    EnterInZone = 3
 };
 
 enum eRepetitionType
@@ -338,8 +339,9 @@ struct SpellEffect
 enum eTypeZone
 {
     NoneZone = 0,
-    NeutralZone = 1, ///< Attack impossible
-    ArenaZone = 2
+    QuestZone = 1, ///< don't send to client
+    NeutralZone = 2, ///< Attack impossible
+    ArenaZone = 3
 };
 
 struct Zone

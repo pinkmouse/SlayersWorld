@@ -60,6 +60,7 @@ void PacketHandler::HandleRemoveUnit(WorldPacket &p_Packet)
             return;
 
         l_Map->RemoveUnit(l_Unit);
+
         delete l_Unit;
     }
 }

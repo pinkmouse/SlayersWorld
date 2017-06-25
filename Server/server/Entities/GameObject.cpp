@@ -141,7 +141,6 @@ void GameObject::ActionFrom(Player* p_Player)
     case eGameObjectTemplate::GameObjectLaunchGossip:
         if ((m_GobTemplate->GetRequired() != nullptr && m_GobTemplate->GetRequired()->IsValid(p_Player)) || m_GobTemplate->GetRequired() == nullptr)
         {
-            printf("Enter 2 %d\n", m_GobTemplate->GetType());
             GossipTo(p_Player);
         }
         break;

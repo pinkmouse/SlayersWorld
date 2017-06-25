@@ -3,7 +3,7 @@
 Quest::Quest(QuestTemplate* p_QuestTemplate) :
     m_QuestTemplate(p_QuestTemplate)
 {
-    for (std::map< uint8, ObjectifQuestTemplate* >::iterator l_It = p_QuestTemplate->m_ObjectifList.begin(); l_It != p_QuestTemplate->m_ObjectifList.end(); ++l_It)
+        for (std::map< uint8, ObjectifQuestTemplate* >::iterator l_It = p_QuestTemplate->m_ObjectifList.begin(); l_It != p_QuestTemplate->m_ObjectifList.end(); ++l_It)
         m_ObjectifProgressList[(*l_It).first] = new ObjectifProgess((*l_It).first);
 }
 

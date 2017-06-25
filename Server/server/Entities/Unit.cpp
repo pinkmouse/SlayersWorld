@@ -890,14 +890,23 @@ void Unit::GossipTo(Player* p_Player)
         Quest* l_Quest = nullptr;
         try
         {
-            l_Quest = new Quest(g_QuestManager->GetQuestTemplate(l_Data1));
+            QuestTemplate* l_QuestTemplate = g_QuestManager->GetQuestTemplate(l_Data1);
+            if (l_QuestTemplate != nullptr)
+                l_Quest = new Quest(g_QuestManager->GetQuestTemplate(l_Data1));
+            else
+                p_Player->SendMsg( "Error Quest :" + std::to_string(l_Data1));
         }
         catch (std::bad_alloc& ba)
         {
             printf("-> bad_alloc on quest caught: %d\n", ba.what());
         }
+        if (l_Quest == nullptr)
+            return;
         p_Player->AddQuest(l_Quest);
-        p_Player->SendMsg(GetName() + ": " + l_GossipMsg);
+        if (GetName() != "")
+            p_Player->SendMsg(GetName() + ": " + l_GossipMsg);
+        else
+            p_Player->SendMsg(l_GossipMsg);
         return;
     }
 

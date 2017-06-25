@@ -19,7 +19,7 @@
 #define GRID_SIZE 12
 
 /// SKIN
-#define MAX_SKIN_IMG 74
+#define MAX_SKIN_IMG 80
 #define SKIN_ZOOM_FACTOR_DEFAULT 1.0f
 #define UPDATE_OPACITY_TIME 250
 #define SKINS_FOLDER "img/skins/"
@@ -32,7 +32,7 @@
 #define MAX_OPACITY 255
 
 /// GOB
-#define MAX_GOB_IMG 3
+#define MAX_GOB_IMG 8
 #define GOBS_SKIN_FOLDER "img/gobs/"
 
 /// SPELL

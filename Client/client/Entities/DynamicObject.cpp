@@ -20,7 +20,7 @@ DynamicObject::DynamicObject(int32 p_ID, TypeUnit p_Type, std::string p_Name, ui
 
 DynamicObject::~DynamicObject()
 {
-    //m_Map->GetCase(GetPosX(), GetPosY() - TILE_SIZE)->RemoveDynamicOject(this);
+    printf("Erreur Dyn");//m_Map->GetCase(GetPosX(), GetPosY() - TILE_SIZE)->RemoveDynamicOject(this);
 }
 
 bool DynamicObject::IsBlocking()

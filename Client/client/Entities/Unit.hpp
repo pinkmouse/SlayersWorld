@@ -18,6 +18,7 @@ public:
     virtual ~Unit();
 
     bool IsPlayer() const;
+    bool IsDynamicObject() const;
     std::string GetName() const;
     uint16 GetCasePosX() const;
     uint16 GetCasePosY() const;

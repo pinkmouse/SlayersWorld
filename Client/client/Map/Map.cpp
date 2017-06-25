@@ -42,7 +42,7 @@ void Map::Update(sf::Time p_Diff)
 
             if (!g_Player->IsInRayVisible(l_Unit))
             {
-                m_ListUnitZone[l_Unit->GetType()].erase(l_Unit->GetID());
+                RemoveUnit(l_Unit);
                 delete l_Unit;
             }
             else
@@ -58,14 +58,15 @@ std::map<TypeUnit, std::map<uint16, Unit*>>* Map::GetListUnitZone()
 
 void Map::AddUnit(Unit* p_Unit)
 {
-    printf("Add Unit %d\n", p_Unit->GetID());
+    //printf("Add Unit %d\n", p_Unit->GetID());
     m_ListUnitZone[p_Unit->GetType()][p_Unit->GetID()] = p_Unit;
 }
 
 void Map::RemoveUnit(Unit* p_Unit)
 {
-    printf("Remove Unit %d\n", p_Unit->GetID());
     m_ListUnitZone[p_Unit->GetType()].erase(p_Unit->GetID());
+    if (p_Unit->IsDynamicObject())
+        GetCase(p_Unit->GetPosX(), p_Unit->GetPosY() - TILE_SIZE)->RemoveDynamicOject(p_Unit->ToDynamicObject());
 }
 
 Unit* Map::GetUnit(TypeUnit p_TypeID, uint16 p_UnitID)

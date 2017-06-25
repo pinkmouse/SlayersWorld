@@ -293,8 +293,11 @@ void Player::ValidateQuest(Quest* p_Quest)
     PacketWarningMsg l_Packet;
     l_Packet.BuildPacket(eTypeWarningMsg::Yellow, "Quete : " + p_Quest->GetName() + " terminé");
     GetSession()->send(l_Packet.m_Packet);
-
     g_SqlManager->SaveQuestForPlayer(this, p_Quest);
+
+    /// TEMP
+    SetXp(GetXp() + (g_LevelManager->GetXpForLevel(GetLevel()) / 10));
+
     RemoveQuest(p_Quest->GetID());
 }
 
@@ -381,27 +384,26 @@ void Player::EnterInZone(Zone* p_Zone)
     if (p_Zone == nullptr)
         return;
 
-    printf("---> ENTER IN ZONE\n");
-    if (p_Zone->m_Name != "")
+    if (p_Zone->m_TypeID != eTypeZone::QuestZone &&  p_Zone->m_Name != "")
     {
         PacketWarningMsg l_Packet;
         l_Packet.BuildPacket(eTypeWarningMsg::Yellow, p_Zone->m_Name);
         GetSession()->send(l_Packet.m_Packet);
     }
+   CheckQuestObjective(eObjectifType::EnterInZone, p_Zone->m_ID);
 }
 
 void Player::OutOfZone(Zone* p_Zone)
 {
-    if (p_Zone == nullptr)
+    /*if (p_Zone == nullptr)
         return;
 
-    printf("---> OUT OF ZONE\n");
     if (p_Zone->m_Name != "")
     {
         PacketWarningMsg l_Packet;
         l_Packet.BuildPacket(eTypeWarningMsg::Yellow, "out of " + p_Zone->m_Name);
         GetSession()->send(l_Packet.m_Packet);
-    }
+    }*/
 }
 
 std::map< eKeyBoardAction, uint8 >* Player::GetKeyBoardBinds()
