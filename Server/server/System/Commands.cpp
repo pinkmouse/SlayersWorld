@@ -44,6 +44,10 @@ void Player::InitializeCommands()
     m_CmdHandleMap["test"].second = &Player::HandleTest;
     m_CmdHandleMap["announce"].first = eAccessType::Moderator;
     m_CmdHandleMap["announce"].second = &Player::HandleCommandAnnounce;
+    m_CmdHandleMap["summon"].first = eAccessType::Moderator;
+    m_CmdHandleMap["summon"].second = &Player::HandleCommandSummonPlayer;
+    m_CmdHandleMap["server"].first = eAccessType::Moderator;
+    m_CmdHandleMap["server"].second = &Player::HandleCommandServer;
 }
 
 bool Player::HandleTest(std::vector<std::string> p_ListCmd)
@@ -122,6 +126,16 @@ bool Player::HandleCommandAnnounce(std::vector<std::string> p_ListCmd)
     {
         l_AllPlayers[i]->SendMsg("**Annonce**:" + l_Msg);
     }
+    return true;
+}
+
+bool Player::HandleCommandServer(std::vector<std::string> p_ListCmd)
+{
+    uint16 l_NbPlayers = 0;
+
+    std::vector<Player*> l_AllPlayers = g_MapManager->GetAllPlayers();
+    SendMsg("-> " + std::to_string(l_AllPlayers.size()) + " joueurs");
+
     return true;
 }
 
@@ -432,6 +446,23 @@ bool Player::HandleCommandAddPoint(std::vector<std::string> p_ListCmd)
 	return true;
 }
 
+bool Player::HandleCommandSummonPlayer(std::vector<std::string> p_ListCmd)
+{
+    if (p_ListCmd.empty())
+        return false;
+
+    std::string l_Name = p_ListCmd[0];
+
+    int32 l_Id = g_SqlManager->GetPlayerID(l_Name);
+    if (l_Id <= 0)
+    {
+        SendMsg(l_Name + " est introuvable");
+        return true;
+    }
+    Player* l_Player = g_MapManager->GetPlayer(l_Id);
+
+    l_Player->TeleportTo(GetMapID(), GetPositionCentered().m_X, GetPositionCentered().m_Y, Orientation::Down);
+}
 bool Player::HandleCommandTeleport(std::vector<std::string> p_ListCmd)
 {
     if (p_ListCmd.empty())
