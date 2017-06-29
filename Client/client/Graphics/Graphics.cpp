@@ -199,7 +199,7 @@ void Graphics::DrawWorldObjects(std::map<uint32, std::vector<WorldObject*> > *p_
                 {
                     sf::Text l_Name(l_Unit->GetName(), *g_Font, SIZE_NAME_FONT);
                     uint8 l_Color = 255.0f / 100.0f * l_Unit->GetResourceNb(eResourceType::Alignment);
-                    l_Name.setColor(sf::Color(l_Color, l_Color, l_Color, 255));
+                    l_Name.setColor(sf::Color(255.0f, l_Color, l_Color, 255));
                     sf::Vector2f l_View(l_Unit->GetPosXAtIntant(), l_Unit->GetPosYAtIntant());
 
                     sf::Vector2f l_Coord = CoordFromViewToView(l_View, m_View, m_ViewInterface);

@@ -184,7 +184,10 @@ void Events::NewKeyPressed(eKeyBoardAction p_NewKey)
         }
         case eKeyBoardAction::KeyBoardAction:
         {
-            g_Socket->SendEventAction((uint8)p_NewKey);
+            if (TopIsOpen())
+                SetTopIsOpen(false);
+            else
+                g_Socket->SendEventAction((uint8)p_NewKey);
             break;
         }
         case eKeyBoardAction::KeyBoardEnter:
@@ -255,4 +258,14 @@ void Events::SetWritingField(WritingField* p_WritingField)
 void Events::SetHistoryField(HistoryField* p_HistoryField)
 {
     m_HistoryField = p_HistoryField;
+}
+
+bool Events::TopIsOpen()
+{
+    return m_TopOpen;
+}
+
+void Events::SetTopIsOpen(bool p_TopOpen)
+{
+    m_TopOpen = p_TopOpen;
 }

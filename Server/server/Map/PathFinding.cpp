@@ -109,8 +109,13 @@ Path Map::LaunchPathFinding(const Position & p_PosStart, const Position & p_PosE
     l_Start.m_PosParent = l_Current;
     m_OpenList[l_Current] = l_Start;
 
+    if (GetCase(p_PosEnd.m_X * TILE_SIZE, p_PosEnd.m_Y * TILE_SIZE)->IsBlocking())
+        return Path();
+
     AddToCloseList(l_Current);
     AddAdjacentCases(l_Current);
+
+    //printf("######### [%d-%d] to [%d-%d] \n", p_PosStart.m_X, p_PosStart.m_Y, p_PosEnd.m_X, p_PosEnd.m_Y);
 
     while ((l_Current != m_EndPosition) && (!m_OpenList.empty()))
     {

@@ -30,7 +30,7 @@
 #define OUT_OF_COMBAT_TIME 7
 #define MELEE_RANGE TILE_SIZE
 
-#define MAX_SKIN_IMG 80
+#define MAX_SKIN_IMG 87
 
 typedef char int8;
 typedef short int16;
@@ -117,7 +117,8 @@ enum eGossipType
     Whisp = 0,
     Yell = 1,
     LaunchQuest = 2,
-    ValidQuest = 3
+    ValidQuest = 3,
+    Announce = 4
 };
 
 enum eDynamicObjectType
@@ -137,7 +138,9 @@ enum eGameObjectTemplate
     GameObjectSpellLauncher = 0,
     GameObjectQuest = 1,
     GameObjectTrap = 2,
-    GameObjectLaunchGossip = 3
+    GameObjectLaunchGossip = 3,
+    GameObjectDoor = 4,
+    GameObjectVisu = 5
 };
 
 enum eRequiredType
@@ -147,7 +150,8 @@ enum eRequiredType
     LevelMin = 2,
     LevelMax = 3,
     QuestAllObjectiveDone = 4,
-    QuestInProgress = 5
+    QuestInProgress = 5,
+    AccessLevel = 6
 };
 
 enum eResourceType
@@ -193,7 +197,8 @@ enum eRepetitionType
 enum eTypeWarningMsg
 {
     Red = 0,
-    Yellow
+    Yellow,
+    Top
 };
 
 struct ObjectifQuestTemplate
@@ -416,7 +421,7 @@ static uint32 PixelToCase(uint32 p_NbPixel) { return p_NbPixel / TILE_SIZE; }
 static uint32 CaseToPixel(uint32 p_NbCase) { return p_NbCase * TILE_SIZE; }
 static Position PositionToCasePosition(const Position & p_Pos) { return Position(PixelToCase(p_Pos.m_X), PixelToCase(p_Pos.m_Y)); }
 static float InYard(float p_YardInPixel) { return p_YardInPixel / (float)TILE_SIZE; }
-static bool RandChance(uint8 p_Rand) { return (rand() % 100) <= p_Rand ; }
+static bool RandChance(uint8 p_Rand) { printf("--------------------> Rand [%d]\n", (rand() % 100)); return (rand() % 100) <= p_Rand ; }
 static void Log(const std::string & p_Str)
 {
     time_t l_Time = time(NULL);;

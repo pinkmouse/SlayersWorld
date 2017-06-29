@@ -117,3 +117,20 @@ Player* MapManager::GetPlayer(uint16 p_IdPlayer)
     }
     return nullptr;
 }
+
+std::vector<Player*> MapManager::GetAllPlayers()
+{
+    std::vector<Player*> l_ListPlayer;
+    for (std::pair<uint16, Map*> l_MapPair : m_MapList)
+    {
+        Map* l_Map = l_MapPair.second;
+
+        if (l_Map == nullptr)
+            continue;
+
+        std::map<uint16, Unit*>* l_ListPlayerMap = l_Map->GetListUnitType(TypeUnit::PLAYER);
+        for (auto l_Player : *l_ListPlayerMap)
+            l_ListPlayer.push_back((l_Player.second)->ToPlayer());
+    }
+    return l_ListPlayer;
+}

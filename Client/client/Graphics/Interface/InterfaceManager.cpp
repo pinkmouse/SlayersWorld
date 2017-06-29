@@ -322,9 +322,9 @@ void InterfaceManager::DrawWarnings(Window & p_Window)
             sf::Text    l_WarningMsg;
             l_WarningMsg.setCharacterSize(22);
             if ((*l_It).first == eTypeWarningMsg::Red)
-                l_WarningMsg.setColor(sf::Color(255, 66, 66, 240));
+                l_WarningMsg.setColor(sf::Color(255, 66, 66, 255));
             else
-                l_WarningMsg.setColor(sf::Color(255, 239, 66, 240));
+                l_WarningMsg.setColor(sf::Color(44, 45, 86, 255));
             l_WarningMsg.setString((*l_It).second[i].first);
             l_WarningMsg.setFont(*g_Font);
 
@@ -378,7 +378,7 @@ void InterfaceManager::Draw(Window & p_Window)
     l_XpBar.setPosition(0, Y_WINDOW - (m_XpTexture.getSize().y / 2 * XP_BAR_SCALE));
     l_XpBar.setScale(XP_BAR_SCALE, XP_BAR_SCALE);
     p_Window.draw(l_XpBar);
-
+    
     /// Draw CAST Bar
     uint8 l_CastPct = g_Player->GetCastPct();
     if (l_CastPct)
@@ -400,6 +400,30 @@ void InterfaceManager::Draw(Window & p_Window)
         DrawField(p_Window, 0, Y_WINDOW - SIZE_FILED_TALK_Y, X_WINDOW, SIZE_FILED_TALK_Y);
         p_Window.draw(m_WritingField->GetText());
     }
+    DrawAlign(p_Window);
+
+    /// Draw Top Text
+    if (!m_TopMessages.empty())
+    {
+        if (!m_Events->TopIsOpen())
+        {
+            RemoveFirstTopMsg();
+            if (!m_TopMessages.empty())
+                m_Events->SetTopIsOpen(true);
+        }
+        if (!m_TopMessages.empty())
+        {
+            sf::Text l_Text(m_TopMessages[0], *g_Font, SIZE_TALK_FONT);
+            sf::Vector2i l_FieldSize = TextSplitToFit(X_WINDOW, l_Text);
+
+            DrawField(p_Window, 0, 0, X_WINDOW, l_FieldSize.y + 14);
+            p_Window.draw(m_WritingField->GetText());
+
+            l_Text.setColor(sf::Color::White);
+            l_Text.setPosition(0.0f, 0.0f);
+            p_Window.draw(l_Text);
+        }
+    }
     /// Draw history
     if (m_HistoryField->IsFieldOpen())
     {
@@ -417,7 +441,6 @@ void InterfaceManager::Draw(Window & p_Window)
         }
         //p_Window.draw(m_WritingField->GetText());
     }
-    DrawAlign(p_Window);
     DrawWarnings(p_Window);
     //DrawClock(p_Window);
 
@@ -429,6 +452,19 @@ void InterfaceManager::Draw(Window & p_Window)
 void InterfaceManager::AddWarningMsg(eTypeWarningMsg p_Type, const std::string & p_Msg)
 {
     m_WarningMsgs[p_Type].push_back(std::pair<std::string, uint32>(p_Msg, MAX_WARNING_LOG_TIME));
+}
+
+void InterfaceManager::AddTopMsg(const std::string & p_Msg)
+{
+    if (!m_Events->TopIsOpen())
+        m_Events->SetTopIsOpen(true);
+    m_TopMessages.push_back(p_Msg);
+}
+
+void InterfaceManager::RemoveFirstTopMsg()
+{
+    if (m_TopMessages.begin() != m_TopMessages.end())
+        m_TopMessages.erase(m_TopMessages.begin());
 }
 
 void InterfaceManager::AddWarningMsg(eTypeWarningMsg p_Type, eWarningMsg p_WarningMsg)

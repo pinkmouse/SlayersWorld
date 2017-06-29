@@ -20,12 +20,15 @@ public:
     void SetWritingField(WritingField*);
     void SetHistoryField(HistoryField*);
     void LostFocus();
+    bool TopIsOpen();
+    void SetTopIsOpen(bool);
 
 private:
     std::map<eKeyBoardAction, uint8> m_DirectionMap;
     std::vector<eKeyBoardAction> m_KeyPressed; ///< Only for Direction
     std::map<eKeyBoardAction, bool> m_KeyUsableWhileDeath;
     bool m_IsInMouvement;
+    bool m_TopOpen;
 
     WritingField* m_WritingField;
     HistoryField* m_HistoryField;

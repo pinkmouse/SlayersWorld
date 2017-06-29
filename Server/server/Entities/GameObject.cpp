@@ -77,6 +77,17 @@ GameObject::GameObject(uint16 p_Id,  Map* p_Map, uint32 p_PosX, uint32 p_PosY, G
     m_GobTemplate(p_GobTemplate)
 {
     m_RespawnTime = p_GobTemplate->GetRespawnTime();
+
+    switch (m_GobTemplate->GetType())
+    {
+    case eGameObjectTemplate::GameObjectSpellLauncher:
+    {
+        AddSpellID(m_GobTemplate->GetData(0), 0);
+        break;
+    }
+    default:
+        break;
+    }
 }
 
 GameObject::~GameObject()
@@ -86,6 +97,22 @@ GameObject::~GameObject()
 void GameObject::Update(sf::Time m_Diff)
 {
     Unit::Update(m_Diff);
+    switch (m_GobTemplate->GetType())
+    {
+        case eGameObjectTemplate::GameObjectSpellLauncher :
+        {
+            if (m_GobTemplate->GetData(0) < 0) ///< No Spells
+                break;
+
+            if (HasSpellCooldown(m_GobTemplate->GetData(0)))
+                return;
+
+            CastSpell(m_GobTemplate->GetData(0));
+            break;
+        }
+        default:
+            break;
+    }
 }
 
 bool GameObject::IsBlocking() const
@@ -127,6 +154,7 @@ bool GameObject::CanBeWalk()
 void GameObject::ActionFrom(Player* p_Player)
 {
     Unit::ActionFrom(p_Player);
+
     printf("Enter %d\n", m_GobTemplate->GetType());
 
     switch (m_GobTemplate->GetType())
@@ -137,6 +165,12 @@ void GameObject::ActionFrom(Player* p_Player)
             if (p_Player->CheckQuestObjective(eObjectifType::RecoltGob, m_GobTemplate->GetID()))
                 SetResourceNb(eResourceType::Health, 0);
         }
+        break;
+    case eGameObjectTemplate::GameObjectDoor:
+        if (m_GobTemplate->GetRequired() != nullptr && m_GobTemplate->GetRequired()->IsValid(p_Player))
+                SetResourceNb(eResourceType::Health, 0);
+        printf("Enter %d\n", m_GobTemplate->GetType());
+
         break;
     case eGameObjectTemplate::GameObjectLaunchGossip:
         if ((m_GobTemplate->GetRequired() != nullptr && m_GobTemplate->GetRequired()->IsValid(p_Player)) || m_GobTemplate->GetRequired() == nullptr)

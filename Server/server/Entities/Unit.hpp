@@ -52,6 +52,7 @@ public:
     virtual void Respawn();
     virtual void Unspawn();
     virtual bool IsBlocking() const;
+    Position GetPositionCentered();
 
     /* RESOURCE */
     Resource* GetResource(eResourceType);

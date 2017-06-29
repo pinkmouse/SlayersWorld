@@ -18,6 +18,7 @@ public:
     Orientation GetOrientationToPoint(const Position &) const;
     Orientation GetOrientationToPoint(const WorldObject*) const;
     Orientation GetOrientationToCase(const Position &) const;
+    Orientation GetOrientationToCase(const Position &, const Position &) const;
 
 private:
     Position m_Position;

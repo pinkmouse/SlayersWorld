@@ -174,6 +174,11 @@ std::vector<Unit*> Spell::SearchTargets(SpellTarget p_TargetType, float p_Radius
         l_Targets = m_Caster->GetMap()->GetUnitsInRadius(m_Caster, p_RadiusMin, p_RadiusMax, true, true);
         break;
     }
+    case SpellTarget::ZoneAlly:
+    {
+        l_Targets = m_Caster->GetMap()->GetUnitsInRadius(m_Caster, p_RadiusMin, p_RadiusMax, true, false);
+        break;
+    }
     default:
         break;
     }

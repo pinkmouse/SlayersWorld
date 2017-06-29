@@ -31,3 +31,20 @@ bool SubRequiredLevelMax::IsValid(const Player* p_Player) const
         return false;
     return true;
 }
+
+
+SubRequiredAccessLevel::SubRequiredAccessLevel(uint16 p_AccessLevel, uint16) :
+    m_AccessLevel(p_AccessLevel)
+{
+}
+
+SubRequiredAccessLevel::~SubRequiredAccessLevel()
+{
+}
+
+bool SubRequiredAccessLevel::IsValid(const Player* p_Player) const
+{
+    if (p_Player->GetAccessType() >= m_AccessLevel)
+        return true;
+    return false;
+}

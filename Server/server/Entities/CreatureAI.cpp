@@ -124,7 +124,7 @@ void Creature::UpdateDefensive(sf::Time p_Diff)
             {
                 m_RandMovementTime = 0;
                 if (PositionToCasePosition(GetVictim()->GetPosition()) != PositionToCasePosition(GetPosition()))
-                    GoToCase(GetVictim()->GetPosition());
+                    GoToCase(GetVictim()->GetPositionCentered());
                 else
                 {
                     Orientation l_Orientation = GetOrientationToPoint(GetVictim()->GetPosition());
@@ -215,7 +215,7 @@ void Creature::UpdateAgresive(sf::Time p_Diff)
             if (!m_MovementHandler->IsInAttack())
             {
                 m_RandMovementTime = 0;
-                GoToCase(GetVictim()->GetPosition());
+                GoToCase(GetVictim()->GetPositionCentered());
                 /*if (!IsValidOrientationToPoint((Orientation)GetOrientation(), GetVictim()) || !IsInMovement())
                 {
                     Orientation l_Orientation = GetOrientationToPoint(GetVictim());

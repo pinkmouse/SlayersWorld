@@ -84,6 +84,7 @@ public:
     bool HandleCommandJoin(std::vector<std::string>);
     bool HandleCommandLeave(std::vector<std::string>);
     bool HandleCommandEmote(std::vector<std::string>);
+    bool HandleCommandAnnounce(std::vector<std::string>);
     bool HandleCommandGroupWisp(std::vector<std::string>);
     bool HandleRegen(std::vector<std::string>);
     bool HandleBind(std::vector<std::string>);

@@ -42,6 +42,8 @@ void Player::InitializeCommands()
     m_CmdHandleMap["speed"].second = &Player::HandleCommandSpeed;
     m_CmdHandleMap["test"].first = eAccessType::Moderator;
     m_CmdHandleMap["test"].second = &Player::HandleTest;
+    m_CmdHandleMap["announce"].first = eAccessType::Moderator;
+    m_CmdHandleMap["announce"].second = &Player::HandleCommandAnnounce;
 }
 
 bool Player::HandleTest(std::vector<std::string> p_ListCmd)
@@ -109,15 +111,30 @@ bool Player::HandleBind(std::vector<std::string> p_ListCmd)
     return true;
 }
 
+bool Player::HandleCommandAnnounce(std::vector<std::string> p_ListCmd)
+{
+    std::string l_Msg = "";
+    for (uint8 i = 0; i < p_ListCmd.size(); ++i)
+        l_Msg += " " + p_ListCmd[i];
+
+    std::vector<Player*> l_AllPlayers = g_MapManager->GetAllPlayers();
+    for (uint16 i = 0; i < l_AllPlayers.size(); ++i)
+    {
+        l_AllPlayers[i]->SendMsg("**Annonce**:" + l_Msg);
+    }
+    return true;
+}
+
 bool Player::HandleCommandSkin(std::vector<std::string> p_ListCmd)
 {
     if (p_ListCmd.empty())
         return false;
 
     int16 l_SkinID = atoi(p_ListCmd[0].c_str());
-    if (l_SkinID >= MAX_SKIN_IMG)
+    if (l_SkinID >= 65 && GetAccessType() == 0/*MAX_SKIN_IMG*/)
         l_SkinID = 0;
-
+    else if (l_SkinID >= MAX_SKIN_IMG)
+        l_SkinID = 0;
     SetSkinID(l_SkinID);
 
     return true;

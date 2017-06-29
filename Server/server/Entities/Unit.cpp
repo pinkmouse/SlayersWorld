@@ -190,7 +190,6 @@ void Unit::UpdateSpell(sf::Time p_Diff)
 void Unit::UpdateCooldowns(sf::Time p_Diff)
 {
     /// Update spells cooldowns
-
     for (std::map< uint16, uint64 >::iterator l_It = m_ListSpellID.begin(); l_It != m_ListSpellID.end(); ++l_It)
     {
         if ((*l_It).second == 0)
@@ -630,6 +629,17 @@ void Unit::SetPosY(const uint32 & p_PosY)
     m_MovementHandler->SetPosY(p_PosY);
 }
 
+Position Unit::GetPositionCentered()
+{
+    Position l_PosCentered;
+
+    l_PosCentered.m_X = GetPosition().m_X + ((GetSizeX() - SKIN_OFFSET_SIZE_X) / 2);
+    l_PosCentered.m_Y = GetPosition().m_Y - 4;
+
+    return l_PosCentered;
+}
+
+
 void Unit::SetOrientation(const Orientation & p_Orientation)
 {
     m_MovementHandler->SetOrientation(p_Orientation);
@@ -903,10 +913,16 @@ void Unit::GossipTo(Player* p_Player)
         if (l_Quest == nullptr)
             return;
         p_Player->AddQuest(l_Quest);
+        std::string l_Msg = "";
         if (GetName() != "")
-            p_Player->SendMsg(GetName() + ": " + l_GossipMsg);
+            l_Msg = GetName() + ": " + l_GossipMsg;
         else
-            p_Player->SendMsg(l_GossipMsg);
+            l_Msg =  l_GossipMsg;
+            //p_Player->SendMsg(l_GossipMsg);
+
+        PacketWarningMsg l_Packet;
+        l_Packet.BuildPacket(eTypeWarningMsg::Top, l_Msg);
+        p_Player->GetSession()->send(l_Packet.m_Packet);
         return;
     }
 
@@ -922,6 +938,22 @@ void Unit::GossipTo(Player* p_Player)
     if (l_GossipMsg != "")
         p_Player->SendMsg(GetName() + ": " + l_GossipMsg);
 
+    /* SIMPLE WHISP */
+    for (Gossip l_Gossip : m_ListGossip[eGossipType::Announce]) ///< Only one Wisp can be done
+    {
+        if (l_Gossip.m_Required != nullptr && !l_Gossip.m_Required->IsValid(p_Player))
+            continue;
+        l_GossipMsg = l_Gossip.m_Msg;
+        p_Player->ParseStringWithTag(l_GossipMsg);
+        if (l_Gossip.m_Required != nullptr && l_Gossip.m_Required->IsValid(p_Player)) ///< Priority for Wisp with Valid Required
+        {
+            std::vector<Player*> l_AllPlayers = g_MapManager->GetAllPlayers();
+            for (uint16 i = 0; i < l_AllPlayers.size(); ++i)
+            {
+                l_AllPlayers[i]->SendMsg("**Quête**:" + l_GossipMsg);
+            }
+        }
+    }
 }
 
 void Unit::AddAttacker(Unit* p_Attacker) 
@@ -1023,10 +1055,8 @@ bool Unit::HasSpellCooldown(uint16 p_SpellID)
 {
     if (m_ListSpellID.find(p_SpellID) == m_ListSpellID.end())
         return false;
-
     if (m_ListSpellID[p_SpellID] > 0)
         return true;
-
     return false;
 }
 

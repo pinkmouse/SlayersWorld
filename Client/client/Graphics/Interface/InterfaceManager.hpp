@@ -31,6 +31,8 @@ public:
     void DrawAlign(Window &);
     HistoryField* GetHistoryField() const;
     void AddWarningMsg(eTypeWarningMsg, const std::string &);
+    void AddTopMsg(const std::string &);
+    void RemoveFirstTopMsg();
     void AddWarningMsg(eTypeWarningMsg, eWarningMsg);
     void AddKeyBind(uint8, uint8);
     int16 GetBindForKey(uint8);
@@ -53,6 +55,7 @@ private:
     sf::Text                            m_SystemMsg;
     sf::Text                            m_ClockTxt;
     sf::Text                            m_Align;
+    std::vector<std::string >           m_TopMessages;
     std::map< eTypeWarningMsg, std::vector< std::pair<std::string, uint32> > >     m_WarningMsgs;
     std::map< eWarningMsg, std::string > m_WarningMsgsEnum;
     std::map< uint8, uint8 >             m_KeyBoardBind;

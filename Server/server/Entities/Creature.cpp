@@ -113,8 +113,7 @@ void Creature::ReturnToRespawnPoint()
 
     if (!IsFollowingPath() && PositionToCasePosition(GetPosition()) != PositionToCasePosition(m_RespawnPosition.GetPosition()))
     {
-        printf("Launch Path Resapwn\n");
-        m_PathToTargetPosition = m_Map->LaunchPathFinding(PositionToCasePosition(GetPosition()), PositionToCasePosition(m_RespawnPosition.GetPosition()));
+        m_PathToTargetPosition = m_Map->LaunchPathFinding(PositionToCasePosition(GetPositionCentered()), PositionToCasePosition(m_RespawnPosition.GetPosition()));
     }
     else if (!IsFollowingPath() && PositionToCasePosition(GetPosition()) == PositionToCasePosition(m_RespawnPosition.GetPosition())) ///< WHEN IN GOOD CASE
     {
@@ -145,14 +144,14 @@ void Creature::ReturnInRay()
                 StartMovement(l_Orientation);
         }
         else
-            m_PathToTargetPosition = m_Map->LaunchPathFinding(PositionToCasePosition(GetPosition()), PositionToCasePosition(m_RespawnPosition.GetPosition()));
+            m_PathToTargetPosition = m_Map->LaunchPathFinding(PositionToCasePosition(GetPositionCentered()), PositionToCasePosition(m_RespawnPosition.GetPosition()));
     }
 }
 
 void Creature::GoToCase(const Position & p_Position)
 {
     if (m_PathToTargetPosition.empty() || m_PathToTargetPosition[0] != PositionToCasePosition(p_Position))
-        m_PathToTargetPosition = m_Map->LaunchPathFinding(PositionToCasePosition(GetPosition()), PositionToCasePosition(p_Position));
+        m_PathToTargetPosition = m_Map->LaunchPathFinding(PositionToCasePosition(GetPositionCentered()), PositionToCasePosition(p_Position));
 }
 
 void Creature::ResetRandMovementTime(bool ForMoving)
@@ -208,7 +207,7 @@ Orientation Creature::GetOrientationByPath(Path & p_Path)
         return m_MovementHandler->GetOrientation();
     }
     Position p_NextPos = p_Path[p_Path.size() - 1];
-    while (GetPosX() / TILE_SIZE == p_NextPos.m_X && GetPosY() / TILE_SIZE == p_NextPos.m_Y)
+    while (GetPositionCentered().m_X / TILE_SIZE == p_NextPos.m_X && GetPositionCentered().m_Y / TILE_SIZE == p_NextPos.m_Y)
     {
         p_Path.pop_back();
 
@@ -219,5 +218,5 @@ Orientation Creature::GetOrientationByPath(Path & p_Path)
         }
         p_NextPos = p_Path[p_Path.size() - 1];
     }
-    return GetOrientationToCase(p_NextPos);
+    return GetOrientationToCase(GetPositionCentered(), p_NextPos);
 }

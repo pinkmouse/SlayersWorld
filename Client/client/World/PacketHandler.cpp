@@ -530,7 +530,10 @@ void PacketHandler::HandleWarningMsg(WorldPacket &p_Packet)
     p_Packet >> l_Type;
     p_Packet >> l_WarningMsg;
 
-    m_InterfaceManager->AddWarningMsg((eTypeWarningMsg)l_Type, l_WarningMsg);
+    if (l_Type == eTypeWarningMsg::Top)
+        m_InterfaceManager->AddTopMsg(l_WarningMsg);
+    else
+        m_InterfaceManager->AddWarningMsg((eTypeWarningMsg)l_Type, l_WarningMsg);
 }
 
 void PacketHandler::HandleUnitPlayVisual(WorldPacket &p_Packet)

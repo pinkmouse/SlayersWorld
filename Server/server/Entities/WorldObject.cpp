@@ -108,6 +108,32 @@ bool WorldObject::IsValidOrientationToPoint(const Orientation & p_Orientation, c
     return IsValidOrientationToPoint(p_Orientation, l_Posistion);
 }
 
+Orientation  WorldObject::GetOrientationToCase(const Position & p_PositionBegin, const Position & p_Position) const
+{
+    int32 l_X = p_PositionBegin.m_X / TILE_SIZE - p_Position.m_X;
+    int32 l_Y = p_PositionBegin.m_Y / TILE_SIZE - p_Position.m_Y;
+
+    if (l_X < 0)
+        l_X *= -1;
+    if (l_Y < 0)
+        l_Y *= -1;
+
+    if (l_X > l_Y)
+    {
+        if (p_PositionBegin.m_X / TILE_SIZE < p_Position.m_X)
+            return Orientation::Right;
+        else
+            return Orientation::Left;
+    }
+    else
+    {
+        if (p_PositionBegin.m_Y / TILE_SIZE < p_Position.m_Y)
+            return Orientation::Down;
+        else
+            return Orientation::Up;
+    }
+}
+
 Orientation  WorldObject::GetOrientationToCase(const Position & p_Position) const
 {
     int32 l_X = GetPosX() / TILE_SIZE - p_Position.m_X;

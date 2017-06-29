@@ -24,3 +24,15 @@ public:
 private:
     uint8 m_Level;
 };
+
+
+class SubRequiredAccessLevel : public SubRequired
+{
+public:
+    SubRequiredAccessLevel(uint16, uint16);
+    ~SubRequiredAccessLevel();
+    bool IsValid(const Player*) const;
+
+private:
+    uint16 m_AccessLevel;
+};
