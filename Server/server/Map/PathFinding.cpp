@@ -94,6 +94,7 @@ Path Map::GetPath()
         l_Before = l_TmpNode.m_PosParent;
         if (l_Path.size() > 500) /// !!!!!!! A revoir
         {
+            printf("######### [%d-%d] to [%d-%d] more than 500 ways !\n", m_StartPosition.m_X, m_StartPosition.m_Y, m_EndPosition.m_X, m_EndPosition.m_Y);
             l_Path.clear();
             return l_Path;
         }
