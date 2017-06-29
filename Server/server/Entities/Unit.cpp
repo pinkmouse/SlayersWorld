@@ -876,6 +876,7 @@ void Unit::GossipTo(Player* p_Player)
         if (l_Quest == nullptr)
             return;
 
+        p_Player->ValidateQuest(l_Quest);
         PacketWarningMsg l_Packet;
         l_Packet.BuildPacket(eTypeWarningMsg::Top, GetName() + ": " + l_GossipMsg);
         p_Player->GetSession()->send(l_Packet.m_Packet);
