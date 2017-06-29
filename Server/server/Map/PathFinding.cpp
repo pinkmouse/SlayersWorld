@@ -92,6 +92,11 @@ Path Map::GetPath()
         l_Path.push_back(l_Before);
         l_TmpNode = m_CloseList[l_TmpNode.m_PosParent];
         l_Before = l_TmpNode.m_PosParent;
+        if (l_Path.size() > 500) /// !!!!!!! A revoir
+        {
+            l_Path.clear();
+            return l_Path;
+        }
     }
     return l_Path;
 }
