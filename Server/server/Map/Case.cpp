@@ -92,13 +92,13 @@ void Case::UnitEnterInCase(Unit* p_Unit, Case* p_OlderCase)
     std::vector<Zone*> l_ZoneList;
     l_ZoneList = CompareZones(p_OlderCase);
 
-    if (p_Unit->IsPlayer())
+   /* if (p_Unit->IsPlayer())
     {
         if (p_OlderCase)
         printf("---> Case : %d from %d\n", m_ID, p_OlderCase->GetID());
         else
             printf("---> Case : %d from NULL\n", m_ID);
-    }
+    }*/
     for (uint8 i = 0; i < l_ZoneList.size(); ++i)
         p_Unit->EnterInZone(l_ZoneList[i]);
 

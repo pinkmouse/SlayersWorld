@@ -387,10 +387,10 @@ void PacketHandler::HandleCreateUnit(WorldPacket &p_Packet)
     else
         p_Packet >> l_IsBlocking;
 
-    if (l_TypeID == (uint8)TypeUnit::PLAYER)
+   /* if (l_TypeID == (uint8)TypeUnit::PLAYER)
         printf("Create new Player: %d %s %d %d %d %d\n", l_ID, l_Name.c_str(), l_SkinID, l_MapID, l_Pos.x, l_Pos.y);
     else
-        printf("Create new Unit: %d %s %d %d %d %d\n", l_ID, l_Name.c_str(), l_SkinID, l_MapID, l_Pos.x, l_Pos.y);
+        printf("Create new Unit: %d %s %d %d %d %d\n", l_ID, l_Name.c_str(), l_SkinID, l_MapID, l_Pos.x, l_Pos.y);*/
 
     Unit* l_NewUnit = nullptr;
 
