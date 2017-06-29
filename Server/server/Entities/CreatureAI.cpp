@@ -222,6 +222,8 @@ void Creature::UpdateAgresive(sf::Time p_Diff)
                     if (GetOrientation() != l_Orientation || !IsInMovement())
                         StartMovement(l_Orientation);
                 }*/
+                if (m_PathToTargetPosition.empty())
+                    SetVictim(nullptr);
             }
         }
         else
