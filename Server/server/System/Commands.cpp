@@ -460,9 +460,13 @@ bool Player::HandleCommandSummonPlayer(std::vector<std::string> p_ListCmd)
         return true;
     }
     Player* l_Player = g_MapManager->GetPlayer(l_Id);
+    if (l_Player == nullptr)
+        return true;
 
     l_Player->TeleportTo(GetMapID(), GetPositionCentered().m_X, GetPositionCentered().m_Y, Orientation::Down);
+    return true;
 }
+
 bool Player::HandleCommandTeleport(std::vector<std::string> p_ListCmd)
 {
     if (p_ListCmd.empty())

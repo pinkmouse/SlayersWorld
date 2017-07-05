@@ -117,6 +117,7 @@ public:
     void TeleportTo(const WorldPosition&);
     void TeleportTo(uint32, uint32, Orientation);
     void TeleportTo(uint16, uint32, uint32, Orientation);
+    void SetTeleportPos(const Position & p_Positon);
 
     /* SPELL */
     void AddSpellID(uint16, uint64);
@@ -199,4 +200,7 @@ private:
 
     /* GROUP*/
     std::map<eGroupType, std::vector< std::string > > m_GroupList;
+
+    /* TELEPORT */
+    Position m_TeleportPos;
 };

@@ -343,6 +343,11 @@ void Map::AddUnit(Unit* p_Unit)
     p_Unit->SetInWorld(true);
     m_ListUnitZone[p_Unit->GetType()][p_Unit->GetID()] = p_Unit;
 
+    if (p_Unit->GetPosX() / TILE_SIZE > GetSizeX() || p_Unit->GetPosY() / TILE_SIZE > GetSizeX())
+    {
+        p_Unit->SetPosX(0);
+        p_Unit->SetPosY(0);
+    }
     /// Add to square
     uint16 l_SquareId = GetSquareID(p_Unit->GetPosX(), p_Unit->GetPosY());
     AddToSquare(p_Unit, l_SquareId);
@@ -350,14 +355,17 @@ void Map::AddUnit(Unit* p_Unit)
     if (p_Unit->GetType() == TypeUnit::PLAYER)
         p_Unit->ToPlayer()->UpdateNewSquares(0, p_Unit->GetSquareID(), true);
 
-    GetCase(((p_Unit->GetPosY() / TILE_SIZE) * (uint32)GetSizeX()) + (p_Unit->GetPosX() / TILE_SIZE))->UnitEnterInCase(p_Unit, nullptr);
+    GetCase(((p_Unit->GetPositionCentered().m_Y / TILE_SIZE) * (uint32)GetSizeX()) + (p_Unit->GetPositionCentered().m_X / TILE_SIZE))->UnitEnterInCase(p_Unit, nullptr);
 }
 
 void Map::RemoveUnit(Unit* p_Unit)
 {
     m_ListUnitZone[p_Unit->GetType()].erase(p_Unit->GetID());
 
-    GetCase(((p_Unit->GetPosY() / TILE_SIZE) * (uint32)GetSizeX()) + (p_Unit->GetPosX() / TILE_SIZE))->UnitOutOfCase(p_Unit, nullptr);
+    Case* l_Case = GetCase(((p_Unit->GetPositionCentered().m_Y / TILE_SIZE) * (uint32)GetSizeX()) + (p_Unit->GetPositionCentered().m_X / TILE_SIZE));
+    if (l_Case != nullptr)
+        l_Case->UnitOutOfCase(p_Unit, nullptr);
+    //GetCase(((p_Unit->GetPosY() / TILE_SIZE) * (uint32)GetSizeX()) + (p_Unit->GetPosX() / TILE_SIZE))->UnitOutOfCase(p_Unit, nullptr);
 
     /// Remove from square
     RemoveFromSquare(p_Unit);

@@ -61,6 +61,12 @@ enum TypeUnit
     GAMEOBJECT
 };
 
+enum TypeBG
+{
+    NONEBBG = 0,
+    PointCapture = 1
+};
+
 enum eGroupType
 {
     SIMPLE = 0,

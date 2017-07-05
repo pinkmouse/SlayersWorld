@@ -609,6 +609,11 @@ void Unit::CheckOutOfZone(uint32 p_OldX, uint32 p_OldY, uint32 p_NewX, uint32 p_
     }
 }
 
+void Unit::SetTeleportPos(const Position & p_Positon)
+{
+    m_TeleportPos = p_Positon;
+}
+
 void Unit::SetPos(const uint32 & p_PosX, const uint32 & p_PosY)
 {
     CheckEnterInZone(GetPosX(), GetPosY(), p_PosX, p_PosY);
@@ -689,9 +694,14 @@ void Unit::TeleportTo(const WorldPosition& p_WorldPosition)
     GetMovementHandler()->StopMovement();
     GetMovementHandler()->StopAttack();
     InterruptCast();
-    SetPos(p_WorldPosition.GetPosX(), p_WorldPosition.GetPosY());
+
+    Case* l_Case = m_Map->GetCase(((GetPositionCentered().m_Y / TILE_SIZE) * (uint32)m_Map->GetSizeX()) + (GetPositionCentered().m_X / TILE_SIZE));
+    if (l_Case != nullptr)
+        l_Case->UnitOutOfCase(this, nullptr);
+
     SetOrientation(p_WorldPosition.GetOrientation());
     SetMapID(p_WorldPosition.GetMapID());
+    SetPos(p_WorldPosition.GetPosX(), p_WorldPosition.GetPosY());
 
     /* TODO : check range for short TP */
     CleanAttackers();
