@@ -104,7 +104,6 @@ void WorldSocket::SendUnitStartAttack(uint8 p_TypeID, uint16 p_ID, const Positio
 
     l_Packet << l_ID << p_TypeID << p_ID << p_Pos.m_X << p_Pos.m_Y << p_Orientation;
     SendToSet(l_Packet, true);
-    printf("Send Attack\n");
 }
 
 void WorldSocket::SendUnitStopAttack(uint8 p_TypeID, uint16 p_ID)

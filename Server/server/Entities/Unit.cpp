@@ -23,6 +23,7 @@ Unit::Unit(uint16 p_ID, TypeUnit p_Type, eFactionType p_FactionType)
     m_FactionType = p_FactionType;
     m_Name = "";
     m_MapID = 0;
+    m_InstanceID = 0;
     m_ID = p_ID;
     m_SizeX = 24;
     m_SizeY = 32;
@@ -609,11 +610,6 @@ void Unit::CheckOutOfZone(uint32 p_OldX, uint32 p_OldY, uint32 p_NewX, uint32 p_
     }
 }
 
-void Unit::SetTeleportPos(const Position & p_Positon)
-{
-    m_TeleportPos = p_Positon;
-}
-
 void Unit::SetPos(const uint32 & p_PosX, const uint32 & p_PosY)
 {
     CheckEnterInZone(GetPosX(), GetPosY(), p_PosX, p_PosY);
@@ -653,6 +649,8 @@ void Unit::SetOrientation(const Orientation & p_Orientation)
 void Unit::SetMap(Map* p_Map)
 {
     m_Map = p_Map;
+    if (p_Map != nullptr)
+        m_MapID = p_Map->GetID();
     m_MovementHandler->SetMap(m_Map);
 }
 
@@ -1335,4 +1333,14 @@ bool Unit::IsInGroupWith(const Unit* p_Unit) const
         }
     }
     return false;
+}
+
+void Unit::SetInstanceID(uint16 p_InstanceID)
+{
+    m_InstanceID = p_InstanceID;
+}
+
+uint16 Unit::GetInstanceID() const
+{
+    return m_InstanceID;
 }

@@ -10,14 +10,15 @@
 #include "../Entities/Creature.hpp"
 #include "Square.hpp"
 #include "../World/WorldPacket.hpp"
+#include "MapTemplate.hpp"
 
 class Map
 {
 public:
-	Map(uint16);
+	Map(MapTemplate*);
 	~Map();
 	bool InitializeMap(const std::string &);
-    void Update(sf::Time);
+    virtual void Update(sf::Time);
     void AddUnit(Unit*);
     void RemoveUnit(Unit*);
     uint16  GetSquareID(uint16 , uint16) const;
@@ -44,6 +45,8 @@ public:
     void UpdateForPlayersInNewSquare(Unit*, bool p_UpdateAll = false);
     std::map<uint16, Unit*>* GetListUnitType(TypeUnit);
 
+    void SetListCase(std::vector<Case*>);
+    void AddCase(Case*);
     /// Enable Zone
     void AddZone(Zone*);
     void EnableZone(uint16, bool);

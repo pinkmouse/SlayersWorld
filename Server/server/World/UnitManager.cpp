@@ -15,9 +15,9 @@ void UnitManager::AddCreatureTemplate(const CreatureTemplate & p_CreatureTemplat
     m_CreatureTemplateMap[p_CreatureTemplate.m_Entry] = p_CreatureTemplate;
 }
 
-CreatureTemplate UnitManager::GetCreatureTemplate(uint32 p_Entry)
+CreatureTemplate* UnitManager::GetCreatureTemplate(uint32 p_Entry)
 {
-    return m_CreatureTemplateMap[p_Entry];
+    return &m_CreatureTemplateMap[p_Entry];
 }
 
 void UnitManager::AddGossip(const Gossip & p_Gossip)

@@ -67,12 +67,8 @@ add_executable(${EXECUTABLE_NAME}
 	      server/System/Spell/Spell.cpp
               server/System/Spell/Spell.hpp
 
-	      server/System/BattleGround/BGManager.cpp
-              server/System/BattleGround/BGManager.hpp
-	      server/System/BattleGround/BG.cpp
-              server/System/BattleGround/BG.hpp
-	      server/System/BattleGround/BGCapturePoint.cpp
-              server/System/BattleGround/BGCapturePoint.hpp
+	      server/System/Instance/BattleGround/BGCapturePoint.cpp
+              server/System/Instance/BattleGround/BGCapturePoint.hpp
 
 
               server/Map/Case.cpp
@@ -80,6 +76,8 @@ add_executable(${EXECUTABLE_NAME}
               server/Map/Map.cpp
 	      server/Map/PathFinding.cpp
               server/Map/Map.hpp
+              server/Map/MapTemplate.cpp
+              server/Map/MapTemplate.hpp
               server/Map/MapManager.cpp
               server/Map/MapManager.hpp
               server/Map/MapNetwork.cpp

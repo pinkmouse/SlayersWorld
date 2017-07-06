@@ -19,7 +19,7 @@ void Creature::UpdateAI(sf::Time p_Diff)
         if (IsFollowingPath() && (GetOrientation() != l_Orientation || !IsInMovement()))
             StartMovement(l_Orientation);
     }
-    switch (m_CreatureTemplate.m_AiType)
+    switch (m_CreatureTemplate->m_AiType)
     {
         case eAiType::PASSIVE:
             UpdatePassive(p_Diff);
@@ -75,7 +75,7 @@ void Creature::UpdateDefensive(sf::Time p_Diff)
             return;
 
         ReturnInRay();
-        if (GetDistance(m_RespawnPosition.GetPosition()) <= CaseToPixel(m_CreatureTemplate.m_MaxRay) && m_MovementHandler->IsInMovement() && IsInEvade())
+        if (GetDistance(m_RespawnPosition.GetPosition()) <= CaseToPixel(m_CreatureTemplate->m_MaxRay) && m_MovementHandler->IsInMovement() && IsInEvade())
         {
             OutOfEvade();
             ResetRandMovementTime(false);
@@ -109,7 +109,7 @@ void Creature::UpdateDefensive(sf::Time p_Diff)
             return;
         }
 
-        if (GetDistance(m_RespawnPosition.GetPosition()) > CaseToPixel(m_CreatureTemplate.m_MaxVision + m_CreatureTemplate.m_MaxRay))
+        if (GetDistance(m_RespawnPosition.GetPosition()) > CaseToPixel(m_CreatureTemplate->m_MaxVision + m_CreatureTemplate->m_MaxRay))
         {
             EnterInEvade();
             OutOfCombat();
@@ -164,7 +164,7 @@ void Creature::UpdateAgresive(sf::Time p_Diff)
             return;
 
         ReturnInRay();
-        if (GetDistance(m_RespawnPosition.GetPosition()) <= CaseToPixel(m_CreatureTemplate.m_MaxRay))
+        if (GetDistance(m_RespawnPosition.GetPosition()) <= CaseToPixel(m_CreatureTemplate->m_MaxRay))
         {
             if (m_MovementHandler->IsInMovement() && IsInEvade())
             {
@@ -172,7 +172,7 @@ void Creature::UpdateAgresive(sf::Time p_Diff)
                 ResetRandMovementTime(false);
                 StopMovement();
             }
-            if (Unit* l_Victim = m_Map->GetCloserUnit(this, (float)CaseToPixel(m_CreatureTemplate.m_MaxVision), true, false, true))
+            if (Unit* l_Victim = m_Map->GetCloserUnit(this, (float)CaseToPixel(m_CreatureTemplate->m_MaxVision), true, false, true))
             {
                 SetVictim(l_Victim);
                 return;
@@ -192,7 +192,7 @@ void Creature::UpdateAgresive(sf::Time p_Diff)
     }
     else
     {
-        if (GetDistance(m_RespawnPosition.GetPosition()) > CaseToPixel(m_CreatureTemplate.m_MaxVision + m_CreatureTemplate.m_MaxRay))
+        if (GetDistance(m_RespawnPosition.GetPosition()) > CaseToPixel(m_CreatureTemplate->m_MaxVision + m_CreatureTemplate->m_MaxRay))
         {
             EnterInEvade();
             OutOfCombat();

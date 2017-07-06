@@ -22,5 +22,6 @@ public:
 
 private:
     Position m_Position;
+    uint16 m_InstanceID;
 };
 

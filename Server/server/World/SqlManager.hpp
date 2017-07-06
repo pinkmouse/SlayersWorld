@@ -62,8 +62,9 @@ public:
     bool InitializeKeyBindsForAccount(uint32, Player*);
     bool InitializeSpellsBinds(Player*);
     bool InitializeQuests();
+    bool InitializeMaps();
     bool InitializeZones();
-    bool InitializeAreatrigger(DynamicObjectManager*);
+    bool InitializeAreatrigger(DynamicObjectManager*, UnitManager*);
     bool InitializeGameObject(DynamicObjectManager*, RequiredManager*, UnitManager*);
     CreatureTemplate GetCreatureTemplate(uint16);
     uint16 AddNewCreature(uint16, uint16, uint32, uint32);

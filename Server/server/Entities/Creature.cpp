@@ -2,16 +2,16 @@
 #include "../Map/Map.hpp"
 #include "../World/PacketDefine.hpp"
 
-Creature::Creature(uint16 p_ID, uint16 p_Entry, CreatureTemplate p_CreatureTemplate, uint16 p_MapID, uint32 p_PosX, uint32 p_PosY) :
-    Unit(p_ID, TypeUnit::CREATURE, p_CreatureTemplate.m_FactionType)
+Creature::Creature(uint16 p_ID, CreatureTemplate* p_CreatureTemplate, uint16 p_MapID, uint32 p_PosX, uint32 p_PosY) :
+    Unit(p_ID, TypeUnit::CREATURE, p_CreatureTemplate->m_FactionType)
 {
-    m_Entry = p_Entry;
+    m_Entry = p_CreatureTemplate->m_Entry;
     SetMapID(p_MapID);
     SetPosX(p_PosX);
     SetPosY(p_PosY);
-    m_SkinID = p_CreatureTemplate.m_SkinID;
-    m_Level = p_CreatureTemplate.m_Level;
-    m_Name = p_CreatureTemplate.m_Name;
+    m_SkinID = p_CreatureTemplate->m_SkinID;
+    m_Level = p_CreatureTemplate->m_Level;
+    m_Name = p_CreatureTemplate->m_Name;
     m_CreatureTemplate = p_CreatureTemplate;
 
     m_RespawnPosition.SetMapID(p_MapID);
@@ -21,13 +21,12 @@ Creature::Creature(uint16 p_ID, uint16 p_Entry, CreatureTemplate p_CreatureTempl
     ResetRandMovementTime(false);
 
     PointsSet l_PointsSet;
-    l_PointsSet.SetStat(eStats::Force, m_CreatureTemplate.m_Force);
-    l_PointsSet.SetStat(eStats::Stamina, m_CreatureTemplate.m_Stamina);
-    l_PointsSet.SetStat(eStats::Dexterity, m_CreatureTemplate.m_Dexterity);
+    l_PointsSet.SetStat(eStats::Force, m_CreatureTemplate->m_Force);
+    l_PointsSet.SetStat(eStats::Stamina, m_CreatureTemplate->m_Stamina);
+    l_PointsSet.SetStat(eStats::Dexterity, m_CreatureTemplate->m_Dexterity);
 	SetPointsSet(l_PointsSet);
-    m_RespawnTime = m_CreatureTemplate.m_RespawnTime * IN_MILLISECOND;
+    m_RespawnTime = m_CreatureTemplate->m_RespawnTime * IN_MILLISECOND;
 }
-
 
 Creature::~Creature()
 {
@@ -46,7 +45,7 @@ void Creature::RandMoving()
         return;
 
     uint8 l_Orientation = rand() % 4;
-    if (GetMapID() == m_RespawnPosition.GetMapID() && GetDistance(m_RespawnPosition.GetPosition()) > CaseToPixel(m_CreatureTemplate.m_MaxRay))
+    if (GetMapID() == m_RespawnPosition.GetMapID() && GetDistance(m_RespawnPosition.GetPosition()) > CaseToPixel(m_CreatureTemplate->m_MaxRay))
         l_Orientation = GetOrientationToPoint(m_RespawnPosition.GetPosition());
     StartMovement((Orientation)l_Orientation);
 }
@@ -100,7 +99,7 @@ void Creature::SetResourceNb(eResourceType p_Resource, uint8 p_Nb)
 
 uint32 Creature::GetXpEarn() const
 {
-    return m_CreatureTemplate.m_Xp;
+    return m_CreatureTemplate->m_Xp;
 }
 
 void Creature::ReturnToRespawnPoint()
@@ -129,11 +128,11 @@ void Creature::ReturnInRay()
     if (GetMapID() == m_RespawnPosition.GetMapID())
         return;
 
-    if (IsFollowingPath() && GetDistance(m_RespawnPosition.GetPosition()) <= CaseToPixel(m_CreatureTemplate.m_MaxRay))
+    if (IsFollowingPath() && GetDistance(m_RespawnPosition.GetPosition()) <= CaseToPixel(m_CreatureTemplate->m_MaxRay))
     {
         m_PathToTargetPosition.clear();
     }
-    else if (!IsFollowingPath() && GetDistance(m_RespawnPosition.GetPosition()) > CaseToPixel(m_CreatureTemplate.m_MaxRay)) ///< WHEN IN GOOD CASE
+    else if (!IsFollowingPath() && GetDistance(m_RespawnPosition.GetPosition()) > CaseToPixel(m_CreatureTemplate->m_MaxRay)) ///< WHEN IN GOOD CASE
     {
         if (PositionToCasePosition(GetPosition()) == PositionToCasePosition(m_RespawnPosition.GetPosition()))
         {
@@ -159,17 +158,17 @@ void Creature::ResetRandMovementTime(bool ForMoving)
     m_DiffMovementTime = 0;
     if (ForMoving)
     {
-        if (m_CreatureTemplate.m_MovingTimeMax - m_CreatureTemplate.m_MovingTimeMin <= 0)
-            m_RandMovementTime = m_CreatureTemplate.m_MovingTimeMax;
+        if (m_CreatureTemplate->m_MovingTimeMax - m_CreatureTemplate->m_MovingTimeMin <= 0)
+            m_RandMovementTime = m_CreatureTemplate->m_MovingTimeMax;
         else
-            m_RandMovementTime = m_CreatureTemplate.m_MovingTimeMin + ((float)(rand() % (uint16)((float)(m_CreatureTemplate.m_MovingTimeMax - m_CreatureTemplate.m_MovingTimeMin) * 100.0f)) / 100.0f);
+            m_RandMovementTime = m_CreatureTemplate->m_MovingTimeMin + ((float)(rand() % (uint16)((float)(m_CreatureTemplate->m_MovingTimeMax - m_CreatureTemplate->m_MovingTimeMin) * 100.0f)) / 100.0f);
     }
     else
     {
-        if (m_CreatureTemplate.m_StopTimeMax - m_CreatureTemplate.m_StopTimeMin <= 0)
-            m_RandMovementTime = m_CreatureTemplate.m_StopTimeMax;
+        if (m_CreatureTemplate->m_StopTimeMax - m_CreatureTemplate->m_StopTimeMin <= 0)
+            m_RandMovementTime = m_CreatureTemplate->m_StopTimeMax;
         else
-            m_RandMovementTime = m_CreatureTemplate.m_StopTimeMin + ((float)(rand() % (uint16)((float)(m_CreatureTemplate.m_StopTimeMax - m_CreatureTemplate.m_StopTimeMin) * 100.0f)) / 100.0f);
+            m_RandMovementTime = m_CreatureTemplate->m_StopTimeMin + ((float)(rand() % (uint16)((float)(m_CreatureTemplate->m_StopTimeMax - m_CreatureTemplate->m_StopTimeMin) * 100.0f)) / 100.0f);
     }
 }
 

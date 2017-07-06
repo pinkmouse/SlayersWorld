@@ -1,12 +1,11 @@
 #pragma once
-#include "BG.hpp"
-
+#include "../../../Map/Map.hpp"
 #define NB_PLAYERS_CAPTURE_POINT 20
 
-class BGCapturePoint : public BG
+class BGCapturePoint : public Map
 {
 public:
-    BGCapturePoint(std::vector<Player*>);
+    BGCapturePoint();
     ~BGCapturePoint();
     void Update(sf::Time);
 

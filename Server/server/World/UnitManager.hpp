@@ -8,7 +8,7 @@ public:
     UnitManager();
     ~UnitManager();
     void AddCreatureTemplate(const CreatureTemplate &);
-    CreatureTemplate GetCreatureTemplate(uint32);
+    CreatureTemplate* GetCreatureTemplate(uint32);
     void AddGossip(const Gossip &);
     std::vector<Gossip>* GetGossipListFor(TypeUnit, uint16);
 

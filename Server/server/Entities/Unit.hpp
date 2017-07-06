@@ -53,6 +53,8 @@ public:
     virtual void Unspawn();
     virtual bool IsBlocking() const;
     Position GetPositionCentered();
+    void SetInstanceID(uint16);
+    uint16 GetInstanceID() const;
 
     /* RESOURCE */
     Resource* GetResource(eResourceType);
@@ -117,7 +119,6 @@ public:
     void TeleportTo(const WorldPosition&);
     void TeleportTo(uint32, uint32, Orientation);
     void TeleportTo(uint16, uint32, uint32, Orientation);
-    void SetTeleportPos(const Position & p_Positon);
 
     /* SPELL */
     void AddSpellID(uint16, uint64);
@@ -174,6 +175,8 @@ protected:
     uint16 m_SquareID;
     WorldPosition m_RespawnPosition;
 
+    uint16 m_InstanceID;
+
     /* COMBAT */
     bool m_Evade;
     uint64 m_ResTimer;
@@ -198,9 +201,6 @@ private:
     /* GOSSIP */
     std::map< eGossipType, std::vector<Gossip> > m_ListGossip;
 
-    /* GROUP*/
+    /* GROUP */
     std::map<eGroupType, std::vector< std::string > > m_GroupList;
-
-    /* TELEPORT */
-    Position m_TeleportPos;
 };

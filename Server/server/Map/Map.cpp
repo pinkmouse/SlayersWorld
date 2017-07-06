@@ -3,11 +3,45 @@
 #include "../World/WorldSocket.hpp"
 #include "../World/PacketDefine.hpp"
 
-Map::Map(uint16 p_ID)
+Map::Map(MapTemplate* p_Template)
 {
-    m_ID = p_ID;
-    m_SizeX = 0;
-    m_SizeY = 0;
+    m_ID = p_Template->GetID();
+    m_SizeX = p_Template->GetSizeX();
+    m_SizeY = p_Template->GetSizeY();
+
+    std::vector<Case> l_ListCase = (*p_Template->GetListCase());
+    uint32 i;
+    for (i = 0; i < l_ListCase.size(); i++)
+        AddCase(new Case(l_ListCase[i]));
+
+    std::vector<Zone> l_ListZone = (*p_Template->GetListZone());
+    for ( i = 0; i < l_ListZone.size(); i++)
+        AddZone(new Zone(l_ListZone[i]));
+
+    std::vector<AreaTriggerMapTemplate> l_ListArea = (*p_Template->GetListArea());
+    for (i = 0; i < l_ListArea.size(); i++)
+    {
+        Areatrigger* l_Areatrigger = new Areatrigger(l_ListArea[i].m_ID, this, l_ListArea[i].m_PosX, l_ListArea[i].m_PosY, l_ListArea[i].m_Template);
+        AddUnit(l_Areatrigger);
+        GetCase(l_ListArea[i].m_CaseNb)->AddDynamicOject(l_Areatrigger);
+    }
+
+    std::vector<GobMapTemplate> l_ListGob = (*p_Template->GetListGob());
+    for (i = 0; i < l_ListGob.size(); i++)
+    {
+        GameObject* l_Gob = new GameObject(l_ListGob[i].m_ID, this, l_ListGob[i].m_PosX, l_ListGob[i].m_PosY, l_ListGob[i].m_Template);
+        l_Gob->SetGossipList(l_ListGob[i].m_GossipList);
+        AddUnit(l_Gob);
+        GetCase(l_ListGob[i].m_CaseNb)->AddDynamicOject(l_Gob);
+    }
+
+    std::vector<CreatureMapTemplate> l_ListCreature = (*p_Template->GetListCreature());
+    for (i = 0; i < l_ListCreature.size(); i++)
+    {
+        Creature* l_Creature = new Creature(l_ListCreature[i].m_ID, l_ListCreature[i].m_Template, l_ListCreature[i].m_MapID, l_ListCreature[i].m_PosX, l_ListCreature[i].m_PosY);
+        l_Creature->SetGossipList(l_ListCreature[i].m_GossipList);
+        AddUnit(l_Creature);
+    }
 }
 
 Map::~Map()
@@ -47,6 +81,11 @@ Case* Map::GetCase(uint32 p_ID) const
 uint16 Map::GetID() const
 {
     return m_ID;
+}
+
+void Map::SetListCase(std::vector<Case*> p_ListCase)
+{
+    m_ListCase = p_ListCase;
 }
 
 Case* Map::GetCase(uint32 p_PosX, uint32 p_PosY) const
@@ -345,8 +384,8 @@ void Map::AddUnit(Unit* p_Unit)
 
     if (p_Unit->GetPosX() / TILE_SIZE > GetSizeX() || p_Unit->GetPosY() / TILE_SIZE > GetSizeX())
     {
-        p_Unit->SetPosX(0);
-        p_Unit->SetPosY(0);
+        p_Unit->SetPosX(10);
+        p_Unit->SetPosY(10);
     }
     /// Add to square
     uint16 l_SquareId = GetSquareID(p_Unit->GetPosX(), p_Unit->GetPosY());
@@ -427,6 +466,11 @@ bool Map::InitializeMap(const std::string & p_FileName)
     }
 
 	return true;
+}
+
+void Map::AddCase(Case* p_Case)
+{
+    m_ListCase.push_back(p_Case);
 }
 
 Square* Map::GetSquare(uint16 p_SquareID)

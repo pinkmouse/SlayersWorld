@@ -166,6 +166,7 @@ void MovementHandler::Update(sf::Time p_Diff)
 {
     CheckNextMovement(m_Pos.m_X, m_Pos.m_Y);
     UpdateAttack(p_Diff);
+
     if (!IsInMovement())
         return;
 

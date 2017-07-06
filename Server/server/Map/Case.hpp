@@ -8,6 +8,7 @@ class Case : public WorldObject
 {
 public:
 	Case(uint32, uint16, uint16);
+    Case(const Case &);
 	~Case();
 	void SetBlock(bool);
     bool CanBeWalk();

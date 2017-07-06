@@ -317,12 +317,12 @@ bool Player::HandleCommandCreature(std::vector<std::string> p_ListCmd)
 
     if (p_ListCmd[0] == "add" && p_ListCmd.size() < 3)
     {
-        uint8 l_CreatureEntry = atoi(p_ListCmd[1].c_str());
+        /*uint8 l_CreatureEntry = atoi(p_ListCmd[1].c_str());
 
         uint16 l_Id = g_SqlManager->AddNewCreature(GetMapID(), l_CreatureEntry, GetPosX(), GetPosY());
         Creature* l_Creature = new Creature(l_Id, l_CreatureEntry, g_SqlManager->GetCreatureTemplate(l_CreatureEntry), GetMapID(), GetPosX(), GetPosY());
-        Map* l_Map = g_MapManager->GetMap(GetMapID());
-        l_Map->AddUnit(l_Creature);
+        Map* l_Map = g_MapManager->GetMap(GetMapID(), GetInstanceID());
+        l_Map->AddUnit(l_Creature);*/
     }
     return true;
 }

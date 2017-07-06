@@ -9,6 +9,14 @@ Case::Case(uint32 p_ID, uint16 p_X, uint16 p_Y) :
     SetPosY(p_Y);
 }
 
+Case::Case(const Case & p_Case)
+{
+    m_ID = p_Case.GetID();
+    SetPosX(p_Case.GetPosX());
+    SetPosY(p_Case.GetPosY());
+    SetBlock(p_Case.IsBlocking());
+}
+
 Case::~Case()
 {
 }

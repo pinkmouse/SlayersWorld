@@ -5,6 +5,7 @@
 #include "../Entities/GameObject.hpp"
 #include "../Global.hpp"
 #include <cstdlib>
+#include <ctime>
 
 SqlManager::SqlManager()
 {
@@ -676,11 +677,20 @@ bool SqlManager::InitializeCreature(UnitManager* p_CreatureManager)
         l_PosX = atoi(l_Row[3]);
         l_PosY = atoi(l_Row[4]);
 
-        Creature* l_Creature = new Creature(l_Id, l_Entry, p_CreatureManager->GetCreatureTemplate(l_Entry), l_MapID, l_PosX, l_PosY);
+        /*Creature* l_Creature = new Creature(l_Id, l_Entry, p_CreatureManager->GetCreatureTemplate(l_Entry), l_MapID, l_PosX, l_PosY);
         if (p_CreatureManager->GetGossipListFor(TypeUnit::CREATURE, l_Entry) != nullptr)
-            l_Creature->SetGossipList(p_CreatureManager->GetGossipListFor(TypeUnit::CREATURE, l_Entry));
-        Map* l_Map = g_MapManager->GetMap(l_MapID);
-        l_Map->AddUnit(l_Creature);
+            l_Creature->SetGossipList(p_CreatureManager->GetGossipListFor(TypeUnit::CREATURE, l_Entry));*/
+        MapTemplate* l_MapTemplate = g_MapManager->GetMapTemplate(l_MapID);
+        // CreatureMapTemplate(uint16 p_ID, uint16 p_MapID, CreatureTemplate* p_Template, uint32 p_PosX, uint32 p_PosY, std::vector<Gossip>* p_GossipList) :
+
+        if (l_MapTemplate == nullptr)
+        {
+            printf("Erreur map %d don't exist\n", l_MapID);
+            continue;
+        }
+        
+        l_MapTemplate->AddCreatureMapTemplate(CreatureMapTemplate(l_Id, l_MapID, p_CreatureManager->GetCreatureTemplate(l_Entry), l_PosX, l_PosY, p_CreatureManager->GetGossipListFor(TypeUnit::CREATURE, l_Entry)));
+        //l_MapTemplate->AddUnit(l_Creature);
     }
     mysql_free_result(l_Result);
 
@@ -958,11 +968,17 @@ bool SqlManager::InitializeGameObject(DynamicObjectManager* p_DynamicObjectManag
         l_MapID = atoi(l_Row[2]);
         l_CaseNb = atoi(l_Row[3]);
 
-        Map* l_Map = g_MapManager->GetMap(l_MapID);
-        if (l_Map == nullptr)
+        //Map* l_Map = g_MapManager->GetMap(l_MapID);
+        MapTemplate* l_MapTemplate = g_MapManager->GetMapTemplate(l_MapID);
+
+        if (l_MapTemplate == nullptr)
+        {
+            printf("Erreur map %d don't exist\n", l_MapID);
             continue;
-        l_PosX = (l_CaseNb % l_Map->GetSizeX() * TILE_SIZE) + TILE_SIZE / 2;
-        l_PosY = (l_CaseNb / l_Map->GetSizeX() * TILE_SIZE) + TILE_SIZE;
+        }
+
+        l_PosX = (l_CaseNb % l_MapTemplate->GetSizeX() * TILE_SIZE) + TILE_SIZE / 2;
+        l_PosY = (l_CaseNb / l_MapTemplate->GetSizeX() * TILE_SIZE) + TILE_SIZE;
 
 
         GameObjectTemplate* l_GobTemplate = p_DynamicObjectManager->GetGameObjectTemplate(l_GobID);
@@ -970,11 +986,11 @@ bool SqlManager::InitializeGameObject(DynamicObjectManager* p_DynamicObjectManag
         if (l_GobTemplate == nullptr)
             continue;
 
-        GameObject* l_Gob = new GameObject(l_Id, l_Map, l_PosX, l_PosY, l_GobTemplate);
-        if (p_UnitManager->GetGossipListFor(TypeUnit::GAMEOBJECT, l_GobID) != nullptr)
-            l_Gob->SetGossipList(p_UnitManager->GetGossipListFor(TypeUnit::GAMEOBJECT, l_GobID));
-        l_Map->AddUnit(l_Gob);
-        l_Map->GetCase(l_CaseNb)->AddDynamicOject(l_Gob);
+        //GameObject* l_Gob = new GameObject(l_Id, l_MapTemplate->GetID(), l_PosX, l_PosY, l_GobTemplate);
+        /*if (p_UnitManager->GetGossipListFor(TypeUnit::GAMEOBJECT, l_GobID) != nullptr)
+            l_Gob->SetGossipList(p_UnitManager->GetGossipListFor(TypeUnit::GAMEOBJECT, l_GobID));*/
+        l_MapTemplate->AddGobMapTemplate(GobMapTemplate(l_Id, l_MapID, l_GobTemplate, l_CaseNb, l_PosX, l_PosY, p_UnitManager->GetGossipListFor(TypeUnit::GAMEOBJECT, l_GobID)));
+        //l_MapTemplate->GetCase(l_CaseNb)->AddDynamicOject(l_Gob);
     }
     mysql_free_result(l_Result);
 
@@ -1005,19 +1021,22 @@ bool SqlManager::InitializeZones()
         l_CaseNbBegin = atoi(l_Row[4]);
         l_CaseNbEnd = atoi(l_Row[5]);
 
-        Map* l_Map = g_MapManager->GetMap(l_MapID);
-        if (l_Map == nullptr)
+        MapTemplate* l_MapTemplate = g_MapManager->GetMapTemplate(l_MapID);
+        //Map* l_Map = g_MapManager->GetMap(l_MapID);
+        if (l_MapTemplate == nullptr)
+        {
+            printf("Erreur map %d don't exist\n", l_MapID);
             continue;
-
-        Zone* l_Zone = new Zone(l_ID, (eTypeZone)l_TypeID, l_Name, l_CaseNbBegin, l_CaseNbEnd);
-        l_Map->AddZone(l_Zone);
+        }
+        Zone l_Zone = Zone(l_ID, (eTypeZone)l_TypeID, l_Name, l_CaseNbBegin, l_CaseNbEnd);
+        l_MapTemplate->AddZone(l_Zone);
     }
     mysql_free_result(l_Result);
 
     return true;
 }
 
-bool SqlManager::InitializeAreatrigger(DynamicObjectManager* p_DynamicObjectManager)
+bool SqlManager::InitializeAreatrigger(DynamicObjectManager* p_DynamicObjectManager, UnitManager* p_UnitManager)
 {
     std::string l_Query = "SELECT `id`, `typeID`,`skinID`, `radius`, `data0`, `data1`, `data2`, `data3` FROM areatrigger_template";
     mysql_query(&m_MysqlWorld, l_Query.c_str());
@@ -1074,21 +1093,24 @@ bool SqlManager::InitializeAreatrigger(DynamicObjectManager* p_DynamicObjectMana
         l_MapID = atoi(l_Row[2]);
         l_CaseNb = atoi(l_Row[3]);
 
-        Map* l_Map = g_MapManager->GetMap(l_MapID);
-        if (l_Map == nullptr)
+        MapTemplate* l_MapTemplate = g_MapManager->GetMapTemplate(l_MapID);
+        if (l_MapTemplate == nullptr)
+        {
+            printf("Erreur map %d don't exist\n", l_MapID);
             continue;
-        l_PosX = (l_CaseNb % l_Map->GetSizeX() * TILE_SIZE) + TILE_SIZE / 2;
-        l_PosY = (l_CaseNb / l_Map->GetSizeX() * TILE_SIZE) + TILE_SIZE;
+        }
+        l_PosX = (l_CaseNb % l_MapTemplate->GetSizeX() * TILE_SIZE) + TILE_SIZE / 2;
+        l_PosY = (l_CaseNb / l_MapTemplate->GetSizeX() * TILE_SIZE) + TILE_SIZE;
 
 
         AreatriggerTemplate* l_AreatriggerTemplate = p_DynamicObjectManager->GetAreatriggerTemplate(l_AreatriggerID);
 
         if (l_AreatriggerTemplate == nullptr)
             continue;
-
-        Areatrigger* l_Areatrigger = new Areatrigger(l_Id, l_Map, l_PosX, l_PosY, l_AreatriggerTemplate);
-        l_Map->AddUnit(l_Areatrigger);
-        l_Map->GetCase(l_CaseNb)->AddDynamicOject(l_Areatrigger);
+        //Areatrigger* l_Areatrigger = new Areatrigger(l_Id, l_MapTemplate->GetID(), l_PosX, l_PosY, l_AreatriggerTemplate);
+        l_MapTemplate->AddAreaTriggerMapTemplate(AreaTriggerMapTemplate(l_Id, l_MapID, l_AreatriggerTemplate, l_CaseNb, l_PosX, l_PosY, p_UnitManager->GetGossipListFor(TypeUnit::AREATRIGGER, l_AreatriggerID)));
+        /*l_MapTemplate->AddUnit(l_Areatrigger);
+        l_MapTemplate->GetCase(l_CaseNb)->AddDynamicOject(l_Areatrigger);*/
     }
     mysql_free_result(l_Result);
 
@@ -1138,6 +1160,36 @@ WorldPosition SqlManager::GetPosition(const std::string & p_PlayerName)
     return l_Position;
 }
 
+bool SqlManager::InitializeMaps()
+{
+    std::string l_Query = "SELECT `id`, `typeID`,`name`, `fileName`, `fileChipsets`, `maxPlayers` FROM maps";
+    mysql_query(&m_MysqlWorld, l_Query.c_str());
+
+    uint16 l_Id = 0;
+    uint16 l_TypeID = 0;
+    uint16 l_MaxPlayers = 0;
+    std::string l_FileName = "";
+    std::string l_FileChipsets = "";
+    std::string l_Name = "";
+
+    MYSQL_RES *l_Result = NULL;
+    MYSQL_ROW l_Row;
+    l_Result = mysql_use_result(&m_MysqlWorld);
+    while ((l_Row = mysql_fetch_row(l_Result)))
+    {
+        l_Id = atoi(l_Row[0]);
+        l_TypeID = atoi(l_Row[1]);
+        l_Name = std::string(l_Row[2]);
+        l_FileName = std::string(l_Row[3]);
+        l_FileChipsets = std::string(l_Row[4]);
+        l_MaxPlayers = atoi(l_Row[5]);
+
+        MapTemplate* l_MapTemplate = new MapTemplate(l_Id, (eTypeMap)l_TypeID, l_MaxPlayers, l_Name, l_FileName, l_FileChipsets);
+        g_MapManager->AddMapTemplate(l_MapTemplate);
+    }
+    mysql_free_result(l_Result);
+    return true;
+}
 
 int32 SqlManager::GetPlayerID(const std::string & p_PlayerName)
 {

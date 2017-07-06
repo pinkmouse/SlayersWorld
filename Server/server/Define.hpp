@@ -67,6 +67,12 @@ enum TypeBG
     PointCapture = 1
 };
 
+enum eTypeMap
+{
+    MapWorld = 0,
+    MapBattleGround = 1
+};
+
 enum eGroupType
 {
     SIMPLE = 0,
@@ -363,6 +369,9 @@ struct Zone
     uint32 m_CaseBegin;
     uint32 m_CaseEnd;
     bool m_enabled;
+
+    Zone(const Zone & p_Zone) :
+        m_ID(p_Zone.m_ID), m_TypeID(p_Zone.m_TypeID), m_Name(p_Zone.m_Name), m_CaseBegin(p_Zone.m_CaseBegin), m_CaseEnd(p_Zone.m_CaseEnd), m_enabled(p_Zone.m_enabled) {}
 
     Zone(uint16 p_ID, eTypeZone p_TypeID, std::string p_Name, uint32 p_CaseBegin, uint32 p_CaseEnd) :
         m_ID(p_ID), m_TypeID(p_TypeID), m_Name(p_Name), m_CaseBegin(p_CaseBegin), m_CaseEnd(p_CaseEnd), m_enabled(true) {}

@@ -244,7 +244,7 @@ void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldS
     /// Auth Success
     p_WorldSocket->SendAuthResponse(1); ///< Auth Success
 
-    Map* l_Map = g_MapManager->GetMap(l_Player->GetMapID());
+    Map* l_Map = g_MapManager->GetMap(l_Player->GetMapID(), l_Player->GetInstanceID());
 
     if (l_Map == nullptr)
     {
@@ -284,7 +284,7 @@ void PacketHandler::OperatePacket(WorldPacket &p_Packet, WorldSocket* p_WorldSoc
     if (p_WorldSocket->GetPlayer() && p_WorldSocket->GetPlayer()->GetInLoading() && l_PacketID != CMSG::C_LoadingPong) ///< We should not conciderate packet while loading
         return;
     
-    //Log("Receive Packet " +  std::to_string(l_PacketID));
+    Log("Receive Packet " +  std::to_string(l_PacketID));
     m_Func l_Fun = m_PacketHandleMap[l_PacketID];
     if (l_Fun != nullptr)
         (this->*(l_Fun))(p_Packet, p_WorldSocket);

@@ -32,7 +32,7 @@ bool World::Initialize()
 		return false;
 	}
 	printf("Load Maps...\n");
-	if (!g_MapManager->InitializeMaps())
+	if (!g_MapManager->InitializeMapsTemplate())
 	{
 		printf("Load Maps Error\n");
 		return false;
@@ -42,6 +42,14 @@ bool World::Initialize()
     std::vector<std::string> l_ConfigSQLWorld = g_Config->GetValueList(g_Config->GetValue("worldDB"));
     if (!g_SqlManager->InitializeWorld(l_ConfigSQLWorld[0], l_ConfigSQLWorld[1], l_ConfigSQLWorld[2], l_ConfigSQLWorld[3], l_ConfigSQLWorld[4]))
         printf("Error connection world SQL...\n");
+
+    printf("Initialize MapsTemplate\n");
+    if (!g_SqlManager->InitializeMaps())
+        printf("Error Initialize Maps...\n");
+
+    printf("Charging MapsTemplate...\n");
+    if (!g_MapManager->InitializeMapsTemplate())
+        printf("Error charging Map Template...\n");
 
     printf("Initialize XpLevel\n");
     if (!g_LevelManager->Initialize())
@@ -56,7 +64,7 @@ bool World::Initialize()
         printf("Error Initialize Gossip...\n");
 
     printf("Initialize Areatrigger\n");
-    if (!g_SqlManager->InitializeAreatrigger(m_DynamicObjectManager))
+    if (!g_SqlManager->InitializeAreatrigger(m_DynamicObjectManager, m_CreatureManager))
         printf("Error Initialize Areatrigger...\n");
 
     printf("Initialize GameObject\n");
@@ -86,6 +94,10 @@ bool World::Initialize()
     printf("Initialize Creature\n");
     if (!g_SqlManager->InitializeCreature(m_CreatureManager))
         printf("Error Initialize CreatureTemplate...\n");
+
+    printf("Launch World Maps\n");
+    if (!g_MapManager->LaunchWorldsMap())
+        printf("Error Launching World Map...\n");
 
     std::vector<std::string> l_ConfigSQLCharacters = g_Config->GetValueList(g_Config->GetValue("charactersDB"));
     if (!g_SqlManager->InitializeCharacters(l_ConfigSQLCharacters[0], l_ConfigSQLCharacters[1], l_ConfigSQLCharacters[2], l_ConfigSQLCharacters[3], l_ConfigSQLCharacters[4]))
