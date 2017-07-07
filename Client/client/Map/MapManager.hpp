@@ -14,7 +14,7 @@ public:
 	MapManager(Events*);
 	~MapManager();
 	void InitializeMaps();
-    bool LoadMap(uint16);
+    bool LoadMap(uint16, const std::string &, const std::string &, const std::string &);
 	Map* GetActualMap() const;
 	bool HasMap();
 

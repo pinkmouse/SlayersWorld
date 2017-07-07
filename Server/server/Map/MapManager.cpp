@@ -132,7 +132,7 @@ void MapManager::Update(sf::Time p_Diff)
                 }
                 l_Map->RemoveUnit(l_Unit);
                 if (Player* l_Player = l_Unit->ToPlayer())
-                    l_Player->GetSession()->SendSwitchMap(l_NewMap->GetID());
+                    l_Player->GetSession()->SendSwitchMap(l_NewMap->GetID(), GetMapTemplate(l_NewMap->GetID())->GetFileName(), GetMapTemplate(l_NewMap->GetID())->GetFileChipset(), GetMapTemplate(l_NewMap->GetID())->GetName());
                 l_NewMap->AddUnit(l_Unit);
                 l_UnitInterMapAction->pop();
             }

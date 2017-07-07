@@ -21,10 +21,10 @@ void MapManager::Update(sf::Time p_Diff)
         m_ActualMap->Update(p_Diff);
 }
 
-bool MapManager::LoadMap(uint16 m_MapID)
+bool MapManager::LoadMap(uint16 p_MapID, const std::string & p_MapFileName, const std::string & p_MapChispetName, const std::string & p_MapName)
 {
-	m_ActualMap = new Map(m_MapID);
-    if (!m_ActualMap->InitializeMap(m_MapsPath[m_MapID]))
+	m_ActualMap = new Map(p_MapID);
+    if (!m_ActualMap->InitializeMap(p_MapFileName, p_MapChispetName))
         return false;
     return true;
 }
@@ -36,8 +36,8 @@ Map* MapManager::GetActualMap() const
 
 void MapManager::InitializeMaps()
 {
-    for (uint8 i = 0; i < NB_MAP; ++i)
-	    m_MapsPath[i] = "map" + std::to_string(i) + ".map";
+    /*for (uint8 i = 0; i < NB_MAP; ++i)
+	    m_MapsPath[i] = "map" + std::to_string(i) + ".map";*/
 }
 
 bool  MapManager::HasMap()

@@ -12,7 +12,7 @@ class Map
 public:
 	Map(uint16);
 	~Map();
-	bool InitializeMap(const std::string &);
+	bool InitializeMap(const std::string &, const std::string &);
 	bool IsValidMap();
 	
 	uint16 GetSquareID(uint16, uint16) const;
@@ -27,6 +27,7 @@ public:
     Unit* GetUnit(TypeUnit, uint16);
     void MoveUnitToDirection(TypeUnit, uint16, Position, uint8);
     std::map<TypeUnit, std::map<uint16, Unit*>>* GetListUnitZone();
+    std::string GetChipsetFileName() const;
 
     void AddUnit(Unit*);
     void RemoveUnit(Unit*);
@@ -37,6 +38,7 @@ private:
 	uint16 m_ID;
 	uint16 m_SizeX;
 	uint16 m_SizeY;
+    std::string m_ChipsetName;
 
 	std::vector<Case*> m_ListCase;
 	std::map<uint16, std::vector<Case*>>	m_MapListCase;

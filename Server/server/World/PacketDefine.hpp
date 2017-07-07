@@ -312,9 +312,9 @@ struct PacketSwitchMap
     PacketSwitchMap() :
         m_PacketID(SMSG::S_SwitchMap) {}
 
-    void BuildPacket(const uint16 & p_MapID)
+    void BuildPacket(const uint16 & p_MapID, const std::string & p_MapFileName, const std::string & p_ChipsetFile, const std::string & p_MapName)
     {
-        m_Packet << m_PacketID << p_MapID;
+        m_Packet << m_PacketID << p_MapID << p_MapFileName << p_ChipsetFile << p_MapName;
         m_MapID = p_MapID;
     }
 };

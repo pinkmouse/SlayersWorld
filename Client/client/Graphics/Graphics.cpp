@@ -38,6 +38,13 @@ bool Graphics::LoadTexture()
     return true;
 }
 
+void Graphics::SetTileSet(const std::string & p_FileName)
+{
+    delete m_TileSet;
+    m_TileSet = new TileSet(p_FileName);
+    m_TileSet->BuildSprites();
+}
+
 bool Graphics::CreateWindow(uint32 p_X, uint32 p_Y, float p_Zoom)
 {
 	m_Window.create(sf::VideoMode(p_X, p_Y), NAME_WINDOW);
@@ -48,9 +55,6 @@ bool Graphics::CreateWindow(uint32 p_X, uint32 p_Y, float p_Zoom)
 	m_Window.setView(m_View);
     //m_Window.setFramerateLimit(60);
     m_Window.setVerticalSyncEnabled(true);
-
-	m_TileSet = new TileSet();
-	m_TileSet->BuildSprites();
 
     m_VisualManager = new VisualManager();
     if (!m_VisualManager->LoadSkins())
@@ -265,6 +269,11 @@ void Graphics::DrawMap()
 	if (!m_Window.isOpen() || !m_MapManager->HasMap() || g_Player == nullptr)
 		return;
 
+    if (m_TileSet == nullptr || m_TileSet->GetFileName() != m_MapManager->GetActualMap()->GetChipsetFileName())
+    {
+        SetTileSet(m_MapManager->GetActualMap()->GetChipsetFileName());
+    }
+
 	Map* l_Map = m_MapManager->GetActualMap();
     std::map<TypeUnit, std::map<uint16, Unit*> >* l_ListUnitZone = l_Map->GetListUnitZone();
     std::map<uint32, std::vector<WorldObject*> > l_ListWorldObjectByZ;
@@ -292,6 +301,8 @@ void Graphics::DrawMap()
                     continue;
 
                 TileSprite* l_TileSprite = m_TileSet->GetTileSprite(l_TileID);
+                if (l_TileSprite == nullptr)
+                    continue;
                 l_TileSprite->setPosition((float)(*l_It2)->GetPosX(), (float)(*l_It2)->GetPosY());
                 m_Window.draw(*l_TileSprite);
             }
@@ -303,6 +314,8 @@ void Graphics::DrawMap()
                     continue;
 
                 TileSprite* l_TileSprite = m_TileSet->GetTileSprite(l_TileID);
+                if (l_TileSprite == nullptr)
+                    continue;
                 l_TileSprite->setPosition((float)(*l_It2)->GetPosX(), (float)(*l_It2)->GetPosY());
                 (*l_It2)->SetSprite(l_TileSprite);
                 if (l_LevelNb == 4) ///< + GetSizeY because tile of Unit are set to be 0 at foot cf : DrawWorldObjects UNIT
@@ -371,6 +384,8 @@ void Graphics::DrawMap()
                     continue;
 
                 TileSprite* l_TileSprite = m_TileSet->GetTileSprite(l_TileID);
+                if (l_TileSprite == nullptr)
+                    continue;
                 l_TileSprite->setPosition((float)(*l_It2)->GetPosX(), (float)(*l_It2)->GetPosY());
                 m_Window.draw(*l_TileSprite);
             }

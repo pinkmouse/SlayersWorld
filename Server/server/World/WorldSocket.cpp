@@ -29,12 +29,12 @@ void WorldSocket::SendAuthResponse(uint8 p_Status)
 	printf("Send Status Auth %d\n", p_Status);
 }
 
-void WorldSocket::SendPlayerCreate(uint32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_Health, uint8 p_Mana, uint8 p_Alignment, int16 p_SkinID, uint16 p_MapID, uint32 p_PosX, uint32 p_PosY, uint8 p_Orientation)
+void WorldSocket::SendPlayerCreate(uint32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_Health, uint8 p_Mana, uint8 p_Alignment, int16 p_SkinID, uint16 p_MapID, const std::string & p_MapFileName, const std::string & p_FileChipsetName, const std::string & p_MapName, uint32 p_PosX, uint32 p_PosY, uint8 p_Orientation)
 {
     WorldPacket l_Packet;
     uint8 l_ID = SMSG::S_PlayerCreate;
 
-    l_Packet << l_ID << p_ID << p_Name << p_Level << p_Health << p_Mana << p_Alignment << p_SkinID << p_MapID << p_PosX << p_PosY << p_Orientation;
+    l_Packet << l_ID << p_ID << p_Name << p_Level << p_Health << p_Mana << p_Alignment << p_SkinID << p_MapID << p_MapFileName << p_FileChipsetName << p_MapName << p_PosX << p_PosY << p_Orientation;
     send(l_Packet);
     printf("Send create\n");
 }
@@ -122,10 +122,10 @@ void WorldSocket::SendLogDamage(uint8 p_TypeID, uint16 p_ID, DamageInfo p_Damage
 	SendPacket(l_Packet.m_Packet);
 }
 
-void WorldSocket::SendSwitchMap(uint16 p_MapID)
+void WorldSocket::SendSwitchMap(uint16 p_MapID, const std::string & p_MapFileName, const std::string & p_ChipsetFile, const std::string & p_MapName)
 {
     PacketSwitchMap l_Packet;
-    l_Packet.BuildPacket(p_MapID);
+    l_Packet.BuildPacket(p_MapID, p_MapFileName, p_ChipsetFile, p_MapName);
     send(l_Packet.m_Packet);
 }
 

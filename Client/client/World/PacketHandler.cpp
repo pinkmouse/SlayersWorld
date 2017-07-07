@@ -309,6 +309,9 @@ void PacketHandler::HandleCreateMainPlayer(WorldPacket &p_Packet)
     uint8 l_Alignment;
     int16 l_SkinID;
     uint16 l_MapID;
+    std::string l_MapFileName;
+    std::string l_MapChipsetName;
+    std::string l_MapName;
     uint32 l_PosX;
     uint32 l_PosY;
     uint8 l_Orientation;
@@ -321,11 +324,15 @@ void PacketHandler::HandleCreateMainPlayer(WorldPacket &p_Packet)
     p_Packet >> l_Alignment;
     p_Packet >> l_SkinID;
     p_Packet >> l_MapID;
+    p_Packet >> l_MapFileName;
+    p_Packet >> l_MapChipsetName;
+    p_Packet >> l_MapName;
+
     p_Packet >> l_PosX;
     p_Packet >> l_PosY;
     p_Packet >> l_Orientation;
 
-    if (!m_MapManager->LoadMap(l_MapID))
+    if (!m_MapManager->LoadMap(l_MapID, l_MapFileName, l_MapChipsetName, l_MapName))
         return;
 
     g_Player = new Player(l_ID, l_Name, l_Level, l_Health, l_Mana, l_Alignment, l_SkinID, 24, 32, l_MapID, l_PosX, l_PosY, (Orientation)l_Orientation);
@@ -471,11 +478,17 @@ void PacketHandler::HandleUpdateSkin(WorldPacket &p_Packet)
 void PacketHandler::HandleSwitchMap(WorldPacket &p_Packet)
 {
     uint16 l_MapID;
+    std::string l_MapFileName;
+    std::string l_MapChipsetName;
+    std::string l_MapName;
 
     p_Packet >> l_MapID;
+    p_Packet >> l_MapFileName;
+    p_Packet >> l_MapChipsetName;
+    p_Packet >> l_MapName;
 
     delete  m_MapManager->GetActualMap();
-    if (!m_MapManager->LoadMap(l_MapID))
+    if (!m_MapManager->LoadMap(l_MapID, l_MapFileName, l_MapChipsetName, l_MapName))
         return;
 
     if (Map* l_ActualMap = m_MapManager->GetActualMap())

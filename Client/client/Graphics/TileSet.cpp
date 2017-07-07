@@ -5,15 +5,16 @@
 
 
 
-TileSet::TileSet()
+TileSet::TileSet(const std::string & p_FileName)
 {
-	std::string l_FileName = "tileset.png";
-	if (!m_Texture.loadFromFile(TILE_FOLDER + l_FileName, sf::IntRect(0, 0, 1536, 1536)))
+    m_FileName = p_FileName;
+	if (!m_Texture.loadFromFile(TILE_FOLDER + p_FileName, sf::IntRect(0, 0, 1536, 2048)))
 		printf("Load TileSet Failed\n");
 	else
 	{
 		m_X = m_Texture.getSize().x;
 		m_Y = m_Texture.getSize().y;
+        printf("Load TilesSet %d x %d\n", m_X, m_Y);
 		m_XCase = m_X / TILE_SIZE;
 		m_YCase = m_Y / TILE_SIZE;
 	}
@@ -22,6 +23,13 @@ TileSet::TileSet()
 
 TileSet::~TileSet()
 {
+    for (uint32 i = 0; i < m_AllTileSprite.size(); i++)
+        delete m_AllTileSprite[i];
+}
+
+std::string TileSet::GetFileName() const
+{
+    return m_FileName;
 }
 
 void TileSet::BuildSprites()
@@ -49,5 +57,10 @@ size_t TileSet::GetTileListSize() const
 
 TileSprite* TileSet::GetTileSprite(int16 p_ID) const
 {
+    if (p_ID > m_AllTileSprite.size())
+    {
+        printf("Load Chipset %d Failed\n", p_ID);
+        return nullptr;
+    }
 	return m_AllTileSprite[p_ID];
 }

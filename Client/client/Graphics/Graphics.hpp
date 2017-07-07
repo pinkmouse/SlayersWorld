@@ -19,6 +19,7 @@ class Graphics
 public:
 	Graphics(MapManager*, InterfaceManager*, Events*);
 	~Graphics();
+    void SetTileSet(const std::string &);
     bool LoadFont();
     bool LoadTexture();
 	bool CreateWindow(uint32, uint32, float);

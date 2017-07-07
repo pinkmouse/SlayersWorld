@@ -212,7 +212,7 @@ uint16 Map::GetSquareID(uint16 p_X, uint16 p_Y) const
 	return (l_TotalSquareWidth * l_YSquare) + l_XSquare;
 }
 
-bool Map::InitializeMap(const std::string & p_FileName)
+bool Map::InitializeMap(const std::string & p_FileName, const std::string & p_ChipsetFileName)
 {
 	FILE * l_File;
 	std::string l_MapPath = MAP_FOLDER + p_FileName;
@@ -272,8 +272,13 @@ bool Map::InitializeMap(const std::string & p_FileName)
 		m_MapListCase[l_DrawingSquareID].push_back(l_Case);
 	}*/
 	fclose(l_File);
-
+    m_ChipsetName = p_ChipsetFileName;
 	return true;
+}
+
+std::string Map::GetChipsetFileName() const
+{
+    return m_ChipsetName;
 }
 
 std::vector<uint16> Map::GetSquareSetID(uint16 p_SquareID)
