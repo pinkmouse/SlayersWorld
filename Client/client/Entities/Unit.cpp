@@ -13,11 +13,12 @@ Unit::Unit(uint16 p_ID, TypeUnit p_Type, uint8 p_SizeX, uint8 p_SizeY) :
     m_Name = "";
     m_Type = p_Type;
     m_ID = p_ID;
-    m_Opacity = MAX_OPACITY;
     m_DiffTimeOpactiy = 0;
 
     m_CastTime.first = 0;
     m_CastTime.second = 0;
+
+    m_IsInGroup = false;
     
     m_MovementHandler = new MovementHandler(GetSizeX(), GetSizeY());
     m_SkinZoomFactor = SKIN_ZOOM_FACTOR_DEFAULT;
@@ -59,23 +60,10 @@ MovementHandler* Unit::GetMovementHandler()
 
 void Unit::Update(sf::Time p_Diff)
 {
+    UpdateOpacity();
     m_MovementHandler->Update(p_Diff);
     SetPosX(m_MovementHandler->GetPosX());
     SetPosY(m_MovementHandler->GetPosY());
-
-    if (m_Opacity < MAX_OPACITY)
-    {
-        m_DiffTimeOpactiy += p_Diff.asMicroseconds();
-        while (m_DiffTimeOpactiy > (uint64)(UPDATE_OPACITY_TIME * 1000)) ///< 1000 because microsecond
-        {
-            /// UPDATE OPACITY
-            if ((int16)m_Opacity + 15 > MAX_OPACITY)
-                m_Opacity = MAX_OPACITY;
-            else
-                m_Opacity += 15;
-            m_DiffTimeOpactiy -= (uint64)(UPDATE_OPACITY_TIME * 1000);
-        }
-    }
 
     if (!m_Talk.empty())
     {
@@ -115,20 +103,20 @@ void Unit::Update(sf::Time p_Diff)
         m_CastTime.second -= p_Diff.asMicroseconds();
 }
 
-uint8 Unit::GetOpacity()
+void Unit::UpdateOpacity()
 {
     if (IsDeath())
     {
         switch (GetType())
         {
             case TypeUnit::PLAYER:
-                return DEATH_OPACITY;
+                SetOpacity(DEATH_OPACITY);
             default:
-                return 0;
+                SetOpacity(0);
         }
     }
-
-    return 255;
+    else
+        SetOpacity(255);;
 }
 
 std::string Unit::GetName() const
@@ -144,6 +132,11 @@ uint8 Unit::GetLevel() const
 int16 Unit::GetSkinID() const
 {
     return m_SkinID;
+}
+
+bool Unit::GetIsInGroup() const
+{
+    return m_IsInGroup;
 }
 
 Orientation Unit::GetOrientation() const
@@ -225,6 +218,11 @@ void Unit::SetPosY(const uint32 & p_PosY)
 {
     WorldObject::SetPosY(p_PosY);
     m_MovementHandler->SetPosY(p_PosY);
+}
+
+void Unit::SetIsInGroup(bool p_IsInGroup)
+{
+    m_IsInGroup = p_IsInGroup;
 }
 
 void Unit::SetOrientation(const Orientation & p_Orientation)

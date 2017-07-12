@@ -37,6 +37,7 @@ enum SMSG : uint8
     S_UnitStartAttack = 26,
     S_UnitStopAttack = 27,
     S_UnitUpdateSkin = 28,
+    S_UnitIsInGroup = 29,
     S_UnitPlayVisual = 30,
     S_UnitUpdateStat = 31,
     S_LoadingPing = 32,

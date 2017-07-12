@@ -33,6 +33,7 @@ public:
 	void HandleLogDamage(WorldPacket &);
     void HandleWarningMsg(WorldPacket &);
     void HandleUnitPlayVisual(WorldPacket &);
+    void HandleUnitIsInGroup(WorldPacket &);
     void HandleUpdateStat(WorldPacket &);
     void HandleKeyBoardBind(WorldPacket &);
     void HandleKeyBindBlock(WorldPacket &);

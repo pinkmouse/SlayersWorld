@@ -76,7 +76,15 @@ enum eTypeMap
 enum eGroupType
 {
     SIMPLE = 0,
-    GUILD = 1
+    BG = 1,
+    GUILD = 2
+};
+
+enum eBGState
+{
+    STEP0 = 0,
+    STEP1,
+    STEP2
 };
 
 enum eAiType

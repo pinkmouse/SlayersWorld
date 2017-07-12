@@ -95,7 +95,7 @@ bool Areatrigger::CanBeWalk()
 void Areatrigger::UnitEnterInCase(Unit* p_Unit)
 {
     if (m_AreatriggerTemplate->GetType() == eAreatriggerType::AreatriggerTeleport)
-        p_Unit->TeleportTo(m_AreatriggerTemplate->GetData(0), m_AreatriggerTemplate->GetData(1), m_AreatriggerTemplate->GetData(2), (Orientation)m_AreatriggerTemplate->GetData(3));
+        p_Unit->TeleportTo(m_AreatriggerTemplate->GetData(0), 0, m_AreatriggerTemplate->GetData(1), m_AreatriggerTemplate->GetData(2), (Orientation)m_AreatriggerTemplate->GetData(3));
 }
 
 bool Areatrigger::IsBlocking() const

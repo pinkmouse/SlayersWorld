@@ -3,9 +3,10 @@
 #include "../World/WorldSocket.hpp"
 #include "../World/PacketDefine.hpp"
 
-Map::Map(MapTemplate* p_Template)
+Map::Map(uint16 p_InstanceID,  MapTemplate* p_Template)
 {
     m_ID = p_Template->GetID();
+    m_InstanceID = p_InstanceID;
     m_SizeX = p_Template->GetSizeX();
     m_SizeY = p_Template->GetSizeY();
 
@@ -42,6 +43,8 @@ Map::Map(MapTemplate* p_Template)
         l_Creature->SetGossipList(l_ListCreature[i].m_GossipList);
         AddUnit(l_Creature);
     }
+
+    m_GroupManager = nullptr;
 }
 
 Map::~Map()
@@ -58,6 +61,13 @@ Map::~Map()
     {
         delete l_Zone.second;
     }
+
+    delete m_GroupManager;
+}
+
+uint16 Map::GetInstanceID() const
+{
+    return m_InstanceID;
 }
 
 uint16 Map::GetSizeX() const
@@ -129,7 +139,7 @@ void Map::Update(sf::Time p_Diff)
                 continue;
 
             l_Unit->Update(p_Diff);
-            if (l_Unit->GetMapID() != m_ID)
+            if (l_Unit->GetMapID() != m_ID || l_Unit->GetInstanceID() != m_InstanceID)
                 m_UnitInterMapActionQueue[eInterMapAction::SwitchMap].push(l_Unit);
             else if (l_Unit->GetSquareID() != GetSquareID(l_Unit->GetPosX(), l_Unit->GetPosY()))
                 ChangeSquare(l_Unit);
@@ -139,6 +149,18 @@ void Map::Update(sf::Time p_Diff)
     {
         (*l_It)->Update(p_Diff);
     }*/
+}
+
+uint16 Map::GetNbUnitType(TypeUnit p_Type)
+{
+    if (m_ListUnitZone.find(p_Type) == m_ListUnitZone.end())
+        return 0;
+    return m_ListUnitZone[p_Type].size();
+}
+
+bool Map::IsFinish()
+{
+    return false;
 }
 
 std::map<uint16, Unit*>* Map::GetListUnitType(TypeUnit p_Type)
@@ -215,7 +237,7 @@ void Map::UpdateForPlayersInNewSquare(Unit* p_Unit, bool p_UpdateAll)
             if (l_Session == nullptr)
                 continue;
 
-            l_Session->SendUnitCreate(p_Unit->GetType(), p_Unit->GetID(), p_Unit->GetName(), p_Unit->GetLevel(), p_Unit->GetResourceNb(eResourceType::Health), p_Unit->GetResourceNb(eResourceType::Mana), p_Unit->GetResourceNb(eResourceType::Alignment), p_Unit->GetSkinID(), p_Unit->GetSizeX(), p_Unit->GetSizeY(),  p_Unit->GetSpeedUint8(), p_Unit->GetMapID(), p_Unit->GetPosition(), p_Unit->GetOrientation(), p_Unit->IsInMovement(), p_Unit->GetMovementHandler()->IsInAttack(), p_Unit->IsBlocking());
+            l_Session->SendUnitCreate(p_Unit->GetType(), p_Unit->GetID(), p_Unit->GetName(), p_Unit->GetLevel(), p_Unit->GetResourceNb(eResourceType::Health), p_Unit->GetResourceNb(eResourceType::Mana), p_Unit->GetResourceNb(eResourceType::Alignment), p_Unit->GetSkinID(), p_Unit->GetSizeX(), p_Unit->GetSizeY(),  p_Unit->GetSpeedUint8(), p_Unit->GetMapID(), p_Unit->GetPosition(), p_Unit->GetOrientation(), p_Unit->IsInMovement(), p_Unit->GetMovementHandler()->IsInAttack(), p_Unit->IsBlocking(), p_Unit->IsInGroupWith(l_Player));
         }
     }
 }
@@ -242,7 +264,7 @@ std::vector<Unit*> Map::GetUnitsInCase(uint32 p_PosX, uint32 p_PosY)
     return l_List;
 }
 
-Unit* Map::GetCloserUnit(Unit const* p_Unit, float p_Range /*= 2.0f*/, bool p_OnlyInLife /*= flase*/, bool p_InFront /*= true*/, bool p_Attackable /*= false*/)
+Unit* Map::GetCloserUnit(Unit* p_Unit, float p_Range /*= 2.0f*/, bool p_OnlyInLife /*= flase*/, bool p_InFront /*= true*/, bool p_Attackable /*= false*/)
 {
     /// TODO : QuadTree
     std::vector<Square*> l_Grid = GetSquareSet(p_Unit->GetSquareID());
@@ -330,7 +352,7 @@ std::vector<Unit*> Map::GetUnitsInRadius(WorldObject* p_WorldObject, float p_Ran
     return l_Result;
 }
 
-std::vector<Unit*> Map::GetUnitsInRadius(Unit const* p_Unit, float p_RangeMin, float p_RangeMax, bool p_OnlyInLife /*= false*/, bool p_Attackable /*= false*/, float p_Angle /*= 360.0f*/)
+std::vector<Unit*> Map::GetUnitsInRadius(Unit* p_Unit, float p_RangeMin, float p_RangeMax, bool p_OnlyInLife /*= false*/, bool p_Attackable /*= false*/, float p_Angle /*= 360.0f*/)
 {
     /// TODO : QuadTree
     std::vector<Square*> l_Grid = GetSquareSet(p_Unit->GetSquareID());
@@ -408,7 +430,9 @@ void Map::RemoveUnit(Unit* p_Unit)
 
     /// Remove from square
     RemoveFromSquare(p_Unit);
-    
+    if (m_GroupManager != nullptr)
+        m_GroupManager->RemoveUnitFromAllGroup(p_Unit);
+
     PacketUnitRemove l_Packet;
     l_Packet.BuildPacket(p_Unit->GetType(), p_Unit->GetID());
     SendToSet(l_Packet.m_Packet, p_Unit);
@@ -585,4 +609,9 @@ std::vector<uint16> Map::GetSquareSetID(uint16 p_SquareID)
         l_SquareSet.push_back(p_SquareID + l_TotalSquareWidth + 1);
 
     return l_SquareSet;
+}
+
+GroupManager* Map::GetGroupManager()
+{
+    return m_GroupManager;
 }

@@ -29,7 +29,7 @@ public:
     float GetSpeed() const;
     Orientation GetOrientation() const;
     TypeUnit GetType() const;
-    uint8 GetOpacity();
+    bool GetIsInGroup() const;
     bool IsDeath();
     float GetPosXAtIntant(); /// Use for drawing
     float GetPosYAtIntant(); /// Use for drawing
@@ -43,6 +43,7 @@ public:
     void SetSkinZoomFactor(const float &);
     void SetMap(Map*);
     void SetSpeed(float);
+    void SetIsInGroup(bool);
     
     void StartMovement();
     bool IsInRayVisible(Unit*);
@@ -68,6 +69,7 @@ public:
     void CleanCastBar();
 
     void Update(sf::Time);
+    void UpdateOpacity();
 
 protected:
     std::string m_Name;
@@ -75,11 +77,11 @@ protected:
     uint8 m_Level;
     int16 m_SkinID;
     float m_SkinZoomFactor;
+    bool m_IsInGroup;
     std::map< eResourceType, Resource* > m_Resources;
 
     MovementHandler* m_MovementHandler;
     TypeUnit m_Type;
-    uint8 m_Opacity;
     uint64 m_DiffTimeOpactiy;
 	std::vector< std::pair< DamageInfo, uint32 > > m_HistoryDamage;
     std::vector< VisualEffect > m_VisualEffects;

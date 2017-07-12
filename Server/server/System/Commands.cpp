@@ -48,6 +48,8 @@ void Player::InitializeCommands()
     m_CmdHandleMap["summon"].second = &Player::HandleCommandSummonPlayer;
     m_CmdHandleMap["server"].first = eAccessType::Moderator;
     m_CmdHandleMap["server"].second = &Player::HandleCommandServer;
+    m_CmdHandleMap["bg"].first = eAccessType::Moderator;
+    m_CmdHandleMap["bg"].second = &Player::HandleCommandBG;
 }
 
 bool Player::HandleTest(std::vector<std::string> p_ListCmd)
@@ -256,7 +258,7 @@ bool Player::HandleCommandGroupWisp(std::vector<std::string> p_ListCmd)
     for (uint8 i = 0; i < p_ListCmd.size(); ++i)
         l_Msg += " " + p_ListCmd[i];
 
-    std::vector< std::string >* l_Groups = GetAllGroupsForType(eGroupType::SIMPLE);
+    /*std::vector< std::string >* l_Groups = GetAllGroupsForType(eGroupType::SIMPLE);
     if (l_Groups == nullptr)
     {
         SendMsg("Vous ne faite pas partie d'un groupe");
@@ -275,7 +277,7 @@ bool Player::HandleCommandGroupWisp(std::vector<std::string> p_ListCmd)
 
             l_Player->SendMsg(GetName() + "(gr): " + l_Msg);
         }
-    }
+    }*/
 
     return true;
 }
@@ -463,7 +465,7 @@ bool Player::HandleCommandSummonPlayer(std::vector<std::string> p_ListCmd)
     if (l_Player == nullptr)
         return true;
 
-    l_Player->TeleportTo(GetMapID(), GetPositionCentered().m_X, GetPositionCentered().m_Y, Orientation::Down);
+    l_Player->TeleportTo(GetMapID(), GetInstanceID(), GetPositionCentered().m_X, GetPositionCentered().m_Y, Orientation::Down);
     return true;
 }
 
@@ -480,16 +482,37 @@ bool Player::HandleCommandTeleport(std::vector<std::string> p_ListCmd)
         TeleportTo(l_X, l_Y, Orientation::Down);
         return true;
     }
-    if (p_ListCmd.size() == 3)
+    else if (p_ListCmd.size() == 3)
     {
         uint16 l_Map = atoi(p_ListCmd[0].c_str());
         uint32 l_X = atoi(p_ListCmd[1].c_str());
         uint32 l_Y = atoi(p_ListCmd[2].c_str());
 
-        TeleportTo(l_Map, l_X, l_Y, Orientation::Down);
+        TeleportTo(l_Map, 0, l_X, l_Y, Orientation::Down);
+        return true;
+    }
+    else if (p_ListCmd.size() == 4)
+    {
+        uint16 l_Map = atoi(p_ListCmd[0].c_str());
+        uint32 l_Instance = atoi(p_ListCmd[1].c_str());
+        uint32 l_X = atoi(p_ListCmd[2].c_str());
+        uint32 l_Y = atoi(p_ListCmd[2].c_str());
+
+        TeleportTo(l_Map, l_Instance, l_X, l_Y, Orientation::Down);
         return true;
     }
     return false;
+}
+
+bool Player::HandleCommandBG(std::vector<std::string> p_ListCmd)
+{
+    if (p_ListCmd.empty())
+        return false;
+
+    uint32 l_BGID = atoi(p_ListCmd[0].c_str());
+    g_MapManager->AddPlayerToQueue(l_BGID, this);
+
+    return true;
 }
 
 bool Player::HandleCommandJoin(std::vector<std::string> p_ListCmd)
@@ -501,24 +524,8 @@ bool Player::HandleCommandJoin(std::vector<std::string> p_ListCmd)
     if (p_ListCmd.size() > 1)
         return false;
 
-    LeaveAllGroups();
-    std::vector< Unit* >* l_Units = g_GroupManager->GetUnitForGroup(eGroupType::SIMPLE, p_ListCmd[0]);
-    if (l_Units != nullptr)
-    {
-        for (std::vector< Unit* >::iterator l_Itr = l_Units->begin(); l_Itr != l_Units->end(); ++l_Itr)
-        {
-            Player* l_Player = (*l_Itr)->ToPlayer();
-            if (l_Player == nullptr)
-                continue;
-
-            l_Player->SendMsg(GetName() + " vient de rejoindre le groupe '" + p_ListCmd[0] + "'");
-        }
-    }
-
-    EnterInGroup(eGroupType::SIMPLE, p_ListCmd[0]);
-    SendMsg("Vous venez de rejoindre le groupe '" + p_ListCmd[0] + "'");
-
-    return true;
+    g_GroupManager->RemoveUnitFromAllGroupType(eGroupType::SIMPLE, this);
+    g_GroupManager->AddUnitToGroup(eGroupType::SIMPLE, p_ListCmd[0], this);
 }
 
 bool Player::HandleCommandLeave(std::vector<std::string> p_ListCmd)
@@ -526,13 +533,13 @@ bool Player::HandleCommandLeave(std::vector<std::string> p_ListCmd)
     if (!p_ListCmd.empty())
         return false;
 
-    std::vector< std::string >* l_Groups = GetAllGroupsForType(eGroupType::SIMPLE);
+    /*std::vector< std::string >* l_Groups = GetAllGroupsForType(eGroupType::SIMPLE);
     if (l_Groups == nullptr)
     {
         SendMsg("Vous ne faite pas partie d'un groupe");
         return true;
-    }
-    LeaveAllGroups();
+    }*/
+    g_GroupManager->RemoveUnitFromAllGroupType(eGroupType::SIMPLE, this);
 
     return true;
 }

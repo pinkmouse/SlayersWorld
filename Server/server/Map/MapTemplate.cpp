@@ -15,13 +15,14 @@ MapTemplate::MapTemplate() :
     printf("Enter 2\n");
 }
 
-MapTemplate::MapTemplate(uint16 p_ID, eTypeMap p_Type, uint16 p_MaxPlayer, const std::string & p_Name, const std::string & p_FileName, const std::string & p_FileChipset) :
+MapTemplate::MapTemplate(uint16 p_ID, eTypeMap p_Type, uint16 p_MaxPlayer, const std::string & p_Name, const std::string & p_FileName, const std::string & p_FileChipset, bool p_Instance) :
     m_ID(p_ID),
     m_TypeMap(p_Type),
     m_MaxPlayer(p_MaxPlayer),
     m_Name(p_Name),
     m_FileName(p_FileName),
-    m_FileChipset(p_FileChipset)
+    m_FileChipset(p_FileChipset),
+    m_Instance(p_Instance)
 {
     m_SizeX = 0;
     m_SizeY = 0;
@@ -54,6 +55,11 @@ std::string MapTemplate::GetName() const
 uint16 MapTemplate::GetMaxPlayer() const
 {
     return m_MaxPlayer;
+}
+
+bool MapTemplate::IsInstance() const
+{
+    return m_Instance;
 }
 
 uint16 MapTemplate::GetID() const

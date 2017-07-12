@@ -53,8 +53,6 @@ public:
     virtual void Unspawn();
     virtual bool IsBlocking() const;
     Position GetPositionCentered();
-    void SetInstanceID(uint16);
-    uint16 GetInstanceID() const;
 
     /* RESOURCE */
     Resource* GetResource(eResourceType);
@@ -101,9 +99,9 @@ public:
     Unit* GetMaxThreatAttacker();
     void AddThreadFromAttacker(Unit*, uint16);
     Unit* GetVictim() const;
-    bool CanAttack(Unit*) const;
-    bool IsHostileTo(const Unit*) const;
-    bool IsFriendlyTo(const Unit*) const;
+    bool CanAttack(Unit*);
+    bool IsHostileTo(Unit*);
+    bool IsFriendlyTo(Unit*);
     bool IsAttackableTarget() const;
 
     /* UPDATE */
@@ -118,7 +116,7 @@ public:
     /* TELEPORT */
     void TeleportTo(const WorldPosition&);
     void TeleportTo(uint32, uint32, Orientation);
-    void TeleportTo(uint16, uint32, uint32, Orientation);
+    void TeleportTo(uint16, uint16, uint32, uint32, Orientation);
 
     /* SPELL */
     void AddSpellID(uint16, uint64);
@@ -137,14 +135,12 @@ public:
     void UpdateGossip(sf::Time);
 
     /* GROUP */
-    bool EnterInGroup(eGroupType, const std::string &);
-    void LeaveGroup(eGroupType, const std::string &);
-    std::vector< std::string >* GetAllGroupsForType(eGroupType);
-    std::map<eGroupType, std::vector< std::string > >* GetAllGroups();
-    void LeaveAllGroups();
-    void LeaveGroupsType(eGroupType);
-    bool IsInGroupWith(const Unit*) const;
-    bool IsInGroup(eGroupType, const std::string &) const;
+    virtual void LeaveGroup(const std::string &);
+    virtual void EnterInGroup(const std::string &);
+    virtual void UnitLeaveGroup(Unit*, const std::string &);
+    virtual void UnitEnterInGroup(Unit*,  const std::string &);
+    bool IsInGroupWith(Unit*);
+    bool IsInSetWith(Unit*);
 
     /* ZONE */
     void CheckEnterInZone(uint32, uint32, uint32, uint32);
@@ -175,8 +171,6 @@ protected:
     uint16 m_SquareID;
     WorldPosition m_RespawnPosition;
 
-    uint16 m_InstanceID;
-
     /* COMBAT */
     bool m_Evade;
     uint64 m_ResTimer;
@@ -200,7 +194,4 @@ private:
 
     /* GOSSIP */
     std::map< eGossipType, std::vector<Gossip> > m_ListGossip;
-
-    /* GROUP */
-    std::map<eGroupType, std::vector< std::string > > m_GroupList;
 };

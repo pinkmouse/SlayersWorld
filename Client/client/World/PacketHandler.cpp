@@ -42,6 +42,8 @@ void PacketHandler::LoadPacketHandlerMap()
     m_PacketHandleMap[SMSG::S_BlockBind] = &PacketHandler::HandleKeyBindBlock;
     m_PacketHandleMap[SMSG::S_CastBar] = &PacketHandler::HandleCastBar;
     m_PacketHandleMap[SMSG::S_LoadingPing] = &PacketHandler::HandleLoadingPing;
+    m_PacketHandleMap[SMSG::S_UnitIsInGroup] = &PacketHandler::HandleUnitIsInGroup;
+
 }
 
 void PacketHandler::HandleRemoveUnit(WorldPacket &p_Packet)
@@ -488,6 +490,7 @@ void PacketHandler::HandleSwitchMap(WorldPacket &p_Packet)
     p_Packet >> l_MapName;
 
     delete  m_MapManager->GetActualMap();
+    m_InterfaceManager->SetIsLoading(true);
     if (!m_MapManager->LoadMap(l_MapID, l_MapFileName, l_MapChipsetName, l_MapName))
         return;
 
@@ -633,6 +636,29 @@ void PacketHandler::HandleKeyBindBlock(WorldPacket &p_Packet)
     p_Packet >> l_Time;
 
     m_InterfaceManager->AddBlockingBind(l_TypeAction, l_Time);
+}
+
+void PacketHandler::HandleUnitIsInGroup(WorldPacket &p_Packet)
+{
+    uint8 l_TypeID;
+    uint16 l_ID;
+    bool l_IsInGroup;
+
+    p_Packet >> l_TypeID;
+    p_Packet >> l_ID;
+    p_Packet >> l_IsInGroup;
+
+    if (Map* l_Map = m_MapManager->GetActualMap())
+    {
+        Unit* l_Unit = l_Map->GetUnit((TypeUnit)l_TypeID, l_ID);
+
+        if (l_Unit == nullptr)
+        {
+            g_Socket->SendUnitUnknow(l_TypeID, l_ID); ///< Ask for unknow unit to server
+            return;
+        }
+        l_Unit->SetIsInGroup(l_IsInGroup);
+    }
 }
 
 void PacketHandler::HandleCastBar(WorldPacket &p_Packet)

@@ -35,6 +35,9 @@ bool Graphics::LoadTexture()
     std::string l_FileSystemName = "castbarmini.png";
     if (!m_CastBarTexture.loadFromFile(IMG_FOLDER + l_FileSystemName))
         printf("Load SystemImg Cast Bar Mini Failed\n");
+    l_FileSystemName = "lifebarmini.png";
+    if (!m_LifeBarTexture.loadFromFile(IMG_FOLDER + l_FileSystemName))
+        printf("Load SystemImg Life Bar Mini Failed\n");
     return true;
 }
 
@@ -155,6 +158,16 @@ void Graphics::DrawUnitDetails(Unit* p_Unit)
     m_Window.setView(m_View);
 
     /// CAST BAR
+    if (p_Unit != g_Player && p_Unit->GetIsInGroup())
+    {
+        TileSprite l_LifeBar;
+        l_LifeBar.setTexture(m_LifeBarTexture);
+        l_LifeBar.setTextureRect(sf::IntRect(0, 0, (m_LifeBarTexture.getSize().x / 100.0f) * p_Unit->GetResourceNb(eResourceType::Health), m_LifeBarTexture.getSize().y));
+        l_LifeBar.setPosition(p_Unit->GetPosXAtIntant() - (p_Unit->GetSizeX() / 2), p_Unit->GetPosYAtIntant() - p_Unit->GetSizeY() - 4);
+        m_Window.draw(l_LifeBar);
+    }
+
+    /// CAST BAR
     if (p_Unit != g_Player && p_Unit->GetCastPct() > 0)
     {
         TileSprite l_CastBar;
@@ -178,7 +191,10 @@ void Graphics::DrawWorldObjects(std::map<uint32, std::vector<WorldObject*> > *p_
                 l_WorldObject->GetSprite()->setPosition(l_WorldObject->GetPosXAtIntant() - (l_WorldObject->GetSizeX() / 2), l_WorldObject->GetPosYAtIntant() - l_WorldObject->GetSizeY());
             else
                 l_WorldObject->GetSprite()->setPosition(l_WorldObject->GetPosXAtIntant(), l_WorldObject->GetPosYAtIntant());
-            m_Window.draw(*l_WorldObject->GetSprite());
+
+            sf::Sprite l_Sprite = *l_WorldObject->GetSprite();
+            l_Sprite.setColor(sf::Color(255, 255, 255, l_WorldObject->GetOpacity()));
+            m_Window.draw(l_Sprite);
 
             if (l_WorldObject->GetType() == TypeWorldObject::UNIT)
             {
@@ -272,6 +288,7 @@ void Graphics::DrawMap()
     if (m_TileSet == nullptr || m_TileSet->GetFileName() != m_MapManager->GetActualMap()->GetChipsetFileName())
     {
         SetTileSet(m_MapManager->GetActualMap()->GetChipsetFileName());
+        m_InterfaceManager->SetIsLoading(false);
     }
 
 	Map* l_Map = m_MapManager->GetActualMap();
@@ -356,11 +373,6 @@ void Graphics::DrawMap()
             if (l_SkinSprite == nullptr)
                 continue;
             l_SkinSprite->setScale(sf::Vector2f(l_Unit->GetSkinZoomFactor(), l_Unit->GetSkinZoomFactor()));
-            if (l_Unit->IsPlayer())
-                l_SkinSprite->setColor(sf::Color(255, 255, 255, l_Unit->GetOpacity()));
-            /*else
-                l_SkinSprite->setColor(sf::Color(255, 255, 255, 255));*/
-
             l_Unit->SetSprite(l_SkinSprite);
 
             l_ListWorldObjectByZ[l_Unit->GetPosYAtIntant()].push_back(l_Unit);

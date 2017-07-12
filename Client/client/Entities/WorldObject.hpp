@@ -18,6 +18,8 @@ public:
     virtual float GetPosXAtIntant(); /// Use for drawing
     virtual float GetPosYAtIntant(); /// Use for drawing
 
+    uint8 GetOpacity() const;
+    void SetOpacity(const uint8 &);
     sf::Sprite* GetSprite() const;
     void SetSprite(sf::Sprite*);
     TypeWorldObject GetType() const;
@@ -28,5 +30,6 @@ private:
     sf::Sprite* m_Tile;
     uint8 m_SizeX;
     uint8 m_SizeY;
+    uint8 m_Opacity;
 };
 

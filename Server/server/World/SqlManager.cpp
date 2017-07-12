@@ -244,7 +244,7 @@ WorldPosition SqlManager::GetRespawnPositionForPlayer(uint32 p_PlayerID)
         return GetRespawnPositionForPlayer(p_PlayerID);
     }
 
-    WorldPosition l_Position(l_PosX, l_PosY, l_MapID, (Orientation)l_Orientation);
+    WorldPosition l_Position(l_PosX, l_PosY, l_MapID, 0, (Orientation)l_Orientation);
     return l_Position;
 }
 
@@ -1156,18 +1156,19 @@ WorldPosition SqlManager::GetPosition(const std::string & p_PlayerName)
     }
     mysql_free_result(l_Result);
 
-    WorldPosition l_Position(l_PosX, l_PosY, l_MapID, Orientation::Up);
+    WorldPosition l_Position(l_PosX, l_PosY, l_MapID, 0, Orientation::Up);
     return l_Position;
 }
 
 bool SqlManager::InitializeMaps()
 {
-    std::string l_Query = "SELECT `id`, `typeID`,`name`, `fileName`, `fileChipsets`, `maxPlayers` FROM maps";
+    std::string l_Query = "SELECT `id`, `typeID`,`name`, `fileName`, `fileChipsets`, `maxPlayers`, `instance` FROM maps";
     mysql_query(&m_MysqlWorld, l_Query.c_str());
 
     uint16 l_Id = 0;
     uint16 l_TypeID = 0;
     uint16 l_MaxPlayers = 0;
+    uint16 l_Instance = 0;
     std::string l_FileName = "";
     std::string l_FileChipsets = "";
     std::string l_Name = "";
@@ -1183,9 +1184,38 @@ bool SqlManager::InitializeMaps()
         l_FileName = std::string(l_Row[3]);
         l_FileChipsets = std::string(l_Row[4]);
         l_MaxPlayers = atoi(l_Row[5]);
+        l_Instance = atoi(l_Row[6]);
 
-        MapTemplate* l_MapTemplate = new MapTemplate(l_Id, (eTypeMap)l_TypeID, l_MaxPlayers, l_Name, l_FileName, l_FileChipsets);
+        MapTemplate* l_MapTemplate = new MapTemplate(l_Id, (eTypeMap)l_TypeID, l_MaxPlayers, l_Name, l_FileName, l_FileChipsets, (bool)l_Instance);
         g_MapManager->AddMapTemplate(l_MapTemplate);
+    }
+    mysql_free_result(l_Result);
+    return true;
+}
+
+bool SqlManager::InitializeBattlegrounds()
+{
+    std::string l_Query = "SELECT `id`, `mapID`,`minPlayers`, `maxPlayers`, `timeMax` FROM battleground";
+    mysql_query(&m_MysqlWorld, l_Query.c_str());
+
+    uint16 l_Id = 0;
+    uint16 l_MapID = 0;
+    uint16 l_MinPlayers = 0;
+    uint16 l_MaxPlayers = 0;
+    uint16 l_TimeMax = 0;
+
+    MYSQL_RES *l_Result = NULL;
+    MYSQL_ROW l_Row;
+    l_Result = mysql_use_result(&m_MysqlWorld);
+    while ((l_Row = mysql_fetch_row(l_Result)))
+    {
+        l_Id = atoi(l_Row[0]);
+        l_MapID = atoi(l_Row[1]);
+        l_MinPlayers = atoi(l_Row[2]);
+        l_MaxPlayers = atoi(l_Row[3]);
+        l_TimeMax = atoi(l_Row[4]);
+
+        g_MapManager->AddBGTemplate(new BGTemplate(l_Id, l_MapID, l_MinPlayers, l_MaxPlayers, l_TimeMax));
     }
     mysql_free_result(l_Result);
     return true;

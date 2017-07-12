@@ -22,8 +22,6 @@ Unit::Unit(uint16 p_ID, TypeUnit p_Type, eFactionType p_FactionType)
     m_Type = p_Type;
     m_FactionType = p_FactionType;
     m_Name = "";
-    m_MapID = 0;
-    m_InstanceID = 0;
     m_ID = p_ID;
     m_SizeX = 24;
     m_SizeY = 32;
@@ -41,6 +39,7 @@ Unit::Unit(uint16 p_ID, TypeUnit p_Type, eFactionType p_FactionType)
     m_RespawnTime = 0;
     
     m_Victim = nullptr;
+    m_Map = nullptr;
     m_CurrentSpell = nullptr;
     if (m_Type == TypeUnit::CREATURE)
         m_MovementHandler = new MovementHandlerCreature(this, m_SizeX, m_SizeY);
@@ -70,12 +69,12 @@ Creature* Unit::ToCreature()
 
 Unit::~Unit()
 {
-    LeaveAllGroups();
     CleanAttackers();
     CleanVictims();
     m_MovementHandler->StopMovement();
     m_MovementHandler->StopAttack();
     m_Map->RemoveUnit(this);
+    g_GroupManager->RemoveUnitFromAllGroup(this);
     delete m_MovementHandler;
     m_MovementHandler = nullptr;
 
@@ -588,6 +587,9 @@ void Unit::Talk(const std::string & p_Talk)
 
 void Unit::CheckEnterInZone(uint32 p_OldX, uint32 p_OldY, uint32 p_NewX, uint32 p_NewY)
 {
+    if (m_Map == nullptr)
+        return;
+
     if (((p_NewY / TILE_SIZE) * (uint32)m_Map->GetSizeX()) + (p_NewX / TILE_SIZE) != ((p_OldY / TILE_SIZE) * (uint32)m_Map->GetSizeX()) + (p_OldX / TILE_SIZE))
     {
         Case* l_Case = m_Map->GetCase(((p_NewY / TILE_SIZE) * (uint32)m_Map->GetSizeX()) + (p_NewX / TILE_SIZE));
@@ -600,6 +602,9 @@ void Unit::CheckEnterInZone(uint32 p_OldX, uint32 p_OldY, uint32 p_NewX, uint32 
 
 void Unit::CheckOutOfZone(uint32 p_OldX, uint32 p_OldY, uint32 p_NewX, uint32 p_NewY)
 {
+    if (m_Map == nullptr)
+        return;
+
     if (((p_NewY / TILE_SIZE) * (uint32)m_Map->GetSizeX()) + (p_NewX / TILE_SIZE) != ((p_OldY / TILE_SIZE) * (uint32)m_Map->GetSizeX()) + (p_OldX / TILE_SIZE))
     {
         Case* l_Case = m_Map->GetCase(((p_NewY / TILE_SIZE) * (uint32)m_Map->GetSizeX()) + (p_NewX / TILE_SIZE));
@@ -650,7 +655,7 @@ void Unit::SetMap(Map* p_Map)
 {
     m_Map = p_Map;
     if (p_Map != nullptr)
-        m_MapID = p_Map->GetID();
+        SetMapID(p_Map->GetID());
     m_MovementHandler->SetMap(m_Map);
 }
 
@@ -693,22 +698,28 @@ void Unit::TeleportTo(const WorldPosition& p_WorldPosition)
     GetMovementHandler()->StopAttack();
     InterruptCast();
 
-    Case* l_Case = m_Map->GetCase(((GetPositionCentered().m_Y / TILE_SIZE) * (uint32)m_Map->GetSizeX()) + (GetPositionCentered().m_X / TILE_SIZE));
-    if (l_Case != nullptr)
-        l_Case->UnitOutOfCase(this, nullptr);
+    if (m_Map != nullptr)
+    {
+        Case* l_Case = m_Map->GetCase(((GetPositionCentered().m_Y / TILE_SIZE) * (uint32)m_Map->GetSizeX()) + (GetPositionCentered().m_X / TILE_SIZE));
+        if (l_Case != nullptr)
+            l_Case->UnitOutOfCase(this, nullptr);
+    }
 
     SetOrientation(p_WorldPosition.GetOrientation());
     SetMapID(p_WorldPosition.GetMapID());
     SetPos(p_WorldPosition.GetPosX(), p_WorldPosition.GetPosY());
+    SetInstanceID(p_WorldPosition.GetInstanceID());
 
     /* TODO : check range for short TP */
     CleanAttackers();
     CleanVictims();
 
-    PacketUpdatePosition l_Packet;
-    l_Packet.BuildPacket(GetType(), GetID(), GetMapID(), GetPosX(), GetPosY(), GetOrientation());
-    m_Map->SendToSet(l_Packet.m_Packet, this);
-
+    if (m_Map != nullptr)
+    {
+        PacketUpdatePosition l_Packet;
+        l_Packet.BuildPacket(GetType(), GetID(), GetMapID(), GetPosX(), GetPosY(), GetOrientation());
+        m_Map->SendToSet(l_Packet.m_Packet, this);
+    }
     /* To be sure that some packet are not receive between tp */
     if (IsPlayer())
         ToPlayer()->SetInLoading(true);
@@ -716,13 +727,13 @@ void Unit::TeleportTo(const WorldPosition& p_WorldPosition)
 
 void Unit::TeleportTo(uint32 p_X, uint32 p_Y, Orientation p_Orientation)
 {
-    TeleportTo(WorldPosition(p_X, p_Y, GetMapID(), p_Orientation));
+    TeleportTo(WorldPosition(p_X, p_Y, GetMapID(), GetInstanceID(), p_Orientation));
 }
 
-void Unit::TeleportTo(uint16 p_MapID, uint32 p_X, uint32 p_Y, Orientation p_Orientation)
+void Unit::TeleportTo(uint16 p_MapID, uint16 p_InstanceID, uint32 p_X, uint32 p_Y, Orientation p_Orientation)
 {
     if (IsPlayer())
-        TeleportTo(WorldPosition(p_X, p_Y, p_MapID, p_Orientation));
+        TeleportTo(WorldPosition(p_X, p_Y, p_MapID, p_InstanceID, p_Orientation));
 }
 
 bool Unit::IsInCombat() const
@@ -798,7 +809,7 @@ bool Unit::IsInEvade() const
     return m_Evade;
 }
 
-bool Unit::CanAttack(Unit* p_Unit) const
+bool Unit::CanAttack(Unit* p_Unit)
 {
     /// Check if target is a valid attack target
 
@@ -808,7 +819,7 @@ bool Unit::CanAttack(Unit* p_Unit) const
     return IsHostileTo(p_Unit);
 }
 
-bool Unit::IsFriendlyTo(const Unit* p_Unit) const
+bool Unit::IsFriendlyTo(Unit* p_Unit)
 {
     if (GetFaction() == eFactionType::Neutral || p_Unit->GetFaction() == eFactionType::Neutral)
         return true;
@@ -833,7 +844,7 @@ bool Unit::IsBlocking() const
     return false;
 }
 
-bool Unit::IsHostileTo(const Unit* p_Unit) const
+bool Unit::IsHostileTo(Unit* p_Unit)
 {
     return !IsFriendlyTo(p_Unit);
 }
@@ -1234,44 +1245,42 @@ bool Unit::SubPointsStat(eStats p_TypeStat, uint8 p_NbPoints)
     return true;
 }
 
-bool Unit::EnterInGroup(eGroupType p_Type, const std::string & p_GroupeName)
+void Unit::UnitLeaveGroup(Unit* p_Unit, const std::string &)
 {
-    if (m_GroupList.find(p_Type) != m_GroupList.end()) ///< If already exist
+    if (IsInSetWith(p_Unit) && p_Unit->IsPlayer())
     {
-        if (std::find(m_GroupList[p_Type].begin(), m_GroupList[p_Type].end(), p_GroupeName) != m_GroupList[p_Type].end())
-            return false;
-    }
-    m_GroupList[p_Type].push_back(p_GroupeName);
-    g_GroupManager->AddUnitToGroup(p_Type, p_GroupeName, this);
-    return true;
-}
-
-void Unit::LeaveGroup(eGroupType p_Type, const std::string & p_GroupeName)
-{
-    if (m_GroupList.find(p_Type) == m_GroupList.end()) ///< If already exist
-        return;
-
-    std::vector<std::string>::iterator l_It = std::find(m_GroupList[p_Type].begin(), m_GroupList[p_Type].end(), p_GroupeName);
-    if (l_It == m_GroupList[p_Type].end())
-        return;
-
-    m_GroupList[p_Type].erase(l_It);
-    g_GroupManager->RemoveUnitFromGroup(p_Type, p_GroupeName, this);
-}
-
-void Unit::LeaveGroupsType(eGroupType p_Type)
-{
-    if (m_GroupList.find(p_Type) == m_GroupList.end()) ///< If already exist
-        return;
-
-    for (auto l_Groups : m_GroupList[p_Type])
-    {
-        LeaveGroup(p_Type, l_Groups);
+        PacketUnitIsInGroup l_PacketNew;
+        /// Send to new one all people
+        if (p_Unit->IsPlayer())
+        {
+            l_PacketNew.BuildPacket(GetType(), GetID(), false);
+            p_Unit->ToPlayer()->GetSession()->SendPacket(l_PacketNew.m_Packet);
+        }
     }
 }
 
-void Unit::LeaveAllGroups()
+void Unit::UnitEnterInGroup(Unit* p_Unit, const std::string &)
 {
+    if (IsInSetWith(p_Unit) && p_Unit->IsPlayer())
+    {
+        PacketUnitIsInGroup l_PacketNew;
+        /// Send to new one all people
+        if (p_Unit->IsPlayer())
+        {
+            l_PacketNew.BuildPacket(GetType(), GetID(), true);
+            p_Unit->ToPlayer()->GetSession()->SendPacket(l_PacketNew.m_Packet);
+        }
+    }
+}
+
+void Unit::EnterInGroup(const std::string & p_GroupeName)
+{
+    ;
+}
+
+void Unit::LeaveGroup(const std::string & p_Name)
+{
+    /*Player* l_ThisPlayer = ToPlayer();
     std::vector< std::string >* l_Groups = GetAllGroupsForType(eGroupType::SIMPLE);
     if (l_Groups == nullptr)
         return;
@@ -1280,8 +1289,8 @@ void Unit::LeaveAllGroups()
         std::string l_GroupName = (*l_It);
         LeaveGroup(eGroupType::SIMPLE, l_GroupName);
         l_It = l_Groups->begin();
-        if (IsPlayer())
-            ToPlayer()->SendMsg("Vous venez de quitter le groupe '" + l_GroupName + "'");
+        if (l_ThisPlayer != nullptr)
+            l_ThisPlayer->SendMsg("Vous venez de quitter le groupe '" + l_GroupName + "'");
         std::vector< Unit* >* l_Units = g_GroupManager->GetUnitForGroup(eGroupType::SIMPLE, l_GroupName);
         if (l_Units == nullptr)
             continue;
@@ -1292,55 +1301,51 @@ void Unit::LeaveAllGroups()
                 continue;
 
             l_Player->SendMsg(GetName() + " vient de quitter le groupe '" + l_GroupName + "'");
+
+            if (l_Player->IsInSetWith(this))
+            {
+                PacketUnitIsInGroup l_Packet;
+                /// Send to others of group
+                l_Packet.BuildPacket(TypeUnit::PLAYER, GetID(), false);
+                l_Player->GetSession()->SendPacket(l_Packet.m_Packet);
+
+                PacketUnitIsInGroup l_PacketNew;
+                /// Send to new one all people
+                if (l_ThisPlayer != nullptr)
+                {
+                    l_PacketNew.BuildPacket(TypeUnit::PLAYER, l_Player->GetID(), false);
+                    l_ThisPlayer->GetSession()->SendPacket(l_PacketNew.m_Packet);
+                }
+            }
         }
-    }
+    }*/
 }
 
-bool Unit::IsInGroup(eGroupType p_Type, const std::string & p_GroupeName) const
+bool Unit::IsInGroupWith(Unit* p_Unit)
 {
-    auto l_It = m_GroupList.find(p_Type); ///< If already exist
-
-    if (l_It != m_GroupList.end())
+    if (m_Map->GetGroupManager() != nullptr)
     {
-        if (std::find((*l_It).second.begin(), (*l_It).second.end(), p_GroupeName) != (*l_It).second.end())
+        if (m_Map->GetGroupManager()->UnitsInGroup(this, p_Unit))
             return true;
+        return false;
     }
+    else if (g_GroupManager->UnitsInGroup(this, p_Unit))
+        return true;
     return false;
 }
 
-std::vector< std::string >* Unit::GetAllGroupsForType(eGroupType p_Type)
+bool Unit::IsInSetWith(Unit* p_Unit)
 {
-    if (m_GroupList.find(p_Type) == m_GroupList.end()) ///< If already exist
-        return nullptr;
+    std::vector<uint16> GetSquareSetID = m_Map->GetSquareSetID(p_Unit->GetSquareID());
+    std::vector<uint16> GetSquareSetIDUnit = m_Map->GetSquareSetID(GetSquareID());
 
-    return &m_GroupList[p_Type];
-}
-
-std::map<eGroupType, std::vector< std::string > >* Unit::GetAllGroups()
-{
-    return &m_GroupList;
-}
-
-
-bool Unit::IsInGroupWith(const Unit* p_Unit) const
-{
-    for (auto l_Gr : m_GroupList)
+    for (uint16 l_Square : GetSquareSetID)
     {
-        for (std::string l_GroupName : l_Gr.second)
+        for (uint16 l_SquareUnit : GetSquareSetIDUnit)
         {
-            if (p_Unit->IsInGroup(l_Gr.first, l_GroupName))
+            if (l_SquareUnit == l_SquareUnit)
                 return true;
         }
     }
     return false;
-}
-
-void Unit::SetInstanceID(uint16 p_InstanceID)
-{
-    m_InstanceID = p_InstanceID;
-}
-
-uint16 Unit::GetInstanceID() const
-{
-    return m_InstanceID;
 }

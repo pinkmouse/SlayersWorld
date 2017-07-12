@@ -1,6 +1,7 @@
 #include <cstdio>
 #include "MapManager.hpp"
 #include "../World/WorldSocket.hpp"
+#include "../System/Instance/BattleGround/BGCapturePoint.hpp"
 
 #define NB_MAP 2
 
@@ -37,7 +38,7 @@ Map* MapManager::LaunchMap(uint16 p_MapID)
     if (m_MapListTemplate[p_MapID] == nullptr)
         return nullptr;
 
-    Map* l_Map = new Map(m_MapListTemplate[p_MapID]);
+    Map* l_Map = new Map(0, m_MapListTemplate[p_MapID]);
     return l_Map;
 }
 
@@ -45,6 +46,8 @@ bool MapManager::LaunchWorldsMap()
 {
     for (auto l_MapTemplate : m_MapListTemplate)
     {
+        if (l_MapTemplate.second->IsInstance())
+            continue;
         Map* l_Map = LaunchMap(l_MapTemplate.first);
         m_MapList[l_Map->GetID()][0] = l_Map;
     }
@@ -95,8 +98,62 @@ bool MapManager::IsOnline(TypeUnit p_TypeID, uint16 p_UnitID)
     return false;
 }
 
+void MapManager::UpdateQueues(sf::Time p_Diff)
+{
+    for (std::map<uint16, std::pair<BGTemplate*, std::vector<Player*>>>::iterator l_Itr = m_BGListTemplate.begin() ; l_Itr != m_BGListTemplate.end(); l_Itr++)
+    {
+        /// Remove null players
+        for (std::vector<Player*>::iterator l_It = (*l_Itr).second.second.begin(); l_It != (*l_Itr).second.second.end();)
+        {
+            if ((*l_It) == nullptr)
+                l_It = (*l_Itr).second.second.erase(l_It);
+            else
+                l_It++;
+        }
+
+        /// Check actual bg
+        for (auto l_Map : m_MapList[(*l_Itr).second.first->m_MapID])
+        {
+            for (std::vector<Player*>::iterator l_It = (*l_Itr).second.second.begin(); l_Map.second->GetNbUnitType(TypeUnit::PLAYER) < (*l_Itr).second.first->m_MaxPlayer &&  l_It != (*l_Itr).second.second.end();)
+            {
+                (*l_It)->TeleportTo(l_Map.second->GetID(), l_Map.second->GetInstanceID(), 50, 50, Orientation::Down);
+                l_It = (*l_Itr).second.second.erase(l_It);
+            }
+        }
+
+        /// Check Queues
+        if ((*l_Itr).second.second.size() >= (*l_Itr).second.first->m_MinPlayer)
+        {
+            Map* l_NewBGInstance = nullptr;
+            uint16 l_InstanceID = GetValidInstanceIDForMap((*l_Itr).second.first->m_MapID);
+            switch ((*l_Itr).first)
+            {
+                case 0 :
+                    l_NewBGInstance = new BGCapturePoint(l_InstanceID, (*l_Itr).second.first->m_MapID);
+                default :
+                break;
+            }
+            if (l_NewBGInstance != nullptr)
+            {
+                uint16 l_NbPlayers = 0;
+
+                m_MapList[l_NewBGInstance->GetID()][l_InstanceID] = l_NewBGInstance;
+                for (std::vector<Player*>::iterator l_It = (*l_Itr).second.second.begin() ; l_It != (*l_Itr).second.second.end();)
+                {
+                    if (l_NbPlayers > (*l_Itr).second.first->m_MaxPlayer)
+                        break;
+                    (*l_It)->TeleportTo(l_NewBGInstance->GetID(), l_InstanceID, 50, 50, Orientation::Down);
+                    l_It = (*l_Itr).second.second.erase(l_It);
+                    l_NbPlayers++;
+                }
+            }
+        }
+    }
+}
+
 void MapManager::Update(sf::Time p_Diff)
 {
+    UpdateQueues(p_Diff);
     for (std::map<uint16, std::map<uint16, Map*>>::iterator l_It = m_MapList.begin(); l_It != m_MapList.end(); ++l_It)
     {
         for (std::map<uint16, Map*>::iterator l_Itr = (*l_It).second.begin(); l_Itr != (*l_It).second.end(); ++l_Itr)
@@ -111,7 +168,7 @@ void MapManager::Update(sf::Time p_Diff)
 
     for (std::map<uint16, std::map<uint16, Map*>>::iterator l_It = m_MapList.begin(); l_It != m_MapList.end(); ++l_It)
     {
-        for (std::map<uint16, Map*>::iterator l_Itr = (*l_It).second.begin(); l_Itr != (*l_It).second.end(); ++l_Itr)
+        for (std::map<uint16, Map*>::iterator l_Itr = (*l_It).second.begin(); l_Itr != (*l_It).second.end();)
         {
             Map* l_Map = (*l_Itr).second;
             if (l_Map == nullptr)
@@ -124,7 +181,7 @@ void MapManager::Update(sf::Time p_Diff)
                 Unit* l_Unit = l_UnitInterMapAction->front();
                 Map* l_NewMap = GetMap(l_Unit->GetMapID(), l_Unit->GetInstanceID());
 
-                if (l_NewMap == nullptr || l_NewMap->GetID() == l_Map->GetID()) /// If new map doesn't exist, we don't switch it
+                if (l_NewMap == nullptr || (l_NewMap->GetID() == l_Map->GetID() && l_NewMap->GetInstanceID() == l_Map->GetInstanceID())) /// If new map doesn't exist, we don't switch it
                 {
                     l_Unit->SetMapID(l_Map->GetID());
                     l_UnitInterMapAction->pop();
@@ -136,6 +193,13 @@ void MapManager::Update(sf::Time p_Diff)
                 l_NewMap->AddUnit(l_Unit);
                 l_UnitInterMapAction->pop();
             }
+            if (l_Map->IsFinish()) ///< For Instances
+            {
+                delete l_Map;
+                l_Itr = (*l_It).second.erase(l_Itr);
+            }
+            else
+                l_Itr++;
         }
     }
 }
@@ -181,15 +245,26 @@ std::vector<Player*> MapManager::GetAllPlayers()
     return l_ListPlayer;
 }
 
-int32 MapManager::StartInstance(uint16 p_MapID)
+void MapManager::AddBGTemplate(BGTemplate* p_BGTemplate)
 {
-    uint16 i = 0;
+    m_BGListTemplate[p_BGTemplate->m_ID].first = p_BGTemplate;
+}
 
-    /// Search slot disponible
-    while (m_MapList[p_MapID].find(i) != m_MapList[p_MapID].end())
-        i++;
+void MapManager::AddPlayerToQueue(uint16 m_BGID, Player* m_Player)
+{
+    m_BGListTemplate[m_BGID].second.push_back(m_Player);
+}
 
-    //m_MapList[p_MapID][i] = new Map(p_MapID);
-
-    return (uint16)i;
+uint16 MapManager::GetValidInstanceIDForMap(uint16 p_MapID)
+{
+    uint16 l_InstanceID = 0;
+    std::map<uint16, Map*>::iterator l_It;
+    while (1)
+    {
+        l_It = m_MapList[p_MapID].find(l_InstanceID);
+        if (l_It == m_MapList[p_MapID].end() || (*l_It).second == nullptr)
+            break;
+        l_InstanceID++;
+    }
+    return l_InstanceID;
 }

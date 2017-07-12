@@ -19,6 +19,7 @@ InterfaceManager::InterfaceManager(Events* p_Events) :
     m_Align.setColor(sf::Color::Black);
 
     InitializeWarningMsgs();
+    m_IsLoading = false;
 }
 
 InterfaceManager::~InterfaceManager()
@@ -340,7 +341,7 @@ void InterfaceManager::Draw(Window & p_Window)
         return;
 
     /// Draw Starting
-    if (g_Player == nullptr)
+    if (g_Player == nullptr/* || IsLoading()*/)
     {
         DrawStartingPage(p_Window);
         return;
@@ -498,6 +499,17 @@ int16 InterfaceManager::GetBindForKey(uint8 p_Key)
 void InterfaceManager::AddBlockingBind(uint8 p_BindType, uint16 p_Time)
 {
     m_BlockingBinds[p_BindType] = (uint64)p_Time * 1000;
+}
+
+bool InterfaceManager::IsLoading() const
+{
+    return m_IsLoading;
+}
+
+void InterfaceManager::SetIsLoading(bool p_IsLoading)
+{
+    m_IsLoading = p_IsLoading;
+    SetSystemMsg("Loading...");
 }
 
 bool InterfaceManager::IsBlockingBind(uint8 p_BindType)

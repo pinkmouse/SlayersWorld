@@ -10,6 +10,20 @@
 #include "../Entities/Areatrigger.hpp"
 #include "Square.hpp"
 
+struct BGTemplate
+{
+    uint16 m_ID;
+    uint16 m_MapID;
+    uint16 m_MinPlayer;
+    uint16 m_MaxPlayer;
+    uint16 m_TimeMax;
+
+    BGTemplate() {}
+
+    BGTemplate(uint16 p_ID, uint16 p_MapID, uint16 p_MinPlayer, uint16 p_MaxPlayer, uint16 p_TimeMax) :
+        m_ID(p_ID), m_MapID(p_MapID), m_MinPlayer(p_MinPlayer), m_MaxPlayer(p_MaxPlayer), m_TimeMax(p_TimeMax) {}
+};
+
 struct GobMapTemplate
 {
     uint16 m_ID;
@@ -61,7 +75,7 @@ class MapTemplate
 {
 public:
     MapTemplate();
-    MapTemplate(uint16, eTypeMap, uint16, const std::string &, const std::string &, const std::string &);
+    MapTemplate(uint16, eTypeMap, uint16, const std::string &, const std::string &, const std::string &, bool);
 	~MapTemplate();
 
     bool InitializeMap();
@@ -71,6 +85,7 @@ public:
     void AddAreaTriggerMapTemplate(AreaTriggerMapTemplate);
     Case* GetCase(uint32);
 
+    bool IsInstance() const;
     uint16 GetID() const;
     uint16 GetSizeX() const;
     uint16 GetSizeY() const;
@@ -88,6 +103,7 @@ public:
 
 private:
 	uint16 m_ID;
+    bool m_Instance;
 	uint16 m_SizeX;
 	uint16 m_SizeY;
     uint16 m_MaxPlayer;

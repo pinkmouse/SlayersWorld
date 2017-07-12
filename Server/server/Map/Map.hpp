@@ -8,6 +8,7 @@
 #include "../Entities/DynamicObject.hpp"
 #include "../Entities/Player.hpp"
 #include "../Entities/Creature.hpp"
+#include "../Entities/GroupManager.hpp"
 #include "Square.hpp"
 #include "../World/WorldPacket.hpp"
 #include "MapTemplate.hpp"
@@ -15,12 +16,12 @@
 class Map
 {
 public:
-	Map(MapTemplate*);
+    Map(uint16, MapTemplate*);
 	~Map();
 	bool InitializeMap(const std::string &);
     virtual void Update(sf::Time);
-    void AddUnit(Unit*);
-    void RemoveUnit(Unit*);
+    virtual void AddUnit(Unit*);
+    virtual void RemoveUnit(Unit*);
     uint16  GetSquareID(uint16 , uint16) const;
     Unit* GetUnit(TypeUnit, uint16);
     uint16 GetID() const;
@@ -33,20 +34,24 @@ public:
     Square* GetSquare(uint16);
     std::vector<uint16> GetSquareSetID(uint16);
 
-    Unit* GetCloserUnit(Unit const*, float p_Range = 2.0f, bool p_OnlyInLife = false, bool p_InFront = true, bool p_Attackable = false);
-    std::vector<Unit*> GetUnitsInRadius(Unit const*, float p_RangeMin = 0.0f, float p_RangeMax = 2.0f, bool p_OnlyInLife = false, bool p_Attackable = false, float p_Angle = 360.0f);
+    Unit* GetCloserUnit(Unit*, float p_Range = 2.0f, bool p_OnlyInLife = false, bool p_InFront = true, bool p_Attackable = false);
+    std::vector<Unit*> GetUnitsInRadius(Unit*, float p_RangeMin = 0.0f, float p_RangeMax = 2.0f, bool p_OnlyInLife = false, bool p_Attackable = false, float p_Angle = 360.0f);
     std::vector<Unit*> GetUnitsInRadius(WorldObject*, float p_RangeMin = 0.0f, float p_RangeMax = 2.0f, bool p_OnlyInLife = false, float p_Angle = 360.0f);
     std::vector<Unit*> GetUnitsInCase(uint32, uint32);
 
     uint16 GetSizeX() const;
     uint16 GetSizeY() const;
+    uint16 GetInstanceID() const;
     void AddUnitInterMapAction(eInterMapAction, Unit*);
     std::queue<Unit*>* GetUnitInterMapAction(eInterMapAction);
     void UpdateForPlayersInNewSquare(Unit*, bool p_UpdateAll = false);
     std::map<uint16, Unit*>* GetListUnitType(TypeUnit);
+    uint16 GetNbUnitType(TypeUnit);
 
     void SetListCase(std::vector<Case*>);
     void AddCase(Case*);
+    GroupManager* GetGroupManager();
+
     /// Enable Zone
     void AddZone(Zone*);
     void EnableZone(uint16, bool);
@@ -57,8 +62,15 @@ public:
     /// Pathfinding
     Path LaunchPathFinding(const Position &, const Position &);
 
+    /// For Instance
+    virtual bool IsFinish();
+
+protected:
+    GroupManager* m_GroupManager;
+
 private:
 	uint16 m_ID;
+    uint16 m_InstanceID;
 	uint16 m_SizeX;
 	uint16 m_SizeY;
 

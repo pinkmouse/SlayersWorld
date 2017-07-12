@@ -66,6 +66,12 @@ public:
     void EnterInZone(Zone*);
     void OutOfZone(Zone*);
 
+    /* GROUP */
+    void LeaveGroup(const std::string &);
+    void EnterInGroup(const std::string &);
+    void UnitLeaveGroup(Unit*, const std::string &);
+    void UnitEnterInGroup(Unit*, const std::string &);
+
     /* COMMANDS */
     bool CheckCommand(const std::string &);
     void EventAction(eKeyBoardAction);
@@ -86,6 +92,7 @@ public:
     bool HandleCommandEmote(std::vector<std::string>);
     bool HandleCommandAnnounce(std::vector<std::string>);
     bool HandleCommandServer(std::vector<std::string>);
+    bool HandleCommandBG(std::vector<std::string>);
     bool HandleCommandSummonPlayer(std::vector<std::string>);
     bool HandleCommandGroupWisp(std::vector<std::string>);
     bool HandleRegen(std::vector<std::string>);

@@ -5,7 +5,8 @@ WorldObject::WorldObject(TypeWorldObject p_Type, uint8 p_SizeX, uint8 p_SizeY) :
     m_Type(p_Type),
     m_SizeX(p_SizeX),
     m_SizeY(p_SizeY),
-    m_Tile(nullptr)
+    m_Tile(nullptr),
+    m_Opacity(MAX_OPACITY)
 {
 }
 
@@ -27,6 +28,16 @@ sf::Sprite* WorldObject::GetSprite() const
 void WorldObject::SetSprite(sf::Sprite* p_Tile)
 {
     m_Tile = p_Tile;
+}
+
+uint8 WorldObject::GetOpacity() const
+{
+    return m_Opacity;
+}
+
+void WorldObject::SetOpacity(const uint8 & p_Opacity)
+{
+    m_Opacity = p_Opacity;
 }
 
 float WorldObject::GetDistance(const Position & p_Position) const

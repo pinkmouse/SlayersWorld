@@ -43,7 +43,7 @@ void PacketHandler::HandleUnitUnknow(WorldPacket &p_Packet, WorldSocket* p_World
     if (l_UniknowUnit == nullptr)
         return;
 
-    p_WorldSocket->SendUnitCreate(l_UniknowUnit->GetType(), l_UniknowUnit->GetID(), l_UniknowUnit->GetName(), l_UniknowUnit->GetLevel(), l_UniknowUnit->GetResourceNb(eResourceType::Health), l_UniknowUnit->GetResourceNb(eResourceType::Mana), l_UniknowUnit->GetResourceNb(eResourceType::Alignment),  l_UniknowUnit->GetSkinID(), l_UniknowUnit->GetSizeX(), l_UniknowUnit->GetSizeY(), l_UniknowUnit->GetSpeedUint8(), l_UniknowUnit->GetMapID(), l_UniknowUnit->GetPosition(), l_UniknowUnit->GetOrientation(), l_UniknowUnit->IsInMovement(), l_UniknowUnit->GetMovementHandler()->IsInAttack(), l_UniknowUnit->IsBlocking());
+    p_WorldSocket->SendUnitCreate(l_UniknowUnit->GetType(), l_UniknowUnit->GetID(), l_UniknowUnit->GetName(), l_UniknowUnit->GetLevel(), l_UniknowUnit->GetResourceNb(eResourceType::Health), l_UniknowUnit->GetResourceNb(eResourceType::Mana), l_UniknowUnit->GetResourceNb(eResourceType::Alignment),  l_UniknowUnit->GetSkinID(), l_UniknowUnit->GetSizeX(), l_UniknowUnit->GetSizeY(), l_UniknowUnit->GetSpeedUint8(), l_UniknowUnit->GetMapID(), l_UniknowUnit->GetPosition(), l_UniknowUnit->GetOrientation(), l_UniknowUnit->IsInMovement(), l_UniknowUnit->GetMovementHandler()->IsInAttack(), l_UniknowUnit->IsBlocking(), l_UniknowUnit->IsInGroupWith(l_Player));
 }
 
 void PacketHandler::HandleGoDirection(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
@@ -246,10 +246,15 @@ void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldS
 
     Map* l_Map = g_MapManager->GetMap(l_Player->GetMapID(), l_Player->GetInstanceID());
 
-    if (l_Map == nullptr)
+    if (l_Map == nullptr || g_MapManager->GetMapTemplate(l_Player->GetMapID())->IsInstance())
     {
-        printf("Failed load map\n");
-        return;
+        l_Player->Respawn();
+        l_Map = g_MapManager->GetMap(l_Player->GetMapID(), l_Player->GetInstanceID());
+        if (l_Map == nullptr)
+        {
+            printf("Failed load map %d\n", l_Player->GetMapID());
+            return;
+        }
     }
 
     l_Player->SetSession(p_WorldSocket);

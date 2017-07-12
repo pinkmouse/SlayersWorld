@@ -102,7 +102,7 @@ void Player::UpdateNewSquares(uint16 p_OldSquareID, uint16 p_NewSquareID, bool p
                 if (l_Unit->IsPlayer() && l_Unit->GetID() == GetID())
                     continue;
 
-                    GetSession()->SendUnitCreate(l_Unit->GetType(), l_Unit->GetID(), l_Unit->GetName(), l_Unit->GetLevel(), l_Unit->GetResourceNb(eResourceType::Health), l_Unit->GetResourceNb(eResourceType::Mana), l_Unit->GetResourceNb(eResourceType::Alignment), l_Unit->GetSkinID(), l_Unit->GetSizeX(), l_Unit->GetSizeY(), l_Unit->GetSpeedUint8(), l_Unit->GetMapID(), l_Unit->GetPosition(), l_Unit->GetOrientation(), l_Unit->IsInMovement(), l_Unit->GetMovementHandler()->IsInAttack(), l_Unit->IsBlocking());
+                GetSession()->SendUnitCreate(l_Unit->GetType(), l_Unit->GetID(), l_Unit->GetName(), l_Unit->GetLevel(), l_Unit->GetResourceNb(eResourceType::Health), l_Unit->GetResourceNb(eResourceType::Mana), l_Unit->GetResourceNb(eResourceType::Alignment), l_Unit->GetSkinID(), l_Unit->GetSizeX(), l_Unit->GetSizeY(), l_Unit->GetSpeedUint8(), l_Unit->GetMapID(), l_Unit->GetPosition(), l_Unit->GetOrientation(), l_Unit->IsInMovement(), l_Unit->GetMovementHandler()->IsInAttack(), l_Unit->IsBlocking(), l_Unit->IsInGroupWith(this));
             }
         }
     }
@@ -458,6 +458,8 @@ void Player::SetInLoading(bool p_InLoading)
     m_InLoading = p_InLoading;
     if (!p_InLoading)
         return;
+    if (GetSession() == nullptr)
+        return;
 
     PacketLoadingPing l_Packet;
     l_Packet.BuildPacket();
@@ -513,4 +515,41 @@ bool Player::SubPointsStat(eStats p_TypeStat, uint8 p_Nb)
     l_Packet2.BuildPacket(GetType(), GetID(), eStats::Free, GetPointsSet().GetStat(eStats::Free));
     GetSession()->send(l_Packet2.m_Packet);
     return true;
+}
+
+void Player::LeaveGroup(const std::string & p_GroupName)
+{
+    SendMsg("Vous venez de quitter le groupe '" + p_GroupName + "'");
+}
+
+void Player::EnterInGroup(const std::string & p_GroupName)
+{
+    SendMsg("Vous venez de rejoindre le groupe '" + p_GroupName + "'");
+}
+
+void Player::UnitLeaveGroup(Unit* p_Unit, const std::string & p_GroupName)
+{
+    Unit::UnitLeaveGroup(p_Unit, p_GroupName);
+    SendMsg(p_Unit->GetName() + " vient de quitter le groupe '" + p_GroupName + "'");
+    if (IsInSetWith(p_Unit))
+    {
+        PacketUnitIsInGroup l_Packet;
+        /// Send to others of group
+        l_Packet.BuildPacket(p_Unit->GetType(), p_Unit->GetID(), false);
+        GetSession()->SendPacket(l_Packet.m_Packet);
+    }
+}
+
+void Player::UnitEnterInGroup(Unit* p_Unit, const std::string & p_GroupName)
+{
+    Unit::UnitEnterInGroup(p_Unit, p_GroupName);
+
+    SendMsg(p_Unit->GetName() + " vient de rejoindre le groupe '" + p_GroupName + "'");
+    if (IsInSetWith(p_Unit))
+    {
+        PacketUnitIsInGroup l_Packet;
+        /// Send to others of group
+        l_Packet.BuildPacket(p_Unit->GetType(), p_Unit->GetID(), true);
+        GetSession()->SendPacket(l_Packet.m_Packet);
+    }
 }

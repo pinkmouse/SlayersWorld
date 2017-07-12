@@ -38,6 +38,7 @@ enum SMSG : uint8
     S_UnitStartAttack = 26,
     S_UnitStopAttack = 27,
     S_UnitUpdateSkin = 28,
+    S_UnitIsInGroup = 29,
     S_UnitPlayVisual = 30,
     S_UnitUpdateStat = 31,
     S_LoadingPing = 32,
@@ -352,6 +353,27 @@ struct PacketUnitPlayVisual
     {
         m_Packet << m_PacketID << p_TypeID << p_ID << p_VisualID;
         m_VisualID = p_VisualID;
+        m_TypeID = p_TypeID;
+        m_ID = p_ID;
+    }
+};
+
+
+struct PacketUnitIsInGroup
+{
+    WorldPacket m_Packet;
+    uint8 m_PacketID;
+    uint8 m_TypeID;
+    uint16 m_ID;
+    bool m_IsInGroup;
+
+    PacketUnitIsInGroup() :
+        m_PacketID(SMSG::S_UnitIsInGroup) {}
+
+    void BuildPacket(uint8 p_TypeID, uint16 p_ID, bool p_IsInGroup)
+    {
+        m_Packet << m_PacketID << p_TypeID << p_ID << p_IsInGroup;
+        m_IsInGroup = p_IsInGroup;
         m_TypeID = p_TypeID;
         m_ID = p_ID;
     }

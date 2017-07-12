@@ -50,6 +50,7 @@ private:
     sf::View            m_ViewInterface;
     sf::Font            m_Font;
     sf::Texture         m_CastBarTexture;
+    sf::Texture         m_LifeBarTexture;
     sf::Thread          m_Thread;
 
 	MapManager*         m_MapManager;

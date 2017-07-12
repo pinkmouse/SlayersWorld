@@ -58,6 +58,7 @@ public:
     bool InitializeRequired(RequiredManager*);
     bool InitializeGossip(UnitManager*, RequiredManager*);
     bool InitializeSpellsForPlayer(Player*);
+    bool InitializeBattlegrounds();
     bool InitializeQuestsProgessForPlayer(Player*);
     bool InitializeKeyBindsForAccount(uint32, Player*);
     bool InitializeSpellsBinds(Player*);

@@ -42,6 +42,8 @@ public:
     sf::Vector2i TextSplitToFit(uint16, sf::Text &);
     void DrawMenu(Window &, Menu *);
     MenuManager* GetMenuManager();
+    bool IsLoading() const;
+    void SetIsLoading(bool);
 
 private:
     sf::Texture                         m_SystemTexture;
@@ -62,4 +64,5 @@ private:
     std::map< uint8, uint64 >            m_BlockingBinds;
 
     MenuManager                          m_MenuManager;
+    bool                                 m_IsLoading;
 };

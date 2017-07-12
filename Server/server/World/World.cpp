@@ -95,6 +95,10 @@ bool World::Initialize()
     if (!g_SqlManager->InitializeCreature(m_CreatureManager))
         printf("Error Initialize CreatureTemplate...\n");
 
+    printf("Initialize Battledrounds\n");
+    if (!g_SqlManager->InitializeBattlegrounds())
+        printf("Error Initialize Battledrounds...\n");
+
     printf("Launch World Maps\n");
     if (!g_MapManager->LaunchWorldsMap())
         printf("Error Launching World Map...\n");
@@ -119,7 +123,7 @@ bool World::Initialize()
 void World::Run()
 {
 	if (Initialize())
-        printf("WorldServer Start\n");
+        printf("====== WorldServer Start =====\n");
     else
         printf("WorldServer didn't start\n");
 
