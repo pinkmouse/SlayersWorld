@@ -138,12 +138,13 @@ void SqlManager::ReplaceKeyBindsForAccount(uint32 p_AccountID, eKeyBoardAction p
 
 Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
 {
-    std::string l_Query = "SELECT characterID, name, level, health, mana, alignment, skinID, mapID, posX, posY, orientation, xp FROM characters WHERE accountID = '" + std::to_string(p_AccountID) + "'";
+    std::string l_Query = "SELECT characterID, name, level, class, health, mana, alignment, skinID, mapID, posX, posY, orientation, xp FROM characters WHERE accountID = '" + std::to_string(p_AccountID) + "'";
     mysql_query(&m_MysqlCharacters, l_Query.c_str());
 
     uint32 l_ID = 0;
     std::string l_Name = "";
     uint8 l_Lvl = 0;
+    uint8 l_Class = 0;
     uint8 l_Health = 0;
     uint8 l_Mana = 0;
     uint8 l_Alignment = 0;
@@ -166,15 +167,16 @@ Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
         l_ID = atoi(l_Row[0]);
         l_Name = std::string(l_Row[1]);
         l_Lvl = atoi(l_Row[2]);
-        l_Health = atoi(l_Row[3]);
-        l_Mana = atoi(l_Row[4]);
-        l_Alignment = atoi(l_Row[5]);
-        l_SkinID = atoi(l_Row[6]);
-        l_MapID = atoi(l_Row[7]);
-        l_PosX = atoi(l_Row[8]);
-        l_PosY = atoi(l_Row[9]);
-        l_Orientation = atoi(l_Row[10]);
-        l_Xp = atoi(l_Row[11]);
+        l_Class = atoi(l_Row[3]);
+        l_Health = atoi(l_Row[4]);
+        l_Mana = atoi(l_Row[5]);
+        l_Alignment = atoi(l_Row[6]);
+        l_SkinID = atoi(l_Row[7]);
+        l_MapID = atoi(l_Row[8]);
+        l_PosX = atoi(l_Row[9]);
+        l_PosY = atoi(l_Row[10]);
+        l_Orientation = atoi(l_Row[11]);
+        l_Xp = atoi(l_Row[12]);
     }
     mysql_free_result(l_Result);
 
@@ -198,7 +200,7 @@ Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
         return l_Player;
     }
 
-    l_Player = new Player(p_AccountID, l_ID, l_Name, l_Lvl, l_Health, l_Mana, l_Alignment, l_SkinID, l_MapID, l_PosX, l_PosY, (Orientation)l_Orientation, l_Xp, l_PlayerAccessType);
+    l_Player = new Player(p_AccountID, l_ID, l_Name, l_Lvl, l_Class, l_Health, l_Mana, l_Alignment, l_SkinID, l_MapID, l_PosX, l_PosY, (Orientation)l_Orientation, l_Xp, l_PlayerAccessType);
     l_Player->SetRespawnPosition(GetRespawnPositionForPlayer(l_ID));
     InitializeSpellsForPlayer(l_Player);
     InitializeKeyBindsForAccount(p_AccountID, l_Player);
@@ -699,7 +701,7 @@ bool SqlManager::InitializeCreature(UnitManager* p_CreatureManager)
 
 bool  SqlManager::InitializeSpells()
 {
-    std::string l_Query = "SELECT `id`, `level`, `visualID`, `visualIDTarget`,`castTime`, `cooldown`, `speed`,`resourceType`, `resourceNb`, `effect1`, `effect2`, `effect3`, `effect4` FROM spell_template";
+    std::string l_Query = "SELECT `id`, `level`, `visualID`, `visualIDTarget`,`castTime`, `cooldown`, `duration`, `speed`,`resourceType`, `resourceNb`, `effect1`, `effect2`, `effect3`, `effect4` FROM spell_template";
     mysql_query(&m_MysqlWorld, l_Query.c_str());
 
     uint16 l_Id = 0;
@@ -708,6 +710,7 @@ bool  SqlManager::InitializeSpells()
     int32 l_VisualIDTarget = -1;
     uint16 l_CastTime = 0;
     uint32 l_Cooldown = 0;
+    uint32 l_Duration = 0;
     float l_Speed = 0.0f;
     int16 l_ResourceType = 0;
     int32 l_ResourceNb = 0;
@@ -724,11 +727,12 @@ bool  SqlManager::InitializeSpells()
         l_VisualIDTarget = atoi(l_Row[3]);
         l_CastTime = atoi(l_Row[4]);
         l_Cooldown = atoi(l_Row[5]);
-        l_Speed = (float)atof(l_Row[6]);
-        l_ResourceType = atoi(l_Row[7]);
-        l_ResourceNb = atoi(l_Row[8]);
+        l_Duration = atoi(l_Row[6]);
+        l_Speed = (float)atof(l_Row[7]);
+        l_ResourceType = atoi(l_Row[8]);
+        l_ResourceNb = atoi(l_Row[9]);
         for (uint8 i = 0; i < MAX_EFFECTS_FOR_SPELL; ++i)
-            l_EffectList.push_back(atoi(l_Row[9 + i]));
+            l_EffectList.push_back(atoi(l_Row[10 + i]));
 
         SpellTemplate* l_Spell = new SpellTemplate(l_Id);
         l_Spell->SetLevel(l_Level);
@@ -736,6 +740,7 @@ bool  SqlManager::InitializeSpells()
         l_Spell->SetCastTime(l_CastTime);
         l_Spell->SetCooldown(l_Cooldown);
         l_Spell->SetSpeed(l_Speed);
+        l_Spell->SetDuration(l_Duration);
         if (l_ResourceType > 0)
         {
             l_Spell->AddResourceNeed(ResourceNeed((eResourceType)l_ResourceType, l_ResourceNb));

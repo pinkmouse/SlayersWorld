@@ -1,5 +1,7 @@
 #include "BGCapturePoint.hpp"
 #include "../../../Global.hpp"
+#include "../../../World/PacketDefine.hpp"
+#include "../../../World/WorldSocket.hpp"
 
 #define TEAM_LEFT 0
 #define TEAM_RIGHT 1
@@ -35,6 +37,18 @@ void BGCapturePoint::EndBG()
     for (std::map<uint16, Unit*>::iterator l_It = l_ListUnit->begin(); l_It != l_ListUnit->end(); l_It++)
     {
         (*l_It).second->TeleportTo(0, 0, 50, 50, Orientation::Down);
+
+        Player* l_Player = (*l_It).second->ToPlayer();
+        if (l_Player == nullptr)
+            continue;
+
+        WorldSocket* l_Session = l_Player->GetSession();
+        if (l_Session == nullptr)
+            continue;
+
+        PacketExtraInterface l_Packet;
+        l_Packet.BuildPacket(eExtraInterface::eBattelGroundUI, false);
+        l_Session->SendPacket(l_Packet.m_Packet);
     }
     m_Step = eBGState::STEP2;
     m_Finished = true;
@@ -67,6 +81,18 @@ void BGCapturePoint::AddUnit(Unit* p_Unit)
             m_GroupManager->AddUnitToGroup(eGroupType::BG, "Left", p_Unit);
         else
             m_GroupManager->AddUnitToGroup(eGroupType::BG, "Right", p_Unit);
+
+        Player* l_Player = p_Unit->ToPlayer();
+        if (l_Player == nullptr)
+            return;
+
+        WorldSocket* l_Session = l_Player->GetSession();
+        if (l_Session == nullptr)
+            return;
+
+        PacketExtraInterface l_Packet;
+        l_Packet.BuildPacket(eExtraInterface::eBattelGroundUI, true);
+        l_Session->SendPacket(l_Packet.m_Packet);
     }
 }
 

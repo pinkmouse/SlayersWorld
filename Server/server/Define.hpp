@@ -185,9 +185,10 @@ enum eResourceType
 enum SpellEffectType
 {
     Damage = 0,
-    Heal,
-    Teleport,
-    LaunchSpell
+    Heal = 1,
+    Teleport = 2,
+    LaunchSpell = 3,
+    ApplyAura = 4
 };
 
 enum SpellTarget
@@ -219,6 +220,28 @@ enum eTypeWarningMsg
     Red = 0,
     Yellow,
     Top
+};
+
+enum eTypeAuraEffect
+{
+    PERIODIC_DAMAGE = 0,
+    PERIODIC_HEAL = 1,
+    UPDATE_SPEED = 2,
+    MODIFY_DAMAGE_PCT = 3
+};
+
+enum eExtraInterface
+{
+    eBattelGroundUI = 0
+};
+
+enum eClass
+{
+    NONECLASS = 0,
+    ASSASSIN = 1,
+    PALADIN = 2,
+    MAGE = 3,
+    PRETRE = 4
 };
 
 struct ObjectifQuestTemplate
@@ -348,10 +371,10 @@ struct SpellEffect
     uint16 m_ID;
     SpellEffectType m_EffectID;
     SpellTarget m_Target;
-    uint32 m_BasePoint1;
-    uint32 m_BasePoint2;
-    uint32 m_BasePoint3;
-    uint32 m_BasePoint4;
+    int32 m_BasePoint1;
+    int32 m_BasePoint2;
+    int32 m_BasePoint3;
+    int32 m_BasePoint4;
     float m_RadiusMin;
     float m_RadiusMax;
 

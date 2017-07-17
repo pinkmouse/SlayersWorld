@@ -38,6 +38,7 @@ public:
     void HandleKeyBoardBind(WorldPacket &);
     void HandleKeyBindBlock(WorldPacket &);
     void HandleLoadingPing(WorldPacket &);
+    void HandleExtraUI(WorldPacket &);
     void HandleCastBar(WorldPacket &);
 
 private:

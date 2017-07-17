@@ -48,7 +48,10 @@ bool MapManager::LaunchWorldsMap()
     {
         if (l_MapTemplate.second->IsInstance())
             continue;
+        printf("Before launch Map [%d]\n", l_MapTemplate.first);
         Map* l_Map = LaunchMap(l_MapTemplate.first);
+        printf("After launch Map [%d]\n", l_MapTemplate.first);
+
         m_MapList[l_Map->GetID()][0] = l_Map;
     }
     return true;

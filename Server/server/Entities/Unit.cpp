@@ -6,6 +6,7 @@
 #include "../System/Resource/ResourceMana.hpp"
 #include "../System/Resource/ResourceAlignment.hpp"
 #include "../System/Spell/Spell.hpp"
+#include "../System/Spell/Aura.hpp"
 #include "../Global.hpp"
 #include <cstdlib>
 #include <new>  
@@ -205,6 +206,22 @@ void Unit::UpdateCooldowns(sf::Time p_Diff)
     }
 }
 
+void Unit::UpdateAura(sf::Time p_Diff)
+{
+    for (std::vector<Aura*>::iterator l_It = m_AuraList.begin(); l_It != m_AuraList.end();)
+    {
+        (*l_It)->Update(p_Diff);
+        if ((*l_It)->GetDuration() <= 0)
+        {
+            Aura* l_Aura = (*l_It);
+            l_It = m_AuraList.erase(l_It);
+            delete l_Aura;
+        }
+        else
+            l_It++;
+    }
+}
+
 void Unit::Update(sf::Time p_Diff)
 {
     ///  Launch every updates
@@ -214,6 +231,7 @@ void Unit::Update(sf::Time p_Diff)
     UpdateGossip(p_Diff);
     UpdateCooldowns(p_Diff);
     UpdateSpell(p_Diff);
+    UpdateAura(p_Diff);
     UpdateVictims();
 
     if (m_MovementHandler == nullptr)
@@ -365,6 +383,38 @@ void Unit::DealDamage(Unit* p_Victim, DamageInfo p_DamageInfo)
     }
 }
 
+DamageInfo Unit::CalculSpellDamageToTarget(Unit* p_Target, const int32 & p_Bp, const uint8 & p_SpellLevel)
+{
+    DamageInfo l_DamageInfo;
+    l_DamageInfo.m_Damage = p_Bp;
+
+    int8 l_LevelDiff = GetLevel() - p_Target->GetLevel();
+    if (l_LevelDiff > 0)
+        l_DamageInfo.m_Damage += (l_LevelDiff * 2);
+    else
+        l_DamageInfo.m_Damage -= (l_LevelDiff * -2);
+
+    int32 l_ModDamagePct = p_Target->TotalAmountOfAuraType(eTypeAuraEffect::MODIFY_DAMAGE_PCT);
+    l_DamageInfo.m_Damage += ((float)l_DamageInfo.m_Damage * (float)l_ModDamagePct / 100);
+    return l_DamageInfo;
+}
+
+DamageInfo Unit::CalculHealToTarget(Unit* p_Target, const int32 & p_Bp, const uint8 & p_SpellLevel)
+{
+    DamageInfo l_DamageInfo;
+    l_DamageInfo.m_Damage = p_Bp;
+
+    int8 l_LevelDiff = p_SpellLevel - p_Target->GetLevel();
+    if (l_LevelDiff > 0)
+        l_DamageInfo.m_Damage += (l_LevelDiff * 2);
+    else
+        l_DamageInfo.m_Damage -= (l_LevelDiff * -2);
+
+    l_DamageInfo.m_Damage *= -1;
+    return l_DamageInfo;
+}
+
+
 void Unit::AutoAttack(Unit* p_Victim)
 {
     /// This fonction is call everytime autoattack are ready 
@@ -390,6 +440,10 @@ void Unit::AutoAttack(Unit* p_Victim)
     DamageInfo l_DamageInfo;
     if (l_Miss)
         l_DamageInfo.m_Result = DamageResult::Miss;
+
+    int32 l_ModDamagePct = p_Victim->TotalAmountOfAuraType(eTypeAuraEffect::MODIFY_DAMAGE_PCT);
+    l_Damage += (((float)l_Damage / 100.0f) * (float)l_ModDamagePct);
+
     l_DamageInfo.m_Damage = l_Damage;
     DealDamage(p_Victim, l_DamageInfo);
 }
@@ -689,6 +743,11 @@ void Unit::SetPointsSet(const PointsSet & p_PointsSet)
 void Unit::Respawn()
 {
     TeleportTo(m_RespawnPosition);
+}
+
+WorldPosition Unit::GetRespawnPoint() const
+{
+    return m_RespawnPosition;
 }
 
 void Unit::TeleportTo(const WorldPosition& p_WorldPosition)
@@ -1059,6 +1118,11 @@ void Unit::AddSpellID(uint16 p_SpellID, uint64 p_Cooldown)
     AddSpellCooldown(p_SpellID, p_Cooldown);
 }
 
+void Unit::UpdateSpeed()
+{
+    ;
+}
+
 std::map< uint16, uint64 >* Unit::GetSpellList()
 {
     return &m_ListSpellID;
@@ -1070,6 +1134,78 @@ void Unit::AddSpellCooldown(uint16 p_SpellID, uint64 p_Cooldown)
         return;
 
     m_ListSpellID[p_SpellID] += p_Cooldown;
+}
+
+void Unit::AddAura(Aura* p_Aura)
+{
+    ;
+}
+
+int32 Unit::TotalAmountOfAuraType(eTypeAuraEffect p_AuraTypeEffect)
+{
+    std::vector<AuraEffect*> l_AuraEffect = GetAuraEffectType(p_AuraTypeEffect);
+
+    int32 l_Total = 0;
+    for (uint16 i = 0; i < l_AuraEffect.size(); i++)
+        l_Total += l_AuraEffect[i]->GetAmount();
+    return l_Total;
+}
+
+std::vector<Aura*> Unit::GetAura(uint16 p_ID)
+{
+    std::vector<Aura*> l_ListAura;
+    for (uint16 i = 0; i < m_AuraList.size(); i++)
+    {
+        if (m_AuraList[i]->GetSpellTemplate()->GetID() == p_ID)
+            l_ListAura.push_back(m_AuraList[i]);
+    }
+    return l_ListAura;
+}
+
+std::vector<AuraEffect*> Unit::GetAuraEffectType(eTypeAuraEffect p_AuraType)
+{
+    std::vector<AuraEffect*> l_ListAuraEffect;
+    std::vector<AuraEffect*> l_SubList;
+    for (uint16 i = 0; i < m_AuraList.size(); i++)
+    {
+        l_SubList = m_AuraList[i]->GetAuraEffectType(p_AuraType);
+        for (uint16 j = 0; j < l_SubList.size(); j++)
+            l_ListAuraEffect.push_back(l_SubList[j]);
+    }
+    return l_ListAuraEffect;
+}
+
+Aura* Unit::GetCasterAura(uint16 p_SpellID, const Unit* p_Unit)
+{
+    for (uint16 i = 0; i < m_AuraList.size(); i++)
+    {
+        if (m_AuraList[i]->GetSpellTemplate()->GetID() == p_SpellID && m_AuraList[i]->GetCaster() != nullptr && m_AuraList[i]->GetCaster() == p_Unit)
+            return m_AuraList[i];
+    }
+    return nullptr;
+}
+
+AuraEffect* Unit::ApplyAuraEffect(uint8 p_ID, SpellTemplate* p_SpellTemplate, Unit* p_Caster, eTypeAuraEffect p_Type, const int32 & p_Data0, const int32 & p_Data1, const int32 & p_Data2)
+{
+    Aura* l_Aura = nullptr;
+    for (uint16 i = 0; i < m_AuraList.size(); i++)
+    {
+        if (m_AuraList[i] == nullptr)
+            continue;
+        if (m_AuraList[i]->GetSpellTemplate()->GetID() == p_SpellTemplate->GetID() && m_AuraList[i]->GetCaster() != nullptr && m_AuraList[i]->GetCaster() == p_Caster)
+        {
+            l_Aura = m_AuraList[i];
+            break;
+        }
+    }
+    if (l_Aura == nullptr)
+    {
+        l_Aura = new Aura(p_Caster, this, p_SpellTemplate);
+        m_AuraList.push_back(l_Aura);
+    }
+    AuraEffect* l_AuraEffect = l_Aura->AddAuraEffect(p_ID, p_Type, p_Data0, p_Data1, p_Data2);
+    l_Aura->SetDuration(p_SpellTemplate->GetDuration() * 1000);
+    return l_AuraEffect;
 }
 
 bool Unit::HasSpellCooldown(uint16 p_SpellID)

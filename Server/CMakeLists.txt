@@ -66,6 +66,10 @@ add_executable(${EXECUTABLE_NAME}
               server/System/Spell/SpellManager.hpp
 	      server/System/Spell/Spell.cpp
               server/System/Spell/Spell.hpp
+	      server/System/Spell/Aura.cpp
+              server/System/Spell/Aura.hpp
+	      server/System/Spell/AuraEffect.cpp
+              server/System/Spell/AuraEffect.hpp
 
 	      server/System/Instance/BattleGround/BGCapturePoint.cpp
               server/System/Instance/BattleGround/BGCapturePoint.hpp

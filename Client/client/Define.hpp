@@ -2,9 +2,9 @@
 
 #include <cstdio>
 
-#define IP_SERVER "51.255.165.231"
 #define CONF_FILE "config.wtf"
 //#define IP_SERVER "127.0.0.1"
+//#define IP_SERVER "51.255.165.231"
 #define PORT_SERVER 1234
 
 /// GRAPHICS
@@ -59,6 +59,8 @@
 #define SIZE_FILED_TALK_Y 24
 #define FLASK_SIZE_X 16
 #define FLASK_SIZE_Y 72
+#define LIFE_BAR_X 74
+#define LIFE_BAR_Y 13
 #define FLASK_OFFSET_TOP 22
 #define FLASK_OFFSET_BOTTOM 2
 #define FLASK_SCALE 2.0f
@@ -150,6 +152,11 @@ enum eStats
     Speed,
     Level,
     MaxStat
+};
+
+enum eExtraInterface
+{
+    eBattelGroundUI = 0
 };
 
 struct DamageInfo

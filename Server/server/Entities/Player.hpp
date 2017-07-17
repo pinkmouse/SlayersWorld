@@ -9,7 +9,7 @@ class WorldSocket;
 class Player : public Unit
 {
 public:
-    Player(uint32, int32, std::string, uint8, uint8, uint8, uint8, int16, uint16, uint32, uint32, Orientation, uint32, eAccessType);
+    Player(uint32, int32, std::string, uint8, eClass, uint8, uint8, uint8, int16, uint16, uint32, uint32, Orientation, uint32, eAccessType);
     ~Player();
 
     /* BASIC */
@@ -29,6 +29,8 @@ public:
     void SetLevel(const uint8 &);
     void ActionFrom(Player*);
     void ParseStringWithTag(std::string &);
+    void SetClass(eClass);
+    eClass GetClass() const;
 
     /* RESOURCES */
     uint32 GetXp() const;
@@ -108,7 +110,7 @@ private:
     bool m_Initilize;
     bool m_InLoading;
     eAccessType m_AccessType;
-
+    eClass m_Class;
     std::map< uint16, Quest* > m_Quests;
 
     typedef bool(Player::*m_Func)(std::vector<std::string>);

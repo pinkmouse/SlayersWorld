@@ -4,12 +4,15 @@
 #include "MovementHandlerCreature.hpp"
 #include "../Define.hpp"
 #include "../System/Resource/Resource.hpp"
+#include "../System/Spell/SpellTemplate.hpp"
 #include <string>
 #include <map>
 
 /* DOUBLE INCLUSION */
 class Map;
 class Spell;
+class Aura;
+class AuraEffect;
 class Player;
 class Creature;
 
@@ -65,6 +68,7 @@ public:
     uint8 GetOrientation() const;
     Map* GetMap() const;
     uint16 GetSquareID() const;
+    WorldPosition GetRespawnPoint() const;
     void SetSquareID(uint16);
 
     void SetPosX(const uint32 &);
@@ -80,6 +84,8 @@ public:
 
     /* COMBAT */
     void AutoAttack(Unit*);
+    DamageInfo CalculSpellDamageToTarget(Unit*, const int32 &, const uint8 &);
+    DamageInfo CalculHealToTarget(Unit*, const int32 &, const uint8 &);
     void DealDamage(Unit*, DamageInfo);
     void DealHeal(Unit*, DamageInfo);
     bool IsInMovement() const;
@@ -111,7 +117,9 @@ public:
     void UpdateRegen(sf::Time);
     void UpdateSpell(sf::Time);
     void UpdateCooldowns(sf::Time);
+    void UpdateAura(sf::Time);
     void UpdateVictims();
+    void UpdateSpeed();
 
     /* TELEPORT */
     void TeleportTo(const WorldPosition&);
@@ -133,6 +141,14 @@ public:
     void SetGossipList(std::vector<Gossip>*);
     void GossipTo(Player *);
     void UpdateGossip(sf::Time);
+
+    /* AURA */
+    void AddAura(Aura*);
+    std::vector<AuraEffect*> GetAuraEffectType(eTypeAuraEffect);
+    std::vector<Aura*> GetAura(uint16);
+    Aura* GetCasterAura(uint16, const Unit*);
+    AuraEffect* ApplyAuraEffect(uint8, SpellTemplate*, Unit*, eTypeAuraEffect, const int32 &, const int32 &, const int32 &);
+    int32 TotalAmountOfAuraType(eTypeAuraEffect);
 
     /* GROUP */
     virtual void LeaveGroup(const std::string &);
@@ -187,6 +203,9 @@ private:
     std::map<Unit*, uint16> m_Victims;
 
     eFactionType m_FactionType;
+
+    /* AURA */
+    std::vector<Aura*> m_AuraList;
 
     /* SPELL */
     std::map< uint16, uint64 > m_ListSpellID;

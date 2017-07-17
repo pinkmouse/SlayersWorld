@@ -42,6 +42,14 @@ void InterfaceManager::Initialize()
     if (!m_FlaskTexture.loadFromFile(IMG_FOLDER + l_FileSystemName))
         printf("Load SystemImg Flask Failed\n");
 
+    l_FileSystemName = "lifebars.png";
+    if (!m_LifeBarTexture.loadFromFile(IMG_FOLDER + l_FileSystemName))
+        printf("Load SystemImg LifeBar Failed\n");
+
+    l_FileSystemName = "sepbar.png";
+    if (!m_SepBarTexture.loadFromFile(IMG_FOLDER + l_FileSystemName))
+        printf("Load SystemImg SepBar Failed\n");
+
     l_FileSystemName = "xp.png";
     if (!m_XpTexture.loadFromFile(IMG_FOLDER + l_FileSystemName))
         printf("Load SystemImg Xp Failed\n");
@@ -53,6 +61,10 @@ void InterfaceManager::Initialize()
     l_FileSystemName = "background.png";
     if (!m_Background.loadFromFile(IMG_FOLDER + l_FileSystemName))
         printf("Load Background Failed\n");
+
+    l_FileSystemName = "bg0.png";
+    if (!m_BGInterface.loadFromFile(IMG_FOLDER + l_FileSystemName))
+        printf("Load Bg interface Failed\n");
 }
 
 void  InterfaceManager::ManageEvent(sf::Event p_Event)
@@ -202,16 +214,21 @@ void InterfaceManager::DrawBorderField(Window & p_Window, const float & p_PosX, 
     p_Window.draw(l_TileSprite);
 }
 
-TileSprite InterfaceManager::GetFlask(uint8 p_ID, bool p_Full, uint8 p_Pct)
+TileSprite InterfaceManager::GetLifeBar(uint8 p_ID, uint8 p_Pct)
 {
-    uint8 l_Full = 0;
+    TileSprite l_TileSprite;
+    l_TileSprite.setTexture(m_LifeBarTexture);
+    l_TileSprite.setTextureRect(sf::IntRect(0, p_ID * LIFE_BAR_Y, ((float)LIFE_BAR_X / 100.0f) * p_Pct, LIFE_BAR_Y));
+    return l_TileSprite;
+
+    /*uint8 l_Full = 0;
     if (!p_Full)
         l_Full = 1;
 
     TileSprite l_TileSprite;
     l_TileSprite.setTexture(m_FlaskTexture);
     l_TileSprite.setTextureRect(sf::IntRect(FLASK_SIZE_X * ((p_ID * 2) + l_Full), 0, FLASK_SIZE_X, FLASK_SIZE_Y));
-    return l_TileSprite;
+    return l_TileSprite;*/
 }
 
 TileSprite InterfaceManager::GetXpBar(bool p_Full, uint8 p_Pct)
@@ -299,6 +316,27 @@ void InterfaceManager::DrawStartingPage(Window & p_Window)
     }
 }
 
+void InterfaceManager::DrawExtraUI(Window & p_Window)
+{
+    for (uint8 i = 0; i < m_ExtraUI.size(); i++)
+    {
+        switch (m_ExtraUI[i])
+        {
+            case eExtraInterface::eBattelGroundUI :
+            {
+                TileSprite l_BGUI;
+                l_BGUI.setTexture(m_BGInterface);
+                l_BGUI.setScale(1.5f, 1.5f);
+                l_BGUI.setPosition((X_WINDOW / 2) - (l_BGUI.getGlobalBounds().width / 2), 0);
+                p_Window.draw(l_BGUI);
+                break;
+            }
+            default :
+                break;
+        }
+    }
+}
+
 void InterfaceManager::DrawClock(Window & p_Window)
 {
     m_ClockTxt.setFont(*g_Font);
@@ -347,8 +385,24 @@ void InterfaceManager::Draw(Window & p_Window)
         return;
     }
 
+    /// Health Bars
+    TileSprite l_SepBarLife;
+    l_SepBarLife.setTexture(m_SepBarTexture);
+    l_SepBarLife.setPosition(0, 0);
+    l_SepBarLife.setScale(FLASK_SCALE, FLASK_SCALE);
+    p_Window.draw(l_SepBarLife);
+
+    TileSprite l_ManaBar = GetLifeBar(0, g_Player->GetResourceNb(eResourceType::Mana));
+    l_ManaBar.setPosition(16, 14);
+    l_ManaBar.setScale(FLASK_SCALE, FLASK_SCALE);
+    p_Window.draw(l_ManaBar);
+
+    TileSprite l_LifeBar = GetLifeBar(1, g_Player->GetResourceNb(eResourceType::Health));
+    l_LifeBar.setPosition(16, 30);
+    l_LifeBar.setScale(FLASK_SCALE, FLASK_SCALE);
+    p_Window.draw(l_LifeBar);
     /// Draw Flask Life
-    TileSprite l_FlaskEmpty = GetFlask(0, false);
+   /* TileSprite l_FlaskEmpty = GetFlask(0, false);
     l_FlaskEmpty.setPosition(0, Y_WINDOW - (FLASK_SIZE_Y * FLASK_SCALE) - (m_XpTexture.getSize().y / 2 * XP_BAR_SCALE));
     l_FlaskEmpty.setScale(FLASK_SCALE, FLASK_SCALE);
     p_Window.draw(l_FlaskEmpty);
@@ -367,7 +421,7 @@ void InterfaceManager::Draw(Window & p_Window)
     l_Flask.setTextureRect(sf::IntRect(FLASK_SIZE_X * 2, ((FLASK_SIZE_Y - FLASK_OFFSET_TOP - FLASK_OFFSET_BOTTOM) * (1.0f - ((float)g_Player->GetResourceNb(eResourceType::Mana) / 100.0f))) + FLASK_OFFSET_TOP, FLASK_SIZE_X, ((FLASK_SIZE_Y - FLASK_OFFSET_TOP - FLASK_OFFSET_BOTTOM) * ((float)g_Player->GetResourceNb(eResourceType::Mana) / 100.0f))));
     l_Flask.setPosition(X_WINDOW - (FLASK_SIZE_X * FLASK_SCALE), Y_WINDOW - (m_XpTexture.getSize().y / 2 * XP_BAR_SCALE) - (FLASK_OFFSET_BOTTOM * FLASK_SCALE) - (((FLASK_SIZE_Y - FLASK_OFFSET_TOP - FLASK_OFFSET_BOTTOM) * ((float)g_Player->GetResourceNb(eResourceType::Mana) / 100.0f)) * FLASK_SCALE));
     l_Flask.setScale(FLASK_SCALE, FLASK_SCALE);
-    p_Window.draw(l_Flask);
+    p_Window.draw(l_Flask);*/
 
     /// Draw XP bar
     TileSprite l_XpBarEmpty = GetXpBar(false);
@@ -443,6 +497,7 @@ void InterfaceManager::Draw(Window & p_Window)
         //p_Window.draw(m_WritingField->GetText());
     }
     DrawWarnings(p_Window);
+    DrawExtraUI(p_Window);
     //DrawClock(p_Window);
 
     std::vector<Menu*> l_ListOpenMenu = m_MenuManager.GetOpenMenus();
@@ -551,4 +606,23 @@ sf::Vector2i InterfaceManager::TextSplitToFit(uint16 p_MaxSizeX, sf::Text & p_Tx
 MenuManager* InterfaceManager::GetMenuManager()
 {
     return &m_MenuManager;
+}
+
+
+void InterfaceManager::AddExtraInterface(eExtraInterface p_ExtraUI)
+{
+    std::vector<eExtraInterface>::iterator l_It = std::find(m_ExtraUI.begin(), m_ExtraUI.end(), p_ExtraUI);
+    if (l_It != m_ExtraUI.end())
+        return;
+
+    m_ExtraUI.push_back(p_ExtraUI);
+}
+
+void InterfaceManager::RemoveExtraInterface(eExtraInterface p_ExtraUI)
+{
+    std::vector<eExtraInterface>::iterator l_It = std::find(m_ExtraUI.begin(), m_ExtraUI.end(), p_ExtraUI);
+    if (l_It == m_ExtraUI.end())
+        return;
+
+    m_ExtraUI.erase(l_It);
 }

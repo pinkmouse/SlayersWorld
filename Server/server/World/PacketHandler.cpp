@@ -248,7 +248,10 @@ void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldS
 
     if (l_Map == nullptr || g_MapManager->GetMapTemplate(l_Player->GetMapID())->IsInstance())
     {
-        l_Player->Respawn();
+        l_Player->SetOrientation(l_Player->GetRespawnPoint().GetOrientation());
+        l_Player->SetMapID(l_Player->GetRespawnPoint().GetMapID());
+        l_Player->SetPos(l_Player->GetRespawnPoint().GetPosX(), l_Player->GetRespawnPoint().GetPosY());
+        l_Player->SetInstanceID(l_Player->GetRespawnPoint().GetInstanceID());
         l_Map = g_MapManager->GetMap(l_Player->GetMapID(), l_Player->GetInstanceID());
         if (l_Map == nullptr)
         {

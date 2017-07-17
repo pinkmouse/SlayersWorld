@@ -11,6 +11,7 @@ Spell::Spell(SpellTemplate* p_SpellTemplate) :
     m_CastTimer = 0;
     m_SpellEffectsMap[SpellEffectType::Damage] = &Spell::EffectDamage;
     m_SpellEffectsMap[SpellEffectType::Heal] = &Spell::EffectHeal;
+    m_SpellEffectsMap[SpellEffectType::ApplyAura] = &Spell::EffectApplyAura;
 }
 
 Spell::~Spell()
@@ -61,18 +62,15 @@ bool Spell::Prepare(Unit* p_Caster)
     return true;
 }
 
-void Spell::EffectDamage(Unit* p_Target, SpellEffect* p_SpellEffect)
+void Spell::EffectDamage(uint8 p_ID, Unit* p_Target, SpellEffect* p_SpellEffect)
 {
-    DamageInfo l_DamageInfo;
-    l_DamageInfo.m_Damage = p_SpellEffect->m_BasePoint1;
-
-    int8 l_LevelDiff = m_Caster->GetLevel() - p_Target->GetLevel();
-    if (l_LevelDiff > 0)
-        l_DamageInfo.m_Damage += (l_LevelDiff * 2);
-    else
-        l_DamageInfo.m_Damage -= (l_LevelDiff * -2);
-
+    DamageInfo l_DamageInfo = m_Caster->CalculSpellDamageToTarget(p_Target, p_SpellEffect->m_BasePoint1, m_SpellTemplate->GetLevel());
     m_Caster->DealDamage(p_Target, l_DamageInfo);
+}
+
+void Spell::EffectApplyAura(uint8 p_ID, Unit* p_Target, SpellEffect* p_SpellEffect)
+{
+    p_Target->ApplyAuraEffect(p_ID, m_SpellTemplate, m_Caster, (eTypeAuraEffect)p_SpellEffect->m_BasePoint1, p_SpellEffect->m_BasePoint2, p_SpellEffect->m_BasePoint3, p_SpellEffect->m_BasePoint4);
 }
 
 void Spell::SetCastTime(uint64 p_CastTime)
@@ -90,18 +88,9 @@ bool Spell::IsReadyToLaunch() const
     return m_CastTimer == 0;
 }
 
-void Spell::EffectHeal(Unit* p_Target, SpellEffect* p_SpellEffect)
+void Spell::EffectHeal(uint8 p_ID, Unit* p_Target, SpellEffect* p_SpellEffect)
 {
-    DamageInfo l_DamageInfo;
-    l_DamageInfo.m_Damage = p_SpellEffect->m_BasePoint1;
-
-    int8 l_LevelDiff = m_SpellTemplate->GetLevel() - p_Target->GetLevel();
-    if (l_LevelDiff > 0)
-        l_DamageInfo.m_Damage += (l_LevelDiff * 2);
-    else
-        l_DamageInfo.m_Damage -= (l_LevelDiff * -2);
-
-    l_DamageInfo.m_Damage *= -1;
+    DamageInfo l_DamageInfo = m_Caster->CalculHealToTarget(p_Target, p_SpellEffect->m_BasePoint1, m_SpellTemplate->GetLevel());
     m_Caster->DealHeal(p_Target, l_DamageInfo);
 }
 
@@ -122,12 +111,13 @@ void Spell::LaunchEffects()
     m_Caster->AddSpellCooldown(m_SpellTemplate->GetID(), m_SpellTemplate->GetCooldown() * 1000 /* MILLISECOND TO MICROSECOND*/);
 
     std::vector<SpellEffect*>* l_SpellEffects = m_SpellTemplate->GetListEffect();
+    uint8 l_SpellEffectID = 0;
     for (std::vector<SpellEffect*>::iterator l_It = l_SpellEffects->begin(); l_It != l_SpellEffects->end(); ++l_It)
     {
         SpellEffect* l_SpellEffect = (*l_It);
         std::vector<Unit*> l_Targets = SearchTargets(l_SpellEffect->m_Target, l_SpellEffect->m_RadiusMax, l_SpellEffect->m_RadiusMin);
 
-        m_Func l_Fun = m_SpellEffectsMap[l_SpellEffect->m_EffectID];
+        m_SpellFunc l_Fun = m_SpellEffectsMap[l_SpellEffect->m_EffectID];
         if (l_Fun != nullptr)
         {
             for (uint8 i = 0; i < l_Targets.size(); ++i)
@@ -140,11 +130,12 @@ void Spell::LaunchEffects()
                     l_Targets[i]->GetMap()->SendToSet(l_Packet.m_Packet, l_Targets[i]);
                 }
 
-                (this->*(l_Fun))(l_Targets[i], l_SpellEffect);
+                (this->*(l_Fun))(l_SpellEffectID, l_Targets[i], l_SpellEffect);
             }
         }
         else
             printf("Spell type: %d Unknow\n", l_SpellEffect->m_EffectID);
+        l_SpellEffectID++;
     }
 
     delete this;

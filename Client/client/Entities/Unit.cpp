@@ -111,12 +111,14 @@ void Unit::UpdateOpacity()
         {
             case TypeUnit::PLAYER:
                 SetOpacity(DEATH_OPACITY);
+                break;
             default:
                 SetOpacity(0);
+                break;
         }
     }
     else
-        SetOpacity(255);;
+        SetOpacity(255);
 }
 
 std::string Unit::GetName() const

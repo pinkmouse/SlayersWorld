@@ -41,5 +41,6 @@ enum SMSG : uint8
     S_UnitPlayVisual = 30,
     S_UnitUpdateStat = 31,
     S_LoadingPing = 32,
+    S_ExtraInterface = 33,
     S_BlockBind = 40
 };

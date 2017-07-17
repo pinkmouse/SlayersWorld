@@ -1,6 +1,7 @@
 #pragma once
 #include "../../Define.hpp"
 #include "SpellTemplate.hpp"
+#include "AuraEffect.hpp"
 #include "../../Entities/Unit.hpp"
 
 
@@ -14,8 +15,12 @@ public:
     void LaunchEffects();
 
     std::vector<Unit*> SearchTargets(SpellTarget, float, float p_RadiusMin = 0.0f);
-    void EffectDamage(Unit*, SpellEffect*);
-    void EffectHeal(Unit*, SpellEffect*);
+
+    /// EFFECTS
+    void EffectDamage(uint8, Unit*, SpellEffect*);
+    void EffectHeal(uint8, Unit*, SpellEffect*);
+    void EffectApplyAura(uint8, Unit*, SpellEffect*);
+
     void SetCastTime(uint64);
     uint64 GetCastTime() const;
     bool IsReadyToLaunch() const;
@@ -28,7 +33,8 @@ private:
     Unit* m_Caster;
     uint64 m_CastTimer;
 
-    typedef void(Spell::*m_Func)(Unit*, SpellEffect*);
-    std::map<SpellEffectType, m_Func> m_SpellEffectsMap;
+    typedef void(Spell::*m_SpellFunc)(uint8, Unit*, SpellEffect*);
+
+    std::map<SpellEffectType, m_SpellFunc> m_SpellEffectsMap;
     std::vector<Unit*> m_TargetList;
 };

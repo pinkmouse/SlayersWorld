@@ -21,7 +21,7 @@ public:
     TileSprite GetField(uint16, uint16);
     void DrawField(Window &, const float &, const float &, uint16, uint16, bool p_WithBorder = true);
     void DrawBorderField(Window &, const float &, const float &, uint16, uint16);
-    TileSprite GetFlask(uint8, bool, uint8 p_Pct = 100);
+    TileSprite GetLifeBar(uint8, uint8 p_Pct = 100);
     TileSprite GetXpBar(bool, uint8 p_Pct = 100);
     TileSprite GetCastBar(bool, uint8 p_Pct = 100);
     void Draw(Window &);
@@ -29,6 +29,7 @@ public:
     void DrawWarnings(Window &);
     void DrawClock(Window &);
     void DrawAlign(Window &);
+    void DrawExtraUI(Window &);
     HistoryField* GetHistoryField() const;
     void AddWarningMsg(eTypeWarningMsg, const std::string &);
     void AddTopMsg(const std::string &);
@@ -44,13 +45,18 @@ public:
     MenuManager* GetMenuManager();
     bool IsLoading() const;
     void SetIsLoading(bool);
+    void AddExtraInterface(eExtraInterface);
+    void RemoveExtraInterface(eExtraInterface);
 
 private:
     sf::Texture                         m_SystemTexture;
     sf::Texture                         m_FlaskTexture;
+    sf::Texture                         m_SepBarTexture;
+    sf::Texture                         m_LifeBarTexture;
     sf::Texture                         m_XpTexture;
     sf::Texture                         m_CastBarTexture;
     sf::Texture                         m_Background;
+    sf::Texture                         m_BGInterface;
     Events*                             m_Events;
     WritingField*                       m_WritingField;
     HistoryField*                       m_HistoryField;
@@ -62,6 +68,7 @@ private:
     std::map< eWarningMsg, std::string > m_WarningMsgsEnum;
     std::map< uint8, uint8 >             m_KeyBoardBind;
     std::map< uint8, uint64 >            m_BlockingBinds;
+    std::vector<eExtraInterface>         m_ExtraUI;
 
     MenuManager                          m_MenuManager;
     bool                                 m_IsLoading;

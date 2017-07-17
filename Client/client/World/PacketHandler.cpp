@@ -42,8 +42,23 @@ void PacketHandler::LoadPacketHandlerMap()
     m_PacketHandleMap[SMSG::S_BlockBind] = &PacketHandler::HandleKeyBindBlock;
     m_PacketHandleMap[SMSG::S_CastBar] = &PacketHandler::HandleCastBar;
     m_PacketHandleMap[SMSG::S_LoadingPing] = &PacketHandler::HandleLoadingPing;
+    m_PacketHandleMap[SMSG::S_ExtraInterface] = &PacketHandler::HandleExtraUI;
     m_PacketHandleMap[SMSG::S_UnitIsInGroup] = &PacketHandler::HandleUnitIsInGroup;
 
+}
+
+void PacketHandler::HandleExtraUI(WorldPacket &p_Packet)
+{
+    uint8 l_ExtraUI;
+    bool l_Enable;
+
+    p_Packet >> l_ExtraUI;
+    p_Packet >> l_Enable;
+
+    if (l_Enable)
+        m_InterfaceManager->AddExtraInterface((eExtraInterface)l_ExtraUI);
+    else
+        m_InterfaceManager->RemoveExtraInterface((eExtraInterface)l_ExtraUI);
 }
 
 void PacketHandler::HandleRemoveUnit(WorldPacket &p_Packet)
