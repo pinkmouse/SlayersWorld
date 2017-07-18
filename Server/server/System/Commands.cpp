@@ -3,6 +3,7 @@
 #include "../World/WorldSocket.hpp"
 #include "../Global.hpp"
 #include  "../System/Quest/Quest.hpp"
+#include <SFML/Network/IpAddress.hpp>
 
 void Player::InitializeCommands()
 {
@@ -48,6 +49,14 @@ void Player::InitializeCommands()
     m_CmdHandleMap["summon"].second = &Player::HandleCommandSummonPlayer;
     m_CmdHandleMap["server"].first = eAccessType::Moderator;
     m_CmdHandleMap["server"].second = &Player::HandleCommandServer;
+    m_CmdHandleMap["kick"].first = eAccessType::Moderator;
+    m_CmdHandleMap["kick"].second = &Player::HandleKick;
+    m_CmdHandleMap["pinfo"].first = eAccessType::Moderator;
+    m_CmdHandleMap["pinfo"].second = &Player::HandlePlayerInfo;
+    m_CmdHandleMap["banIP"].first = eAccessType::Moderator;
+    m_CmdHandleMap["banIP"].second = &Player::HandleBanIP;
+    m_CmdHandleMap["banAccount"].first = eAccessType::Moderator;
+    m_CmdHandleMap["banAccount"].second = &Player::HandleBanAccount;
     m_CmdHandleMap["bg"].first = eAccessType::Moderator;
     m_CmdHandleMap["bg"].second = &Player::HandleCommandBG;
 }
@@ -469,6 +478,57 @@ bool Player::HandleCommandSummonPlayer(std::vector<std::string> p_ListCmd)
     return true;
 }
 
+bool Player::HandleKick(std::vector<std::string> p_ListCmd)
+{
+    if (p_ListCmd.empty())
+        return false;
+
+    std::string l_Name = p_ListCmd[0];
+
+    int32 l_Id = g_SqlManager->GetPlayerID(l_Name);
+    if (l_Id <= 0)
+    {
+        SendMsg(l_Name + " est introuvable");
+        return true;
+    }
+    Player* l_Player = g_MapManager->GetPlayer(l_Id);
+    if (l_Player == nullptr)
+    {
+        SendMsg(l_Name + " non connecté");
+        return true;
+    }
+
+    l_Player->GetSession()->Kick();
+
+    return true;
+}
+
+bool Player::HandlePlayerInfo(std::vector<std::string> p_ListCmd)
+{
+    if (p_ListCmd.empty())
+        return false;
+
+    std::string l_Name = p_ListCmd[0];
+
+    int32 l_Id = g_SqlManager->GetPlayerID(l_Name);
+    if (l_Id <= 0)
+    {
+        SendMsg(l_Name + " est introuvable");
+        return true;
+    }
+    Player* l_Player = g_MapManager->GetPlayer(l_Id);
+    if (l_Player == nullptr)
+    {
+        SendMsg(l_Name + " non connecté");
+        return true;
+    }
+
+    SendMsg("Player Info " + std::to_string(l_Player->GetAccountID()) + ":" + std::to_string(l_Player->GetID()) + ":" + l_Player->GetName() + ":" + l_Player->GetSession()->getRemoteAddress().toString());
+
+    return true;
+}
+
+
 bool Player::HandleCommandTeleport(std::vector<std::string> p_ListCmd)
 {
     if (p_ListCmd.empty())
@@ -526,6 +586,7 @@ bool Player::HandleCommandJoin(std::vector<std::string> p_ListCmd)
 
     g_GroupManager->RemoveUnitFromAllGroupType(eGroupType::SIMPLE, this);
     g_GroupManager->AddUnitToGroup(eGroupType::SIMPLE, p_ListCmd[0], this);
+    return true;
 }
 
 bool Player::HandleCommandLeave(std::vector<std::string> p_ListCmd)
@@ -541,5 +602,37 @@ bool Player::HandleCommandLeave(std::vector<std::string> p_ListCmd)
     }*/
     g_GroupManager->RemoveUnitFromAllGroupType(eGroupType::SIMPLE, this);
 
+    return true;
+}
+
+bool Player::HandleBanIP(std::vector<std::string> p_ListCmd)
+{
+    if (p_ListCmd.size() < 2)
+        return true;
+
+    std::string l_IP = p_ListCmd[0];
+    uint32 l_Hours = atoi(p_ListCmd[1].c_str());
+
+    std::string l_Msg = "";
+    for (uint8 i = 2; i < p_ListCmd.size(); ++i)
+        l_Msg += " " + p_ListCmd[i];
+
+    g_SqlManager->BlackListIp(l_IP, GetAccountID(), l_Hours, l_Msg);
+    return true;
+}
+
+bool Player::HandleBanAccount(std::vector<std::string> p_ListCmd)
+{
+    if (p_ListCmd.size() < 2)
+        return true;
+
+    uint32 l_Account = atoi(p_ListCmd[0].c_str());
+    uint32 l_Hours = atoi(p_ListCmd[1].c_str());
+
+    std::string l_Msg = "";
+    for (uint8 i = 2; i < p_ListCmd.size(); ++i)
+        l_Msg += " " + p_ListCmd[i];
+
+    g_SqlManager->BlackListAccount(l_Account, GetAccountID(), l_Hours, l_Msg);
     return true;
 }

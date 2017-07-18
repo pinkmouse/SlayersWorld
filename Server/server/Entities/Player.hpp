@@ -20,6 +20,7 @@ public:
     void HasBeenInitialize();
     void Respawn();
     void SendMsg(const std::string &);
+    void SendSimpleQuestion(const uint16 &, const std::string &);
     void Save();
     void SetInLoading(bool);
     bool GetInLoading() const;
@@ -98,6 +99,10 @@ public:
     bool HandleCommandSummonPlayer(std::vector<std::string>);
     bool HandleCommandGroupWisp(std::vector<std::string>);
     bool HandleRegen(std::vector<std::string>);
+    bool HandleKick(std::vector<std::string>);
+    bool HandlePlayerInfo(std::vector<std::string>);
+    bool HandleBanIP(std::vector<std::string>);
+    bool HandleBanAccount(std::vector<std::string>);
     bool HandleBind(std::vector<std::string>);
     bool HandleTest(std::vector<std::string>);
 

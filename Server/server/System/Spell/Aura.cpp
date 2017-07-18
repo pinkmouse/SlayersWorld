@@ -1,4 +1,6 @@
 #include "Aura.hpp"
+#include "../../World/PacketDefine.hpp"
+#include "../../Map/Map.hpp"
 #include "SpellTemplate.hpp"
 
 Aura::Aura(Unit* p_Caster, Unit* p_Target, SpellTemplate* p_SpellTemplate) :
@@ -12,6 +14,7 @@ Aura::Aura(Unit* p_Caster, Unit* p_Target, SpellTemplate* p_SpellTemplate) :
     m_AuraEffectsMap[eTypeAuraEffect::PERIODIC_HEAL] = &Aura::AuraEffectPeriodicHeal;
     m_AuraEffectsMap[eTypeAuraEffect::PERIODIC_DAMAGE] = &Aura::AuraEffectPeriodicDamage;
     m_AuraEffectsMap[eTypeAuraEffect::MODIFY_DAMAGE_PCT] = &Aura::AuraEffectModifyDamagePct;
+    m_AuraEffectsMap[eTypeAuraEffect::MOUNT] = &Aura::AuraEffectMount;
 }
 
 Aura::~Aura()
@@ -24,7 +27,7 @@ Aura::~Aura()
     }
 }
 
-uint64 Aura::GetDuration() const
+int64 Aura::GetDuration() const
 {
     return m_Duration;
 }
@@ -39,13 +42,16 @@ SpellTemplate* Aura::GetSpellTemplate() const
     return m_SpellTemplate;
 }
 
-uint64 Aura::GetMaxDuration() const
+int64 Aura::GetMaxDuration() const
 {
-    return (uint64)m_SpellTemplate->GetDuration() * 1000;
+    return (int64)m_SpellTemplate->GetDuration() * 1000;
 }
 
 void Aura::Update(sf::Time p_Time)
 {
+    if (GetDuration() < 0)
+        return;
+
     uint64 l_OldDuration = GetDuration();
     uint64 l_NewDuration = l_OldDuration;
     if (p_Time.asMicroseconds() > GetDuration())
@@ -82,12 +88,14 @@ void Aura::SubDuration(const uint64 & p_Duration)
 AuraEffect* Aura::AddAuraEffect(const uint8 & p_ID, const eTypeAuraEffect & p_AuraEffectTpe, const int32 & p_Data0, const int32 & p_Data1, const int32 & p_Data2)
 {
     AuraEffect* l_AuraEffect = new AuraEffect(m_SpellTemplate, m_Caster, m_Target, p_AuraEffectTpe, p_Data0, p_Data1, p_Data2);
+    m_AuraEffectFunc l_Fun = m_AuraEffectsMap[p_AuraEffectTpe];
     if (m_AuraEffectList.find(p_ID) != m_AuraEffectList.end())
+    {
+        (this->*(l_Fun))(m_AuraEffectList[p_ID], false);
         delete m_AuraEffectList[p_ID];
-
+    }
     m_AuraEffectList[p_ID] = l_AuraEffect;
 
-    m_AuraEffectFunc l_Fun = m_AuraEffectsMap[p_AuraEffectTpe];
     (this->*(l_Fun))(l_AuraEffect, true);
 
     return l_AuraEffect;
@@ -131,4 +139,20 @@ void Aura::AuraEffectPeriodicDamage(AuraEffect* p_AuraEffect, bool p_Apply)
 void Aura::AuraEffectModifyDamagePct(AuraEffect* p_AuraEffect, bool p_Apply)
 {
     ;
+}
+
+void Aura::AuraEffectMount(AuraEffect* p_AuraEffect, bool p_Apply)
+{
+    Unit* l_Target = p_AuraEffect->GetTarget();
+    if (l_Target == nullptr)
+        return;
+
+
+    int16 m_SkinMount = p_AuraEffect->GetAmount();
+    if (!p_Apply)
+        m_SkinMount = -1;
+
+    PacketUnitMount l_Packet;
+    l_Packet.BuildPacket(l_Target->GetType(), l_Target->GetID(), m_SkinMount);
+    l_Target->GetMap()->SendToSet(l_Packet.m_Packet, l_Target);
 }

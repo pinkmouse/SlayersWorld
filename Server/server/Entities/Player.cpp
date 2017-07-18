@@ -103,7 +103,7 @@ void Player::UpdateNewSquares(uint16 p_OldSquareID, uint16 p_NewSquareID, bool p
                 if (l_Unit->IsPlayer() && l_Unit->GetID() == GetID())
                     continue;
 
-                GetSession()->SendUnitCreate(l_Unit->GetType(), l_Unit->GetID(), l_Unit->GetName(), l_Unit->GetLevel(), l_Unit->GetResourceNb(eResourceType::Health), l_Unit->GetResourceNb(eResourceType::Mana), l_Unit->GetResourceNb(eResourceType::Alignment), l_Unit->GetSkinID(), l_Unit->GetSizeX(), l_Unit->GetSizeY(), l_Unit->GetSpeedUint8(), l_Unit->GetMapID(), l_Unit->GetPosition(), l_Unit->GetOrientation(), l_Unit->IsInMovement(), l_Unit->GetMovementHandler()->IsInAttack(), l_Unit->IsBlocking(), l_Unit->IsInGroupWith(this));
+                GetSession()->SendUnitCreate(l_Unit, l_Unit->IsInGroupWith(this));
             }
         }
     }
@@ -214,6 +214,16 @@ void Player::SendMsg(const std::string & p_Msg)
     l_Session->SendPacket(l_Packet.m_Packet);
 }
 
+void Player::SendSimpleQuestion(const uint16 & p_QuestionID, const std::string & p_Msg)
+{
+    std::string l_Msg = p_Msg;
+    ParseStringWithTag(l_Msg);
+    PacketSrvPlayerQuestion l_Packet;
+    l_Packet.BuildPacket(p_QuestionID, l_Msg);
+    WorldSocket* l_Session = GetSession();
+    l_Session->SendPacket(l_Packet.m_Packet);
+}
+
 void Player::ParseStringWithTag(std::string & p_Msg)
 {
     replaceStr(p_Msg, "$name", GetName());
@@ -247,7 +257,7 @@ void Player::EventAction(eKeyBoardAction p_PlayerAction)
     {
         case eKeyBoardAction::KeyBoardAction: /// GOSSIP
         {
-            Unit* l_Unit = m_Map->GetCloserUnit(this, MELEE_RANGE, true);
+            Unit* l_Unit = m_Map->GetCloserUnit(this, MELEE_RANGE, true, false);
             if (l_Unit == nullptr)
                 return;
 

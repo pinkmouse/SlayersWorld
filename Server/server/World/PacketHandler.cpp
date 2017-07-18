@@ -23,6 +23,7 @@ void PacketHandler::LoadPacketHandlerMap()
     m_PacketHandleMap[CMSG::C_UnitEventAction] = &PacketHandler::HandleEventAction;
     m_PacketHandleMap[CMSG::C_UnitStopAttack] = &PacketHandler::HandleStopAttack;
     m_PacketHandleMap[CMSG::C_LoadingPong] = &PacketHandler::HandleLoadingPong;
+    m_PacketHandleMap[CMSG::C_UnitAnswerQuestion] = &PacketHandler::HandleAnswerQuestion;
 }
 
 void PacketHandler::HandleUnitUnknow(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
@@ -43,7 +44,24 @@ void PacketHandler::HandleUnitUnknow(WorldPacket &p_Packet, WorldSocket* p_World
     if (l_UniknowUnit == nullptr)
         return;
 
-    p_WorldSocket->SendUnitCreate(l_UniknowUnit->GetType(), l_UniknowUnit->GetID(), l_UniknowUnit->GetName(), l_UniknowUnit->GetLevel(), l_UniknowUnit->GetResourceNb(eResourceType::Health), l_UniknowUnit->GetResourceNb(eResourceType::Mana), l_UniknowUnit->GetResourceNb(eResourceType::Alignment),  l_UniknowUnit->GetSkinID(), l_UniknowUnit->GetSizeX(), l_UniknowUnit->GetSizeY(), l_UniknowUnit->GetSpeedUint8(), l_UniknowUnit->GetMapID(), l_UniknowUnit->GetPosition(), l_UniknowUnit->GetOrientation(), l_UniknowUnit->IsInMovement(), l_UniknowUnit->GetMovementHandler()->IsInAttack(), l_UniknowUnit->IsBlocking(), l_UniknowUnit->IsInGroupWith(l_Player));
+    p_WorldSocket->SendUnitCreate(l_UniknowUnit, l_UniknowUnit->IsInGroupWith(l_Player));
+}
+
+void PacketHandler::HandleAnswerQuestion(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
+{
+    uint16 l_QuestionID = 0;
+    uint8 l_AnswerID = 0;
+
+    p_Packet >> l_QuestionID;
+    p_Packet >> l_AnswerID;
+
+
+    Player* l_Player = p_WorldSocket->GetPlayer();
+
+    if (l_Player == nullptr)
+        return;
+
+    printf("[%s] answer question %d\n", l_Player->GetName().c_str(), l_QuestionID);
 }
 
 void PacketHandler::HandleGoDirection(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
@@ -219,6 +237,12 @@ void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldS
             printf("Auth failed\n");
         return;
     }
+    if (g_SqlManager->IsAccountBan(l_Id))
+    {
+        p_WorldSocket->SendAuthResponse(3); ///< Auth Failed
+        return;
+    }
+
     int32 l_IdCharacter = g_SqlManager->GetIDCharacter(l_Id);
 
     if (l_IdCharacter >= 0)
@@ -237,7 +261,7 @@ void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldS
     Player* l_Player = g_SqlManager->GetNewPlayer(l_Id);
     if (l_Player == nullptr)
     {
-        p_WorldSocket->SendAuthResponse(3); ///< Auth Success
+        p_WorldSocket->SendAuthResponse(3); ///< Auth Failed
         return;
     }
 

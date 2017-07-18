@@ -38,6 +38,9 @@ bool Graphics::LoadTexture()
     l_FileSystemName = "lifebarmini.png";
     if (!m_LifeBarTexture.loadFromFile(IMG_FOLDER + l_FileSystemName))
         printf("Load SystemImg Life Bar Mini Failed\n");
+    l_FileSystemName = "uimini.png";
+    if (!m_UiMiniTexture.loadFromFile(IMG_FOLDER + l_FileSystemName))
+        printf("Load SystemImg UI Mini Failed\n");
     return true;
 }
 
@@ -133,7 +136,7 @@ void Graphics::DrawUnitDetails(Unit* p_Unit)
             l_Text.setColor(sf::Color(255, 66, 66));
         else
             l_Text.setColor(sf::Color(164, 255, 6));
-        sf::Vector2f l_V1(p_Unit->GetPosXAtIntant(), p_Unit->GetPosYAtIntant() - p_Unit->GetSizeY() - 6 - 4 - ((MAX_HISTORY_LOG_TIME - l_DamageLog.second) / 100000));
+        sf::Vector2f l_V1(p_Unit->GetPosXAtIntant() + p_Unit->GetPosXOffset(), p_Unit->GetPosYAtIntant() - p_Unit->GetSizeY() - 6 - 4 - ((MAX_HISTORY_LOG_TIME - l_DamageLog.second) / 100000) + p_Unit->GetPosYOffset());
         sf::Vector2f l_Coord = CoordFromViewToView(l_V1, m_View, m_ViewInterface);
         l_Text.setPosition((l_Coord.x - (l_Text.getGlobalBounds().width / 2)), l_Coord.y);
         m_Window.draw(l_Text);
@@ -144,7 +147,7 @@ void Graphics::DrawUnitDetails(Unit* p_Unit)
         sf::Text l_Text(p_Unit->GetTalk(), *g_Font, SIZE_TALK_FONT);
         sf::Vector2i l_FieldSize = m_InterfaceManager->TextSplitToFit(SIZE_TALK_TEXT_SIZE, l_Text);
 
-        sf::Vector2f l_V1(p_Unit->GetPosXAtIntant() + (p_Unit->GetSizeX() / 4), p_Unit->GetPosYAtIntant() - p_Unit->GetSizeY() - 4 - (l_FieldSize.y / 2));
+        sf::Vector2f l_V1(p_Unit->GetPosXAtIntant() + (p_Unit->GetSizeX() / 4) + p_Unit->GetPosXOffset(), p_Unit->GetPosYAtIntant() - p_Unit->GetSizeY() - 4 - (l_FieldSize.y / 2) + p_Unit->GetPosYOffset());
         sf::Vector2f l_Coord = CoordFromViewToView(l_V1, m_View, m_ViewInterface);
         m_InterfaceManager->DrawField(m_Window, (l_Coord.x - ((l_FieldSize.x + 8) / 2)) - (p_Unit->GetSizeX() / 2), l_Coord.y, l_FieldSize.x + 14, l_FieldSize.y + 14);
 
@@ -157,13 +160,13 @@ void Graphics::DrawUnitDetails(Unit* p_Unit)
     /// Reset the view
     m_Window.setView(m_View);
 
-    /// CAST BAR
+    /// LIFE BAR
     if (p_Unit != g_Player && p_Unit->GetIsInGroup())
     {
         TileSprite l_LifeBar;
         l_LifeBar.setTexture(m_LifeBarTexture);
         l_LifeBar.setTextureRect(sf::IntRect(0, 0, (m_LifeBarTexture.getSize().x / 100.0f) * p_Unit->GetResourceNb(eResourceType::Health), m_LifeBarTexture.getSize().y));
-        l_LifeBar.setPosition(p_Unit->GetPosXAtIntant() - (p_Unit->GetSizeX() / 2), p_Unit->GetPosYAtIntant() - p_Unit->GetSizeY() - 4);
+        l_LifeBar.setPosition(p_Unit->GetPosXAtIntant() - (p_Unit->GetSizeX() / 2) + p_Unit->GetPosXOffset(), p_Unit->GetPosYAtIntant() - p_Unit->GetSizeY() - 10 + p_Unit->GetPosYOffset());
         m_Window.draw(l_LifeBar);
     }
 
@@ -173,8 +176,18 @@ void Graphics::DrawUnitDetails(Unit* p_Unit)
         TileSprite l_CastBar;
         l_CastBar.setTexture(m_CastBarTexture);
         l_CastBar.setTextureRect(sf::IntRect(0, 0, (m_CastBarTexture.getSize().x / 100.0f) * p_Unit->GetCastPct(), m_CastBarTexture.getSize().y));
-        l_CastBar.setPosition(p_Unit->GetPosXAtIntant() - (p_Unit->GetSizeX() / 2), p_Unit->GetPosYAtIntant() - p_Unit->GetSizeY());
+        l_CastBar.setPosition(p_Unit->GetPosXAtIntant() - (p_Unit->GetSizeX() / 2) + p_Unit->GetPosXOffset(), p_Unit->GetPosYAtIntant() - p_Unit->GetSizeY() - 4 + p_Unit->GetPosYOffset());
         m_Window.draw(l_CastBar);
+    }
+
+    /// UI GROUP
+    if (p_Unit != g_Player && p_Unit->GetIsInGroup())
+    {
+        TileSprite l_UiGroup;
+        l_UiGroup.setTexture(m_UiMiniTexture);
+        l_UiGroup.setTextureRect(sf::IntRect(0, 0, m_UiMiniTexture.getSize().x, m_UiMiniTexture.getSize().y));
+        l_UiGroup.setPosition(p_Unit->GetPosXAtIntant() - (p_Unit->GetSizeX() / 2) - 6 + p_Unit->GetPosXOffset(), p_Unit->GetPosYAtIntant() - p_Unit->GetSizeY() - 12 + p_Unit->GetPosYOffset());
+        m_Window.draw(l_UiGroup);
     }
 }
 
@@ -187,8 +200,36 @@ void Graphics::DrawWorldObjects(std::map<uint32, std::vector<WorldObject*> > *p_
             if (l_WorldObject == nullptr)
                 continue;
 
+            SkinSprite* l_MountSkin = nullptr;
+
+            float l_OffsetX = 0;
+            float l_OffsetY = 0;
+            /// MOUNT
             if (l_WorldObject->GetType() == TypeWorldObject::UNIT)
-                l_WorldObject->GetSprite()->setPosition(l_WorldObject->GetPosXAtIntant() - (l_WorldObject->GetSizeX() / 2), l_WorldObject->GetPosYAtIntant() - l_WorldObject->GetSizeY());
+            {
+                Unit* l_Unit = l_WorldObject->ToUnit();
+                l_OffsetX = l_Unit->GetPosXOffset();
+                l_OffsetY = l_Unit->GetPosYOffset();
+                std::vector<VisualEffect>  *l_VisualsEffect = l_Unit->GetVisualsEffect();
+
+                if (l_Unit->GetMount() >= 0)
+                {
+                    uint8 l_SpriteNb = (l_Unit->GetOrientation() * MAX_MOVEMENT_POSITION) + l_Unit->GetMovementHandler()->GetMovementPosition();
+                    l_MountSkin = m_VisualManager->GetVisualSprite(eVisualType::VisualSkinMount, l_Unit->GetMount(), l_SpriteNb);
+                    if (l_MountSkin)
+                    {
+                        l_MountSkin->setScale(sf::Vector2f(l_Unit->GetSkinZoomFactor(), l_Unit->GetSkinZoomFactor()));
+                        Position l_Pos = GetCenterPositionOnUnit(l_Unit, l_MountSkin);
+                        l_MountSkin->setPosition(l_Pos.x - (l_Unit->GetSizeX() / 2), l_Pos.y - l_Unit->GetSizeY());
+                        if (l_Unit->GetOrientation() != Orientation::Down)
+                            m_Window.draw(*l_MountSkin);
+                    }
+                }
+            }
+
+            /// UNIT
+            if (l_WorldObject->GetType() == TypeWorldObject::UNIT)
+                l_WorldObject->GetSprite()->setPosition(l_WorldObject->GetPosXAtIntant() - (l_WorldObject->GetSizeX() / 2) + l_OffsetX, l_WorldObject->GetPosYAtIntant() - l_WorldObject->GetSizeY() + l_OffsetY);
             else
                 l_WorldObject->GetSprite()->setPosition(l_WorldObject->GetPosXAtIntant(), l_WorldObject->GetPosYAtIntant());
 
@@ -201,6 +242,9 @@ void Graphics::DrawWorldObjects(std::map<uint32, std::vector<WorldObject*> > *p_
                 Unit* l_Unit = l_WorldObject->ToUnit();
                 std::vector<VisualEffect>  *l_VisualsEffect = l_Unit->GetVisualsEffect();
 
+                if (l_MountSkin != nullptr && l_Unit->GetOrientation() == Orientation::Down)
+                    m_Window.draw(*l_MountSkin);
+
                 /// VISUAL EFFECT
                 for (std::vector<VisualEffect>::iterator l_It = l_VisualsEffect->begin(); l_It != l_VisualsEffect->end(); ++l_It)
                 {
@@ -209,7 +253,7 @@ void Graphics::DrawWorldObjects(std::map<uint32, std::vector<WorldObject*> > *p_
                     {
                         l_SkinSprite->setScale(sf::Vector2f(l_Unit->GetSkinZoomFactor(), l_Unit->GetSkinZoomFactor()));
                         Position l_Pos = GetCenterPositionOnUnit(l_Unit, l_SkinSprite);
-                        l_SkinSprite->setPosition(l_Pos.x - (l_Unit->GetSizeX() / 2), l_Pos.y - l_Unit->GetSizeY());
+                        l_SkinSprite->setPosition(l_Pos.x - (l_Unit->GetSizeX() / 2) + l_OffsetX, l_Pos.y - l_Unit->GetSizeY() + l_OffsetY);
                         m_Window.draw(*l_SkinSprite);
                     }
                 }
@@ -361,6 +405,8 @@ void Graphics::DrawMap()
 
             MovementHandler* l_MovementHandler = l_Unit->GetMovementHandler();
             uint8 l_SpriteNb = (l_Unit->GetOrientation() * MAX_MOVEMENT_POSITION) + l_MovementHandler->GetMovementPosition();
+            if (l_Unit->GetMount() >= 0)
+                l_SpriteNb = (l_Unit->GetOrientation() * MAX_MOVEMENT_POSITION);
             if (l_MovementHandler->IsInAttack())
                 l_SpriteNb += (MAX_MOVEMENT_POSITION * Orientation::MAX);
 

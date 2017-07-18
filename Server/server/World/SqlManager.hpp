@@ -32,6 +32,8 @@ public:
     void AddNewAccount(std::string, std::string);
     bool IsExistingAccound(std::string);
     Player* GetNewPlayer(uint32);
+    bool IsAccountBan(const uint32 &);
+    bool IsIPBan(const std::string &);
     void AddNewPlayer(uint32);
     void AddKeyDefaultBindsForAccount(uint32);
     void AddSpellBind(Player*, uint16, uint8);
@@ -47,6 +49,8 @@ public:
 	PointsSet GetPointsSetForPlayer(uint32);
 	void AddNewPointsSetForPlayer(uint32);
     void SavePlayer(Player*);
+    void BlackListIp(const std::string &, const uint32 &, const uint32 &, const std::string &);
+    void BlackListAccount(const uint32 &, const uint32 &, const uint32 &, const std::string &);
     void SaveQuestForPlayer(Player const*, Quest const*);
 	void UpdatePointsSet(Player const*);
     void AddConnectionLogin(uint32);

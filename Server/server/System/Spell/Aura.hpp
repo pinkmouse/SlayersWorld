@@ -11,8 +11,8 @@ public:
     Aura(Unit*, Unit*, SpellTemplate*);
     ~Aura();
     AuraEffect* AddAuraEffect(const uint8 &, const eTypeAuraEffect &, const int32 &, const int32 & ,const int32 &);
-    uint64 GetDuration() const;
-    uint64 GetMaxDuration() const;
+    int64 GetDuration() const;
+    int64 GetMaxDuration() const;
     void Update(sf::Time);
     void SetDuration(const uint64 &, bool p_Natual = false);
     void AddDuration(const uint64 &);
@@ -26,7 +26,8 @@ public:
     void AuraEffectPeriodicHeal(AuraEffect*, bool);
     void AuraEffectPeriodicDamage(AuraEffect*, bool);
     void AuraEffectModifyDamagePct(AuraEffect*, bool);
-
+    void AuraEffectMount(AuraEffect*, bool);
+    
 private:
     uint16  m_ID;
     Unit* m_Caster;

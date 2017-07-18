@@ -26,6 +26,7 @@ Unit::Unit(uint16 p_ID, TypeUnit p_Type, uint8 p_SizeX, uint8 p_SizeY) :
     m_Resources[eResourceType::Health] = new Resource(eResourceType::Health);
     m_HistoryDamage.clear();
     SetSpeed(1.0f);
+    m_Mount = -1;
 }
 
 Unit::~Unit()
@@ -166,6 +167,10 @@ void Unit::SetResourceNb(eResourceType p_Resource, uint8 p_Nb)
     m_Resources[p_Resource]->SetNumber(p_Nb);
 }
 
+int16 Unit::GetMount() const
+{
+    return m_Mount;
+}
 
 Player* Unit::ToPlayer()
 {
@@ -278,6 +283,12 @@ void Unit::SetTalk(const std::string & p_Talk)
     m_DiffTimeTalk = 0;
 }
 
+void Unit::SetMount(const int16 & p_Mount)
+{
+    m_Mount = p_Mount;
+}
+
+
 std::string Unit::GetTalk() const
 {
     return m_Talk;
@@ -363,4 +374,32 @@ float Unit::GetPosXAtIntant()
 float Unit::GetPosYAtIntant()
 {
     return m_MovementHandler->GetPosYAtIntant();
+}
+
+
+float Unit::GetPosXOffset()
+{
+    float l_OffSetX = 0.0f;
+
+    switch (GetOrientation())
+    {
+    case Orientation::Left:
+        l_OffSetX += 4;
+        break;
+    case Orientation::Right:
+        l_OffSetX -= 4;
+        break;
+    default:
+        break;
+    }
+    return l_OffSetX;
+}
+
+float Unit::GetPosYOffset()
+{
+    float l_OffSetY = 0.0f;
+
+    if (GetMount() >= 0)
+        l_OffSetY -= 14 + ((GetMovementHandler()->GetMovementPosition() % 2) * 2);
+    return l_OffSetY;
 }

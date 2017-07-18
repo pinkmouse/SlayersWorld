@@ -39,6 +39,8 @@ public:
     void HandleKeyBindBlock(WorldPacket &);
     void HandleLoadingPing(WorldPacket &);
     void HandleExtraUI(WorldPacket &);
+    void HandleMount(WorldPacket &);
+    void HandleSrvPlayerQuestion(WorldPacket &);
     void HandleCastBar(WorldPacket &);
 
 private:

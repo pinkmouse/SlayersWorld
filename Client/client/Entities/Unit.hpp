@@ -33,6 +33,9 @@ public:
     bool IsDeath();
     float GetPosXAtIntant(); /// Use for drawing
     float GetPosYAtIntant(); /// Use for drawing
+    float GetPosXOffset(); /// Use for drawing
+    float GetPosYOffset(); /// Use for drawing
+    int16 GetMount() const;
 
     void SetName(const std::string &);
     void SetLevel(const uint8 &);
@@ -44,7 +47,8 @@ public:
     void SetMap(Map*);
     void SetSpeed(float);
     void SetIsInGroup(bool);
-    
+    void SetMount(const int16 &);
+
     void StartMovement();
     bool IsInRayVisible(Unit*);
     void TeleportTo(const WorldPosition&);
@@ -79,6 +83,7 @@ protected:
     float m_SkinZoomFactor;
     bool m_IsInGroup;
     std::map< eResourceType, Resource* > m_Resources;
+    int16 m_Mount;
 
     MovementHandler* m_MovementHandler;
     TypeUnit m_Type;

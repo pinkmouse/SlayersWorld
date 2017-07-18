@@ -200,7 +200,7 @@ Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
         return l_Player;
     }
 
-    l_Player = new Player(p_AccountID, l_ID, l_Name, l_Lvl, l_Class, l_Health, l_Mana, l_Alignment, l_SkinID, l_MapID, l_PosX, l_PosY, (Orientation)l_Orientation, l_Xp, l_PlayerAccessType);
+    l_Player = new Player(p_AccountID, l_ID, l_Name, l_Lvl, (eClass)l_Class, l_Health, l_Mana, l_Alignment, l_SkinID, l_MapID, l_PosX, l_PosY, (Orientation)l_Orientation, l_Xp, l_PlayerAccessType);
     l_Player->SetRespawnPosition(GetRespawnPositionForPlayer(l_ID));
     InitializeSpellsForPlayer(l_Player);
     InitializeKeyBindsForAccount(p_AccountID, l_Player);
@@ -624,7 +624,7 @@ bool SqlManager::InitializeKeyBindsForAccount(uint32 p_Account, Player* p_Player
 
 bool SqlManager::InitializeGossip(UnitManager* p_CreatureManager, RequiredManager* p_RequiredManager)
 {
-    std::string l_Query = "SELECT `id`, `requiredID`, `typeUnit`, `unitEntry`, `type`, `data0`, `msg` FROM gossip";
+    std::string l_Query = "SELECT `id`, `requiredID`, `typeUnit`, `unitEntry`, `type`, `data0`, `data1`, `msg` FROM gossip";
     mysql_query(&m_MysqlWorld, l_Query.c_str());
 
     uint16 l_ID = 0;
@@ -633,6 +633,7 @@ bool SqlManager::InitializeGossip(UnitManager* p_CreatureManager, RequiredManage
     uint16 l_UnitEntry = 0;
     uint8 l_GossipType = 0;
     uint32 l_Data0 = 0;
+    uint32 l_Data1 = 0;
     std::string l_Msg = "";
 
     MYSQL_RES *l_Result = NULL;
@@ -646,11 +647,13 @@ bool SqlManager::InitializeGossip(UnitManager* p_CreatureManager, RequiredManage
         l_UnitEntry = atoi(l_Row[3]);
         l_GossipType = atoi(l_Row[4]);
         l_Data0 = atoi(l_Row[5]);
-        l_Msg = std::string(l_Row[6]);
+        if (l_Row[6])
+            l_Data1 = atoi(l_Row[6]);
+        l_Msg = std::string(l_Row[7]);
         Required* l_Required = nullptr;
         if (l_RequiredID >= 0) /// -1 if no required
             l_Required = p_RequiredManager->GetRequiered(l_RequiredID);
-        p_CreatureManager->AddGossip(Gossip(l_ID, l_Required, (TypeUnit)l_TypeUnit, l_UnitEntry, (eGossipType)l_GossipType, l_Data0, l_Msg));
+        p_CreatureManager->AddGossip(Gossip(l_ID, l_Required, (TypeUnit)l_TypeUnit, l_UnitEntry, (eGossipType)l_GossipType, l_Data0, l_Data1, l_Msg));
     }
     mysql_free_result(l_Result);
 
@@ -710,7 +713,7 @@ bool  SqlManager::InitializeSpells()
     int32 l_VisualIDTarget = -1;
     uint16 l_CastTime = 0;
     uint32 l_Cooldown = 0;
-    uint32 l_Duration = 0;
+    int32 l_Duration = 0;
     float l_Speed = 0.0f;
     int16 l_ResourceType = 0;
     int32 l_ResourceNb = 0;
@@ -1260,4 +1263,84 @@ eAccessType SqlManager::GetAccessType(uint32 p_AccountID)
 
     mysql_free_result(l_Result);
     return (eAccessType)l_ID;
+}
+
+void SqlManager::BlackListIp(const std::string & p_AdressIP, const uint32 & p_AccountAdm, const uint32 & p_TotalHours, const std::string & p_Comment)
+{
+    std::string l_Query = "INSERT INTO `black_list` (ip, accountAdmin, totalHours, comment) VALUES ('" + p_AdressIP + "', '" + std::to_string(p_AccountAdm) + "', '" + std::to_string(p_TotalHours) + "', '" + p_Comment + "');";
+    mysql_query(&m_MysqlCharacters, l_Query.c_str());
+}
+
+void SqlManager::BlackListAccount(const uint32 & p_AccountID, const uint32 & p_AccountAdm, const uint32 & p_TotalHours, const std::string & p_Comment)
+{
+    std::string l_Query = "INSERT INTO `black_list` (accountID, accountAdmin, totalHours, comment) VALUES ('" + std::to_string(p_AccountID) + "', '" + std::to_string(p_AccountAdm) + "', '" + std::to_string(p_TotalHours) + "', '" + p_Comment + "');";
+    mysql_query(&m_MysqlCharacters, l_Query.c_str());
+}
+
+bool SqlManager::IsAccountBan(const uint32 & p_AccountID)
+{
+    std::string l_Query = "SELECT Unix_Timestamp(`date`), `totalHours` FROM `black_list` WHERE `accountID` = '" + std::to_string(p_AccountID) + "'";
+    mysql_query(&m_MysqlCharacters, l_Query.c_str());
+
+    bool m_IsBan = false;
+    std::time_t l_Now;
+    std::time_t l_Time;
+    uint32 l_Hours;
+    MYSQL_RES *l_Result = NULL;
+    MYSQL_ROW l_Row;
+
+    time(&l_Now);
+    l_Result = mysql_use_result(&m_MysqlCharacters);
+    while ((l_Row = mysql_fetch_row(l_Result)))
+    {
+        l_Time = (std::time_t)atoll(l_Row[0]);
+        l_Hours = atoi(l_Row[1]);
+        struct tm now_tm = *localtime(&l_Time);
+        struct tm then_tm = now_tm;
+
+        then_tm.tm_hour += l_Hours;
+        const double diff = std::difftime(l_Now, mktime(&then_tm));
+        if (diff <= 0)
+        {
+            m_IsBan = true;
+            break;
+        }
+    }
+
+    mysql_free_result(l_Result);
+    return m_IsBan;
+}
+
+bool SqlManager::IsIPBan(const std::string & p_IP)
+{
+    std::string l_Query = "SELECT Unix_Timestamp(`date`), `totalHours` FROM `black_list` WHERE `ip` = '" + p_IP + "'";
+    mysql_query(&m_MysqlCharacters, l_Query.c_str());
+
+    bool m_IsBan = false;
+    std::time_t l_Now;
+    std::time_t l_Time;
+    uint32 l_Hours;
+    MYSQL_RES *l_Result = NULL;
+    MYSQL_ROW l_Row;
+
+    time(&l_Now);
+    l_Result = mysql_use_result(&m_MysqlCharacters);
+    while ((l_Row = mysql_fetch_row(l_Result)))
+    {
+        l_Time = (std::time_t)atoll(l_Row[0]);
+        l_Hours = atoi(l_Row[1]);
+        struct tm now_tm = *localtime(&l_Time);
+        struct tm then_tm = now_tm;
+
+        then_tm.tm_hour += l_Hours;
+        const double diff = std::difftime(l_Now, mktime(&then_tm));
+        if (diff <= 0)
+        {
+            m_IsBan = true;
+            break;
+        }
+    }
+
+    mysql_free_result(l_Result);
+    return m_IsBan;
 }

@@ -22,6 +22,7 @@ public:
     void SendTalk(const std::string &);
     void SendSave();
     void SendStatAction(eStats, bool, uint8);
+    void SendAnswerQuestion(const uint16 &, const uint8 &_Resp);
     bool IsConnected() const;
 
 private:

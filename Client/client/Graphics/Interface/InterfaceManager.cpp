@@ -38,10 +38,6 @@ void InterfaceManager::Initialize()
     if (!m_SystemTexture.loadFromFile(IMG_FOLDER + l_FileSystemName))
         printf("Load SystemImg Failed\n");
 
-    l_FileSystemName = "flask.png";
-    if (!m_FlaskTexture.loadFromFile(IMG_FOLDER + l_FileSystemName))
-        printf("Load SystemImg Flask Failed\n");
-
     l_FileSystemName = "lifebars.png";
     if (!m_LifeBarTexture.loadFromFile(IMG_FOLDER + l_FileSystemName))
         printf("Load SystemImg LifeBar Failed\n");
@@ -76,7 +72,12 @@ void  InterfaceManager::ManageEvent(sf::Event p_Event)
     switch (p_Event.type)
     {
         case sf::Event::KeyPressed: ///< Key Press
-            if (p_Event.key.code == sf::Keyboard::Escape && !m_MenuManager.IsOpen()) ///< Bypass for Menu
+            if (!m_ListSimpleQuestion.empty())
+            {
+                (*--m_ListSimpleQuestion.end()).second.KeyPress(p_Event.key.code);
+                break;
+            }
+            else if (p_Event.key.code == sf::Keyboard::Escape && !m_MenuManager.IsOpen()) ///< Bypass for Menu
                     m_MenuManager.Open();
             else if (m_MenuManager.IsOpen())
             {
@@ -104,9 +105,25 @@ void  InterfaceManager::ManageEvent(sf::Event p_Event)
 
 void InterfaceManager::DrawMenu(Window & p_Window, Menu * p_Menu)
 {
-    DrawField(p_Window, p_Menu->GetPosition().x, p_Menu->GetPosition().y, p_Menu->GetColumn() * MENU_COLUMN_SIZE, p_Menu->GetRow() * MENU_ROW_SIZE + 20);
+    sf::Vector2i l_Size(0, 0);
+    sf::Text    l_Title;
+    if (p_Menu->GetTitle() != "")
+    {
+        l_Title.setCharacterSize(18);
+        l_Title.setColor(sf::Color::White);
+        l_Title.setString(p_Menu->GetTitle());
+        l_Title.setFont(*g_Font);
+        l_Size = TextSplitToFit((p_Menu->GetColumn() * MENU_COLUMN_SIZE) - 20, l_Title);
+        l_Size.y += 10;
+        l_Title.setPosition(p_Menu->GetPosition().x + 10, p_Menu->GetPosition().y + 10);
+    }
+    DrawField(p_Window, p_Menu->GetPosition().x, p_Menu->GetPosition().y, (p_Menu->GetColumn() * MENU_COLUMN_SIZE), p_Menu->GetRow() * MENU_ROW_SIZE + 20 + l_Size.y);
     std::map<uint8, std::map<uint8, MenuElement> >* m_Elements = p_Menu->GetElements();
 
+    if (l_Title.getString() != "")
+    {
+        p_Window.draw(l_Title);
+    }
     for (std::map<uint8, std::map<uint8, MenuElement> >::iterator l_It = m_Elements->begin(); l_It != m_Elements->end(); ++l_It)
     {
         for (std::map<uint8, MenuElement>::iterator l_Itr = (*l_It).second.begin(); l_Itr != (*l_It).second.end(); l_Itr++)
@@ -117,12 +134,12 @@ void InterfaceManager::DrawMenu(Window & p_Window, Menu * p_Menu)
             l_Label.setString((*l_Itr).second.GetLabel());
             l_Label.setFont(*g_Font);
 
-            l_Label.setPosition(p_Menu->GetPosition().x + (*l_It).first * MENU_COLUMN_SIZE + 10, p_Menu->GetPosition().y + (*l_Itr).first * MENU_ROW_SIZE + 5);
+            l_Label.setPosition(p_Menu->GetPosition().x + (*l_It).first * MENU_COLUMN_SIZE + 10, p_Menu->GetPosition().y + l_Size.y + (*l_Itr).first * MENU_ROW_SIZE + 5);
             p_Window.draw(l_Label);
         }
     }
     std::pair<uint8, uint8> l_SelectedElement = p_Menu->GetSelectedElement();
-    DrawBorderField(p_Window, p_Menu->GetPosition().x + l_SelectedElement.first * MENU_COLUMN_SIZE, p_Menu->GetPosition().y + l_SelectedElement.second * MENU_ROW_SIZE + 5, MENU_COLUMN_SIZE, MENU_ROW_SIZE);
+    DrawBorderField(p_Window, p_Menu->GetPosition().x + l_SelectedElement.first * MENU_COLUMN_SIZE, p_Menu->GetPosition().y + l_Size.y + l_SelectedElement.second * MENU_ROW_SIZE + 5, MENU_COLUMN_SIZE, MENU_ROW_SIZE);
 }
 
 TileSprite InterfaceManager::GetField(uint16 p_SizeX, uint16 p_SizeY)
@@ -503,6 +520,16 @@ void InterfaceManager::Draw(Window & p_Window)
     std::vector<Menu*> l_ListOpenMenu = m_MenuManager.GetOpenMenus();
     for (std::vector<Menu*>::iterator l_It = l_ListOpenMenu.begin(); l_It != l_ListOpenMenu.end(); ++l_It)
         DrawMenu(p_Window, (*l_It));
+    for (std::map<uint16, QuestionBox>::iterator l_It = m_ListSimpleQuestion.begin(); l_It != m_ListSimpleQuestion.end();)
+    {
+        if (!(*l_It).second.IsOpen())
+            l_It = m_ListSimpleQuestion.erase(l_It);
+        else
+        {
+            DrawMenu(p_Window, &(*l_It).second);
+            ++l_It;
+        }
+    }
 }
 
 void InterfaceManager::AddWarningMsg(eTypeWarningMsg p_Type, const std::string & p_Msg)
@@ -625,4 +652,14 @@ void InterfaceManager::RemoveExtraInterface(eExtraInterface p_ExtraUI)
         return;
 
     m_ExtraUI.erase(l_It);
+}
+
+void InterfaceManager::AddSimpleQuestion(const uint16 & p_GossipID, const std::string & p_Msg)
+{
+    std::map<uint16, QuestionBox>::iterator l_It = m_ListSimpleQuestion.find(p_GossipID);
+    if (l_It != m_ListSimpleQuestion.end())
+        return;
+
+    m_ListSimpleQuestion[p_GossipID] = QuestionBox(p_GossipID, p_Msg);
+    m_ListSimpleQuestion[p_GossipID].Open();
 }

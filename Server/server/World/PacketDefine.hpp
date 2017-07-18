@@ -14,6 +14,7 @@ enum CMSG : uint8
     C_UnitStartAttack = 24,
     C_UnitStopAttack = 25,
     C_UnitEventAction = 26,
+    C_UnitAnswerQuestion = 27
 };
 
 enum SMSG : uint8
@@ -43,6 +44,8 @@ enum SMSG : uint8
     S_UnitUpdateStat = 31,
     S_LoadingPing = 32,
     S_ExtraInterface = 33,
+    S_UnitMount = 34,
+    S_SrvPlayerQuestion = 35,
     S_BlockBind = 40
 };
 
@@ -283,6 +286,24 @@ struct PacketSrvPlayerMsg
     }
 };
 
+struct PacketSrvPlayerQuestion
+{
+    WorldPacket m_Packet;
+    uint8 m_PacketID;
+    uint16 m_QuestionID;
+    std::string m_Msg;
+
+    PacketSrvPlayerQuestion() :
+        m_PacketID(SMSG::S_SrvPlayerQuestion) {}
+
+    void BuildPacket(const uint16 & p_QuestionID, const std::string & p_Msg)
+    {
+        m_Packet << m_PacketID << p_QuestionID << p_Msg;
+        m_QuestionID = p_QuestionID;
+        m_Msg = p_Msg;
+    }
+};
+
 struct PacketLogDamage
 {
 	WorldPacket m_Packet;
@@ -375,6 +396,26 @@ struct PacketUnitIsInGroup
     {
         m_Packet << m_PacketID << p_TypeID << p_ID << p_IsInGroup;
         m_IsInGroup = p_IsInGroup;
+        m_TypeID = p_TypeID;
+        m_ID = p_ID;
+    }
+};
+
+struct PacketUnitMount
+{
+    WorldPacket m_Packet;
+    uint8 m_PacketID;
+    uint8 m_TypeID;
+    uint16 m_ID;
+    int16 m_Skin;
+
+    PacketUnitMount() :
+        m_PacketID(SMSG::S_UnitMount) {}
+
+    void BuildPacket(uint8 p_TypeID, uint16 p_ID, int16 p_Skin)
+    {
+        m_Packet << m_PacketID << p_TypeID << p_ID << p_Skin;
+        m_Skin = p_Skin;
         m_TypeID = p_TypeID;
         m_ID = p_ID;
     }

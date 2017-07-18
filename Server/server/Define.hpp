@@ -138,7 +138,8 @@ enum eGossipType
     Yell = 1,
     LaunchQuest = 2,
     ValidQuest = 3,
-    Announce = 4
+    Announce = 4,
+    SimpleQuestion = 5
 };
 
 enum eDynamicObjectType
@@ -227,7 +228,8 @@ enum eTypeAuraEffect
     PERIODIC_DAMAGE = 0,
     PERIODIC_HEAL = 1,
     UPDATE_SPEED = 2,
-    MODIFY_DAMAGE_PCT = 3
+    MODIFY_DAMAGE_PCT = 3,
+    MOUNT = 4
 };
 
 enum eExtraInterface
@@ -352,18 +354,19 @@ struct Gossip
     uint16 m_UnitEntry;
     eGossipType m_GossipType;
     uint32 m_Data1;
+    uint32 m_Data2;
     std::string m_Msg;
     uint64 m_GossipTimer;
     Required* m_Required;
 
     Gossip() :
-        m_ID(0), m_TypeUnit(TypeUnit::CREATURE), m_UnitEntry(0), m_GossipType(eGossipType::Whisp), m_Data1(0), m_Msg(""), m_GossipTimer(0), m_Required(nullptr) {}
+        m_ID(0), m_TypeUnit(TypeUnit::CREATURE), m_UnitEntry(0), m_GossipType(eGossipType::Whisp), m_Data1(0), m_Data2(0), m_Msg(""), m_GossipTimer(0), m_Required(nullptr) {}
 
     Gossip(const Gossip & p_Gossip) :
-        m_ID(p_Gossip.m_ID), m_Required(p_Gossip.m_Required), m_TypeUnit(p_Gossip.m_TypeUnit), m_UnitEntry(p_Gossip.m_UnitEntry), m_GossipType(p_Gossip.m_GossipType), m_Data1(p_Gossip.m_Data1), m_Msg(p_Gossip.m_Msg), m_GossipTimer(p_Gossip.m_GossipTimer){}
+        m_ID(p_Gossip.m_ID), m_Required(p_Gossip.m_Required), m_TypeUnit(p_Gossip.m_TypeUnit), m_UnitEntry(p_Gossip.m_UnitEntry), m_GossipType(p_Gossip.m_GossipType), m_Data1(p_Gossip.m_Data1), m_Data2(p_Gossip.m_Data2), m_Msg(p_Gossip.m_Msg), m_GossipTimer(p_Gossip.m_GossipTimer){}
         
-    Gossip(uint16 p_ID, Required* p_Required, TypeUnit p_TypeUnit, uint16 p_UnitEntry, eGossipType p_GossipType, uint32 p_Data1, std::string p_Msg) :
-        m_ID(p_ID), m_Required(p_Required), m_TypeUnit(p_TypeUnit), m_UnitEntry(p_UnitEntry), m_GossipType(p_GossipType), m_Data1(p_Data1), m_Msg(p_Msg), m_GossipTimer(0){}
+    Gossip(uint16 p_ID, Required* p_Required, TypeUnit p_TypeUnit, uint16 p_UnitEntry, eGossipType p_GossipType, uint32 p_Data1, uint32 p_Data2, std::string p_Msg) :
+        m_ID(p_ID), m_Required(p_Required), m_TypeUnit(p_TypeUnit), m_UnitEntry(p_UnitEntry), m_GossipType(p_GossipType), m_Data1(p_Data1), m_Data2(p_Data2), m_Msg(p_Msg), m_GossipTimer(0){}
 };
 
 struct SpellEffect
@@ -467,7 +470,7 @@ static uint32 PixelToCase(uint32 p_NbPixel) { return p_NbPixel / TILE_SIZE; }
 static uint32 CaseToPixel(uint32 p_NbCase) { return p_NbCase * TILE_SIZE; }
 static Position PositionToCasePosition(const Position & p_Pos) { return Position(PixelToCase(p_Pos.m_X), PixelToCase(p_Pos.m_Y)); }
 static float InYard(float p_YardInPixel) { return p_YardInPixel / (float)TILE_SIZE; }
-static bool RandChance(uint8 p_Rand) { printf("--------------------> Rand [%d]\n", (rand() % 100)); return (rand() % 100) <= p_Rand ; }
+static bool RandChance(uint8 p_Rand) { return (rand() % 100) <= p_Rand ; }
 static void Log(const std::string & p_Str)
 {
     time_t l_Time = time(NULL);;

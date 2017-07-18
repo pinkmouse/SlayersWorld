@@ -31,6 +31,7 @@ public:
     Menu();
     Menu(const uint8 &, const uint8 &);
     ~Menu();
+    void SetTitle(const std::string &);
     virtual void KeyPress(const sf::Keyboard::Key &);
     MenuElement* GetElement(const uint8 &, const uint8 &);
     std::map<uint8, std::map<uint8, MenuElement> >* GetElements();
@@ -44,8 +45,9 @@ public:
     std::pair<uint8, uint8> GetSelectedElement() const;
     void SetSelectedElement(uint8, uint8);
     void SelectNextElementOn(Orientation);
-    void Open();
+    virtual void Open();
     void Close();
+    std::string GetTitle() const;
 
     virtual void GenericAction(const uint16 &);
 
@@ -56,6 +58,7 @@ private:
     bool m_Open;
     uint8 m_Column;
     uint8 m_Row;
+    std::string m_Title;
     std::pair < uint8, uint8 > m_SelectedElement;
     std::map<uint8, std::map<uint8, MenuElement> > m_Elements;
 };

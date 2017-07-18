@@ -4,6 +4,7 @@
 #include "../../Define.hpp"
 #include "../Window.hpp"
 #include "../../World/Events/Events.hpp"
+#include "QuestionBox.hpp"
 #include "MenuManager.hpp"
 #include "WritingField.hpp"
 #include "HistoryField.hpp"
@@ -33,6 +34,7 @@ public:
     HistoryField* GetHistoryField() const;
     void AddWarningMsg(eTypeWarningMsg, const std::string &);
     void AddTopMsg(const std::string &);
+    void AddSimpleQuestion(const uint16 &, const std::string &);
     void RemoveFirstTopMsg();
     void AddWarningMsg(eTypeWarningMsg, eWarningMsg);
     void AddKeyBind(uint8, uint8);
@@ -50,7 +52,6 @@ public:
 
 private:
     sf::Texture                         m_SystemTexture;
-    sf::Texture                         m_FlaskTexture;
     sf::Texture                         m_SepBarTexture;
     sf::Texture                         m_LifeBarTexture;
     sf::Texture                         m_XpTexture;
@@ -69,6 +70,7 @@ private:
     std::map< uint8, uint8 >             m_KeyBoardBind;
     std::map< uint8, uint64 >            m_BlockingBinds;
     std::vector<eExtraInterface>         m_ExtraUI;
+    std::map<uint16, QuestionBox>        m_ListSimpleQuestion;
 
     MenuManager                          m_MenuManager;
     bool                                 m_IsLoading;

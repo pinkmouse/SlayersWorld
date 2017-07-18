@@ -78,6 +78,9 @@ void Creature::StopAttack()
 
 void Creature::UpdateOrientation(Orientation p_Orientation)
 {
+    if (p_Orientation == m_MovementHandler->GetOrientation())
+        return;
+
     m_MovementHandler->SetOrientation(p_Orientation);
     PacketUpdateOrientation l_Packet;
     l_Packet.BuildPacket((uint8)TypeUnit::CREATURE, GetID(), GetOrientation());

@@ -12,8 +12,8 @@ public:
 	~WorldSocket();
 
     void SendPlayerCreate(uint32, std::string, uint8, uint8, uint8, uint8, int16, uint16, const std::string &, const std::string &, const std::string &, uint32, uint32, uint8);
-    void SendUnitCreateToSet(uint8, uint32, std::string, uint8, uint8, uint8, uint8, uint8, uint16, uint32, uint32, uint8, bool, bool, bool, bool);
-    void SendUnitCreate(uint8, uint32, std::string, uint8, uint8, uint8, uint8, uint8, uint8, uint8, uint8, uint16, Position, uint8, bool, bool, bool, bool);
+    //void SendUnitCreate(uint8, uint32, std::string, uint8, uint8, uint8, uint8, uint8, uint8, uint8, uint8, uint16, Position, uint8, bool, bool, bool, bool);
+    void SendUnitCreate(Unit*, bool);
     void SendUnitGoDirectionToSet(uint8, uint16, const Position &, uint8);
     void SendUnitStopMovement(uint8, uint16, const Position &, uint8);
     void SendUnitStartAttack(uint8, uint16, const Position &, uint8);
@@ -28,11 +28,16 @@ public:
     void SendSwitchMap(uint16, const std::string &, const std::string &, const std::string &);
     void SendKeyBoardBind(eKeyBoardAction, uint8);
     void SendUnitIsInGroup(uint8, uint32, bool);
+    void SendUnitMount(const uint8 &, const uint32 &, const int16 &);
 
     Player* GetPlayer();
     void SetPlayer(Player*);
 
+    bool IsDisonnected() const;
+    void Kick();
+
 private:
     Player* m_Player;
+    bool m_Disconnected;
 };
 

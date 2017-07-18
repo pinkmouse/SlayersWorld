@@ -13,14 +13,14 @@ public:
     int16 GetVisualIDTarget() const;
     uint16 GetCastTime() const;
     uint32 GetCooldown() const;
-    uint32 GetDuration() const;
+    int32 GetDuration() const;
     std::vector<SpellEffect*>* GetListEffect();
     std::vector<ResourceNeed>* GetReousrcesNeed();
     void SetLevel(uint8);
     void SetVisualsID(int16, int16);
     void SetCooldown(uint32);
     void SetCastTime(uint16);
-    void SetDuration(uint32);
+    void SetDuration(int32);
     void SetSpeed(float);
     void AddSpellEffect(SpellEffect*);
     void AddResourceNeed(ResourceNeed);
@@ -32,7 +32,7 @@ private:
     int16 m_VisualIDTarget;
     uint32 m_Cooldown; ///< In Millisecond
     uint16 m_CastTime; ///< In Millisecond
-    uint32 m_Duration; ///< In Millisecond
+    int32 m_Duration; ///< In Millisecond
     float m_Speed;
     
     std::vector<SpellEffect*> m_ListEffect;

@@ -36,7 +36,7 @@ uint32 SpellTemplate::GetCooldown() const
     return m_Cooldown;
 }
 
-uint32 SpellTemplate::GetDuration() const
+int32 SpellTemplate::GetDuration() const
 {
     return m_Duration;
 }
@@ -72,7 +72,7 @@ void SpellTemplate::SetCooldown(uint32 p_Cooldown)
     m_Cooldown = p_Cooldown;
 }
 
-void SpellTemplate::SetDuration(uint32 p_Duration)
+void SpellTemplate::SetDuration(int32 p_Duration)
 {
     m_Duration = p_Duration;
 }

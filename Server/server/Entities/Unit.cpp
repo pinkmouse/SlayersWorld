@@ -211,7 +211,7 @@ void Unit::UpdateAura(sf::Time p_Diff)
     for (std::vector<Aura*>::iterator l_It = m_AuraList.begin(); l_It != m_AuraList.end();)
     {
         (*l_It)->Update(p_Diff);
-        if ((*l_It)->GetDuration() <= 0)
+        if ((*l_It)->GetDuration() == 0)
         {
             Aura* l_Aura = (*l_It);
             l_It = m_AuraList.erase(l_It);
@@ -921,7 +921,20 @@ void Unit::SetGossipList(std::vector<Gossip>* p_GossipList)
 
 void Unit::ActionFrom(Player* p_Player)
 {
+    if (IsPlayer())
+        return;
+
     GossipTo(p_Player);
+
+    Creature* l_Creature = ToCreature();
+    if (l_Creature == nullptr)
+        return;
+
+    if (IsInMovement())
+        l_Creature->StopMovement();
+    Orientation l_Oritantion = GetOrientationToPoint(p_Player->GetPosition());
+    l_Creature->UpdateOrientation(GetOrientationToPoint(p_Player->GetPosition()));
+    l_Creature->ResetRandMovementTime(false);
 }
 
 void Unit::GossipTo(Player* p_Player)
@@ -1006,6 +1019,20 @@ void Unit::GossipTo(Player* p_Player)
         return;
     }
 
+    /* SIMPLE QUESTION */
+    uint32 l_QuestionID = 0;
+    for (Gossip l_Gossip : m_ListGossip[eGossipType::SimpleQuestion]) ///< Only one Wisp can be done
+    {
+        if (l_Gossip.m_Required != nullptr && !l_Gossip.m_Required->IsValid(p_Player))
+            continue;
+        l_GossipMsg = l_Gossip.m_Msg;
+        l_QuestionID = l_Gossip.m_Data2;
+        if (l_Gossip.m_Required != nullptr && l_Gossip.m_Required->IsValid(p_Player)) ///< Priority for Wisp with Valid Required
+            break;
+    }
+    if (l_GossipMsg != "")
+        p_Player->SendSimpleQuestion(l_QuestionID, l_GossipMsg);
+
     /* SIMPLE WHISP */
     for (Gossip l_Gossip : m_ListGossip[eGossipType::Whisp]) ///< Only one Wisp can be done
     {
@@ -1018,8 +1045,8 @@ void Unit::GossipTo(Player* p_Player)
     if (l_GossipMsg != "")
         p_Player->SendMsg(GetName() + ": " + l_GossipMsg);
 
-    /* SIMPLE WHISP */
-    for (Gossip l_Gossip : m_ListGossip[eGossipType::Announce]) ///< Only one Wisp can be done
+    /* ANNOUNCE */
+    for (Gossip l_Gossip : m_ListGossip[eGossipType::Announce])
     {
         if (l_Gossip.m_Required != nullptr && !l_Gossip.m_Required->IsValid(p_Player))
             continue;

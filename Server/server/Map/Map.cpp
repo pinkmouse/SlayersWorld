@@ -237,7 +237,7 @@ void Map::UpdateForPlayersInNewSquare(Unit* p_Unit, bool p_UpdateAll)
             if (l_Session == nullptr)
                 continue;
 
-            l_Session->SendUnitCreate(p_Unit->GetType(), p_Unit->GetID(), p_Unit->GetName(), p_Unit->GetLevel(), p_Unit->GetResourceNb(eResourceType::Health), p_Unit->GetResourceNb(eResourceType::Mana), p_Unit->GetResourceNb(eResourceType::Alignment), p_Unit->GetSkinID(), p_Unit->GetSizeX(), p_Unit->GetSizeY(),  p_Unit->GetSpeedUint8(), p_Unit->GetMapID(), p_Unit->GetPosition(), p_Unit->GetOrientation(), p_Unit->IsInMovement(), p_Unit->GetMovementHandler()->IsInAttack(), p_Unit->IsBlocking(), p_Unit->IsInGroupWith(l_Player));
+            l_Session->SendUnitCreate(p_Unit, p_Unit->IsInGroupWith(l_Player));
         }
     }
 }

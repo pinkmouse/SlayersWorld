@@ -44,6 +44,9 @@ void PacketHandler::LoadPacketHandlerMap()
     m_PacketHandleMap[SMSG::S_LoadingPing] = &PacketHandler::HandleLoadingPing;
     m_PacketHandleMap[SMSG::S_ExtraInterface] = &PacketHandler::HandleExtraUI;
     m_PacketHandleMap[SMSG::S_UnitIsInGroup] = &PacketHandler::HandleUnitIsInGroup;
+    m_PacketHandleMap[SMSG::S_SrvPlayerQuestion] = &PacketHandler::HandleSrvPlayerQuestion;
+    m_PacketHandleMap[SMSG::S_UnitMount] = &PacketHandler::HandleMount;
+
 
 }
 
@@ -59,6 +62,27 @@ void PacketHandler::HandleExtraUI(WorldPacket &p_Packet)
         m_InterfaceManager->AddExtraInterface((eExtraInterface)l_ExtraUI);
     else
         m_InterfaceManager->RemoveExtraInterface((eExtraInterface)l_ExtraUI);
+}
+
+void PacketHandler::HandleMount(WorldPacket &p_Packet)
+{
+    uint8 l_TypeID;
+    uint16 l_ID;
+    int16 l_MountSkin;
+
+    p_Packet >> l_TypeID;
+    p_Packet >> l_ID;
+    p_Packet >> l_MountSkin;
+
+    if (Map* l_Map = m_MapManager->GetActualMap())
+    {
+        Unit* l_Unit = l_Map->GetUnit((TypeUnit)l_TypeID, l_ID);
+
+        if (l_Unit == nullptr)
+            return;
+
+        l_Unit->SetMount(l_MountSkin);
+    }
 }
 
 void PacketHandler::HandleRemoveUnit(WorldPacket &p_Packet)
@@ -526,6 +550,18 @@ void PacketHandler::HandleSrvPlayerMsg(WorldPacket &p_Packet)
     
     m_InterfaceManager->GetHistoryField()->OpenTemporary(5000);
     m_InterfaceManager->GetHistoryField()->AddHistoryLine(l_Msg);
+}
+
+void PacketHandler::HandleSrvPlayerQuestion(WorldPacket &p_Packet)
+{
+    uint16 l_QuestionID;
+    std::string l_Msg;
+
+    p_Packet >> l_QuestionID;
+    p_Packet >> l_Msg;
+
+    printf("I--> Question %d:%s\n", l_QuestionID, l_Msg.c_str());
+    m_InterfaceManager->AddSimpleQuestion(l_QuestionID, l_Msg);
 }
 
 void PacketHandler::HandleLogDamage(WorldPacket &p_Packet)

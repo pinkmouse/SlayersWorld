@@ -46,7 +46,8 @@ Menu::Menu() :
 Menu::Menu(const uint8 & p_Column, const uint8 & p_Row) :
     m_Column(p_Column),
     m_Row(p_Row),
-    m_Open(false)
+    m_Open(false),
+    m_Title("")
 {
     SetSelectedElement(0, 0);
 }
@@ -105,6 +106,16 @@ void Menu::GenericAction(const uint16 & p_MenuID)
 {
 }
 
+void Menu::SetTitle(const std::string & p_Title)
+{
+    m_Title = p_Title;
+}
+
+std::string Menu::GetTitle() const
+{
+    return m_Title;
+}
+
 std::map<uint8, std::map<uint8, MenuElement> >* Menu::GetElements()
 {
     return &m_Elements;
@@ -145,7 +156,6 @@ void Menu::ClearElements()
         l_It = m_Elements.erase(l_It);
     }
 }
-
 
 void Menu::SelectNextElementOn(Orientation p_Orientation)
 {

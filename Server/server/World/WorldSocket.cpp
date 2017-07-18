@@ -1,10 +1,12 @@
 #include "WorldSocket.hpp"
 #include "../Map/Map.hpp"
+#include "../System/Spell/AuraEffect.hpp"
 #include "PacketDefine.hpp"
 
 WorldSocket::WorldSocket()
 {
     m_Player = nullptr;
+    m_Disconnected = false;
 }
 
 
@@ -38,23 +40,7 @@ void WorldSocket::SendPlayerCreate(uint32 p_ID, std::string p_Name, uint8 p_Leve
     send(l_Packet);
     printf("Send create\n");
 }
-
-void WorldSocket::SendUnitCreateToSet(uint8 p_Type, uint32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_Health, uint8 p_Mana, uint8 p_Alignment, uint8 p_SkinID, uint16 p_MapID, uint32 p_PosX, uint32 p_PosY, uint8 p_Orientation, bool p_InMovement, bool p_IsAttacking, bool p_IsBlocking, bool p_IsInGroup)
-{
-    WorldPacket l_Packet;
-    uint8 l_ID = SMSG::S_UnitCreate;
-
-    if (p_Type < TypeUnit::AREATRIGGER)
-        l_Packet << l_ID << p_Type << p_ID << p_Name << p_Level << p_Health << p_Mana << p_Alignment << p_SkinID << p_MapID << p_PosX << p_PosY << p_Orientation << p_InMovement << p_IsAttacking;
-    else
-        l_Packet << l_ID << p_Type << p_ID << p_Name << p_SkinID << p_MapID << p_PosX << p_PosY << p_Orientation << p_InMovement << p_IsBlocking;
-
-    SendToSet(l_Packet, true);
-
-    if (p_IsInGroup)
-        SendUnitIsInGroup(p_Type, p_ID, true);
-}
-
+/*
 void WorldSocket::SendUnitCreate(uint8 p_Type, uint32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_Health,  uint8 p_Mana, uint8 p_Alignment, uint8 p_SkinID, uint8 p_SizeX, uint8 p_SizeY, uint8 p_Speed, uint16 p_MapID, Position p_Position, uint8 p_Orientation, bool p_InMovement, bool p_IsAttacking, bool p_IsBlocking, bool p_IsInGroup)
 {
      if (p_Type == TypeUnit::PLAYER && p_ID == GetPlayer()->GetID())
@@ -74,6 +60,47 @@ void WorldSocket::SendUnitCreate(uint8 p_Type, uint32 p_ID, std::string p_Name, 
 
     if (p_IsInGroup)
         SendUnitIsInGroup(p_Type, p_ID, true);
+}*/
+
+void WorldSocket::SendUnitCreate(Unit* p_Unit, bool p_IsInGroup)
+{
+    if (p_Unit->GetType() == TypeUnit::PLAYER && p_Unit->GetID() == GetPlayer()->GetID())
+        return;
+
+    if (p_Unit->GetSkinID() < 0)
+        return;
+
+    PacketUnitCreate l_Packet;
+
+    if (p_Unit->GetType() < TypeUnit::AREATRIGGER)
+        l_Packet.BuildPacket(p_Unit->GetType(), p_Unit->GetID(), p_Unit->GetName() , p_Unit->GetLevel(), p_Unit->GetResourceNb(eResourceType::Health), p_Unit->GetResourceNb(eResourceType::Mana), p_Unit->GetResourceNb(eResourceType::Alignment), p_Unit->GetSkinID(),
+            p_Unit->GetSizeX(), p_Unit->GetSizeY(), p_Unit->GetSpeedUint8(), p_Unit->GetMapID(), p_Unit->GetPosition(), p_Unit->GetOrientation(), p_Unit->IsInMovement(), p_Unit->GetMovementHandler()->IsInAttack());
+    else
+        l_Packet.BuildPacket(p_Unit->GetType(), p_Unit->GetID(), p_Unit->GetName(), p_Unit->GetSkinID(), p_Unit->GetSizeX(), p_Unit->GetSizeY(), p_Unit->GetSpeedUint8(), p_Unit->GetMapID(), p_Unit->GetPosition(), p_Unit->GetOrientation(), p_Unit->IsInMovement(), p_Unit->IsBlocking());
+
+    send(l_Packet.m_Packet);
+
+    if (p_IsInGroup)
+        SendUnitIsInGroup(p_Unit->GetType(), p_Unit->GetID(), true);
+
+
+    std::vector<AuraEffect*> l_ListMount = p_Unit->GetAuraEffectType(eTypeAuraEffect::MOUNT);
+    int16 l_Mount = -1;
+    if (!l_ListMount.empty())
+        l_Mount =l_ListMount[0]->GetAmount();
+    if (l_Mount >= 0)
+        SendUnitMount(p_Unit->GetType(), p_Unit->GetID(), l_Mount);
+}
+
+void WorldSocket::SendUnitMount(const uint8 & p_Type, const uint32 & p_ID, const int16 & p_Skin)
+{
+    if (p_Type == TypeUnit::PLAYER && p_ID == GetPlayer()->GetID())
+        return;
+
+    PacketUnitMount l_Packet;
+
+    l_Packet.BuildPacket(p_Type, p_ID, p_Skin);
+    send(l_Packet.m_Packet);
 }
 
 void WorldSocket::SendUnitIsInGroup(uint8 p_Type, uint32 p_ID, bool p_IsInGroup)
@@ -218,4 +245,15 @@ void WorldSocket::SendToSet(WorldPacket p_Packet, bool p_ExcludePlayer /*= false
             }
         }
     }
+}
+
+bool WorldSocket::IsDisonnected() const
+{
+    return m_Disconnected;
+}
+
+void WorldSocket::Kick()
+{
+    m_Disconnected = true;
+    disconnect();
 }

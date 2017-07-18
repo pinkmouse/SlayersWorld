@@ -33,6 +33,8 @@ Visual* VisualManager::GetVisual(eVisualType p_Type, int16 p_VisualID)
 bool VisualManager::LoadSkins()
 {
     sf::Texture *l_Texture = nullptr;
+
+    /// SKINS
     for (uint8 i = 0; i < MAX_SKIN_IMG; ++i)
     {
         l_Texture = new sf::Texture();
@@ -61,6 +63,37 @@ bool VisualManager::LoadSkins()
 
         m_VisualsMap[l_Skin.GetType()][i] = l_Skin;
     }
+
+    /// SKINS MOUNT
+    for (uint8 i = 0; i < MAX_SKIN_MOUNT_IMG; ++i)
+    {
+        l_Texture = new sf::Texture();
+        std::string l_FileName = std::to_string(i) + ".png";
+        if (!l_Texture->loadFromFile(SKINS_MOUNT_FOLDER + l_FileName))
+        {
+            printf("Load Skin %s Failed\n", l_FileName.c_str());
+            return false;
+        }
+        m_TextureSkinsMap[i] = l_Texture;
+
+        uint32 l_NbSkinX = l_Texture->getSize().x / SKIN_MOUNT_SIZE_X;
+        uint32 l_NbSkinY = l_Texture->getSize().y / SKIN_MOUNT_SIZE_Y;
+        Visual l_Skin(eVisualType::VisualSkinMount, l_NbSkinX, l_NbSkinY);
+
+        for (uint8 j = 0; j < l_NbSkinX / MAX_MOVEMENT_POSITION; ++j)
+        {
+            for (uint8 i = 0; i < MAX_MOVEMENT_POSITION * Orientation::MAX; ++i)
+            {
+                SkinSprite l_SkinSprite(l_NbSkinX, l_NbSkinY);
+                l_SkinSprite.setTexture(*l_Texture);
+                l_SkinSprite.setTextureRect(sf::IntRect((i % MAX_MOVEMENT_POSITION) * SKIN_MOUNT_SIZE_X + (j * MAX_MOVEMENT_POSITION * SKIN_MOUNT_SIZE_X), (i / MAX_MOVEMENT_POSITION) * SKIN_MOUNT_SIZE_Y, SKIN_MOUNT_SIZE_X, SKIN_MOUNT_SIZE_Y));
+                l_Skin.AddSprite(l_SkinSprite);
+            }
+        }
+
+        m_VisualsMap[l_Skin.GetType()][i] = l_Skin;
+    }
+
     return true;
 }
 

@@ -51,6 +51,7 @@ private:
     sf::Font            m_Font;
     sf::Texture         m_CastBarTexture;
     sf::Texture         m_LifeBarTexture;
+    sf::Texture         m_UiMiniTexture;
     sf::Thread          m_Thread;
 
 	MapManager*         m_MapManager;

@@ -157,3 +157,15 @@ void Socket::SendStatAction(eStats p_Stat, bool p_Add, uint8 p_Nb)
 
     send(packet);
 }
+
+void Socket::SendAnswerQuestion(const uint16 & p_QuestionID, const uint8 & p_Resp)
+{
+    WorldPacket packet;
+    uint8 l_ID = CMSG::C_UnitAnswerQuestion;
+
+    packet << l_ID;
+    packet << p_QuestionID;
+    packet << p_Resp;
+
+    send(packet);
+}

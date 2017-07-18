@@ -27,6 +27,7 @@ public:
     void HandleStartAttack(WorldPacket &, WorldSocket*);
     void HandleStopAttack(WorldPacket &, WorldSocket*);
     void HandleEventAction(WorldPacket &, WorldSocket*);
+    void HandleAnswerQuestion(WorldPacket &, WorldSocket*);
     void HandleDisconnected(WorldSocket*);
 
 private:
