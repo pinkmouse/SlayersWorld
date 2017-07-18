@@ -381,6 +381,8 @@ float Unit::GetPosXOffset()
 {
     float l_OffSetX = 0.0f;
 
+    if (GetMount() < 0)
+        return l_OffSetX;
     switch (GetOrientation())
     {
     case Orientation::Left:

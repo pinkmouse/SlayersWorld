@@ -35,7 +35,6 @@ void QuestionBox::GenericAction(const uint16 & p_MenuID)
     switch (p_MenuID)
     {
         case 0:
-            printf("Answer %d\n", m_QuestionID);
             g_Socket->SendAnswerQuestion(m_QuestionID, 0);
             Close();
             break;

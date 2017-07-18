@@ -932,7 +932,6 @@ void Unit::ActionFrom(Player* p_Player)
 
     if (IsInMovement())
         l_Creature->StopMovement();
-    Orientation l_Oritantion = GetOrientationToPoint(p_Player->GetPosition());
     l_Creature->UpdateOrientation(GetOrientationToPoint(p_Player->GetPosition()));
     l_Creature->ResetRandMovementTime(false);
 }
