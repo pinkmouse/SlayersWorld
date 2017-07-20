@@ -1116,8 +1116,8 @@ Unit* Unit::GetMaxThreatAttacker()
             l_Thread = (*l_It).second;
         }
     }
-    if (l_Attacker)
-        printf("------ GetMaxThread Attacker\n");
+   // if (l_Attacker)
+    //    printf("------ GetMaxThread Attacker\n");
     return l_Attacker;
 }
 

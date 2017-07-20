@@ -85,7 +85,6 @@ Position WorldObject::GetPositionAtDistance(const float & p_Dist, float p_Angle)
         l_Y = GetPosY() + l_Y;
         break;
     }
-    printf("---- [X-Y] %f  %f\n", l_X, l_Y);
     Position l_Position((uint32)l_X, (uint32)l_Y);
     return l_Position;
 }

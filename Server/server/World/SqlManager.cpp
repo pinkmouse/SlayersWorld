@@ -986,7 +986,7 @@ bool SqlManager::InitializeGameObject(DynamicObjectManager* p_DynamicObjectManag
         }
 
         l_PosX = (l_CaseNb % l_MapTemplate->GetSizeX() * TILE_SIZE) + TILE_SIZE / 2;
-        l_PosY = (l_CaseNb / l_MapTemplate->GetSizeX() * TILE_SIZE) + TILE_SIZE;
+        l_PosY = (l_CaseNb / l_MapTemplate->GetSizeX() * TILE_SIZE) + TILE_SIZE / 2;
 
 
         GameObjectTemplate* l_GobTemplate = p_DynamicObjectManager->GetGameObjectTemplate(l_GobID);

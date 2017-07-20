@@ -229,7 +229,10 @@ void Graphics::DrawWorldObjects(std::map<uint32, std::vector<WorldObject*> > *p_
 
             /// UNIT
             if (l_WorldObject->GetType() == TypeWorldObject::UNIT)
-                l_WorldObject->GetSprite()->setPosition(l_WorldObject->GetPosXAtIntant() - (l_WorldObject->GetSizeX() / 2) + l_OffsetX, l_WorldObject->GetPosYAtIntant() - l_WorldObject->GetSizeY() + l_OffsetY);
+            {
+                if (!l_WorldObject->ToUnit()->IsDynamicObject())
+                    l_WorldObject->GetSprite()->setPosition(l_WorldObject->GetPosXAtIntant() - (l_WorldObject->GetSizeX() / 2) + l_OffsetX, l_WorldObject->GetPosYAtIntant() - l_WorldObject->GetSizeY() + l_OffsetY);
+            }
             else
                 l_WorldObject->GetSprite()->setPosition(l_WorldObject->GetPosXAtIntant(), l_WorldObject->GetPosYAtIntant());
 
@@ -252,7 +255,9 @@ void Graphics::DrawWorldObjects(std::map<uint32, std::vector<WorldObject*> > *p_
                     if (l_SkinSprite)
                     {
                         l_SkinSprite->setScale(sf::Vector2f(l_Unit->GetSkinZoomFactor(), l_Unit->GetSkinZoomFactor()));
-                        Position l_Pos = GetCenterPositionOnUnit(l_Unit, l_SkinSprite);
+                        Position l_Pos = l_Unit->GetPosition();
+                        if (!l_Unit->IsDynamicObject())
+                        GetCenterPositionOnUnit(l_Unit, l_SkinSprite);
                         l_SkinSprite->setPosition(l_Pos.x - (l_Unit->GetSizeX() / 2) + l_OffsetX, l_Pos.y - l_Unit->GetSizeY() + l_OffsetY);
                         m_Window.draw(*l_SkinSprite);
                     }

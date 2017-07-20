@@ -189,7 +189,7 @@ void MovementHandler::Update(sf::Time p_Diff)
         }
         else
         {
-            printf("IsIncollision %d:%d\n", l_PosX, l_PosY);
+            //printf("IsIncollision %d:%d\n", l_PosX, l_PosY);
             StopMovement();
             m_InColision = true;
         }

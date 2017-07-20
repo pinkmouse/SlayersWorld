@@ -66,7 +66,7 @@ void Map::RemoveUnit(Unit* p_Unit)
 {
     m_ListUnitZone[p_Unit->GetType()].erase(p_Unit->GetID());
     if (p_Unit->IsDynamicObject())
-        GetCase(p_Unit->GetPosX(), p_Unit->GetPosY() - TILE_SIZE)->RemoveDynamicOject(p_Unit->ToDynamicObject());
+        GetCase(p_Unit->GetPosX(), p_Unit->GetPosY())->RemoveDynamicOject(p_Unit->ToDynamicObject());
 }
 
 Unit* Map::GetUnit(TypeUnit p_TypeID, uint16 p_UnitID)

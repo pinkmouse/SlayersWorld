@@ -462,14 +462,14 @@ void PacketHandler::HandleCreateUnit(WorldPacket &p_Packet)
             l_VisualEffect.StartAnim();
             l_NewUnit->AddVisualEffect(l_VisualEffect);
 
-            l_ActualMap->GetCase(l_Pos.x, l_Pos.y - TILE_SIZE)->AddDynamicOject(l_NewUnit->ToDynamicObject());
+            l_ActualMap->GetCase(l_Pos.x, l_Pos.y)->AddDynamicOject(l_NewUnit->ToDynamicObject());
         }
 
         float l_SpeedFloat = (float)l_Speed / 10.0f;
         l_NewUnit->SetSpeed(l_SpeedFloat);
         l_NewUnit->SetMap(l_ActualMap);
         l_ActualMap->AddUnit(l_NewUnit);
-        //printf("Create new Unit DONE: %d %s %d %d %d %d\n", l_ID, l_Name.c_str(), l_SkinID, l_MapID, l_Pos.x, l_Pos.y);
+        printf("Create new Unit DONE: %d %s %d %d %d %d\n", l_ID, l_Name.c_str(), l_SkinID, l_MapID, l_Pos.x, l_Pos.y);
         if (l_IsInMovement)
             l_NewUnit->GetMovementHandler()->AddMovementToStack(eActionType::Go, l_Pos, (Orientation)l_NewUnit->GetOrientation());
         if (l_IsInAttack)

@@ -265,6 +265,28 @@ std::vector<Unit*> Map::GetUnitsInCase(uint32 p_PosX, uint32 p_PosY)
     return l_List;
 }
 
+bool Map::UnitIsInVisu(Unit* p_Unit, Unit* p_Target)
+{
+    if (p_Unit == nullptr || p_Target == nullptr)
+        return false;
+
+    float l_DistMax = p_Unit->GetDistance(p_Target);
+    float l_Angle = p_Unit->GetAngle(p_Target->GetPosition());
+    for (float l_Dist = 4.0f; l_Dist < l_DistMax; l_Dist += 4)
+    {
+        Position p_Pos = p_Unit->GetPositionAtDistance(l_Dist, l_Angle);
+        Case* l_Case = GetCase(p_Pos.m_X, p_Pos.m_Y);
+        Case* l_CaseTarget = GetCase(p_Target->GetPosition().m_X, p_Target->GetPosition().m_Y);
+        if (l_Case == nullptr || l_CaseTarget == nullptr)
+            return false;
+
+        printf("[%d] %d\n", l_Case->GetID(), l_CaseTarget->GetID());
+        if (l_Case->IsBlocking() && l_Case->GetID() != l_CaseTarget->GetID())
+            return false;
+    }
+    return true;
+}
+
 Unit* Map::GetCloserUnit(Unit* p_Unit, float p_Range /*= 2.0f*/, bool p_OnlyInLife /*= flase*/, bool p_InFront /*= true*/, bool p_Attackable /*= false*/)
 {
     /// TODO : QuadTree
@@ -301,6 +323,9 @@ Unit* Map::GetCloserUnit(Unit* p_Unit, float p_Range /*= 2.0f*/, bool p_OnlyInLi
                     continue;
 
                 if (p_InFront && !p_Unit->IsInFront(l_Unit))
+                    continue;
+
+                if (p_Unit->GetMap() == nullptr || !p_Unit->GetMap()->UnitIsInVisu(p_Unit, l_Unit))
                     continue;
 
                 if (l_CloserUnit == nullptr)
@@ -386,6 +411,9 @@ std::vector<Unit*> Map::GetUnitsInRadius(Unit* p_Unit, float p_RangeMin, float p
                 float l_Dist = InYard(p_Unit->GetDistance(l_Unit));
 
                 if (l_Dist > p_RangeMax || l_Dist < p_RangeMin)
+                    continue;
+
+                if (p_Unit->GetMap() == nullptr || !p_Unit->GetMap()->UnitIsInVisu(p_Unit, l_Unit))
                     continue;
 
                 /// TODO : cheack angle

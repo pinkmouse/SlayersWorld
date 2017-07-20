@@ -51,6 +51,7 @@ public:
     void SetListCase(std::vector<Case*>);
     void AddCase(Case*);
     GroupManager* GetGroupManager();
+    bool UnitIsInVisu(Unit*, Unit*);
 
     /// Enable Zone
     void AddZone(Zone*);
