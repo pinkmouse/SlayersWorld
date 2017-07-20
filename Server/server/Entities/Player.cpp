@@ -11,7 +11,7 @@ Player::Player(uint32 p_AccountID, int32 p_ID, std::string p_Name, uint8 p_Level
     m_AccountID(p_AccountID)
 {
     InitializeCommands();
-
+    m_Mod = ePlayerMod::NONEMOD;
     m_Name = p_Name;
     m_Level = p_Level;
     m_Class = p_Class;
@@ -257,7 +257,7 @@ void Player::EventAction(eKeyBoardAction p_PlayerAction)
     {
         case eKeyBoardAction::KeyBoardAction: /// GOSSIP
         {
-            Unit* l_Unit = m_Map->GetCloserUnit(this, MELEE_RANGE, true, false);
+            Unit* l_Unit = m_Map->GetCloserUnit(this, MELEE_RANGE + 4, true, false);
             if (l_Unit == nullptr)
                 return;
 
@@ -274,6 +274,16 @@ void Player::EventAction(eKeyBoardAction p_PlayerAction)
         default:
             break;
     }
+}
+
+void Player::SetPlayerMod(const ePlayerMod & p_PlayerMod)
+{
+    m_Mod = p_PlayerMod;
+}
+
+ePlayerMod Player::GetPlayerMod() const
+{
+    return m_Mod;
 }
 
 void Player::Save()

@@ -57,6 +57,8 @@ void Player::InitializeCommands()
     m_CmdHandleMap["banIP"].second = &Player::HandleBanIP;
     m_CmdHandleMap["banAccount"].first = eAccessType::Moderator;
     m_CmdHandleMap["banAccount"].second = &Player::HandleBanAccount;
+    m_CmdHandleMap["godmod"].first = eAccessType::Moderator;
+    m_CmdHandleMap["godmod"].second = &Player::handleGodMod;
     m_CmdHandleMap["bg"].first = eAccessType::Moderator;
     m_CmdHandleMap["bg"].second = &Player::HandleCommandBG;
 }
@@ -69,6 +71,19 @@ bool Player::HandleTest(std::vector<std::string> p_ListCmd)
     AddQuest(new Quest(g_QuestManager->GetQuestTemplate(1)));
     return true;
 }
+
+bool Player::handleGodMod(std::vector<std::string> p_ListCmd)
+{
+    if (!p_ListCmd.empty())
+    return true;
+
+    if (GetPlayerMod() == ePlayerMod::GODMOD)
+        SetPlayerMod(ePlayerMod::NONEMOD);
+    else
+        SetPlayerMod(ePlayerMod::GODMOD);
+return true;
+}
+
 
 bool Player::HandleCommandQuests(std::vector<std::string> p_ListCmd)
 {

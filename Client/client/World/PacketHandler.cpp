@@ -157,7 +157,8 @@ void PacketHandler::HandleTalk(WorldPacket &p_Packet)
             return;
 
         l_Unit->SetTalk(l_String);
-        m_InterfaceManager->GetHistoryField()->AddHistoryLine(l_Unit->GetName() + ": " + l_String);
+        if ((TypeUnit)l_TypeID == TypeUnit::PLAYER)
+            m_InterfaceManager->GetHistoryField()->AddHistoryLine(l_Unit->GetName() + ": " + l_String);
     }
 }
 

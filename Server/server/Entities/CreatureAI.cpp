@@ -17,7 +17,10 @@ void Creature::UpdateAI(sf::Time p_Diff)
     {
         Orientation l_Orientation = GetOrientationByPath(m_PathToTargetPosition);
         if (IsFollowingPath() && (GetOrientation() != l_Orientation || !IsInMovement()))
+        {
+            printf("Change Orientation [%d] to %d\n", GetOrientation(), l_Orientation);
             StartMovement(l_Orientation);
+        }
     }
     switch (m_CreatureTemplate->m_AiType)
     {
@@ -101,7 +104,7 @@ void Creature::UpdateDefensive(sf::Time p_Diff)
             return;
         }
 
-        SetVictim(GetMaxThreatAttacker());
+        EnterInCombat(GetMaxThreatAttacker());
 
         if (GetVictim() == nullptr || !GetVictim()->IsInWorld())
         {
@@ -174,7 +177,9 @@ void Creature::UpdateAgresive(sf::Time p_Diff)
             }
             if (Unit* l_Victim = m_Map->GetCloserUnit(this, (float)CaseToPixel(m_CreatureTemplate->m_MaxVision), true, false, true))
             {
-                SetVictim(l_Victim);
+                EnterInCombat(l_Victim);
+                Position p_Pos = l_Victim->GetPositionAtDistance(l_Victim->GetDistance(this), l_Victim->GetAngle(GetPosition()));
+                printf("POSITION = %d-%d   MINE %d-%d  IS %d-%d\n", p_Pos.m_X, p_Pos.m_Y, l_Victim->GetPosition().m_X, l_Victim->GetPosition().m_Y, GetPosX(), GetPosY());
                 return;
             }
         }
@@ -200,7 +205,7 @@ void Creature::UpdateAgresive(sf::Time p_Diff)
         }
 
         if (GetVictim() == nullptr || !CanAttack(GetVictim()))
-            SetVictim(GetMaxThreatAttacker());
+            EnterInCombat(GetMaxThreatAttacker());
         if (GetVictim() == nullptr /*|| !GetVictim()->IsInWorld()*/)
         {
             EnterInEvade();

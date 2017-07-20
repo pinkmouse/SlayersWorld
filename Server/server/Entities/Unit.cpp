@@ -336,7 +336,8 @@ void Unit::DealDamage(Unit* p_Victim, DamageInfo p_DamageInfo)
     if (IsPlayer())
         ToPlayer()->GetSession()->SendLogDamage(p_Victim->GetType(), p_Victim->GetID(), p_DamageInfo);
 
-    p_Victim->SetResourceNb(eResourceType::Health, (uint8)l_NewHealth);
+    if (!(p_Victim->IsPlayer() && p_Victim->ToPlayer()->GetPlayerMod() == ePlayerMod::GODMOD))
+        p_Victim->SetResourceNb(eResourceType::Health, (uint8)l_NewHealth);
     switch (p_Victim->GetType())
     {
     case TypeUnit::PLAYER:
@@ -693,8 +694,8 @@ Position Unit::GetPositionCentered()
 {
     Position l_PosCentered;
 
-    l_PosCentered.m_X = GetPosition().m_X + ((GetSizeX() - SKIN_OFFSET_SIZE_X) / 2);
-    l_PosCentered.m_Y = GetPosition().m_Y - 4;
+    l_PosCentered.m_X = GetPosition().m_X;// GetPosition().m_X + ((GetSizeX() - SKIN_OFFSET_SIZE_X) / 2);
+    l_PosCentered.m_Y = GetPosition().m_Y;
 
     return l_PosCentered;
 }
@@ -872,7 +873,7 @@ bool Unit::CanAttack(Unit* p_Unit)
 {
     /// Check if target is a valid attack target
 
-    if (!p_Unit->IsInWorld() || p_Unit->IsDeath() || !p_Unit->IsInWorld())
+    if (p_Unit == nullptr || !p_Unit->IsInWorld() || p_Unit->IsDeath())
         return false;
 
     return IsHostileTo(p_Unit);
@@ -1070,6 +1071,7 @@ void Unit::AddAttacker(Unit* p_Attacker)
 
 void Unit::AddVictim(Unit* p_Victim)
 {
+    printf("Add Victim [%s] %d\n", p_Victim->GetName().c_str(), m_Victims.size());
     if (m_Victims.find(p_Victim) == m_Victims.end())
         m_Victims[p_Victim] = 0;
 }
@@ -1114,6 +1116,8 @@ Unit* Unit::GetMaxThreatAttacker()
             l_Thread = (*l_It).second;
         }
     }
+    if (l_Attacker)
+        printf("------ GetMaxThread Attacker\n");
     return l_Attacker;
 }
 
@@ -1127,13 +1131,13 @@ void Unit::UpdateVictims()
     for (std::map<Unit*, uint16>::iterator l_It = m_Attackers.begin(); l_It != m_Attackers.end(); ++l_It)
     {
         Unit* l_Attacker = (*l_It).first;
-        if (l_Attacker->GetDistance(this) > CaseToPixel(30))
+        if (l_Attacker == nullptr || l_Attacker->GetDistance(this) > CaseToPixel(30))
             l_Attacker->RemoveVictim(this);
     }
     for (std::map<Unit*, uint16>::iterator l_It = m_Victims.begin(); l_It != m_Victims.end(); ++l_It)
     {
         Unit* l_Victim = (*l_It).first;
-        if (l_Victim->GetDistance(this) > CaseToPixel(30))
+        if (l_Victim == nullptr || l_Victim->GetDistance(this) > CaseToPixel(30))
             l_Victim->RemoveAttacker(this);
     }
 }
@@ -1510,4 +1514,24 @@ bool Unit::IsInSetWith(Unit* p_Unit)
         }
     }
     return false;
+}
+
+bool Unit::IsCenteredInCase()
+{
+    uint8 l_SizeXWithOffset = GetSizeX() - SKIN_OFFSET_SIZE_X;
+
+    if ((GetPositionCentered().m_X - (l_SizeXWithOffset / 2)) / TILE_SIZE == (GetPositionCentered().m_X + (l_SizeXWithOffset / 2)) / TILE_SIZE)
+        return true;
+    return false;
+}
+
+Orientation Unit::OrientationToBeCenteredInCase(const Position & p_Position)
+{
+    uint8 l_SizeXWithOffset = GetSizeX() - SKIN_OFFSET_SIZE_X;
+
+    if ((GetPositionCentered().m_X - ((l_SizeXWithOffset / 2))) / TILE_SIZE < p_Position.m_X)
+        return Orientation::Right;
+    
+    //if (GetPositionCentered().m_X + (l_SizeXWithOffset / 2) > p_Position.m_X)
+        return Orientation::Left;
 }

@@ -121,6 +121,7 @@ void Creature::ReturnToRespawnPoint()
     {
         m_MovementHandler->SetStopPoint(true, m_RespawnPosition.GetPosition());
         Orientation l_Orientation = GetOrientationToPoint(m_RespawnPosition.GetPosition());
+        printf("Return to respawn [%d]\n", l_Orientation);
         if (GetOrientation() != l_Orientation || !IsInMovement())
             StartMovement(l_Orientation);
     }
@@ -128,7 +129,7 @@ void Creature::ReturnToRespawnPoint()
 
 void Creature::ReturnInRay()
 {
-    if (GetMapID() == m_RespawnPosition.GetMapID())
+    if (GetMapID() != m_RespawnPosition.GetMapID())
         return;
 
     if (IsFollowingPath() && GetDistance(m_RespawnPosition.GetPosition()) <= CaseToPixel(m_CreatureTemplate->m_MaxRay))
@@ -153,7 +154,9 @@ void Creature::ReturnInRay()
 void Creature::GoToCase(const Position & p_Position)
 {
     if (m_PathToTargetPosition.empty() || m_PathToTargetPosition[0] != PositionToCasePosition(p_Position))
+    {
         m_PathToTargetPosition = m_Map->LaunchPathFinding(PositionToCasePosition(GetPositionCentered()), PositionToCasePosition(p_Position));
+    }
 }
 
 void Creature::ResetRandMovementTime(bool ForMoving)
@@ -209,8 +212,26 @@ Orientation Creature::GetOrientationByPath(Path & p_Path)
         return m_MovementHandler->GetOrientation();
     }
     Position p_NextPos = p_Path[p_Path.size() - 1];
-    while (GetPositionCentered().m_X / TILE_SIZE == p_NextPos.m_X && GetPositionCentered().m_Y / TILE_SIZE == p_NextPos.m_Y)
+
+    uint8 m_Offset = 0;
+    switch (GetOrientation())
     {
+        case Orientation::Left :
+            m_Offset = -10;
+            break;
+        case Orientation::Right:
+            m_Offset = 10;
+            break;
+        default:
+            break;
+    }
+
+    if (GetPositionCentered().m_X / TILE_SIZE == p_NextPos.m_X &&
+        GetPositionCentered().m_Y / TILE_SIZE == p_NextPos.m_Y)
+    {
+        if (!IsCenteredInCase())
+            return OrientationToBeCenteredInCase(p_NextPos);
+
         p_Path.pop_back();
 
         if (p_Path.empty())
@@ -219,6 +240,10 @@ Orientation Creature::GetOrientationByPath(Path & p_Path)
             return m_MovementHandler->GetOrientation();
         }
         p_NextPos = p_Path[p_Path.size() - 1];
+        printf("#### Go TO : [%d-%d]\n", p_NextPos.m_X, p_NextPos.m_Y);
     }
-    return GetOrientationToCase(GetPositionCentered(), p_NextPos);
+    //printf("#### [%d-%d]\n", p_NextPos.m_X, p_NextPos.m_Y);
+    Orientation l_Orien = GetOrientationToCase(GetPositionCentered(), p_NextPos);
+
+    return l_Orien;
 }

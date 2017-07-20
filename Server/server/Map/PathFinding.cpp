@@ -32,7 +32,9 @@ void Map::AddAdjacentCases(const Position & p_Pos)
             /******************/
 
             Position l_Pos((uint32)i, (uint32)j);
+
             Case* l_Case = GetCase(l_Pos.m_X * TILE_SIZE, l_Pos.m_Y * TILE_SIZE);
+
             if (l_Case == nullptr || l_Case->IsBlocking() || !l_Case->CanBeWalk())
                 continue;
 
@@ -99,6 +101,7 @@ Path Map::GetPath()
             return l_Path;
         }
     }
+    l_Path.push_back(l_Before);
     return l_Path;
 }
 
@@ -121,7 +124,7 @@ Path Map::LaunchPathFinding(const Position & p_PosStart, const Position & p_PosE
     AddToCloseList(l_Current);
     AddAdjacentCases(l_Current);
 
-    //printf("######### [%d-%d] to [%d-%d] \n", p_PosStart.m_X, p_PosStart.m_Y, p_PosEnd.m_X, p_PosEnd.m_Y);
+    printf("######### [%d-%d] to [%d-%d] \n", p_PosStart.m_X, p_PosStart.m_Y, p_PosEnd.m_X, p_PosEnd.m_Y);
 
     while ((l_Current != m_EndPosition) && (!m_OpenList.empty()))
     {

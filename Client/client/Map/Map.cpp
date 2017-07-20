@@ -235,7 +235,7 @@ bool Map::InitializeMap(const std::string & p_FileName, const std::string & p_Ch
     t_Case *Buffer = (t_Case*)malloc(sizeof(t_Case) * l_NbCase);
     fread(Buffer, sizeof(*Buffer), l_NbCase, l_File);
 
-    for (uint32 i = 0; i < (m_SizeX * m_SizeY); ++i)
+    for (uint32 i = 0; i < ((uint32)m_SizeX * (uint32)m_SizeY); ++i)
     {
         Case* l_Case = new Case(i, i % m_SizeX, i / m_SizeX);
         l_Case->SetMapID(m_ID);
@@ -271,6 +271,7 @@ bool Map::InitializeMap(const std::string & p_FileName, const std::string & p_Ch
 		m_ListCase.push_back(l_Case);
 		m_MapListCase[l_DrawingSquareID].push_back(l_Case);
 	}*/
+    free(Buffer);
 	fclose(l_File);
     m_ChipsetName = p_ChipsetFileName;
 	return true;

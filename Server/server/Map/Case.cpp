@@ -15,6 +15,9 @@ Case::Case(const Case & p_Case)
     SetPosX(p_Case.GetPosX());
     SetPosY(p_Case.GetPosY());
     SetBlock(p_Case.IsBlocking());
+    if (m_Block)
+        ;//printf("AddCase = %d Blocking\n", m_ID);
+
 }
 
 Case::~Case()

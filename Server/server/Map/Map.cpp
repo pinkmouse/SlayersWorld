@@ -12,6 +12,7 @@ Map::Map(uint16 p_InstanceID,  MapTemplate* p_Template)
 
     std::vector<Case> l_ListCase = (*p_Template->GetListCase());
     uint32 i;
+    printf("SizeCase = %d\n", l_ListCase.size());
     for (i = 0; i < l_ListCase.size(); i++)
         AddCase(new Case(l_ListCase[i]));
 

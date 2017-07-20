@@ -142,6 +142,12 @@ enum eGossipType
     SimpleQuestion = 5
 };
 
+enum ePlayerMod
+{
+    NONEMOD = 0,
+    GODMOD = 1
+};
+
 enum eDynamicObjectType
 {
     AreaTriggerType = 0,

@@ -140,21 +140,27 @@ bool MapTemplate::InitializeMap()
     m_SizeX = l_Param.l_Size[0];
     m_SizeY = l_Param.l_Size[1];
 
+    int l_NbCase = (uint32)m_SizeX * (uint32)m_SizeY;
+    t_Case *Buffer = (t_Case*)malloc(sizeof(t_Case) * l_NbCase);
+    fread(Buffer, sizeof(*Buffer), l_NbCase, l_File);
     /// Read Map
-    for (uint32 i = 0; i < (m_SizeX * m_SizeY); ++i)
+    for (uint32 i = 0; i < (uint32)((uint32)m_SizeX * (uint32)m_SizeY); ++i)
     {
-        t_Case l_FluxCase;
-        fread(&l_FluxCase, sizeof(l_FluxCase), 1, l_File);
+       // t_Case l_FluxCase;
+        //fread(&l_FluxCase, sizeof(l_FluxCase), 1, l_File);
         Case l_Case = Case(i, i % m_SizeX, i / m_SizeX);
 
         l_Case.SetMapID(m_ID);
 
-        bool l_Block = l_FluxCase.l_Block;
+        /*bool l_Block = l_FluxCase.l_Block;*/
+        bool l_Block = Buffer[i].l_Block;
         if (l_Block)
             l_Case.SetBlock(true);
+
         m_ListCase.push_back(l_Case);
     }
-
+    free(Buffer);
+    fclose(l_File);
     return true;
 }
 

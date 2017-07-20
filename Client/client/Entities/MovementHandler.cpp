@@ -40,8 +40,8 @@ bool MovementHandler::IsInColision(int64 p_PosX, int64 p_PosY) const
 
     std::vector<Case*> l_CaseList;
     for (uint8 i = 0; i <= l_SizeXWithOffset; i += TILE_SIZE)
-        l_CaseList.push_back(m_Map->GetCase((uint32)p_PosX + i - (l_SizeXWithOffset / 2), (uint32)p_PosY - 4));
-    l_CaseList.push_back(m_Map->GetCase((uint32)p_PosX + (l_SizeXWithOffset / 2), (uint32)p_PosY - 4));
+        l_CaseList.push_back(m_Map->GetCase((uint32)p_PosX + i - (l_SizeXWithOffset / 2), (uint32)p_PosY));
+    l_CaseList.push_back(m_Map->GetCase((uint32)p_PosX + (l_SizeXWithOffset / 2), (uint32)p_PosY));
 
     for (Case* l_Case : l_CaseList)
     {
@@ -189,6 +189,7 @@ void MovementHandler::Update(sf::Time p_Diff)
         }
         else
         {
+            printf("IsIncollision %d:%d\n", l_PosX, l_PosY);
             StopMovement();
             m_InColision = true;
         }

@@ -55,6 +55,8 @@ public:
     virtual void Respawn();
     virtual void Unspawn();
     virtual bool IsBlocking() const;
+    bool IsCenteredInCase();
+    Orientation OrientationToBeCenteredInCase(const Position &);
     Position GetPositionCentered();
 
     /* RESOURCE */

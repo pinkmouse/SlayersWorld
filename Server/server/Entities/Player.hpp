@@ -33,6 +33,9 @@ public:
     void SetClass(eClass);
     eClass GetClass() const;
 
+    void SetPlayerMod(const ePlayerMod &);
+    ePlayerMod GetPlayerMod() const;
+
     /* RESOURCES */
     uint32 GetXp() const;
     void SetXp(uint32);
@@ -104,11 +107,13 @@ public:
     bool HandleBanIP(std::vector<std::string>);
     bool HandleBanAccount(std::vector<std::string>);
     bool HandleBind(std::vector<std::string>);
+    bool handleGodMod(std::vector<std::string>);
     bool HandleTest(std::vector<std::string>);
 
 private:
     uint16 m_AccountID;
     WorldSocket* m_Session;
+    ePlayerMod m_Mod;
 
     uint8 m_Alignment;
     uint32 m_Xp;
