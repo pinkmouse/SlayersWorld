@@ -14,7 +14,7 @@ DynamicObject::DynamicObject(uint16 p_ID, uint16 p_Entry, TypeUnit p_Type, Map* 
     SetOrientation(Orientation::Up);
     m_SizeX = 16;
     m_SizeY = 16;
-
+    m_Entry = p_Entry;
     m_RespawnPosition.SetMapID(p_Map->GetID());
     m_RespawnPosition.SetPosX(p_PosX);
     m_RespawnPosition.SetPosY(p_PosY);
@@ -28,6 +28,11 @@ DynamicObject::~DynamicObject()
 void DynamicObject::ActionFrom(Player* p_Player)
 {
     ;
+}
+
+uint16 DynamicObject::GetEntry() const
+{
+    return m_Entry;
 }
 
 void DynamicObject::Respawn()

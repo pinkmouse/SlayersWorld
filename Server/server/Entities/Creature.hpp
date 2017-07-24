@@ -32,13 +32,16 @@ public:
     void UpdatePassive(sf::Time);
     void UpdateDefensive(sf::Time);
     void UpdateAgresive(sf::Time);
+    void UpdatePassiveAttackEffect(sf::Time);
 
 private:
     uint16 m_Entry;
     uint64 m_DiffMovementTime;
+    uint64 m_DiffAttackEffect;
     CreatureTemplate* m_CreatureTemplate;
     float m_RandMovementTime;
     bool m_Evade;
+    bool m_Static;
 
     Path m_PathToTargetPosition;
 };

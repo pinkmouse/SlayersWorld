@@ -36,3 +36,36 @@ public:
 private:
     uint16 m_AccessLevel;
 };
+
+class SubRequiredClass : public SubRequired
+{
+public:
+    SubRequiredClass(uint8);
+    ~SubRequiredClass();
+    bool IsValid(const Player*) const;
+
+private:
+    uint8 m_Class;
+};
+
+class SubRequiredHasSpell : public SubRequired
+{
+public:
+    SubRequiredHasSpell(uint16);
+    ~SubRequiredHasSpell();
+    bool IsValid(const Player*) const;
+
+private:
+    uint16 m_Spell;
+};
+
+class SubRequiredHasNotSpell : public SubRequired
+{
+public:
+    SubRequiredHasNotSpell(uint16);
+    ~SubRequiredHasNotSpell();
+    bool IsValid(const Player*) const;
+
+private:
+    uint16 m_Spell;
+};

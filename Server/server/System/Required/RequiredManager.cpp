@@ -40,6 +40,15 @@ void RequiredManager::AddSubRequiered(uint16 p_RequierdID, eRequiredType p_Type,
     case AccessLevel:
         m_RequiredList[p_RequierdID].AddSubRequired(new SubRequiredAccessLevel((uint16)p_Data0, (uint16)p_Data1));
         break;
+    case ClassNeed:
+        m_RequiredList[p_RequierdID].AddSubRequired(new SubRequiredClass((uint8)p_Data0));
+        break;
+    case HasSpell:
+        m_RequiredList[p_RequierdID].AddSubRequired(new SubRequiredHasSpell((uint16)p_Data0));
+        break;
+    case HasNotSpell:
+        m_RequiredList[p_RequierdID].AddSubRequired(new SubRequiredHasNotSpell((uint16)p_Data0));
+        break;
     default:
         break;
     }

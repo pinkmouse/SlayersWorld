@@ -13,11 +13,12 @@ Creature::Creature(uint16 p_ID, CreatureTemplate* p_CreatureTemplate, uint16 p_M
     m_Level = p_CreatureTemplate->m_Level;
     m_Name = p_CreatureTemplate->m_Name;
     m_CreatureTemplate = p_CreatureTemplate;
+    m_Static = false;
 
     m_RespawnPosition.SetMapID(p_MapID);
     m_RespawnPosition.SetPosX(p_PosX);
     m_RespawnPosition.SetPosY(p_PosY);
-    m_MovementHandler->SetSpeed(0.5f);
+    m_MovementHandler->SetSpeed((float)p_CreatureTemplate->m_Speed / 10.0f);
     ResetRandMovementTime(false);
 
     PointsSet l_PointsSet;
@@ -26,6 +27,9 @@ Creature::Creature(uint16 p_ID, CreatureTemplate* p_CreatureTemplate, uint16 p_M
     l_PointsSet.SetStat(eStats::Dexterity, m_CreatureTemplate->m_Dexterity);
 	SetPointsSet(l_PointsSet);
     m_RespawnTime = m_CreatureTemplate->m_RespawnTime * IN_MILLISECOND;
+    m_DiffAttackEffect = 0;
+    if (p_CreatureTemplate->m_MovingTimeMin == -1)
+        m_Static = true;
 }
 
 Creature::~Creature()
@@ -39,6 +43,9 @@ uint16 Creature::GetEntry() const
 
 void Creature::RandMoving()
 {
+    if (m_Static)
+        return;
+
     ResetRandMovementTime(true);
 
     if (m_RandMovementTime <= 0)
@@ -176,6 +183,8 @@ void Creature::ResetRandMovementTime(bool ForMoving)
         else
             m_RandMovementTime = m_CreatureTemplate->m_StopTimeMin + ((float)(rand() % (uint16)((float)(m_CreatureTemplate->m_StopTimeMax - m_CreatureTemplate->m_StopTimeMin) * 100.0f)) / 100.0f);
     }
+    if (m_RandMovementTime < 0)
+        m_RandMovementTime = 0;
 }
 
 void Creature::Unspawn()
@@ -188,6 +197,7 @@ void Creature::Respawn()
 {
     Unit::Respawn();
     m_DiffMovementTime = 0;
+    m_DiffAttackEffect = 0;
     SetInWorld(true);
 
     SetResourceNb(eResourceType::Health, MAX_HEALTH);

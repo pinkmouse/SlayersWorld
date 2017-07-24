@@ -67,3 +67,8 @@ void Case::RemoveDynamicOject(DynamicObject* p_DynamicObject)
         m_DynamicObjectList.erase(l_It);
     }
 }
+
+uint32 Case::GetID() const
+{
+    return m_ID;
+}

@@ -197,11 +197,17 @@ void MovementHandler::Update(sf::Time p_Diff)
         }
         m_DiffTime -= (uint64)((UPDATE_TIME_MOVEMENT / (STEP_SIZE * m_Speed)) * 1000);
 
-        if (!IsInColision(l_PosX, l_PosY) && !(m_StopPoint.m_Active && m_StopPoint.m_Position == m_Pos))
+        bool l_Collision = IsInColision(l_PosX, l_PosY);
+        if (!l_Collision && !(m_StopPoint.m_Active && m_StopPoint.m_Position == m_Pos))
         {
             m_Pos.m_X = (uint32)l_PosX;
             m_Pos.m_Y = (uint32)l_PosY;
         }
+        /*else if (l_Collision && m_Map->GetCaseNb((int64)m_Pos.m_X, (int64)m_Pos.m_Y) == m_Map->GetCaseNb(l_PosX, l_PosY) && m_Map->GetCaseNb(l_PosX, l_PosY) >= 0)
+        {
+            m_Pos.m_X = (uint32)l_PosX;
+            m_Pos.m_Y = (uint32)l_PosY;
+        }*/
         else
         {
             StopMovement();

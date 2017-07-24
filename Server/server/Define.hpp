@@ -91,7 +91,8 @@ enum eAiType
 {
     PASSIVE = 0,
     DEFENSIVE = 1,
-    AGRESIVE = 2
+    AGRESIVE = 2,
+    PASSIVE_ATTACK_EFFECT = 3
 };
 
 enum eActionType
@@ -139,7 +140,9 @@ enum eGossipType
     LaunchQuest = 2,
     ValidQuest = 3,
     Announce = 4,
-    SimpleQuestion = 5
+    SimpleQuestion = 5,
+    LaunchBG = 6,
+    GossipLaunchSpell = 7
 };
 
 enum ePlayerMod
@@ -178,7 +181,10 @@ enum eRequiredType
     LevelMax = 3,
     QuestAllObjectiveDone = 4,
     QuestInProgress = 5,
-    AccessLevel = 6
+    AccessLevel = 6,
+    ClassNeed = 7,
+    HasSpell = 8,
+    HasNotSpell = 9
 };
 
 enum eResourceType
@@ -195,7 +201,9 @@ enum SpellEffectType
     Heal = 1,
     Teleport = 2,
     LaunchSpell = 3,
-    ApplyAura = 4
+    ApplyAura = 4,
+    LearnClass = 5,
+    LearnSpell = 6
 };
 
 enum SpellTarget
@@ -226,7 +234,8 @@ enum eTypeWarningMsg
 {
     Red = 0,
     Yellow,
-    Top
+    Top,
+    BigMsg
 };
 
 enum eTypeAuraEffect
@@ -364,15 +373,16 @@ struct Gossip
     std::string m_Msg;
     uint64 m_GossipTimer;
     Required* m_Required;
+    bool m_Automatic;
 
     Gossip() :
-        m_ID(0), m_TypeUnit(TypeUnit::CREATURE), m_UnitEntry(0), m_GossipType(eGossipType::Whisp), m_Data1(0), m_Data2(0), m_Msg(""), m_GossipTimer(0), m_Required(nullptr) {}
+        m_ID(0), m_TypeUnit(TypeUnit::CREATURE), m_UnitEntry(0), m_Automatic(true), m_GossipType(eGossipType::Whisp), m_Data1(0), m_Data2(0), m_Msg(""), m_GossipTimer(0), m_Required(nullptr) {}
 
     Gossip(const Gossip & p_Gossip) :
-        m_ID(p_Gossip.m_ID), m_Required(p_Gossip.m_Required), m_TypeUnit(p_Gossip.m_TypeUnit), m_UnitEntry(p_Gossip.m_UnitEntry), m_GossipType(p_Gossip.m_GossipType), m_Data1(p_Gossip.m_Data1), m_Data2(p_Gossip.m_Data2), m_Msg(p_Gossip.m_Msg), m_GossipTimer(p_Gossip.m_GossipTimer){}
+        m_ID(p_Gossip.m_ID), m_Required(p_Gossip.m_Required), m_TypeUnit(p_Gossip.m_TypeUnit), m_UnitEntry(p_Gossip.m_UnitEntry), m_Automatic(p_Gossip.m_Automatic), m_GossipType(p_Gossip.m_GossipType), m_Data1(p_Gossip.m_Data1), m_Data2(p_Gossip.m_Data2), m_Msg(p_Gossip.m_Msg), m_GossipTimer(p_Gossip.m_GossipTimer){}
         
-    Gossip(uint16 p_ID, Required* p_Required, TypeUnit p_TypeUnit, uint16 p_UnitEntry, eGossipType p_GossipType, uint32 p_Data1, uint32 p_Data2, std::string p_Msg) :
-        m_ID(p_ID), m_Required(p_Required), m_TypeUnit(p_TypeUnit), m_UnitEntry(p_UnitEntry), m_GossipType(p_GossipType), m_Data1(p_Data1), m_Data2(p_Data2), m_Msg(p_Msg), m_GossipTimer(0){}
+    Gossip(uint16 p_ID, Required* p_Required, TypeUnit p_TypeUnit, uint16 p_UnitEntry, bool p_Automatic, eGossipType p_GossipType, uint32 p_Data1, uint32 p_Data2, std::string p_Msg) :
+        m_ID(p_ID), m_Required(p_Required), m_TypeUnit(p_TypeUnit), m_UnitEntry(p_UnitEntry), m_Automatic(p_Automatic),  m_GossipType(p_GossipType), m_Data1(p_Data1), m_Data2(p_Data2), m_Msg(p_Msg), m_GossipTimer(0) {}
 };
 
 struct SpellEffect
@@ -426,6 +436,7 @@ struct CreatureTemplate
     uint8 m_Force;
     uint8 m_Stamina;
     uint8 m_Dexterity;
+    uint8 m_Speed;
     uint8 m_Xp;
     uint8 m_State;
     uint16 m_MaxRay;
@@ -440,10 +451,10 @@ struct CreatureTemplate
     eFactionType m_FactionType;
 
     CreatureTemplate() :
-        m_Entry(0), m_SkinID(0), m_Name(""), m_Level(0), m_Force(0), m_Stamina(0), m_Dexterity(0), m_Xp(0), m_State(0), m_MaxRay(0), m_MaxVision(0), m_MovingTimeMin(0.0f), m_MovingTimeMax(0.0f), m_StopTimeMin(0.0f), m_StopTimeMax(0.0f), m_RespawnTime(0), m_Rank(0), m_AiType(0), m_FactionType(eFactionType::Ally) {}
+        m_Entry(0), m_SkinID(0), m_Name(""), m_Level(0), m_Force(0), m_Stamina(0), m_Dexterity(0), m_Speed(0), m_Xp(0), m_State(0), m_MaxRay(0), m_MaxVision(0), m_MovingTimeMin(0.0f), m_MovingTimeMax(0.0f), m_StopTimeMin(0.0f), m_StopTimeMax(0.0f), m_RespawnTime(0), m_Rank(0), m_AiType(0), m_FactionType(eFactionType::Ally) {}
 
-    CreatureTemplate(uint32 p_Entry, int16 p_SkinID, std::string p_Name, uint8 p_Level, uint8 p_Force, uint8 p_Stamina, uint8 p_Dexterity, uint8 p_Xp, uint8 p_State, uint16 p_MaxRay , uint16 p_MaxVision, float p_MovingTimeMin, float p_MovingTimeMax, float p_StopTimeMin, float p_StopTimeMax, int32 p_RespawnTime, uint8 p_Rank, uint8 p_AiType, eFactionType p_FactionType) :
-    m_Entry(p_Entry), m_SkinID(p_SkinID), m_Name(p_Name), m_Level(p_Level), m_Force(p_Force), m_Stamina(p_Stamina), m_Dexterity(p_Dexterity), m_Xp(p_Xp), m_State(p_State), m_MaxRay(p_MaxRay), m_MaxVision(p_MaxVision), m_MovingTimeMin(p_MovingTimeMin), m_MovingTimeMax(p_MovingTimeMax), m_StopTimeMin(p_StopTimeMin), m_StopTimeMax(p_StopTimeMax), m_RespawnTime(p_RespawnTime), m_Rank(p_Rank), m_AiType(p_AiType), m_FactionType(p_FactionType){}
+    CreatureTemplate(uint32 p_Entry, int16 p_SkinID, std::string p_Name, uint8 p_Level, uint8 p_Force, uint8 p_Stamina, uint8 p_Dexterity, uint8 p_Speed, uint8 p_Xp, uint8 p_State, uint16 p_MaxRay , uint16 p_MaxVision, float p_MovingTimeMin, float p_MovingTimeMax, float p_StopTimeMin, float p_StopTimeMax, int32 p_RespawnTime, uint8 p_Rank, uint8 p_AiType, eFactionType p_FactionType) :
+    m_Entry(p_Entry), m_SkinID(p_SkinID), m_Name(p_Name), m_Level(p_Level), m_Force(p_Force), m_Stamina(p_Stamina), m_Dexterity(p_Dexterity), m_Speed(p_Speed), m_Xp(p_Xp), m_State(p_State), m_MaxRay(p_MaxRay), m_MaxVision(p_MaxVision), m_MovingTimeMin(p_MovingTimeMin), m_MovingTimeMax(p_MovingTimeMax), m_StopTimeMin(p_StopTimeMin), m_StopTimeMax(p_StopTimeMax), m_RespawnTime(p_RespawnTime), m_Rank(p_Rank), m_AiType(p_AiType), m_FactionType(p_FactionType){}
 };
 
 struct PointsSet

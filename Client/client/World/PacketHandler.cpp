@@ -45,6 +45,7 @@ void PacketHandler::LoadPacketHandlerMap()
     m_PacketHandleMap[SMSG::S_ExtraInterface] = &PacketHandler::HandleExtraUI;
     m_PacketHandleMap[SMSG::S_UnitIsInGroup] = &PacketHandler::HandleUnitIsInGroup;
     m_PacketHandleMap[SMSG::S_SrvPlayerQuestion] = &PacketHandler::HandleSrvPlayerQuestion;
+    m_PacketHandleMap[SMSG::S_ExtraInterfaceData] = &PacketHandler::HandleExtraUIData;
     m_PacketHandleMap[SMSG::S_UnitMount] = &PacketHandler::HandleMount;
 
 
@@ -62,6 +63,21 @@ void PacketHandler::HandleExtraUI(WorldPacket &p_Packet)
         m_InterfaceManager->AddExtraInterface((eExtraInterface)l_ExtraUI);
     else
         m_InterfaceManager->RemoveExtraInterface((eExtraInterface)l_ExtraUI);
+}
+
+void PacketHandler::HandleExtraUIData(WorldPacket &p_Packet)
+{
+    uint8 l_ExtraUI;
+    uint8 l_Index;
+    uint8 l_Type;
+    int16 l_Data;
+
+    p_Packet >> l_ExtraUI;
+    p_Packet >> l_Index;
+    p_Packet >> l_Type;
+    p_Packet >> l_Data;
+
+    m_InterfaceManager->AddExtraUiData((eExtraInterface)l_ExtraUI, l_Index, l_Type, l_Data);
 }
 
 void PacketHandler::HandleMount(WorldPacket &p_Packet)
@@ -601,6 +617,8 @@ void PacketHandler::HandleWarningMsg(WorldPacket &p_Packet)
 
     if (l_Type == eTypeWarningMsg::Top)
         m_InterfaceManager->AddTopMsg(l_WarningMsg);
+    else if (l_Type == eTypeWarningMsg::BigMsg)
+        m_InterfaceManager->SetBigMsg(l_WarningMsg);
     else
         m_InterfaceManager->AddWarningMsg((eTypeWarningMsg)l_Type, l_WarningMsg);
 }

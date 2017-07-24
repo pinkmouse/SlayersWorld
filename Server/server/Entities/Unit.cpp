@@ -58,6 +58,26 @@ Player* Unit::ToPlayer()
         return nullptr;
 }
 
+GameObject* Unit::ToGameObject()
+{
+    /// Convert to Gob
+
+    if (m_Type == TypeUnit::GAMEOBJECT)
+        return  reinterpret_cast<GameObject*>(this);
+    else
+        return nullptr;
+}
+
+DynamicObject* Unit::ToDynamicObject()
+{
+    /// Convert to Gob
+
+    if (m_Type == TypeUnit::GAMEOBJECT || m_Type == TypeUnit::AREATRIGGER)
+        return  reinterpret_cast<DynamicObject*>(this);
+    else
+        return nullptr;
+}
+
 Creature* Unit::ToCreature()
 {
     /// Convert to Creature
@@ -512,6 +532,11 @@ uint8 Unit::GetResourceNb(eResourceType p_Resource)
     return m_Resources[p_Resource]->GetNumber();
 }
 
+void Unit::Kill()
+{
+    SetResourceNb(eResourceType::Health, 0);
+}
+
 void Unit::SetResourceNb(eResourceType p_Resource, uint8 p_Nb)
 {
     if (m_Resources.find(p_Resource) == m_Resources.end())
@@ -523,7 +548,10 @@ void Unit::SetResourceNb(eResourceType p_Resource, uint8 p_Nb)
     {
         case eResourceType::Health:
             if (!m_Resources[p_Resource]->GetNumber())
+            {
                 OutOfCombat();
+                RemoveAllAura();
+            }            
             break;
         default:
             break;
@@ -536,12 +564,14 @@ void Unit::AddResourceNb(eResourceType p_Resource, uint8 p_Nb)
         return;
 
     m_Resources[p_Resource]->AddNumber(p_Nb);
-
     switch (p_Resource)
     {
     case eResourceType::Health:
-        if (!m_Resources[p_Resource]->GetNumber())
+        if (!m_Resources[p_Resource]->GetNumber()) ///< Death
+        {
             OutOfCombat();
+            RemoveAllAura();
+        }
         break;
     default:
         break;
@@ -937,6 +967,46 @@ void Unit::ActionFrom(Player* p_Player)
     l_Creature->ResetRandMovementTime(false);
 }
 
+Gossip* Unit::GetGossip(const uint16 & p_ID)
+{
+    for (std::map< eGossipType, std::vector<Gossip> >::iterator l_It = m_ListGossip.begin(); l_It != m_ListGossip.end(); l_It++)
+    {
+        for (std::vector<Gossip>::iterator l_Itr = (*l_It).second.begin(); l_Itr != (*l_It).second.end(); l_Itr++)
+        {
+            if ((*l_Itr).m_ID == p_ID)
+                return &(*l_Itr);
+        }
+    }
+    return nullptr;
+}
+
+void Unit::GossipTo(Player * p_Player, const uint16 & p_ID)
+{
+    Gossip* l_Gossip = GetGossip(p_ID);
+    if (l_Gossip == nullptr)
+        return;
+
+    std::string l_GossiMsg = l_Gossip->m_Msg;
+
+    if (l_Gossip->m_GossipType == eGossipType::LaunchBG)
+    {
+        g_MapManager->AddPlayerToQueue(l_Gossip->m_Data1, p_Player);
+
+    }
+    else if (l_Gossip->m_GossipType == eGossipType::GossipLaunchSpell)
+    {
+        std::vector<Unit*> l_ListTarget;
+        l_ListTarget.push_back(p_Player);
+        CastSpell(l_Gossip->m_Data1, l_ListTarget);
+    }
+    if (l_GossiMsg != "")
+    {
+        PacketWarningMsg l_Packet;
+        l_Packet.BuildPacket(eTypeWarningMsg::Top, l_GossiMsg);
+        p_Player->GetSession()->send(l_Packet.m_Packet);
+    }
+}
+
 void Unit::GossipTo(Player* p_Player)
 {
     /// Send a gossip wisp to a Player
@@ -954,7 +1024,7 @@ void Unit::GossipTo(Player* p_Player)
     /* QUEST VALIDATE*/
     for (Gossip l_Gossip : m_ListGossip[eGossipType::ValidQuest]) ///< Only one Wisp can be done
     {
-        if (l_Gossip.m_Required != nullptr && (!l_Gossip.m_Required->IsValid(p_Player)))
+        if (l_Gossip.m_Automatic == false || (l_Gossip.m_Required != nullptr && (!l_Gossip.m_Required->IsValid(p_Player))))
             continue;
         l_GossipMsg = l_Gossip.m_Msg;
         l_Data1 = l_Gossip.m_Data1;
@@ -976,7 +1046,7 @@ void Unit::GossipTo(Player* p_Player)
     /* QUEST LAUNCHER*/
     for (Gossip l_Gossip : m_ListGossip[eGossipType::LaunchQuest]) ///< Only one Wisp can be done
     {
-        if (l_Gossip.m_Required != nullptr && (!l_Gossip.m_Required->IsValid(p_Player) || p_Player->HasQuestInProgress(l_Gossip.m_Data1)))
+        if (l_Gossip.m_Automatic == false || (l_Gossip.m_Required != nullptr && (!l_Gossip.m_Required->IsValid(p_Player) || p_Player->HasQuestInProgress(l_Gossip.m_Data1))))
             continue;
 
         l_Data1 = l_Gossip.m_Data1;
@@ -1020,23 +1090,31 @@ void Unit::GossipTo(Player* p_Player)
     }
 
     /* SIMPLE QUESTION */
-    uint32 l_QuestionID = 0;
+    uint16 l_QuestionID = 0;
+    std::vector<uint16> m_QuestionAnswers;
     for (Gossip l_Gossip : m_ListGossip[eGossipType::SimpleQuestion]) ///< Only one Wisp can be done
     {
-        if (l_Gossip.m_Required != nullptr && !l_Gossip.m_Required->IsValid(p_Player))
+        if (l_Gossip.m_Automatic == false || (l_Gossip.m_Required != nullptr && !l_Gossip.m_Required->IsValid(p_Player)))
             continue;
         l_GossipMsg = l_Gossip.m_Msg;
-        l_QuestionID = l_Gossip.m_Data2;
+        l_QuestionID = l_Gossip.m_ID;
+        m_QuestionAnswers.push_back((uint16)l_Gossip.m_Data1);
+        m_QuestionAnswers.push_back((uint16)l_Gossip.m_Data2);
+ 
         if (l_Gossip.m_Required != nullptr && l_Gossip.m_Required->IsValid(p_Player)) ///< Priority for Wisp with Valid Required
             break;
     }
     if (l_GossipMsg != "")
+    {
+        p_Player->AddQuestionInProgress(l_QuestionID, this, m_QuestionAnswers);
         p_Player->SendSimpleQuestion(l_QuestionID, l_GossipMsg);
+        return;
+    }
 
     /* SIMPLE WHISP */
     for (Gossip l_Gossip : m_ListGossip[eGossipType::Whisp]) ///< Only one Wisp can be done
     {
-        if (l_Gossip.m_Required != nullptr && !l_Gossip.m_Required->IsValid(p_Player))
+        if (l_Gossip.m_Automatic == false || (l_Gossip.m_Required != nullptr && !l_Gossip.m_Required->IsValid(p_Player)))
             continue;
         l_GossipMsg = l_Gossip.m_Msg;
         if (l_Gossip.m_Required != nullptr && l_Gossip.m_Required->IsValid(p_Player)) ///< Priority for Wisp with Valid Required
@@ -1048,7 +1126,7 @@ void Unit::GossipTo(Player* p_Player)
     /* ANNOUNCE */
     for (Gossip l_Gossip : m_ListGossip[eGossipType::Announce])
     {
-        if (l_Gossip.m_Required != nullptr && !l_Gossip.m_Required->IsValid(p_Player))
+        if (l_Gossip.m_Automatic == false || (l_Gossip.m_Required != nullptr && !l_Gossip.m_Required->IsValid(p_Player)))
             continue;
         l_GossipMsg = l_Gossip.m_Msg;
         p_Player->ParseStringWithTag(l_GossipMsg);
@@ -1148,6 +1226,22 @@ void Unit::AddSpellID(uint16 p_SpellID, uint64 p_Cooldown)
     AddSpellCooldown(p_SpellID, p_Cooldown);
 }
 
+void Unit::RemoveSpellID(uint16 p_SpellID)
+{
+    std::map<uint16, uint64>::iterator l_It = m_ListSpellID.find(p_SpellID);
+    if (l_It == m_ListSpellID.end())
+        return;
+
+    m_ListSpellID.erase(l_It);
+}
+
+bool Unit::HasSpell(uint16 p_SpellID) const
+{
+    if (m_ListSpellID.find(p_SpellID) != m_ListSpellID.end())
+        return true;
+    return false;
+}
+
 void Unit::UpdateSpeed()
 {
     ;
@@ -1238,6 +1332,35 @@ AuraEffect* Unit::ApplyAuraEffect(uint8 p_ID, SpellTemplate* p_SpellTemplate, Un
     return l_AuraEffect;
 }
 
+void Unit::RemoveAura(Aura* p_Aura)
+{
+    std::vector<Aura*>::iterator l_It = std::find(m_AuraList.begin(), m_AuraList.end(), p_Aura);
+    if (l_It != m_AuraList.end())
+    {
+        Aura* l_Aura = *l_It;
+        l_It = m_AuraList.erase(l_It);
+        delete l_Aura;
+    }
+}
+
+void Unit::RemoveAllAura()
+{
+    for (std::vector<Aura*>::iterator l_It = m_AuraList.begin(); l_It != m_AuraList.end();)
+    {
+        Aura* l_Aura = *l_It;
+        printf("Remove Aura %d", l_Aura->GetSpellTemplate()->GetID());
+        l_It = m_AuraList.erase(l_It);
+        delete l_Aura;
+    }
+}
+
+void Unit::Dismount()
+{
+    std::vector<AuraEffect*> l_ListMount = GetAuraEffectType(eTypeAuraEffect::MOUNT);
+    for (uint16 i = 0; i < l_ListMount.size(); i++)
+        RemoveAura(l_ListMount[i]->GetAura());
+}
+
 bool Unit::HasSpellCooldown(uint16 p_SpellID)
 {
     if (m_ListSpellID.find(p_SpellID) == m_ListSpellID.end())
@@ -1269,6 +1392,7 @@ void Unit::CastSpell(uint16 p_ID)
         return;
 
     InterruptCast();
+    Dismount();
     SetCurrentSpell(l_Spell);
 }
 

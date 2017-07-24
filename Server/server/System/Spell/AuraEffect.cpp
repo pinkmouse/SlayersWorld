@@ -2,7 +2,8 @@
 #include "../../Define.hpp"
 
 
-AuraEffect::AuraEffect(SpellTemplate* p_SpellTemplate, Unit* p_Caster, Unit* p_Target, eTypeAuraEffect p_Type, const int32 & p_Data0, const int32 & p_Data1, const int32 & p_Data2) :
+AuraEffect::AuraEffect(Aura* p_Aura, SpellTemplate* p_SpellTemplate, Unit* p_Caster, Unit* p_Target, eTypeAuraEffect p_Type, const int32 & p_Data0, const int32 & p_Data1, const int32 & p_Data2) :
+    m_Aura(p_Aura),
     m_SpellTemplate(p_SpellTemplate),
     m_Caster(p_Caster),
     m_Target(p_Target),
@@ -72,4 +73,9 @@ Unit* AuraEffect::GetTarget() const
 Unit* AuraEffect::GetCaster() const
 {
     return m_Caster;
+}
+
+Aura* AuraEffect::GetAura() const
+{
+    return m_Aura;
 }

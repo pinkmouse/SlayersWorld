@@ -193,10 +193,10 @@ Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
         AddKeyDefaultBindsForAccount(p_AccountID);
         Player* l_Player = GetNewPlayer(p_AccountID);
         /* FOR TEST*/
-        AddSpellForPlayer(l_Player, 1);
+        /*AddSpellForPlayer(l_Player, 1);
         AddSpellForPlayer(l_Player, 2);
         AddSpellBind(l_Player, 1, 9);
-        AddSpellBind(l_Player, 2, 10);
+        AddSpellBind(l_Player, 2, 10);*/
         return l_Player;
     }
 
@@ -212,7 +212,7 @@ Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
 
 void SqlManager::AddNewRespawnPositionForPlayer(uint32 p_PlayerID)
 {
-    std::string l_Query = "insert into `characters_respawn` (`characterID`, `posX`, `posY`, `mapID`, `orientation`) values('" + std::to_string(p_PlayerID) + "', '2069', '211', '0', '0');";
+    std::string l_Query = "insert into `characters_respawn` (`characterID`, `posX`, `posY`, `mapID`, `orientation`) values('" + std::to_string(p_PlayerID) + "', '200', '200', '0', '0');";
     mysql_query(&m_MysqlCharacters, l_Query.c_str());
 }
 
@@ -323,7 +323,7 @@ void SqlManager::SavePlayer(Player* p_Player)
         }
     }
 
-	std::string l_Query = "UPDATE characters SET `posX` = '" + std::to_string(p_Player->GetPosX()) + "', `posY` = '" + std::to_string(p_Player->GetPosY()) + "', `mapID` = '" + std::to_string(p_Player->GetMapID()) + "', `orientation` = '" + std::to_string(p_Player->GetOrientation()) + "', `health` = '" + std::to_string(p_Player->GetResourceNb(eResourceType::Health)) + "', `mana` = '" + std::to_string(p_Player->GetResourceNb(eResourceType::Mana)) + "', `alignment` = '" + std::to_string(p_Player->GetResourceNb(eResourceType::Alignment)) + "', `xp` = '" + std::to_string(p_Player->GetXp()) + "', `level` = '" + std::to_string(p_Player->GetLevel()) + "', skinID = '" + std::to_string(p_Player->GetSkinID()) + "' WHERE characterID = '" + std::to_string(p_Player->GetID()) + "';";
+	std::string l_Query = "UPDATE characters SET `posX` = '" + std::to_string(p_Player->GetPosX()) + "', `posY` = '" + std::to_string(p_Player->GetPosY()) + "', `mapID` = '" + std::to_string(p_Player->GetMapID()) + "', `class` = '" + std::to_string(p_Player->GetClass()) + "', `orientation` = '" + std::to_string(p_Player->GetOrientation()) + "', `health` = '" + std::to_string(p_Player->GetResourceNb(eResourceType::Health)) + "', `mana` = '" + std::to_string(p_Player->GetResourceNb(eResourceType::Mana)) + "', `alignment` = '" + std::to_string(p_Player->GetResourceNb(eResourceType::Alignment)) + "', `xp` = '" + std::to_string(p_Player->GetXp()) + "', `level` = '" + std::to_string(p_Player->GetLevel()) + "', skinID = '" + std::to_string(p_Player->GetSkinID()) + "' WHERE characterID = '" + std::to_string(p_Player->GetID()) + "';";
     mysql_query(&m_MysqlCharacters, l_Query.c_str());
 	UpdatePointsSet(p_Player);
 }
@@ -370,7 +370,7 @@ void SqlManager::UpdatePointsSet(Player const* p_Player)
 
 CreatureTemplate SqlManager::GetCreatureTemplate(uint16 p_Entry)
 {
-    std::string l_Query = "SELECT `skinID`, `name`, `level`, `force`, `stamina`, `dexterity`, `xp`, `state`, `maxRay`, `maxVision`,`movingTimeMin`, `movingTimeMax`, `stopTimeMin`, `stopTimeMax`, `respawnTime`, `rank`, `aiType`, `faction` FROM creature_template WHERE `entry` = '" + std::to_string(p_Entry) + "'";
+    std::string l_Query = "SELECT `skinID`, `name`, `level`, `force`, `stamina`, `dexterity`, `speed`, `xp`, `state`, `maxRay`, `maxVision`,`movingTimeMin`, `movingTimeMax`, `stopTimeMin`, `stopTimeMax`, `respawnTime`, `rank`, `aiType`, `faction` FROM creature_template WHERE `entry` = '" + std::to_string(p_Entry) + "'";
     mysql_query(&m_MysqlWorld, l_Query.c_str());
 
     int16 l_SkinID = 0;
@@ -379,6 +379,7 @@ CreatureTemplate SqlManager::GetCreatureTemplate(uint16 p_Entry)
     uint8 l_Force = 0;
     uint8 l_Stamina = 0;
     uint8 l_Dexterity = 0;
+    uint8 l_Speed = 0;
     uint8 l_Xp = 0;
     uint8 l_State = 0;
     uint16 l_MaxRay = 0;
@@ -403,20 +404,21 @@ CreatureTemplate SqlManager::GetCreatureTemplate(uint16 p_Entry)
         l_Force = atoi(l_Row[3]);
         l_Stamina = atoi(l_Row[4]);
         l_Dexterity = atoi(l_Row[5]);
-        l_Xp = atoi(l_Row[6]);
-        l_State = atoi(l_Row[7]);
-        l_MaxRay = atoi(l_Row[8]);
-        l_MaxVision = atoi(l_Row[9]);
-        l_RespawnTime = atoi(l_Row[10]);
-        l_MovingTimeMin = (float)atof(l_Row[11]);
-        l_MovingTimeMax = (float)atof(l_Row[12]);
-        l_StopTimeMin = (float)atof(l_Row[13]);
-        l_StopTimeMax = (float)atof(l_Row[14]);
-        l_RespawnTime = atoi(l_Row[15]);
-        l_Rank = atoi(l_Row[16]);
-        l_AiType = atoi(l_Row[17]);
-        l_Faction = atoi(l_Row[18]);
-        return CreatureTemplate(p_Entry, l_SkinID, l_Name, l_Lvl, l_Force, l_Stamina, l_Dexterity, l_Xp, l_State, l_MaxRay, l_MaxVision, l_MovingTimeMin, l_MovingTimeMax, l_StopTimeMin, l_StopTimeMax, l_RespawnTime, l_Rank, l_AiType, (eFactionType)l_Faction);
+        l_Speed = atoi(l_Row[6]);
+        l_Xp = atoi(l_Row[7]);
+        l_State = atoi(l_Row[8]);
+        l_MaxRay = atoi(l_Row[9]);
+        l_MaxVision = atoi(l_Row[10]);
+        l_RespawnTime = atoi(l_Row[11]);
+        l_MovingTimeMin = (float)atof(l_Row[12]);
+        l_MovingTimeMax = (float)atof(l_Row[13]);
+        l_StopTimeMin = (float)atof(l_Row[14]);
+        l_StopTimeMax = (float)atof(l_Row[15]);
+        l_RespawnTime = atoi(l_Row[16]);
+        l_Rank = atoi(l_Row[17]);
+        l_AiType = atoi(l_Row[18]);
+        l_Faction = atoi(l_Row[19]);
+        return CreatureTemplate(p_Entry, l_SkinID, l_Name, l_Lvl, l_Force, l_Stamina, l_Dexterity, l_Speed, l_Xp, l_State, l_MaxRay, l_MaxVision, l_MovingTimeMin, l_MovingTimeMax, l_StopTimeMin, l_StopTimeMax, l_RespawnTime, l_Rank, l_AiType, (eFactionType)l_Faction);
     }
     mysql_free_result(l_Result);
 
@@ -449,7 +451,7 @@ uint16 SqlManager::AddNewCreature(uint16 p_Map, uint16 p_Entry, uint32 p_PosX, u
 
 bool SqlManager::InitializeCreatureTemplate(UnitManager* p_CreatureManager)
 {
-    std::string l_Query = "SELECT `entry`, `skinID`, `name`, `level`, `force`, `stamina`, `dexterity`, `xp`, `state`, `maxRay`, `maxVision`, `movingTimeMin`, `movingTimeMax`, `stopTimeMin`, `stopTimeMax`, `respawnTime`, `rank`, `aiType`, `faction` FROM creature_template";
+    std::string l_Query = "SELECT `entry`, `skinID`, `name`, `level`, `force`, `stamina`, `dexterity`, `speed`, `xp`, `state`, `maxRay`, `maxVision`, `movingTimeMin`, `movingTimeMax`, `stopTimeMin`, `stopTimeMax`, `respawnTime`, `rank`, `aiType`, `faction` FROM creature_template";
     mysql_query(&m_MysqlWorld, l_Query.c_str());
 
     uint32 l_Entry = 0;
@@ -459,6 +461,7 @@ bool SqlManager::InitializeCreatureTemplate(UnitManager* p_CreatureManager)
     uint8 l_Force = 0;
     uint8 l_Stamina = 0;
     uint8 l_Dexterity = 0;
+    uint8 l_Speed = 0;
     uint8 l_Xp = 0;
     uint8 l_State = 0;
     uint16 l_MaxRay = 0;
@@ -484,19 +487,20 @@ bool SqlManager::InitializeCreatureTemplate(UnitManager* p_CreatureManager)
         l_Force = atoi(l_Row[4]);
         l_Stamina = atoi(l_Row[5]);
         l_Dexterity = atoi(l_Row[6]);
-        l_Xp = atoi(l_Row[7]);
-        l_State = atoi(l_Row[8]);
-        l_MaxRay = atoi(l_Row[9]);
-        l_MaxVision = atoi(l_Row[10]);
-        l_MovingTimeMin = (float)atof(l_Row[11]);
-        l_MovingTimeMax = (float)atof(l_Row[12]);
-        l_StopTimeMin = (float)atof(l_Row[13]);
-        l_StopTimeMax = (float)atof(l_Row[14]);
-        l_RespawnTime = atoi(l_Row[15]);
-        l_Rank = atoi(l_Row[16]);
-        l_AiType = atoi(l_Row[17]);
-        l_Faction = atoi(l_Row[18]);
-        p_CreatureManager->AddCreatureTemplate(CreatureTemplate(l_Entry, l_SkinID, l_Name, l_Lvl, l_Force, l_Stamina, l_Dexterity, l_Xp, l_State, l_MaxRay, l_MaxVision, l_MovingTimeMin, l_MovingTimeMax, l_StopTimeMin, l_StopTimeMax, l_RespawnTime, l_Rank, l_AiType, (eFactionType)l_Faction));
+        l_Speed = atoi(l_Row[7]);
+        l_Xp = atoi(l_Row[8]);
+        l_State = atoi(l_Row[9]);
+        l_MaxRay = atoi(l_Row[10]);
+        l_MaxVision = atoi(l_Row[11]);
+        l_MovingTimeMin = (float)atof(l_Row[12]);
+        l_MovingTimeMax = (float)atof(l_Row[13]);
+        l_StopTimeMin = (float)atof(l_Row[14]);
+        l_StopTimeMax = (float)atof(l_Row[15]);
+        l_RespawnTime = atoi(l_Row[16]);
+        l_Rank = atoi(l_Row[17]);
+        l_AiType = atoi(l_Row[18]);
+        l_Faction = atoi(l_Row[19]);
+        p_CreatureManager->AddCreatureTemplate(CreatureTemplate(l_Entry, l_SkinID, l_Name, l_Lvl, l_Force, l_Stamina, l_Dexterity, l_Speed, l_Xp, l_State, l_MaxRay, l_MaxVision, l_MovingTimeMin, l_MovingTimeMax, l_StopTimeMin, l_StopTimeMax, l_RespawnTime, l_Rank, l_AiType, (eFactionType)l_Faction));
     }
     mysql_free_result(l_Result);
 
@@ -589,6 +593,13 @@ void SqlManager::AddSpellForPlayer(Player* p_Player, uint16 l_SpellID)
 {
     std::string l_Query = "REPLACE INTO `characters_spells` (characterID, spellID) VALUES ('" + std::to_string(p_Player->GetID()) + "', '" + std::to_string(l_SpellID) + "');";
     mysql_query(&m_MysqlCharacters, l_Query.c_str());
+    p_Player->AddSpellID(l_SpellID, 0);
+}
+
+void SqlManager::RemoveSpellForPlayer(Player* p_Player, uint16 l_SpellID)
+{
+    std::string l_Query = "REMOVE FROM `characters_spells` WHERE characterID = '" + std::to_string(p_Player->GetID()) + "' and spellID = '" + std::to_string(l_SpellID) + "');";
+    mysql_query(&m_MysqlCharacters, l_Query.c_str());
 }
 
 void SqlManager::AddSpellBind(Player* p_Player, uint16 l_SpellID, uint8 l_BindID)
@@ -598,6 +609,12 @@ void SqlManager::AddSpellBind(Player* p_Player, uint16 l_SpellID, uint8 l_BindID
     l_Query = "INSERT INTO `characters_spell_binds` (characterID, spellID, bindID) VALUES ('" + std::to_string(p_Player->GetID()) + "', '" + std::to_string(l_SpellID) + "', '" + std::to_string(l_BindID) + "');";
     mysql_query(&m_MysqlCharacters, l_Query.c_str());
     p_Player->AddSpellBindToKey(l_SpellID, l_BindID);
+}
+
+void SqlManager::RemoveSpellBind(Player* p_Player, uint16 l_SpellID)
+{
+    std::string l_Query = "DELETE FROM `characters_spell_binds` WHERE spellID = '" + std::to_string(l_SpellID) + "' AND characterID = '" + std::to_string(p_Player->GetID()) + "';";
+    mysql_query(&m_MysqlCharacters, l_Query.c_str());
 }
 
 bool SqlManager::InitializeKeyBindsForAccount(uint32 p_Account, Player* p_Player)
@@ -635,7 +652,7 @@ bool SqlManager::InitializeGossip(UnitManager* p_CreatureManager, RequiredManage
     uint32 l_Data0 = 0;
     uint32 l_Data1 = 0;
     std::string l_Msg = "";
-
+    bool l_Automatic = true;
     MYSQL_RES *l_Result = NULL;
     MYSQL_ROW l_Row;
     l_Result = mysql_use_result(&m_MysqlWorld);
@@ -653,7 +670,12 @@ bool SqlManager::InitializeGossip(UnitManager* p_CreatureManager, RequiredManage
         Required* l_Required = nullptr;
         if (l_RequiredID >= 0) /// -1 if no required
             l_Required = p_RequiredManager->GetRequiered(l_RequiredID);
-        p_CreatureManager->AddGossip(Gossip(l_ID, l_Required, (TypeUnit)l_TypeUnit, l_UnitEntry, (eGossipType)l_GossipType, l_Data0, l_Data1, l_Msg));
+        if (l_RequiredID < -1)
+            l_Automatic = false;
+        else
+            l_Automatic = true;
+
+        p_CreatureManager->AddGossip(Gossip(l_ID, l_Required, (TypeUnit)l_TypeUnit, l_UnitEntry, l_Automatic, (eGossipType)l_GossipType, l_Data0, l_Data1, l_Msg));
     }
     mysql_free_result(l_Result);
 
@@ -704,7 +726,7 @@ bool SqlManager::InitializeCreature(UnitManager* p_CreatureManager)
 
 bool  SqlManager::InitializeSpells()
 {
-    std::string l_Query = "SELECT `id`, `level`, `visualID`, `visualIDTarget`,`castTime`, `cooldown`, `duration`, `speed`,`resourceType`, `resourceNb`, `effect1`, `effect2`, `effect3`, `effect4` FROM spell_template";
+    std::string l_Query = "SELECT `id`, `level`, `visualID`, `visualIDTarget`,`castTime`, `cooldown`, `duration`, `speed`,`resourceType`, `resourceNb`, `effect1`, `effect2`, `effect3`, `effect4`, `name` FROM spell_template";
     mysql_query(&m_MysqlWorld, l_Query.c_str());
 
     uint16 l_Id = 0;
@@ -718,6 +740,7 @@ bool  SqlManager::InitializeSpells()
     int16 l_ResourceType = 0;
     int32 l_ResourceNb = 0;
     std::vector<int32> l_EffectList;
+    std::string l_Name = "";
 
     MYSQL_RES *l_Result = NULL;
     MYSQL_ROW l_Row;
@@ -736,6 +759,7 @@ bool  SqlManager::InitializeSpells()
         l_ResourceNb = atoi(l_Row[9]);
         for (uint8 i = 0; i < MAX_EFFECTS_FOR_SPELL; ++i)
             l_EffectList.push_back(atoi(l_Row[10 + i]));
+        l_Name = std::string(l_Row[10 + MAX_EFFECTS_FOR_SPELL]);
 
         SpellTemplate* l_Spell = new SpellTemplate(l_Id);
         l_Spell->SetLevel(l_Level);
@@ -744,6 +768,7 @@ bool  SqlManager::InitializeSpells()
         l_Spell->SetCooldown(l_Cooldown);
         l_Spell->SetSpeed(l_Speed);
         l_Spell->SetDuration(l_Duration);
+        l_Spell->SetName(l_Name);
         if (l_ResourceType > 0)
         {
             l_Spell->AddResourceNeed(ResourceNeed((eResourceType)l_ResourceType, l_ResourceNb));
@@ -1013,8 +1038,8 @@ bool SqlManager::InitializeZones()
     uint16 l_ID = 0;
     uint16 l_TypeID = 0;
     uint16 l_MapID = 0;
-    uint16 l_CaseNbBegin = 0;
-    uint16 l_CaseNbEnd = 0;
+    uint32 l_CaseNbBegin = 0;
+    uint32 l_CaseNbEnd = 0;
     std::string l_Name = "";
 
     MYSQL_RES *l_Result = NULL;
@@ -1037,6 +1062,7 @@ bool SqlManager::InitializeZones()
             continue;
         }
         Zone l_Zone = Zone(l_ID, (eTypeZone)l_TypeID, l_Name, l_CaseNbBegin, l_CaseNbEnd);
+
         l_MapTemplate->AddZone(l_Zone);
     }
     mysql_free_result(l_Result);

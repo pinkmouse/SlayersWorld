@@ -33,10 +33,30 @@ void Creature::UpdateAI(sf::Time p_Diff)
         case eAiType::AGRESIVE:
             UpdateAgresive(p_Diff);
             break;
+        case eAiType::PASSIVE_ATTACK_EFFECT:
+            UpdatePassiveAttackEffect(p_Diff);
+            break;
         default:
             break;
     }
-    m_DiffMovementTime += p_Diff.asMicroseconds();
+    if (!m_Static)
+        m_DiffMovementTime += p_Diff.asMicroseconds();
+}
+
+void Creature::UpdatePassiveAttackEffect(sf::Time p_Diff)
+{
+    if (GetMovementHandler()->IsInAttack() && m_DiffAttackEffect > 3 * IN_MICROSECOND)
+    {
+        GetMovementHandler()->StopAttack();
+        m_DiffAttackEffect = 0;
+    }
+    else if (m_DiffAttackEffect > 10 * IN_MICROSECOND)
+    {
+        GetMovementHandler()->StartAttack();
+        m_DiffAttackEffect = 0;
+    }
+    m_DiffAttackEffect += p_Diff.asMicroseconds();
+    UpdatePassive(p_Diff);
 }
 
 void Creature::UpdatePassive(sf::Time p_Diff)

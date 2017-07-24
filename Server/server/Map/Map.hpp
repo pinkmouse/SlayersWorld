@@ -24,10 +24,12 @@ public:
     virtual void RemoveUnit(Unit*);
     uint16  GetSquareID(uint16 , uint16) const;
     Unit* GetUnit(TypeUnit, uint16);
+    std::vector<Unit*> GetAllUnitWithEntry(TypeUnit, uint16);
     uint16 GetID() const;
     uint16 ChangeSquare(Unit*);
     Case* GetCase(uint32) const;
     Case* GetCase(uint32, uint32) const;
+    int64 GetCaseNb(const int64 &, const int64 &) const;
     void RemoveFromSquare(Unit*);
     void AddToSquare(Unit*, uint16);
     std::vector<Square*> GetSquareSet(uint16);
@@ -59,6 +61,7 @@ public:
 
     /// Network
     void SendToSet(WorldPacket, Unit*);
+    void SendToMap(WorldPacket);
 
     /// Pathfinding
     Path LaunchPathFinding(const Position &, const Position &);

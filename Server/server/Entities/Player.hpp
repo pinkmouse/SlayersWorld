@@ -32,8 +32,10 @@ public:
     void ParseStringWithTag(std::string &);
     void SetClass(eClass);
     eClass GetClass() const;
-
+    void AddQuestionInProgress(uint16, Unit*, std::vector<uint16>);
+    void RemoveQuestionInProgress(uint16);
     void SetPlayerMod(const ePlayerMod &);
+    std::pair<Unit*, uint16> GetGossipForQuestion(const uint16 &, const uint8 &);
     ePlayerMod GetPlayerMod() const;
 
     /* RESOURCES */
@@ -60,13 +62,18 @@ public:
     void AddKeyBoardBind(eKeyBoardAction, uint8);
     int16 GetKeyBoardBind(eKeyBoardAction);
     void AddSpellBindToKey(uint16, uint8);
+    void RemoveSpellBindToKey(uint16);
     int32 GetBindSpell(uint16);
     std::map< eKeyBoardAction, uint8 >* GetKeyBoardBinds();
     int32 GetSpellOnBind(uint8);
 
     /* SPELL */
+    void CastSpell(uint16);
     void AddSpellCooldown(uint16, uint64);
+    void LearnClass(eClass);
     void LearnSpell(uint16);
+    void UnlearnSpell(uint16);
+    void UnlearnAllSpell();
 
     /* ZONE */
     void EnterInZone(Zone*);
@@ -103,6 +110,8 @@ public:
     bool HandleCommandGroupWisp(std::vector<std::string>);
     bool HandleRegen(std::vector<std::string>);
     bool HandleKick(std::vector<std::string>);
+    bool HandleMount(std::vector<std::string>);
+    bool HandleDismount(std::vector<std::string>);
     bool HandlePlayerInfo(std::vector<std::string>);
     bool HandleBanIP(std::vector<std::string>);
     bool HandleBanAccount(std::vector<std::string>);
@@ -123,6 +132,7 @@ private:
     eClass m_Class;
     std::map< uint16, Quest* > m_Quests;
 
+    std::map < uint16, std::pair<Unit*, std::vector<uint16> > > m_QuestionInProgress;
     typedef bool(Player::*m_Func)(std::vector<std::string>);
     std::map < std::string, std::pair < eAccessType,  m_Func > > m_CmdHandleMap;
     std::map < eKeyBoardAction, uint8 > m_KeyBoardBinds;

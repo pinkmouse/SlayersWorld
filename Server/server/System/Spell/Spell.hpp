@@ -20,6 +20,8 @@ public:
     void EffectDamage(uint8, Unit*, SpellEffect*);
     void EffectHeal(uint8, Unit*, SpellEffect*);
     void EffectApplyAura(uint8, Unit*, SpellEffect*);
+    void EffectLearnClass(uint8, Unit*, SpellEffect*);
+    void EffectLearnSpell(uint8, Unit*, SpellEffect*);
 
     void SetCastTime(uint64);
     uint64 GetCastTime() const;

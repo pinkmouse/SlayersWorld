@@ -214,6 +214,43 @@ void Player::SendMsg(const std::string & p_Msg)
     l_Session->SendPacket(l_Packet.m_Packet);
 }
 
+std::pair<Unit*, uint16> Player::GetGossipForQuestion(const uint16 & p_ID, const uint8 & p_AnswerID)
+{
+    std::map < uint16, std::pair< Unit*, std::vector<uint16> > >::iterator l_It = m_QuestionInProgress.find(p_ID);
+    std::pair<Unit*, uint16> l_Res;
+    l_Res.first = nullptr;
+
+    if (l_It == m_QuestionInProgress.end())
+        return l_Res;
+    
+    std::vector<uint16> l_Answers = (*l_It).second.second;
+    if (l_Answers.size() < p_AnswerID)
+        return l_Res;
+
+    l_Res.first = (*l_It).second.first;
+    l_Res.second = l_Answers[p_AnswerID];
+    return l_Res;
+}
+
+void Player::AddQuestionInProgress(uint16 p_ID, Unit* p_Unit, std::vector<uint16> p_ListAnswers)
+{
+    std::pair<Unit*, std::vector<uint16>> l_Pair;
+
+    l_Pair.first = p_Unit;
+    l_Pair.second = p_ListAnswers;
+    m_QuestionInProgress[p_ID] = l_Pair;
+}
+
+void Player::RemoveQuestionInProgress(uint16 p_ID)
+{
+    std::map < uint16, std::pair<Unit*, std::vector<uint16>> >::iterator l_It = m_QuestionInProgress.find(p_ID);
+
+    if (l_It == m_QuestionInProgress.end())
+        return;
+
+    m_QuestionInProgress.erase(l_It);
+}
+
 void Player::SendSimpleQuestion(const uint16 & p_QuestionID, const std::string & p_Msg)
 {
     std::string l_Msg = p_Msg;
@@ -276,6 +313,18 @@ void Player::EventAction(eKeyBoardAction p_PlayerAction)
     }
 }
 
+void Player::CastSpell(uint16 p_SpellID)
+{
+    if (!HasSpell(p_SpellID))
+    {
+        PacketWarningMsg l_Packet;
+        l_Packet.BuildPacket(eTypeWarningMsg::Red, "Vous ne possedez pas le sort " + std::to_string(p_SpellID));
+        GetSession()->send(l_Packet.m_Packet);
+        return;
+    }
+    Unit::CastSpell(p_SpellID);
+}
+
 void Player::SetPlayerMod(const ePlayerMod & p_PlayerMod)
 {
     m_Mod = p_PlayerMod;
@@ -293,7 +342,85 @@ void Player::Save()
 
 void Player::LearnSpell(uint16 p_SpellID)
 {
-    ;
+    if (HasSpell(p_SpellID))
+    {
+        SendMsg("Vous possedez déja le sort #" + std::to_string(p_SpellID));
+    }
+
+    SpellTemplate* l_SpellTemplate = g_SpellManager->GetSpell(p_SpellID);
+
+    if (l_SpellTemplate == nullptr)
+        return;
+
+    SendMsg("Vous apprenez le sort " + l_SpellTemplate->GetName());
+    g_SqlManager->AddSpellForPlayer(this, p_SpellID);
+}
+
+void Player::UnlearnSpell(uint16 p_SpellID)
+{
+    if (!HasSpell(p_SpellID))
+    {
+        SendMsg("Vous ne possédez pas le sort #" + std::to_string(p_SpellID));
+    }
+
+    SpellTemplate* l_SpellTemplate = g_SpellManager->GetSpell(p_SpellID);
+
+    if (l_SpellTemplate == nullptr)
+        return;
+
+    SendMsg("Vous oubliez le sort " + l_SpellTemplate->GetName());
+
+    RemoveSpellBindToKey(p_SpellID);
+    g_SqlManager->RemoveSpellForPlayer(this, p_SpellID);
+
+    RemoveSpellID(p_SpellID);
+}
+
+void Player::UnlearnAllSpell()
+{
+    std::map< uint16, uint64 >* l_SpellList = GetSpellList();
+    std::vector<uint16> l_SpellIDs;
+    for (auto l_Spell : (*l_SpellList))
+    {
+        l_SpellIDs.push_back(l_Spell.first);
+    }
+    for (auto l_SpellID : l_SpellIDs)
+    {
+        UnlearnSpell(l_SpellID);
+    }
+}
+
+
+void Player::LearnClass(eClass p_Class)
+{
+    /// FOR TEST
+    /*if (GetClass() != eClass::NONECLASS)
+        return;*/
+
+    SetClass(p_Class);
+    UnlearnAllSpell();
+
+    std::string l_Msg = "Vous devenez un ";
+    switch (p_Class)
+    {
+    case eClass::ASSASSIN :
+        l_Msg += "Assassin";
+        g_SqlManager->AddSpellForPlayer(this, 1);
+        g_SqlManager->AddSpellForPlayer(this, 2);
+        g_SqlManager->AddSpellBind(this, 1, 9);
+        g_SqlManager->AddSpellBind(this, 2, 10);
+        break;
+    case eClass::MAGE:
+        l_Msg += "Mage";
+        break;
+    case eClass::PALADIN:
+        l_Msg += "Paladin";
+        break;
+    case eClass::PRETRE:
+        l_Msg += "Prêtre";
+        break;
+    }
+    SendMsg(l_Msg);
 }
 
 void Player::SetClass(eClass p_Class)
@@ -460,6 +587,18 @@ void Player::AddSpellBindToKey(uint16 p_SpellID, uint8 p_Bind)
 {
     m_SpellsBindToKey[p_SpellID] = p_Bind;
 }
+
+void Player::RemoveSpellBindToKey(uint16 p_SpellID)
+{
+    std::map<uint16, uint8>::iterator l_It = m_SpellsBindToKey.find(p_SpellID);
+
+    if (l_It == m_SpellsBindToKey.end())
+        return;
+
+    m_SpellsBindToKey.erase(l_It);
+    g_SqlManager->RemoveSpellBind(this, p_SpellID);
+}
+
 
 int32 Player::GetSpellOnBind(uint8 p_Bind)
 {

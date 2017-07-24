@@ -140,6 +140,7 @@ bool MapTemplate::InitializeMap()
     m_SizeX = l_Param.l_Size[0];
     m_SizeY = l_Param.l_Size[1];
 
+    printf("Map Size %d %d %d\n", m_ID, m_SizeX, m_SizeY);
     int l_NbCase = (uint32)m_SizeX * (uint32)m_SizeY;
     t_Case *Buffer = (t_Case*)malloc(sizeof(t_Case) * l_NbCase);
     fread(Buffer, sizeof(*Buffer), l_NbCase, l_File);

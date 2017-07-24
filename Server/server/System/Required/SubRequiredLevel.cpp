@@ -48,3 +48,52 @@ bool SubRequiredAccessLevel::IsValid(const Player* p_Player) const
         return true;
     return false;
 }
+
+SubRequiredClass::SubRequiredClass(uint8 p_Class) :
+    m_Class(p_Class)
+{
+}
+
+SubRequiredClass::~SubRequiredClass()
+{
+}
+
+bool SubRequiredClass::IsValid(const Player* p_Player) const
+{
+    if (p_Player->GetClass() == (eClass)m_Class)
+        return true;
+    return false;
+}
+
+
+SubRequiredHasSpell::SubRequiredHasSpell(uint16 p_SpellID) :
+    m_Spell(p_SpellID)
+{
+}
+
+SubRequiredHasSpell::~SubRequiredHasSpell()
+{
+}
+
+bool SubRequiredHasSpell::IsValid(const Player* p_Player) const
+{
+    if (p_Player->HasSpell(m_Spell))
+        return true;
+    return false;
+}
+
+SubRequiredHasNotSpell::SubRequiredHasNotSpell(uint16 p_SpellID) :
+    m_Spell(p_SpellID)
+{
+}
+
+SubRequiredHasNotSpell::~SubRequiredHasNotSpell()
+{
+}
+
+bool SubRequiredHasNotSpell::IsValid(const Player* p_Player) const
+{
+    if (!p_Player->HasSpell(m_Spell))
+        return true;
+    return false;
+}

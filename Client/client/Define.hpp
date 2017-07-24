@@ -19,16 +19,16 @@
 #define GRID_SIZE 12
 
 /// SKIN
-#define MAX_SKIN_IMG 87
-#define MAX_SKIN_MOUNT_IMG 1
+#define MAX_SKIN_IMG 90
+#define MAX_SKIN_MOUNT_IMG 2
 #define SKIN_ZOOM_FACTOR_DEFAULT 1.0f
 #define UPDATE_OPACITY_TIME 250
 #define SKINS_FOLDER "img/skins/"
 #define SKINS_MOUNT_FOLDER "img/skins/mount/"
 #define SKIN_SIZE_X 24
 #define SKIN_SIZE_Y 32
-#define SKIN_MOUNT_SIZE_X 26
-#define SKIN_MOUNT_SIZE_Y 26
+#define SKIN_MOUNT_SIZE_X 48
+#define SKIN_MOUNT_SIZE_Y 33
 #define SKIN_OFFSET_SIZE_X 14
 #define MAX_MOVEMENT_POSITION 3
 #define UPDATE_TIME_MOVEMENT 200
@@ -132,7 +132,8 @@ enum eTypeWarningMsg
 {
     Red = 0,
     Yellow,
-    Top
+    Top,
+    BigMsg
 };
 
 struct Position

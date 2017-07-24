@@ -221,7 +221,7 @@ void Graphics::DrawWorldObjects(std::map<uint32, std::vector<WorldObject*> > *p_
                         l_MountSkin->setScale(sf::Vector2f(l_Unit->GetSkinZoomFactor(), l_Unit->GetSkinZoomFactor()));
                         Position l_Pos = GetCenterPositionOnUnit(l_Unit, l_MountSkin);
                         l_MountSkin->setPosition(l_Pos.x - (l_Unit->GetSizeX() / 2), l_Pos.y - l_Unit->GetSizeY());
-                        if (l_Unit->GetOrientation() != Orientation::Down)
+                        if (l_Unit->GetOrientation() != Orientation::Down && l_Unit->GetOrientation() != Orientation::Up)
                             m_Window.draw(*l_MountSkin);
                     }
                 }
@@ -245,7 +245,7 @@ void Graphics::DrawWorldObjects(std::map<uint32, std::vector<WorldObject*> > *p_
                 Unit* l_Unit = l_WorldObject->ToUnit();
                 std::vector<VisualEffect>  *l_VisualsEffect = l_Unit->GetVisualsEffect();
 
-                if (l_MountSkin != nullptr && l_Unit->GetOrientation() == Orientation::Down)
+                if (l_MountSkin != nullptr && (l_Unit->GetOrientation() == Orientation::Down || l_Unit->GetOrientation() == Orientation::Up))
                     m_Window.draw(*l_MountSkin);
 
                 /// VISUAL EFFECT
@@ -257,7 +257,7 @@ void Graphics::DrawWorldObjects(std::map<uint32, std::vector<WorldObject*> > *p_
                         l_SkinSprite->setScale(sf::Vector2f(l_Unit->GetSkinZoomFactor(), l_Unit->GetSkinZoomFactor()));
                         Position l_Pos = l_Unit->GetPosition();
                         if (!l_Unit->IsDynamicObject())
-                        GetCenterPositionOnUnit(l_Unit, l_SkinSprite);
+                            GetCenterPositionOnUnit(l_Unit, l_SkinSprite);
                         l_SkinSprite->setPosition(l_Pos.x - (l_Unit->GetSizeX() / 2) + l_OffsetX, l_Pos.y - l_Unit->GetSizeY() + l_OffsetY);
                         m_Window.draw(*l_SkinSprite);
                     }
@@ -450,7 +450,11 @@ void Graphics::DrawMap()
                 if (l_TileSprite == nullptr)
                     continue;
                 l_TileSprite->setPosition((float)(*l_It2)->GetPosX(), (float)(*l_It2)->GetPosY());
-                m_Window.draw(*l_TileSprite);
+                TileSprite l_UnPtrTileSprite = *l_TileSprite;
+                Case *l_ActualCase = l_Map->GetCase(g_Player->GetPosX(), g_Player->GetPosY());
+                if (g_Player && l_ActualCase && l_ActualCase->GetID() == (*l_It2)->GetID())
+                    l_UnPtrTileSprite.setColor(sf::Color(255, 255, 255, 100));
+                m_Window.draw(l_UnPtrTileSprite);
             }
         }
     }

@@ -61,7 +61,14 @@ void PacketHandler::HandleAnswerQuestion(WorldPacket &p_Packet, WorldSocket* p_W
     if (l_Player == nullptr)
         return;
 
-    printf("[%s] answer question %d\n", l_Player->GetName().c_str(), l_QuestionID);
+    std::pair<Unit*, uint16> l_Gossip = l_Player->GetGossipForQuestion(l_QuestionID, l_AnswerID);
+    l_Player->RemoveQuestionInProgress(l_QuestionID);
+    Unit* l_Unit = l_Gossip.first;
+    if (l_Unit == nullptr)
+        return;
+
+    l_Unit->GossipTo(l_Player, l_Gossip.second);
+    printf("[%s] answer question %d %d\n", l_Player->GetName().c_str(), l_QuestionID, l_AnswerID);
 }
 
 void PacketHandler::HandleGoDirection(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
@@ -149,6 +156,7 @@ void PacketHandler::HandleStartAttack(WorldPacket &p_Packet, WorldSocket* p_Worl
     if (l_Player == nullptr)
         return;
 
+    l_Player->Dismount();
     l_Player->GetMovementHandler()->AddMovementToStack(eActionType::Attack, l_Pos, (Orientation)l_Player->GetOrientation());
     l_Player->GetSession()->SendUnitStartAttack((uint8)TypeUnit::PLAYER, l_Player->GetID(), l_Pos, l_Player->GetOrientation());
 }

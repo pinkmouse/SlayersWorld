@@ -46,6 +46,11 @@ uint16 SpellTemplate::GetCastTime() const
     return m_CastTime;
 }
 
+std::string SpellTemplate::GetName() const
+{
+    return m_Name;
+}
+
 std::vector<SpellEffect*>* SpellTemplate::GetListEffect()
 {
     return &m_ListEffect;
@@ -95,4 +100,9 @@ void SpellTemplate::AddSpellEffect(SpellEffect* p_SpellEffect)
 void SpellTemplate::AddResourceNeed(ResourceNeed p_ResourceNeed)
 {
     m_ListResourceNeed.push_back(p_ResourceNeed);
+}
+
+void SpellTemplate::SetName(const std::string & p_Name)
+{
+    m_Name = p_Name;
 }

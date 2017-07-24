@@ -32,16 +32,8 @@ void QuestionBox::Open()
 
 void QuestionBox::GenericAction(const uint16 & p_MenuID)
 {
-    switch (p_MenuID)
-    {
-        case 0:
-            g_Socket->SendAnswerQuestion(m_QuestionID, 0);
-            Close();
-            break;
-        case 1:
-            Close();
-            break;
-    }
+    g_Socket->SendAnswerQuestion(m_QuestionID, p_MenuID);
+    Close();
 }
 
 void QuestionBox::KeyPress(const sf::Keyboard::Key & p_Key)

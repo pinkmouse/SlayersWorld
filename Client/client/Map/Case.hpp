@@ -13,6 +13,7 @@ public:
 	uint8 GetMaxTileLevel();
 	void SetTile(uint8, int16);
 	int16 GetTile(uint8) const;
+    uint32 GetID() const;
     bool IsBlocking() const;
     void AddDynamicOject(DynamicObject*);
     void RemoveDynamicOject(DynamicObject*);

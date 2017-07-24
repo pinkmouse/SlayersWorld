@@ -23,7 +23,8 @@ public:
     void DrawField(Window &, const float &, const float &, uint16, uint16, bool p_WithBorder = true);
     void DrawBorderField(Window &, const float &, const float &, uint16, uint16);
     TileSprite GetLifeBar(uint8, uint8 p_Pct = 100);
-    TileSprite GetXpBar(bool, uint8 p_Pct = 100);
+    TileSprite GetXpBar();
+    TileSprite GetBottomBar();
     TileSprite GetCastBar(bool, uint8 p_Pct = 100);
     void Draw(Window &);
     void DrawStartingPage(Window &);
@@ -31,9 +32,11 @@ public:
     void DrawClock(Window &);
     void DrawAlign(Window &);
     void DrawExtraUI(Window &);
+    void DrawBGUI(Window &);
     HistoryField* GetHistoryField() const;
     void AddWarningMsg(eTypeWarningMsg, const std::string &);
     void AddTopMsg(const std::string &);
+    void SetBigMsg(const std::string &);
     void AddSimpleQuestion(const uint16 &, const std::string &);
     void RemoveFirstTopMsg();
     void AddWarningMsg(eTypeWarningMsg, eWarningMsg);
@@ -47,14 +50,17 @@ public:
     MenuManager* GetMenuManager();
     bool IsLoading() const;
     void SetIsLoading(bool);
+
     void AddExtraInterface(eExtraInterface);
     void RemoveExtraInterface(eExtraInterface);
+    void AddExtraUiData(eExtraInterface, const uint8 &, const uint8 &, const int16 &);
 
 private:
     sf::Texture                         m_SystemTexture;
     sf::Texture                         m_SepBarTexture;
     sf::Texture                         m_LifeBarTexture;
     sf::Texture                         m_XpTexture;
+    sf::Texture                         m_BarBottom;
     sf::Texture                         m_CastBarTexture;
     sf::Texture                         m_Background;
     sf::Texture                         m_BGInterface;
@@ -70,8 +76,9 @@ private:
     std::map< uint8, uint8 >             m_KeyBoardBind;
     std::map< uint8, uint64 >            m_BlockingBinds;
     std::vector<eExtraInterface>         m_ExtraUI;
+    std::map < eExtraInterface, std::map< uint8,  std::pair<uint8, uint64>>> m_ExtraUIData;
     std::map<uint16, QuestionBox>        m_ListSimpleQuestion;
-
+    std::pair<std::string , uint64>      m_BigMessage;
     MenuManager                          m_MenuManager;
     bool                                 m_IsLoading;
 };

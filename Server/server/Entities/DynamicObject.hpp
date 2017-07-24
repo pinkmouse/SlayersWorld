@@ -13,9 +13,13 @@ public:
     virtual void Update(sf::Time) = 0;
     void Respawn();
     void SetResourceNb(eResourceType, uint8);
+    uint16 GetEntry() const;
     virtual void ActionFrom(Player*);
     virtual void UnitEnterInCase(Unit*) = 0;
     virtual bool CanBeWalk() = 0;
     virtual bool IsBlocking() const;
+
+private:
+    uint16 m_Entry;
 };
 

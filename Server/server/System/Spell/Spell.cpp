@@ -12,6 +12,8 @@ Spell::Spell(SpellTemplate* p_SpellTemplate) :
     m_SpellEffectsMap[SpellEffectType::Damage] = &Spell::EffectDamage;
     m_SpellEffectsMap[SpellEffectType::Heal] = &Spell::EffectHeal;
     m_SpellEffectsMap[SpellEffectType::ApplyAura] = &Spell::EffectApplyAura;
+    m_SpellEffectsMap[SpellEffectType::LearnClass] = &Spell::EffectLearnClass;
+    m_SpellEffectsMap[SpellEffectType::LearnSpell] = &Spell::EffectLearnSpell;
 }
 
 Spell::~Spell()
@@ -71,6 +73,24 @@ void Spell::EffectDamage(uint8 p_ID, Unit* p_Target, SpellEffect* p_SpellEffect)
 void Spell::EffectApplyAura(uint8 p_ID, Unit* p_Target, SpellEffect* p_SpellEffect)
 {
     p_Target->ApplyAuraEffect(p_ID, m_SpellTemplate, m_Caster, (eTypeAuraEffect)p_SpellEffect->m_BasePoint1, p_SpellEffect->m_BasePoint2, p_SpellEffect->m_BasePoint3, p_SpellEffect->m_BasePoint4);
+}
+
+void Spell::EffectLearnClass(uint8 p_ID, Unit* p_Target, SpellEffect* p_SpellEffect)
+{
+    Player* l_Player = p_Target->ToPlayer();
+    if (l_Player == nullptr)
+        return;
+
+    l_Player->LearnClass((eClass)p_SpellEffect->m_BasePoint1);
+}
+
+void Spell::EffectLearnSpell(uint8 p_ID, Unit* p_Target, SpellEffect* p_SpellEffect)
+{
+    Player* l_Player = p_Target->ToPlayer();
+    if (l_Player == nullptr)
+        return;
+
+    l_Player->LearnSpell(p_SpellEffect->m_BasePoint1);
 }
 
 void Spell::SetCastTime(uint64 p_CastTime)

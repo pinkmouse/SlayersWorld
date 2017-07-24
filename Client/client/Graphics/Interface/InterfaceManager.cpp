@@ -19,6 +19,7 @@ InterfaceManager::InterfaceManager(Events* p_Events) :
     m_Align.setColor(sf::Color::Black);
 
     InitializeWarningMsgs();
+    m_BigMessage.first = "";
     m_IsLoading = false;
 }
 
@@ -49,6 +50,10 @@ void InterfaceManager::Initialize()
     l_FileSystemName = "xp.png";
     if (!m_XpTexture.loadFromFile(IMG_FOLDER + l_FileSystemName))
         printf("Load SystemImg Xp Failed\n");
+
+    l_FileSystemName = "barbottom.png";
+    if (!m_BarBottom.loadFromFile(IMG_FOLDER + l_FileSystemName))
+        printf("Load %s Failed\n", l_FileSystemName.c_str());
 
     l_FileSystemName = "castBar.png";
     if (!m_CastBarTexture.loadFromFile(IMG_FOLDER + l_FileSystemName))
@@ -248,15 +253,19 @@ TileSprite InterfaceManager::GetLifeBar(uint8 p_ID, uint8 p_Pct)
     return l_TileSprite;*/
 }
 
-TileSprite InterfaceManager::GetXpBar(bool p_Full, uint8 p_Pct)
+TileSprite InterfaceManager::GetXpBar()
 {
-    uint8 l_Full = 0;
-    if (p_Full)
-        l_Full = 1;
-
     TileSprite l_TileSprite;
-    l_TileSprite.setTexture(m_XpTexture);
-    l_TileSprite.setTextureRect(sf::IntRect(0, (m_XpTexture.getSize().y / 2) * l_Full, m_XpTexture.getSize().x, m_XpTexture.getSize().y / 2));
+    l_TileSprite.setTexture(m_BarBottom);
+    l_TileSprite.setTextureRect(sf::IntRect(0, 38, m_BarBottom.getSize().x, 30));
+    return l_TileSprite;
+}
+
+TileSprite InterfaceManager::GetBottomBar()
+{
+    TileSprite l_TileSprite;
+    l_TileSprite.setTexture(m_BarBottom);
+    l_TileSprite.setTextureRect(sf::IntRect(0, 0, m_BarBottom.getSize().x, 38));
     return l_TileSprite;
 }
 
@@ -291,6 +300,33 @@ void InterfaceManager::Update(sf::Time p_Diff)
             {
                 (*l_Itr).second -= (p_Diff.asMicroseconds());
                 ++l_Itr;
+            }
+        }
+    }
+
+    /// UPDATE BIG Msg (Seconds in BG)
+    if (m_BigMessage.first != "")
+    {
+        if (m_BigMessage.second <= p_Diff.asMicroseconds())
+        {
+            m_BigMessage.first = "";
+            m_BigMessage.second = 0;
+        }
+        else
+        m_BigMessage.second -= p_Diff.asMicroseconds();
+    }
+
+    /// UPDATE EXTRA UI TIMER
+    for (std::map < eExtraInterface, std::map< uint8, std::pair<uint8, uint64>>>::iterator l_It = m_ExtraUIData.begin(); l_It != m_ExtraUIData.end(); l_It++)
+    {
+        for (std::map< uint8, std::pair<uint8, uint64>>::iterator l_Itr = (*l_It).second.begin(); l_Itr != (*l_It).second.end(); l_Itr++)
+        {
+            if ((*l_Itr).second.first == 1) ///< Timer
+            {
+                if ((*l_Itr).second.second >= p_Diff.asMicroseconds())
+                    (*l_Itr).second.second -= p_Diff.asMicroseconds();
+                else
+                    (*l_Itr).second.second = 0;
             }
         }
     }
@@ -341,17 +377,60 @@ void InterfaceManager::DrawExtraUI(Window & p_Window)
         {
             case eExtraInterface::eBattelGroundUI :
             {
-                TileSprite l_BGUI;
-                l_BGUI.setTexture(m_BGInterface);
-                l_BGUI.setScale(1.5f, 1.5f);
-                l_BGUI.setPosition((X_WINDOW / 2) - (l_BGUI.getGlobalBounds().width / 2), 0);
-                p_Window.draw(l_BGUI);
+                DrawBGUI(p_Window);
                 break;
             }
             default :
                 break;
         }
     }
+}
+
+void InterfaceManager::DrawBGUI(Window & p_Window)
+{
+    /// IMG BASE
+    TileSprite l_BGUI;
+    l_BGUI.setTexture(m_BGInterface);
+    l_BGUI.setScale(1.5f, 1.5f);
+    l_BGUI.setPosition((X_WINDOW / 2) - (l_BGUI.getGlobalBounds().width / 2), 0);
+    p_Window.draw(l_BGUI);
+
+    auto l_UIData = m_ExtraUIData.find(eExtraInterface::eBattelGroundUI);
+    if (l_UIData == m_ExtraUIData.end())
+        return;
+
+    /// TIME
+    auto l_BGTimer = (*l_UIData).second.find(0);
+    if (l_BGTimer != (*l_UIData).second.end())
+    {
+        sf::Text l_Time;
+        l_Time.setCharacterSize(16);
+        l_Time.setFont(*g_Font);
+        l_Time.setColor(sf::Color(255, 255, 255, 255));
+        uint8 l_Min = m_ExtraUIData[eExtraInterface::eBattelGroundUI][0].second / 1000 / 1000 / 60;
+        uint8 l_Sec = m_ExtraUIData[eExtraInterface::eBattelGroundUI][0].second / 1000 / 1000 % 60;
+        std::string l_TimeStr;
+        if (l_Min <= 0)
+            l_TimeStr = std::to_string(l_Sec);
+        else if (l_Sec < 10)
+            l_TimeStr = std::to_string(l_Min) + ":0" + std::to_string(l_Sec);
+        else
+            l_TimeStr = std::to_string(l_Min) + ":" + std::to_string(l_Sec);
+        l_Time.setString(l_TimeStr);
+        l_Time.setPosition(l_BGUI.getPosition().x + 60 - l_Time.getGlobalBounds().width / 2, l_BGUI.getPosition().y + 4);
+        p_Window.draw(l_Time);
+    }
+}
+
+void InterfaceManager::AddExtraUiData(eExtraInterface p_Interface, const uint8 & p_Index, const uint8 & p_Type, const int16 & p_Data)
+{
+    std::pair<uint8, uint64> l_DataPair;
+    l_DataPair.first = p_Type;
+    l_DataPair.second = (uint64)p_Data;
+    if (p_Type == 1)
+        l_DataPair.second = p_Data * IN_MILLISECOND * 1000;
+
+    m_ExtraUIData[p_Interface][p_Index] = l_DataPair;
 }
 
 void InterfaceManager::DrawClock(Window & p_Window)
@@ -387,6 +466,17 @@ void InterfaceManager::DrawWarnings(Window & p_Window)
             l_WarningMsg.setPosition((X_WINDOW / 2) - ((l_WarningMsg.getGlobalBounds().width) / 2), (Y_WINDOW / 2) - 50 - ((g_Font->getLineSpacing(l_WarningMsg.getCharacterSize())) / 2) + (g_Font->getLineSpacing(l_WarningMsg.getCharacterSize()) * i));
             p_Window.draw(l_WarningMsg);
         }
+    }
+
+    if (m_BigMessage.first != "")
+    {
+        sf::Text l_BigMsg;
+        l_BigMsg.setCharacterSize(40);
+        l_BigMsg.setFont(*g_Font);
+        l_BigMsg.setColor(sf::Color(255, 66, 66, 255));
+        l_BigMsg.setString(m_BigMessage.first);
+        l_BigMsg.setPosition((X_WINDOW / 2) - ((l_BigMsg.getGlobalBounds().width) / 2), (Y_WINDOW / 2) - 50 - ((l_BigMsg.getGlobalBounds().height) / 2));
+        p_Window.draw(l_BigMsg);
     }
 }
 
@@ -440,15 +530,17 @@ void InterfaceManager::Draw(Window & p_Window)
     l_Flask.setScale(FLASK_SCALE, FLASK_SCALE);
     p_Window.draw(l_Flask);*/
 
+    /// Draw Bottom bar
+    TileSprite l_BottomBar = GetBottomBar();
+    l_BottomBar.setScale(XP_BAR_SCALE, XP_BAR_SCALE);
+    l_BottomBar.setPosition((X_WINDOW / 2) - (l_BottomBar.getGlobalBounds().width / 2), Y_WINDOW - (l_BottomBar.getGlobalBounds().height));
+    p_Window.draw(l_BottomBar);
+
     /// Draw XP bar
-    TileSprite l_XpBarEmpty = GetXpBar(false);
-    l_XpBarEmpty.setPosition(0, Y_WINDOW - (m_XpTexture.getSize().y / 2 * XP_BAR_SCALE));
-    l_XpBarEmpty.setScale(XP_BAR_SCALE, XP_BAR_SCALE);
-    p_Window.draw(l_XpBarEmpty);
-    TileSprite l_XpBar = GetXpBar(true);
-    l_XpBar.setTextureRect(sf::IntRect(0, m_XpTexture.getSize().y / 2, (m_XpTexture.getSize().x / 100.0f) * g_Player->GetXpPct(), m_XpTexture.getSize().y / 2));
-    l_XpBar.setPosition(0, Y_WINDOW - (m_XpTexture.getSize().y / 2 * XP_BAR_SCALE));
+    TileSprite l_XpBar = GetXpBar();
+    l_XpBar.setTextureRect(sf::IntRect(0, l_XpBar.getTextureRect().top, (l_XpBar.getTextureRect().width / 100.0f) * g_Player->GetXpPct(), l_XpBar.getTextureRect().height));
     l_XpBar.setScale(XP_BAR_SCALE, XP_BAR_SCALE);
+    l_XpBar.setPosition((X_WINDOW / 2) - (l_BottomBar.getGlobalBounds().width / 2), Y_WINDOW - (l_XpBar.getGlobalBounds().height));
     p_Window.draw(l_XpBar);
     
     /// Draw CAST Bar
@@ -466,6 +558,7 @@ void InterfaceManager::Draw(Window & p_Window)
         p_Window.draw(l_CastBar);
     }
 
+    DrawExtraUI(p_Window);
     /// Draw chat bar
     if (m_WritingField->IsFieldOpen())
     {
@@ -514,7 +607,7 @@ void InterfaceManager::Draw(Window & p_Window)
         //p_Window.draw(m_WritingField->GetText());
     }
     DrawWarnings(p_Window);
-    DrawExtraUI(p_Window);
+
     //DrawClock(p_Window);
 
     std::vector<Menu*> l_ListOpenMenu = m_MenuManager.GetOpenMenus();
@@ -648,10 +741,12 @@ void InterfaceManager::AddExtraInterface(eExtraInterface p_ExtraUI)
 void InterfaceManager::RemoveExtraInterface(eExtraInterface p_ExtraUI)
 {
     std::vector<eExtraInterface>::iterator l_It = std::find(m_ExtraUI.begin(), m_ExtraUI.end(), p_ExtraUI);
-    if (l_It == m_ExtraUI.end())
-        return;
+    if (l_It != m_ExtraUI.end())
+        m_ExtraUI.erase(l_It);
 
-    m_ExtraUI.erase(l_It);
+    std::map < eExtraInterface, std::map< uint8, std::pair<uint8, uint64> > >::iterator l_Itr = m_ExtraUIData.find(p_ExtraUI);
+    if (l_Itr != m_ExtraUIData.end())
+        m_ExtraUIData.erase(l_Itr);
 }
 
 void InterfaceManager::AddSimpleQuestion(const uint16 & p_GossipID, const std::string & p_Msg)
@@ -662,4 +757,10 @@ void InterfaceManager::AddSimpleQuestion(const uint16 & p_GossipID, const std::s
 
     m_ListSimpleQuestion[p_GossipID] = QuestionBox(p_GossipID, p_Msg);
     m_ListSimpleQuestion[p_GossipID].Open();
+}
+
+void InterfaceManager::SetBigMsg(const std::string & p_Msg)
+{
+    m_BigMessage.first = p_Msg;
+    m_BigMessage.second = 1 * IN_MILLISECOND * IN_MILLISECOND;
 }

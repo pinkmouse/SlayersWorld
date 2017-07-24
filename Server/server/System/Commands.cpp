@@ -31,6 +31,10 @@ void Player::InitializeCommands()
     m_CmdHandleMap["leave"].second = &Player::HandleCommandLeave;
     m_CmdHandleMap["kiss"].first = eAccessType::Dummy;
     m_CmdHandleMap["kiss"].second = &Player::HandleCommandEmote;
+    m_CmdHandleMap["mount"].first = eAccessType::Dummy;
+    m_CmdHandleMap["mount"].second = &Player::HandleMount;
+    m_CmdHandleMap["dismount"].first = eAccessType::Dummy;
+    m_CmdHandleMap["dismount"].second = &Player::HandleDismount;
     m_CmdHandleMap["npc"].first = eAccessType::Moderator;
     m_CmdHandleMap["npc"].second = &Player::HandleCommandCreature;
     m_CmdHandleMap["who"].first = eAccessType::Moderator;
@@ -69,6 +73,21 @@ bool Player::HandleTest(std::vector<std::string> p_ListCmd)
         return false;
 
     AddQuest(new Quest(g_QuestManager->GetQuestTemplate(1)));
+    return true;
+}
+
+bool Player::HandleMount(std::vector<std::string> p_ListCmd)
+{
+    if (!p_ListCmd.empty())
+        CastSpell(5);
+    else
+        CastSpell(4);
+    return true;
+}
+
+bool Player::HandleDismount(std::vector<std::string> p_ListCmd)
+{
+    Dismount();
     return true;
 }
 

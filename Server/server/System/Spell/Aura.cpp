@@ -87,7 +87,7 @@ void Aura::SubDuration(const uint64 & p_Duration)
 
 AuraEffect* Aura::AddAuraEffect(const uint8 & p_ID, const eTypeAuraEffect & p_AuraEffectTpe, const int32 & p_Data0, const int32 & p_Data1, const int32 & p_Data2)
 {
-    AuraEffect* l_AuraEffect = new AuraEffect(m_SpellTemplate, m_Caster, m_Target, p_AuraEffectTpe, p_Data0, p_Data1, p_Data2);
+    AuraEffect* l_AuraEffect = new AuraEffect(this, m_SpellTemplate, m_Caster, m_Target, p_AuraEffectTpe, p_Data0, p_Data1, p_Data2);
     m_AuraEffectFunc l_Fun = m_AuraEffectsMap[p_AuraEffectTpe];
     if (m_AuraEffectList.find(p_ID) != m_AuraEffectList.end())
     {

@@ -173,6 +173,13 @@ Case* Map::GetCase(uint32 p_PosX, uint32 p_PosY) const
     return m_ListCase[(uint16)((p_PosY / TILE_SIZE) * m_SizeX) + (p_PosX / TILE_SIZE)];
 }
 
+int64 Map::GetCaseNb(const int64 & p_PosX, const int64 & p_PosY) const
+{
+    if (p_PosX < 0 || p_PosY < 0)
+        return -1;
+    return ((p_PosY / TILE_SIZE) * m_SizeX) + (p_PosX / TILE_SIZE);
+}
+
 uint16 Map::GetSizeX() const
 {
 	return m_SizeX;

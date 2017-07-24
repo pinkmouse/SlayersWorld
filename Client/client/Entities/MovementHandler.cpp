@@ -181,15 +181,23 @@ void MovementHandler::Update(sf::Time p_Diff)
 
         m_DiffTime -= (uint64)((UPDATE_TIME_MOVEMENT / (STEP_SIZE * m_Speed)) * 1000);
 
-        if (!IsInColision(l_PosX, l_PosY))
+        bool l_Colision = IsInColision(l_PosX, l_PosY);
+        if (!l_Colision)
         {
             m_Pos.x = (uint32)l_PosX;
             m_Pos.y = (uint32)l_PosY;
             m_InColision = false;
         }
+        /*else if (l_Colision && m_Map->GetCaseNb((int64)m_Pos.x, (int64)m_Pos.y) == m_Map->GetCaseNb(l_PosX, l_PosY) && m_Map->GetCaseNb(l_PosX, l_PosY) >= 0)
+        {
+            m_Pos.x = (uint32)l_PosX;
+            m_Pos.y = (uint32)l_PosY;
+            m_InColision = false;
+            printf("Is Not Incollision %d:%d\n", l_PosX, l_PosY);
+        }*/
         else
         {
-            //printf("IsIncollision %d:%d\n", l_PosX, l_PosY);
+            printf("IsIncollision %d:%d\n", l_PosX, l_PosY);
             StopMovement();
             m_InColision = true;
         }

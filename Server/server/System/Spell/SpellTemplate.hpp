@@ -14,6 +14,7 @@ public:
     uint16 GetCastTime() const;
     uint32 GetCooldown() const;
     int32 GetDuration() const;
+    std::string GetName() const;
     std::vector<SpellEffect*>* GetListEffect();
     std::vector<ResourceNeed>* GetReousrcesNeed();
     void SetLevel(uint8);
@@ -22,6 +23,7 @@ public:
     void SetCastTime(uint16);
     void SetDuration(int32);
     void SetSpeed(float);
+    void SetName(const std::string &);
     void AddSpellEffect(SpellEffect*);
     void AddResourceNeed(ResourceNeed);
 
@@ -34,7 +36,8 @@ private:
     uint16 m_CastTime; ///< In Millisecond
     int32 m_Duration; ///< In Millisecond
     float m_Speed;
-    
+    std::string m_Name;
+
     std::vector<SpellEffect*> m_ListEffect;
     std::vector<ResourceNeed> m_ListResourceNeed;
 };

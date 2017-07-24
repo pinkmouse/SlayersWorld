@@ -36,7 +36,7 @@ void TileSet::BuildSprites()
 {
 	int32 l_TileSizeNumber = m_XCase * m_YCase;
 
-	for (int32 i = 0; i < l_TileSizeNumber; ++i)
+    for (int32 i = 0; i < l_TileSizeNumber; ++i)
 		m_AllTileSprite.push_back(GetNewTileSprite(i));
 
 }

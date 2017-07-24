@@ -15,6 +15,8 @@ class Aura;
 class AuraEffect;
 class Player;
 class Creature;
+class GameObject;
+class DynamicObject;
 
 class Unit : public WorldObject
 {
@@ -45,6 +47,8 @@ public:
     TypeUnit GetType() const;
     Creature* ToCreature();
     Player* ToPlayer();
+    GameObject* ToGameObject();
+    DynamicObject* ToDynamicObject();
     MovementHandler* GetMovementHandler();
     eFactionType GetFaction() const;
     virtual void SetPointsSet(const PointsSet &);
@@ -58,6 +62,7 @@ public:
     bool IsCenteredInCase();
     Orientation OrientationToBeCenteredInCase(const Position &);
     Position GetPositionCentered();
+    void Kill();
 
     /* RESOURCE */
     Resource* GetResource(eResourceType);
@@ -130,7 +135,9 @@ public:
 
     /* SPELL */
     void AddSpellID(uint16, uint64);
-    void CastSpell(uint16);
+    void RemoveSpellID(uint16);
+    bool HasSpell(uint16) const;
+    virtual void CastSpell(uint16);
     void CastSpell(uint16, std::vector<Unit*>);
     std::map< uint16, uint64 >* GetSpellList();
     virtual void AddSpellCooldown(uint16, uint64);
@@ -138,14 +145,19 @@ public:
     void SetCurrentSpell(Spell*);
     Spell* GetCurrentSpell() const;
     void InterruptCast();
+    void Dismount();
 
     /* GOSSIP*/
     void SetGossipList(std::vector<Gossip>*);
+    Gossip* GetGossip(const uint16 &);
     void GossipTo(Player *);
+    void GossipTo(Player *, const uint16 &);
     void UpdateGossip(sf::Time);
 
     /* AURA */
     void AddAura(Aura*);
+    void RemoveAllAura();
+    void RemoveAura(Aura*);
     std::vector<AuraEffect*> GetAuraEffectType(eTypeAuraEffect);
     std::vector<Aura*> GetAura(uint16);
     Aura* GetCasterAura(uint16, const Unit*);

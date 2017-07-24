@@ -37,7 +37,9 @@ public:
     void AddNewPlayer(uint32);
     void AddKeyDefaultBindsForAccount(uint32);
     void AddSpellBind(Player*, uint16, uint8);
+    void RemoveSpellBind(Player*, uint16);
     void AddSpellForPlayer(Player*, uint16);
+    void RemoveSpellForPlayer(Player*, uint16);
     void ReplaceKeyBindsForAccount(uint32, eKeyBoardAction, uint8);
     std::string GetLoginName(uint32);
     int16 GetLevel(const std::string &);

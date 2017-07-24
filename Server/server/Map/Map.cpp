@@ -9,10 +9,10 @@ Map::Map(uint16 p_InstanceID,  MapTemplate* p_Template)
     m_InstanceID = p_InstanceID;
     m_SizeX = p_Template->GetSizeX();
     m_SizeY = p_Template->GetSizeY();
+    printf("[%d] %d\n", m_SizeX, m_SizeY);
 
     std::vector<Case> l_ListCase = (*p_Template->GetListCase());
     uint32 i;
-    printf("SizeCase = %d\n", l_ListCase.size());
     for (i = 0; i < l_ListCase.size(); i++)
         AddCase(new Case(l_ListCase[i]));
 
@@ -25,7 +25,12 @@ Map::Map(uint16 p_InstanceID,  MapTemplate* p_Template)
     {
         Areatrigger* l_Areatrigger = new Areatrigger(l_ListArea[i].m_ID, this, l_ListArea[i].m_PosX, l_ListArea[i].m_PosY, l_ListArea[i].m_Template);
         AddUnit(l_Areatrigger);
-        GetCase(l_ListArea[i].m_CaseNb)->AddDynamicOject(l_Areatrigger);
+        Case* l_Case = GetCase(l_ListArea[i].m_CaseNb);
+
+        if (l_Case == nullptr)
+            continue;
+
+        l_Case->AddDynamicOject(l_Areatrigger);
     }
 
     std::vector<GobMapTemplate> l_ListGob = (*p_Template->GetListGob());
@@ -34,7 +39,12 @@ Map::Map(uint16 p_InstanceID,  MapTemplate* p_Template)
         GameObject* l_Gob = new GameObject(l_ListGob[i].m_ID, this, l_ListGob[i].m_PosX, l_ListGob[i].m_PosY, l_ListGob[i].m_Template);
         l_Gob->SetGossipList(l_ListGob[i].m_GossipList);
         AddUnit(l_Gob);
-        GetCase(l_ListGob[i].m_CaseNb)->AddDynamicOject(l_Gob);
+        Case* l_Case = GetCase(l_ListGob[i].m_CaseNb);
+
+        if (l_Case == nullptr)
+            continue;
+
+        l_Case->AddDynamicOject(l_Gob);
     }
 
     std::vector<CreatureMapTemplate> l_ListCreature = (*p_Template->GetListCreature());
@@ -107,6 +117,13 @@ Case* Map::GetCase(uint32 p_PosX, uint32 p_PosY) const
     return m_ListCase[(uint32)((p_PosY / TILE_SIZE) * m_SizeX) + (p_PosX / TILE_SIZE)];
 }
 
+int64 Map::GetCaseNb(const int64 & p_PosX, const int64 & p_PosY) const
+{
+    if (p_PosX < 0 || p_PosY < 0)
+        return -1;
+    return ((p_PosY / TILE_SIZE) * m_SizeX) + (p_PosX / TILE_SIZE);
+}
+
 uint16 Map::GetSquareID(uint16 p_X, uint16 p_Y) const
 {
     uint16 l_DrawingSquareID = 0;
@@ -125,6 +142,24 @@ Unit* Map::GetUnit(TypeUnit p_TypeID, uint16 p_UnitID)
     if (m_ListUnitZone[p_TypeID].find(p_UnitID) != m_ListUnitZone[p_TypeID].end())
         return m_ListUnitZone[p_TypeID][p_UnitID];
     return nullptr;
+}
+
+std::vector<Unit*> Map::GetAllUnitWithEntry(TypeUnit p_TypeID, uint16 p_Entry)
+{
+    std::vector<Unit*> l_ListUnit;
+    for (std::map<uint16, Unit*>::iterator l_It = m_ListUnitZone[p_TypeID].begin(); l_It != m_ListUnitZone[p_TypeID].end(); l_It++)
+    {
+        switch ((*l_It).second->GetType())
+        {
+            case TypeUnit::AREATRIGGER  :
+            case TypeUnit::GAMEOBJECT :
+                DynamicObject* l_Dyn = (*l_It).second->ToDynamicObject();
+                if (l_Dyn->GetEntry() == p_Entry)
+                    l_ListUnit.push_back(l_Dyn);
+                break;
+        }
+    }
+    return l_ListUnit;
 }
 
 void Map::Update(sf::Time p_Diff)
@@ -280,7 +315,6 @@ bool Map::UnitIsInVisu(Unit* p_Unit, Unit* p_Target)
         if (l_Case == nullptr || l_CaseTarget == nullptr)
             return false;
 
-        printf("[%d] %d\n", l_Case->GetID(), l_CaseTarget->GetID());
         if (l_Case->IsBlocking() && l_Case->GetID() != l_CaseTarget->GetID())
             return false;
     }
@@ -430,6 +464,7 @@ std::vector<Unit*> Map::GetUnitsInRadius(Unit* p_Unit, float p_RangeMin, float p
 void Map::AddUnit(Unit* p_Unit)
 {
     p_Unit->SetMap(this);
+    p_Unit->SetInstanceID(GetInstanceID());
     p_Unit->SetInWorld(true);
     m_ListUnitZone[p_Unit->GetType()][p_Unit->GetID()] = p_Unit;
 
@@ -446,6 +481,7 @@ void Map::AddUnit(Unit* p_Unit)
         p_Unit->ToPlayer()->UpdateNewSquares(0, p_Unit->GetSquareID(), true);
 
     GetCase(((p_Unit->GetPositionCentered().m_Y / TILE_SIZE) * (uint32)GetSizeX()) + (p_Unit->GetPositionCentered().m_X / TILE_SIZE))->UnitEnterInCase(p_Unit, nullptr);
+
 }
 
 void Map::RemoveUnit(Unit* p_Unit)
@@ -584,7 +620,10 @@ void Map::AddZone(Zone* p_Zone)
         Case* l_Case = GetCase(i);
 
         if (l_Case == nullptr)
+        {
+            i++;
             continue;
+        }
 
         l_Case->AddZone(p_Zone);
 

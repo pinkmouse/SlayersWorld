@@ -46,6 +46,7 @@ enum SMSG : uint8
     S_ExtraInterface = 33,
     S_UnitMount = 34,
     S_SrvPlayerQuestion = 35,
+    S_ExtraInterfaceData = 36,
     S_BlockBind = 40
 };
 
@@ -527,5 +528,23 @@ struct PacketExtraInterface
     void BuildPacket(eExtraInterface p_ExtraInterface, bool p_Enable)
     {
         m_Packet << m_PacketID << (uint8)p_ExtraInterface << p_Enable;
+    }
+};
+
+struct PacketExtraInterfaceData
+{
+    WorldPacket m_Packet;
+    uint8 m_PacketID;
+    eExtraInterface m_ExtraInterface;
+    uint8 m_Index;
+    uint8 m_Type;
+    int16 m_Data;
+
+    PacketExtraInterfaceData() :
+        m_PacketID(SMSG::S_ExtraInterfaceData) {}
+
+    void BuildPacket(eExtraInterface p_ExtraInterface, uint8 p_Index, uint8 p_Type, int16 p_Data)
+    {
+        m_Packet << m_PacketID << (uint8)p_ExtraInterface << p_Index << p_Type << p_Data;
     }
 };

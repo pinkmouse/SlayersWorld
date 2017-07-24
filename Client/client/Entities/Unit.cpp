@@ -402,6 +402,6 @@ float Unit::GetPosYOffset()
     float l_OffSetY = 0.0f;
 
     if (GetMount() >= 0)
-        l_OffSetY -= 14 + ((GetMovementHandler()->GetMovementPosition() % 2) * 2);
+        l_OffSetY -= 13 + ((GetMovementHandler()->GetMovementPosition() % 2) * 2);
     return l_OffSetY;
 }
