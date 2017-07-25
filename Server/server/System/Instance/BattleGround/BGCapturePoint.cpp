@@ -39,18 +39,7 @@ void BGCapturePoint::EndBG()
     {
         for (std::map<uint16, Unit*>::iterator l_It = l_ListUnit->begin(); l_It != l_ListUnit->end(); l_It++)
         {
-            Player* l_Player = (*l_It).second->ToPlayer();
-            if (l_Player == nullptr)
-                continue;
-
-            l_Player->TeleportTo(2, 0, 360, 380, Orientation::Up);
-            WorldSocket* l_Session = l_Player->GetSession();
-            if (l_Session == nullptr)
-                continue;
-
-            PacketExtraInterface l_Packet;
-            l_Packet.BuildPacket(eExtraInterface::eBattelGroundUI, false);
-            l_Session->SendPacket(l_Packet.m_Packet);
+            (*l_It).second->TeleportTo(2, 0, 360, 380, Orientation::Up);
         }
     }
     m_Step = eBGState::STEP2;
@@ -191,7 +180,20 @@ void BGCapturePoint::RemoveUnit(Unit* p_Unit)
         p_Unit->SetRespawnPosition(m_SaveRespawnPoint[p_Unit->GetID()]);
         m_SaveRespawnPoint.erase(l_It);
     }
+
+    Map::RemoveUnit(p_Unit);
+
+    Player* l_Player = p_Unit->ToPlayer();
+    if (l_Player == nullptr)
+        return;
+
+    WorldSocket* l_Session = l_Player->GetSession();
+    if (l_Session == nullptr)
+        return;
+
+    PacketExtraInterface l_Packet;
+    l_Packet.BuildPacket(eExtraInterface::eBattelGroundUI, false);
+    l_Session->SendPacket(l_Packet.m_Packet);
     //if (p_Unit->IsPlayer())
       //  p_Unit->TeleportTo(2, 0, 360, 280, Orientation::Up);
-    Map::RemoveUnit(p_Unit);
 }

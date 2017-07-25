@@ -19,7 +19,7 @@
 #define GRID_SIZE 12
 
 /// SKIN
-#define MAX_SKIN_IMG 90
+#define MAX_SKIN_IMG 91
 #define MAX_SKIN_MOUNT_IMG 2
 #define SKIN_ZOOM_FACTOR_DEFAULT 1.0f
 #define UPDATE_OPACITY_TIME 250
@@ -43,6 +43,7 @@
 #define MAX_SPELL_IMG 6
 #define SPELLS_FOLDER "img/spells/"
 #define MAX_VISUAL_IMG_X 3 
+#define MAX_VISUAL_IMG_Y 4
 
 /// UNIT
 #define TALK_TIME_SHOW 5000

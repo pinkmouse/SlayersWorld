@@ -66,8 +66,9 @@ public:
 	void AddDamageLog(const DamageInfo &);
 	std::vector<std::pair<DamageInfo, uint32>> GetDamageLog();
 
-    void AddVisualEffect(VisualEffect);
-    std::vector< VisualEffect >  *GetVisualsEffect();
+    void AddVisualEffect(TypeUnit, const uint16 &,  VisualEffect);
+    void RemoveVisualEffect(TypeUnit, const uint16 &, const uint8 &);
+    std::map< std::pair<TypeUnit, uint16>, std::map<uint8, VisualEffect> >  *GetVisualsEffect();
     void LaunchCastBar(uint16);
     uint8 GetCastPct();
     void CleanCastBar();
@@ -89,7 +90,8 @@ protected:
     TypeUnit m_Type;
     uint64 m_DiffTimeOpactiy;
 	std::vector< std::pair< DamageInfo, uint32 > > m_HistoryDamage;
-    std::vector< VisualEffect > m_VisualEffects;
+    std::map< std::pair<TypeUnit, uint16> , std::map<uint8, VisualEffect> > m_VisualEffects;
+
     std::pair< uint64, uint64> m_CastTime;
     Map* m_Map;
 

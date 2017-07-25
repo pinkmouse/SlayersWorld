@@ -20,6 +20,8 @@ public:
     SpellTemplate* GetSpellTemplate() const;
     std::vector<AuraEffect*> GetAuraEffectType(const eTypeAuraEffect &);
     Unit* GetCaster() const;
+    TypeUnit GetCasterType() const;
+    uint16 GetCasterID() const;
 
     /// AURA EFFECTS
     void AuraEffectUpdateSpeed(AuraEffect*, bool);
@@ -38,4 +40,6 @@ private:
 
     typedef void(Aura::*m_AuraEffectFunc)(AuraEffect*, bool);
     std::map<eTypeAuraEffect, m_AuraEffectFunc> m_AuraEffectsMap;
+    TypeUnit m_CasterType;
+    uint16 m_CasterID;
 };

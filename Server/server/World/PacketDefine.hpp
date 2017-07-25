@@ -47,6 +47,7 @@ enum SMSG : uint8
     S_UnitMount = 34,
     S_SrvPlayerQuestion = 35,
     S_ExtraInterfaceData = 36,
+    S_UnitPlayAuraVisual = 37,
     S_BlockBind = 40
 };
 
@@ -548,3 +549,18 @@ struct PacketExtraInterfaceData
         m_Packet << m_PacketID << (uint8)p_ExtraInterface << p_Index << p_Type << p_Data;
     }
 };
+
+struct PacketPlayAuraVisual
+{
+    WorldPacket m_Packet;
+    uint8 m_PacketID;
+
+    PacketPlayAuraVisual() :
+        m_PacketID(SMSG::S_UnitPlayAuraVisual) {}
+
+    void BuildPacket(bool p_Apply, uint8 p_TypeID, uint16 p_ID, uint8 p_TypeIDFrom, uint16 p_IDFrom, uint8 p_VisualID)
+    {
+        m_Packet << m_PacketID << p_Apply << p_TypeID << p_ID << p_TypeIDFrom << p_IDFrom << p_VisualID;
+    }
+};
+

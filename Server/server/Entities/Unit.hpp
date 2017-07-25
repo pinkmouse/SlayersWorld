@@ -160,6 +160,7 @@ public:
     void RemoveAura(Aura*);
     std::vector<AuraEffect*> GetAuraEffectType(eTypeAuraEffect);
     std::vector<Aura*> GetAura(uint16);
+    std::vector<Aura*>* GetAuraList();
     Aura* GetCasterAura(uint16, const Unit*);
     AuraEffect* ApplyAuraEffect(uint8, SpellTemplate*, Unit*, eTypeAuraEffect, const int32 &, const int32 &, const int32 &);
     int32 TotalAmountOfAuraType(eTypeAuraEffect);

@@ -1,6 +1,6 @@
 #include "WorldSocket.hpp"
 #include "../Map/Map.hpp"
-#include "../System/Spell/AuraEffect.hpp"
+#include "../System/Spell/Aura.hpp"
 #include "PacketDefine.hpp"
 
 WorldSocket::WorldSocket()
@@ -85,11 +85,21 @@ void WorldSocket::SendUnitCreate(Unit* p_Unit, bool p_IsInGroup)
 
 
     std::vector<AuraEffect*> l_ListMount = p_Unit->GetAuraEffectType(eTypeAuraEffect::MOUNT);
+    std::vector<Aura*>* l_ListAura = p_Unit->GetAuraList();
     int16 l_Mount = -1;
     if (!l_ListMount.empty())
         l_Mount =l_ListMount[0]->GetAmount();
     if (l_Mount >= 0)
         SendUnitMount(p_Unit->GetType(), p_Unit->GetID(), l_Mount);
+    for (std::vector<Aura*>::iterator l_It = l_ListAura->begin(); l_It != l_ListAura->end(); l_It++)
+    {
+        if ((*l_It)->GetSpellTemplate()->GetVisualIDTarget() >= 0)
+        {
+            PacketPlayAuraVisual l_Packet;
+            l_Packet.BuildPacket(true, p_Unit->GetType(), p_Unit->GetID(), (*l_It)->GetCasterType(), (*l_It)->GetCasterID(), (*l_It)->GetSpellTemplate()->GetVisualIDTarget());
+            send(l_Packet.m_Packet);
+        }
+    }
 }
 
 void WorldSocket::SendUnitMount(const uint8 & p_Type, const uint32 & p_ID, const int16 & p_Skin)

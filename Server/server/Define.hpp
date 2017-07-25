@@ -30,7 +30,11 @@
 #define OUT_OF_COMBAT_TIME 7
 #define MELEE_RANGE TILE_SIZE
 
-#define MAX_SKIN_IMG 87
+#define MAX_SKIN_IMG 91
+
+#define CREATION_POINT_X 358
+#define CREATION_POINT_Y 145
+#define CREATION_POINT_MAP 2
 
 typedef char int8;
 typedef short int16;

@@ -87,15 +87,22 @@ void Unit::Update(sf::Time p_Diff)
 		}
 	}
 
-    for (std::vector<VisualEffect>::iterator l_It = m_VisualEffects.begin(); l_It < m_VisualEffects.end();)
+    for (std::map< std::pair<TypeUnit, uint16>, std::map<uint8, VisualEffect> >::iterator l_It = m_VisualEffects.begin(); l_It != m_VisualEffects.end();)
     {
-        if ((*l_It).HasFinishAnim())
+        for (std::map<uint8, VisualEffect>::iterator l_Itr = (*l_It).second.begin(); l_Itr != (*l_It).second.end();)
+        {
+            if ((*l_Itr).second.HasFinishAnim())
+                l_Itr = (*l_It).second.erase(l_Itr);
+            else
+            {
+                (*l_Itr).second.Update(p_Diff);
+                ++l_Itr;
+            }
+        }
+        if ((*l_It).second.empty())
             l_It = m_VisualEffects.erase(l_It);
         else
-        {
-            (*l_It).Update(p_Diff);
-            ++l_It;
-        }
+            l_It++;
     }
 
     if (m_CastTime.second <= p_Diff.asMicroseconds())
@@ -346,12 +353,42 @@ std::vector<std::pair<DamageInfo, uint32>> Unit::GetDamageLog()
 	return m_HistoryDamage;
 }
 
-void Unit::AddVisualEffect(VisualEffect p_VisualEffect)
+void Unit::RemoveVisualEffect(TypeUnit p_TypeUnit, const uint16 & p_ID, const uint8 & p_VisualID)
 {
-    m_VisualEffects.push_back(p_VisualEffect);
+    std::pair<TypeUnit, uint16> l_Pair = std::make_pair(p_TypeUnit, p_ID);
+    std::map< std::pair<TypeUnit, uint16>, std::map<uint8, VisualEffect> >::iterator l_It = m_VisualEffects.find(l_Pair);
+
+    if (l_It == m_VisualEffects.end())
+        return;
+
+    std::map<uint8, VisualEffect>::iterator l_Itr = (*l_It).second.find(p_VisualID);
+
+    if (l_Itr == (*l_It).second.end())
+        return;
+
+    (*l_It).second.erase(l_Itr);
+
+    if ((*l_It).second.empty())
+        m_VisualEffects.erase(l_It);
 }
 
-std::vector< VisualEffect >* Unit::GetVisualsEffect()
+void Unit::AddVisualEffect(TypeUnit p_TypeUnit, const uint16 & p_ID, VisualEffect p_VisualEffect)
+{
+    std::pair<TypeUnit, uint16> l_Pair = std::make_pair(p_TypeUnit, p_ID);
+    std::map< std::pair<TypeUnit, uint16>, std::map<uint8, VisualEffect> >::iterator l_It = m_VisualEffects.find(l_Pair);
+
+    if (l_It != m_VisualEffects.end())
+    {
+        (*l_It).second.insert(std::pair<uint8, VisualEffect>(p_VisualEffect.GetID(), p_VisualEffect));
+        return;
+    }
+
+    std::map<uint8, VisualEffect> l_VisualEffectList;
+    l_VisualEffectList.insert(std::pair<uint8, VisualEffect>(p_VisualEffect.GetID(), p_VisualEffect));
+    m_VisualEffects.insert(std::pair<std::pair<TypeUnit, uint16>, std::map<uint8, VisualEffect>>(l_Pair, l_VisualEffectList));// [l_Pair] = p_VisualEffect;
+}
+
+std::map< std::pair<TypeUnit, uint16>, std::map<uint8, VisualEffect> >* Unit::GetVisualsEffect()
 {
     return &m_VisualEffects;
 }

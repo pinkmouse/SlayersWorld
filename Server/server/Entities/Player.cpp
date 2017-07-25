@@ -405,10 +405,10 @@ void Player::LearnClass(eClass p_Class)
     {
     case eClass::ASSASSIN :
         l_Msg += "Assassin";
-        g_SqlManager->AddSpellForPlayer(this, 1);
-        g_SqlManager->AddSpellForPlayer(this, 2);
-        g_SqlManager->AddSpellBind(this, 1, 9);
-        g_SqlManager->AddSpellBind(this, 2, 10);
+        LearnSpell(6);
+        LearnSpell(7);
+        g_SqlManager->AddSpellBind(this, 6, 9);
+        g_SqlManager->AddSpellBind(this, 7, 10);
         break;
     case eClass::MAGE:
         l_Msg += "Mage";

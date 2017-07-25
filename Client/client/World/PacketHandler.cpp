@@ -46,6 +46,7 @@ void PacketHandler::LoadPacketHandlerMap()
     m_PacketHandleMap[SMSG::S_UnitIsInGroup] = &PacketHandler::HandleUnitIsInGroup;
     m_PacketHandleMap[SMSG::S_SrvPlayerQuestion] = &PacketHandler::HandleSrvPlayerQuestion;
     m_PacketHandleMap[SMSG::S_ExtraInterfaceData] = &PacketHandler::HandleExtraUIData;
+    m_PacketHandleMap[SMSG::S_UnitPlayAuraVisual] = &PacketHandler::HandleUnitPlayVisualAura;
     m_PacketHandleMap[SMSG::S_UnitMount] = &PacketHandler::HandleMount;
 
 
@@ -476,7 +477,7 @@ void PacketHandler::HandleCreateUnit(WorldPacket &p_Packet)
            /* DynamicObject* l_DynIbj*/l_NewUnit = new DynamicObject(l_ID, (TypeUnit)l_TypeID, l_Name, l_Level, l_Health, l_SkinID, l_SizeX, l_SizeY, l_MapID, l_Pos.x, l_Pos.y, (Orientation)l_Orientation, l_IsBlocking);
             VisualEffect l_VisualEffect(eVisualType::VisualGob, l_SkinID, 3);
             l_VisualEffect.StartAnim();
-            l_NewUnit->AddVisualEffect(l_VisualEffect);
+            l_NewUnit->AddVisualEffect(l_NewUnit->GetType(), l_NewUnit->GetID(), l_VisualEffect);
 
             l_ActualMap->GetCase(l_Pos.x, l_Pos.y)->AddDynamicOject(l_NewUnit->ToDynamicObject());
         }
@@ -644,7 +645,47 @@ void PacketHandler::HandleUnitPlayVisual(WorldPacket &p_Packet)
         }
         VisualEffect l_VisualEffect(eVisualType::VisualSpell, l_VisualID, 3);
         l_VisualEffect.StartAnimAndStop();
-        l_Unit->AddVisualEffect(l_VisualEffect);
+        l_Unit->AddVisualEffect(l_Unit->GetType(), l_Unit->GetID(), l_VisualEffect);
+    }
+}
+
+void PacketHandler::HandleUnitPlayVisualAura(WorldPacket &p_Packet)
+{
+    bool l_Apply;
+    uint8 l_TypeID;
+    uint16 l_ID;
+    uint8 l_TypeIDFrom;
+    uint16 l_IDFrom;
+    uint8 l_VisualID;
+
+    p_Packet >> l_Apply;
+    p_Packet >> l_TypeID;
+    p_Packet >> l_ID;
+    p_Packet >> l_TypeIDFrom;
+    p_Packet >> l_IDFrom;
+    p_Packet >> l_VisualID;
+
+    if (Map* l_Map = m_MapManager->GetActualMap())
+    {
+        Unit* l_Unit = l_Map->GetUnit((TypeUnit)l_TypeID, l_ID);
+
+        if (l_Unit == nullptr)
+        {
+            g_Socket->SendUnitUnknow(l_TypeID, l_ID); ///< Ask for unknow unit to server
+            return;
+        }
+        if (l_Apply)
+        {
+            printf("Ad Visual Effect %d\n", l_VisualID);
+            VisualEffect l_VisualEffect(eVisualType::VisualSpell, l_VisualID, 3);
+            l_VisualEffect.StartAnim();
+            l_Unit->AddVisualEffect((TypeUnit)l_TypeIDFrom, l_IDFrom, l_VisualEffect);
+        }
+        else
+        {
+            printf("`Remove Visual Effect\n");
+            l_Unit->RemoveVisualEffect((TypeUnit)l_TypeIDFrom, l_IDFrom, l_VisualID);
+        }
     }
 }
 

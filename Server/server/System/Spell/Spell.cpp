@@ -142,8 +142,8 @@ void Spell::LaunchEffects()
         {
             for (uint8 i = 0; i < l_Targets.size(); ++i)
             {
-                /// Start Visual on target
-                if (m_SpellTemplate->GetVisualIDTarget() >= 0)
+                /// Start Visual on target, aura visual are launching since Aura class
+                if (m_SpellTemplate->GetVisualIDTarget() >= 0 && m_SpellTemplate->GetDuration() == 0)
                 {
                     PacketUnitPlayVisual l_Packet;
                     l_Packet.BuildPacket(l_Targets[i]->GetType(), l_Targets[i]->GetID(), (uint8)m_SpellTemplate->GetVisualIDTarget());

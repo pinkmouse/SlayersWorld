@@ -46,5 +46,6 @@ enum SMSG : uint8
     S_UnitMount = 34,
     S_SrvPlayerQuestion = 35,
     S_ExtraInterfaceData = 36,
+    S_UnitPlayAuraVisual = 37,
     S_BlockBind = 40
 };

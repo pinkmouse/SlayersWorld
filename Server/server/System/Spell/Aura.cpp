@@ -10,11 +10,30 @@ Aura::Aura(Unit* p_Caster, Unit* p_Target, SpellTemplate* p_SpellTemplate) :
     m_ID(p_SpellTemplate->GetID()),
     m_Duration((uint64)p_SpellTemplate->GetDuration() * 1000) ///< Millisecond to microsecond
 {
+    if (m_Caster != nullptr)
+    {
+        m_CasterID = m_Caster->GetID();
+        m_CasterType = m_Caster->GetType();
+    }
+
     m_AuraEffectsMap[eTypeAuraEffect::UPDATE_SPEED] = &Aura::AuraEffectUpdateSpeed;
     m_AuraEffectsMap[eTypeAuraEffect::PERIODIC_HEAL] = &Aura::AuraEffectPeriodicHeal;
     m_AuraEffectsMap[eTypeAuraEffect::PERIODIC_DAMAGE] = &Aura::AuraEffectPeriodicDamage;
     m_AuraEffectsMap[eTypeAuraEffect::MODIFY_DAMAGE_PCT] = &Aura::AuraEffectModifyDamagePct;
     m_AuraEffectsMap[eTypeAuraEffect::MOUNT] = &Aura::AuraEffectMount;
+
+
+    if (m_Target != nullptr && m_SpellTemplate->GetVisualIDTarget() >= 0)
+    {
+        Map* l_Map = m_Target->GetMap();
+
+        if (l_Map == nullptr)
+            return;
+
+        PacketPlayAuraVisual l_Packet;
+        l_Packet.BuildPacket(true, m_Target->GetType(), m_Target->GetID(), m_CasterType, m_CasterID, m_SpellTemplate->GetVisualIDTarget());
+        l_Map->SendToSet(l_Packet.m_Packet, m_Target);
+    }
 }
 
 Aura::~Aura()
@@ -24,6 +43,17 @@ Aura::~Aura()
         m_AuraEffectFunc l_Fun = m_AuraEffectsMap[(*l_It).second->GetType()];
         (this->*(l_Fun))((*l_It).second, false);
         delete (*l_It).second;
+    }
+    if (m_Target != nullptr && m_SpellTemplate->GetVisualIDTarget() >= 0)
+    {
+        Map* l_Map = m_Target->GetMap();
+
+        if (l_Map == nullptr)
+            return;
+
+        PacketPlayAuraVisual l_Packet;
+        l_Packet.BuildPacket(false, m_Target->GetType(), m_Target->GetID(), m_CasterType, m_CasterID, m_SpellTemplate->GetVisualIDTarget());
+        l_Map->SendToSet(l_Packet.m_Packet, m_Target);
     }
 }
 
@@ -155,4 +185,15 @@ void Aura::AuraEffectMount(AuraEffect* p_AuraEffect, bool p_Apply)
     PacketUnitMount l_Packet;
     l_Packet.BuildPacket(l_Target->GetType(), l_Target->GetID(), m_SkinMount);
     l_Target->GetMap()->SendToSet(l_Packet.m_Packet, l_Target);
+}
+
+TypeUnit Aura::GetCasterType() const
+{
+    return m_CasterType;
+}
+
+
+uint16 Aura::GetCasterID() const
+{
+    return m_CasterID;
 }

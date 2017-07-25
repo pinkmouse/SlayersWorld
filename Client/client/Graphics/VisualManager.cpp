@@ -111,16 +111,19 @@ bool VisualManager::LoadVisuals()
         }
         m_TextureSkinsMap[i] = l_Texture;
 
-        uint32 l_NbVisuSizeX = l_Texture->getSize().x / MAX_VISUAL_IMG_X;
-        uint32 l_NbVisuSizeY = l_Texture->getSize().y;
+        uint32 l_VisuSizeX = l_Texture->getSize().x / MAX_VISUAL_IMG_X;
+        uint32 l_VisuSizeY = l_Texture->getSize().y / MAX_VISUAL_IMG_Y;
         Visual l_Visual(eVisualType::VisualSpell, MAX_VISUAL_IMG_X, 0);
 
-        for (uint8 i = 0; i < MAX_VISUAL_IMG_X; ++i)
+        for (uint8 j = 0; j < MAX_VISUAL_IMG_Y; ++j)
         {
-            SkinSprite l_SkinSprite(l_NbVisuSizeX, l_NbVisuSizeY);
-            l_SkinSprite.setTexture(*l_Texture);
-            l_SkinSprite.setTextureRect(sf::IntRect(i * l_NbVisuSizeX, 0, l_NbVisuSizeX, l_NbVisuSizeY));
-            l_Visual.AddSprite(l_SkinSprite);
+            for (uint8 k = 0; k < MAX_VISUAL_IMG_X; ++k)
+            {
+                SkinSprite l_SkinSprite(l_VisuSizeX, l_VisuSizeY);
+                l_SkinSprite.setTexture(*l_Texture);
+                l_SkinSprite.setTextureRect(sf::IntRect(k * l_VisuSizeX, j * l_VisuSizeY, l_VisuSizeX, l_VisuSizeY));
+                l_Visual.AddSprite(l_SkinSprite);
+            }
         }
 
         m_VisualsMap[l_Visual.GetType()][i] = l_Visual;

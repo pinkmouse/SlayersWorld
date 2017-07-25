@@ -1286,6 +1286,11 @@ std::vector<Aura*> Unit::GetAura(uint16 p_ID)
     return l_ListAura;
 }
 
+std::vector<Aura*>* Unit::GetAuraList()
+{
+    return &m_AuraList;
+}
+
 std::vector<AuraEffect*> Unit::GetAuraEffectType(eTypeAuraEffect p_AuraType)
 {
     std::vector<AuraEffect*> l_ListAuraEffect;
