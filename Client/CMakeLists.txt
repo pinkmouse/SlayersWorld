@@ -88,6 +88,8 @@ add_executable(${EXECUTABLE_NAME}
 
               client/Entities/Creature.cpp
               client/Entities/Creature.hpp
+              client/Entities/AnimationUnit.cpp
+              client/Entities/AnimationUnit.hpp
               client/Entities/DynamicObject.cpp
               client/Entities/DynamicObject.hpp
               client/Entities/MovementHandler.cpp

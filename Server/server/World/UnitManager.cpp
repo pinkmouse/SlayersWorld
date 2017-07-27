@@ -15,10 +15,21 @@ void UnitManager::AddCreatureTemplate(const CreatureTemplate & p_CreatureTemplat
     m_CreatureTemplateMap[p_CreatureTemplate.m_Entry] = p_CreatureTemplate;
 }
 
+void UnitManager::AddAnimationUnitTemplate(const AnimationUnitTemplate & p_AnimationUnitTemplate)
+{
+    m_AnimationUnitTemplateMap[p_AnimationUnitTemplate.m_Entry] = p_AnimationUnitTemplate;
+}
+
 CreatureTemplate* UnitManager::GetCreatureTemplate(uint32 p_Entry)
 {
     return &m_CreatureTemplateMap[p_Entry];
 }
+
+AnimationUnitTemplate* UnitManager::GetAnimationUnitTemplate(uint32 p_Entry)
+{
+    return &m_AnimationUnitTemplateMap[p_Entry];
+}
+
 
 void UnitManager::AddGossip(const Gossip & p_Gossip)
 {

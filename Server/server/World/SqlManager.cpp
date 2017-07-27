@@ -449,6 +449,36 @@ uint16 SqlManager::AddNewCreature(uint16 p_Map, uint16 p_Entry, uint32 p_PosX, u
     return l_Id;
 }
 
+bool SqlManager::InitializeAnimationUnitTemplate(UnitManager* p_CreatureManager)
+{
+    std::string l_Query = "SELECT `entry`, `typeID`, `skinID`, `name`, `stopTimeMin`, `stopTimeMax` FROM animation_unit_template";
+    mysql_query(&m_MysqlWorld, l_Query.c_str());
+
+    uint16 l_Entry = 0;
+    uint16 l_TypeID = 0;
+    int16 l_SkinID = 0;
+    std::string l_Name = "";
+    float l_StopTimeMin = 0.0f;
+    float l_StopTimeMax = 0.0f;
+
+    MYSQL_RES *l_Result = NULL;
+    MYSQL_ROW l_Row;
+    l_Result = mysql_use_result(&m_MysqlWorld);
+    while ((l_Row = mysql_fetch_row(l_Result)))
+    {
+        l_Entry = atoi(l_Row[0]);
+        l_TypeID = atoi(l_Row[1]);
+        l_SkinID = atoi(l_Row[2]);
+        l_Name = std::string(l_Row[3]);
+        l_StopTimeMin = atof(l_Row[4]);
+        l_StopTimeMax = atof(l_Row[5]);
+        p_CreatureManager->AddAnimationUnitTemplate(AnimationUnitTemplate(l_Entry, l_SkinID, l_TypeID, l_Name, l_StopTimeMin, l_StopTimeMax));
+    }
+    mysql_free_result(l_Result);
+
+    return true;
+}
+
 bool SqlManager::InitializeCreatureTemplate(UnitManager* p_CreatureManager)
 {
     std::string l_Query = "SELECT `entry`, `skinID`, `name`, `level`, `force`, `stamina`, `dexterity`, `speed`, `xp`, `state`, `maxRay`, `maxVision`, `movingTimeMin`, `movingTimeMax`, `stopTimeMin`, `stopTimeMax`, `respawnTime`, `rank`, `aiType`, `faction` FROM creature_template";
@@ -676,6 +706,45 @@ bool SqlManager::InitializeGossip(UnitManager* p_CreatureManager, RequiredManage
             l_Automatic = true;
 
         p_CreatureManager->AddGossip(Gossip(l_ID, l_Required, (TypeUnit)l_TypeUnit, l_UnitEntry, l_Automatic, (eGossipType)l_GossipType, l_Data0, l_Data1, l_Msg));
+    }
+    mysql_free_result(l_Result);
+
+    return true;
+}
+
+
+bool SqlManager::InitializeAnimationUnit(UnitManager* p_CreatureManager)
+{
+    std::string l_Query = "SELECT `id`, `entry`, `mapID`, `posX`, `posY` FROM animation_unit";
+    mysql_query(&m_MysqlWorld, l_Query.c_str());
+
+    uint16 l_Id = 0;
+    uint16 l_Entry = 0;
+    uint16 l_MapID = 0;
+    uint32 l_PosX = 0;
+    uint32 l_PosY = 0;
+
+    MYSQL_RES *l_Result = NULL;
+    MYSQL_ROW l_Row;
+    l_Result = mysql_use_result(&m_MysqlWorld);
+    while ((l_Row = mysql_fetch_row(l_Result)))
+    {
+        l_Id = atoi(l_Row[0]);
+        l_Entry = atoi(l_Row[1]);
+        l_MapID = atoi(l_Row[2]);
+        l_PosX = atoi(l_Row[3]);
+        l_PosY = atoi(l_Row[4]);
+        MapTemplate* l_MapTemplate = g_MapManager->GetMapTemplate(l_MapID);
+
+
+        if (l_MapTemplate == nullptr)
+        {
+            printf("Erreur map %d don't exist\n", l_MapID);
+            continue;
+        }
+
+        l_MapTemplate->AddAnimationUnitMapTemplate(AnimationUnitMapTemplate(l_Id, l_MapID, p_CreatureManager->GetAnimationUnitTemplate(l_Entry), l_PosX, l_PosY, p_CreatureManager->GetGossipListFor(TypeUnit::ANIMATIONUNIT, l_Entry)));
+        //l_MapTemplate->AddUnit(l_Creature);
     }
     mysql_free_result(l_Result);
 

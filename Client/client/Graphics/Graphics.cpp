@@ -1,5 +1,6 @@
 #include "Graphics.hpp"
 #include "../Global.hpp"
+#include "../Entities/AnimationUnit.hpp"
 
 Graphics::Graphics(MapManager* p_MapManager, InterfaceManager* p_InterfaceManager, Events* p_Events) :
     m_MapManager(p_MapManager),
@@ -226,19 +227,21 @@ void Graphics::DrawWorldObjects(std::map<uint32, std::vector<WorldObject*> > *p_
                 }
             }
 
-            /// UNIT
-            if (l_WorldObject->GetType() == TypeWorldObject::UNIT)
+            sf::Sprite* l_Sprite = l_WorldObject->GetSprite();
+
+            if (l_Sprite != nullptr)
             {
-                if (!l_WorldObject->ToUnit()->IsDynamicObject())
-                    l_WorldObject->GetSprite()->setPosition(l_WorldObject->GetPosXAtIntant() - (l_WorldObject->GetSizeX() / 2) + l_OffsetX, l_WorldObject->GetPosYAtIntant() - l_WorldObject->GetSizeY() + l_OffsetY);
+            /// UNIT
+                if (l_WorldObject->GetType() == TypeWorldObject::UNIT)
+                    l_Sprite->setPosition(l_WorldObject->GetPosXAtIntant() - (l_WorldObject->GetSizeX() / 2) + l_OffsetX, l_WorldObject->GetPosYAtIntant() - l_WorldObject->GetSizeY() + l_OffsetY);
+                else
+                    l_Sprite->setPosition(l_WorldObject->GetPosXAtIntant(), l_WorldObject->GetPosYAtIntant());
+
+                sf::Sprite l_SpriteUnp = *l_WorldObject->GetSprite();
+
+                l_SpriteUnp.setColor(sf::Color(255, 255, 255, l_WorldObject->GetOpacity()));
+                m_Window.draw(l_SpriteUnp);
             }
-            else
-                l_WorldObject->GetSprite()->setPosition(l_WorldObject->GetPosXAtIntant(), l_WorldObject->GetPosYAtIntant());
-
-            sf::Sprite l_Sprite = *l_WorldObject->GetSprite();
-            l_Sprite.setColor(sf::Color(255, 255, 255, l_WorldObject->GetOpacity()));
-            m_Window.draw(l_Sprite);
-
             if (l_WorldObject->GetType() == TypeWorldObject::UNIT)
             {
                 Unit* l_Unit = l_WorldObject->ToUnit();
@@ -420,14 +423,16 @@ void Graphics::DrawMap()
             SkinSprite* l_SkinSprite = nullptr;
             if (l_Unit->GetType() == TypeUnit::CREATURE || l_Unit->GetType() == TypeUnit::PLAYER)
                 l_SkinSprite = m_VisualManager->GetVisualSprite(eVisualType::VisualSkin, l_Unit->GetSkinID(), l_SpriteNb);
-            else
-                l_SkinSprite = m_VisualManager->GetVisualSprite(eVisualType::VisualGob, l_Unit->GetSkinID(), l_SpriteNb);
+            else if (l_Unit->GetType() == TypeUnit::ANIMATIONUNIT)
+                l_SkinSprite = m_VisualManager->GetVisualSprite(eVisualType::VisualAnimationUnit, l_Unit->GetSkinID(), GetFrameNbForAnimationUnit(l_Unit));
+            /*else
+                l_SkinSprite = m_VisualManager->GetVisualSprite(eVisualType::VisualGob, l_Unit->GetSkinID(), l_SpriteNb);*/
 
-            if (l_SkinSprite == nullptr)
-                continue;
-            l_SkinSprite->setScale(sf::Vector2f(l_Unit->GetSkinZoomFactor(), l_Unit->GetSkinZoomFactor()));
-            l_Unit->SetSprite(l_SkinSprite);
-
+            if (l_SkinSprite != nullptr)
+            {
+                l_SkinSprite->setScale(sf::Vector2f(l_Unit->GetSkinZoomFactor(), l_Unit->GetSkinZoomFactor()));
+                l_Unit->SetSprite(l_SkinSprite);
+            }
             l_ListWorldObjectByZ[l_Unit->GetPosYAtIntant()].push_back(l_Unit);
         }
     }
@@ -510,4 +515,31 @@ void Graphics::Display()
 sf::Vector2f Graphics::CoordFromViewToView(const sf::Vector2f & p_ActualCoord, const sf::View & p_View1, const sf::View & p_View2)
 {
     return m_Window.mapPixelToCoords(m_Window.mapCoordsToPixel(p_ActualCoord, p_View1), p_View2);
+}
+
+uint8 Graphics::GetFrameNbForAnimationUnit(Unit* p_Unit)
+{
+    uint8 l_Frame = 0;
+    AnimationUnit* l_AnimationUnit = p_Unit->ToAnimationUnit();
+    if (l_AnimationUnit == nullptr)
+        return l_Frame;
+
+    if (l_AnimationUnit->IsInAnimation())
+        l_Frame = 12 + l_AnimationUnit->GetFrame();
+    else
+    {
+        switch (p_Unit->GetOrientation())
+        {
+        case Orientation::Left:
+            l_Frame = 0;
+            break;
+        case Orientation::Right:
+            l_Frame = 2;
+            break;
+        default:
+            l_Frame = 1;
+            break;
+        }
+    }
+    return l_Frame;
 }

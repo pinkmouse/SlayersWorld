@@ -19,6 +19,7 @@ public:
     /// EFFECTS
     void EffectDamage(uint8, Unit*, SpellEffect*);
     void EffectHeal(uint8, Unit*, SpellEffect*);
+    void EffectTeleport(uint8, Unit*, SpellEffect*);
     void EffectApplyAura(uint8, Unit*, SpellEffect*);
     void EffectLearnClass(uint8, Unit*, SpellEffect*);
     void EffectLearnSpell(uint8, Unit*, SpellEffect*);

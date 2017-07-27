@@ -119,7 +119,7 @@ void InterfaceManager::DrawMenu(Window & p_Window, Menu * p_Menu)
         l_Title.setString(p_Menu->GetTitle());
         l_Title.setFont(*g_Font);
         l_Size = TextSplitToFit((p_Menu->GetColumn() * MENU_COLUMN_SIZE) - 20, l_Title);
-        l_Size.y += 10;
+        l_Size.y += 15;
         l_Title.setPosition(p_Menu->GetPosition().x + 10, p_Menu->GetPosition().y + 10);
     }
     DrawField(p_Window, p_Menu->GetPosition().x, p_Menu->GetPosition().y, (p_Menu->GetColumn() * MENU_COLUMN_SIZE), p_Menu->GetRow() * MENU_ROW_SIZE + 20 + l_Size.y);
@@ -144,7 +144,7 @@ void InterfaceManager::DrawMenu(Window & p_Window, Menu * p_Menu)
         }
     }
     std::pair<uint8, uint8> l_SelectedElement = p_Menu->GetSelectedElement();
-    DrawBorderField(p_Window, p_Menu->GetPosition().x + l_SelectedElement.first * MENU_COLUMN_SIZE, p_Menu->GetPosition().y + l_Size.y + l_SelectedElement.second * MENU_ROW_SIZE + 5, MENU_COLUMN_SIZE, MENU_ROW_SIZE);
+    DrawBorderField(p_Window, p_Menu->GetPosition().x + l_SelectedElement.first * MENU_COLUMN_SIZE, p_Menu->GetPosition().y + l_Size.y + l_SelectedElement.second * MENU_ROW_SIZE + 5, MENU_COLUMN_SIZE, MENU_ROW_SIZE + 5);
 }
 
 TileSprite InterfaceManager::GetField(uint16 p_SizeX, uint16 p_SizeY)
@@ -420,6 +420,32 @@ void InterfaceManager::DrawBGUI(Window & p_Window)
         l_Time.setPosition(l_BGUI.getPosition().x + 60 - l_Time.getGlobalBounds().width / 2, l_BGUI.getPosition().y + 4);
         p_Window.draw(l_Time);
     }
+
+    /// LEFT POINT
+    auto l_BGLeftPoint = (*l_UIData).second.find(1);
+    if (l_BGLeftPoint != (*l_UIData).second.end())
+    {
+        sf::Text l_LeftPoint;
+        l_LeftPoint.setCharacterSize(16);
+        l_LeftPoint.setFont(*g_Font);
+        l_LeftPoint.setColor(sf::Color(255, 255, 255, 255));
+        l_LeftPoint.setString(std::to_string(m_ExtraUIData[eExtraInterface::eBattelGroundUI][1].second));
+        l_LeftPoint.setPosition(l_BGUI.getPosition().x + 60 - l_LeftPoint.getGlobalBounds().width / 2, l_BGUI.getPosition().y + 25);
+        p_Window.draw(l_LeftPoint);
+    }
+
+    /// RIGHT POINT
+    auto l_BGRightPoint = (*l_UIData).second.find(2);
+    if (l_BGRightPoint != (*l_UIData).second.end())
+    {
+        sf::Text l_RightPoint;
+        l_RightPoint.setCharacterSize(16);
+        l_RightPoint.setFont(*g_Font);
+        l_RightPoint.setColor(sf::Color(255, 255, 255, 255));
+        l_RightPoint.setString(std::to_string(m_ExtraUIData[eExtraInterface::eBattelGroundUI][2].second));
+        l_RightPoint.setPosition(l_BGUI.getPosition().x + 60 - l_RightPoint.getGlobalBounds().width / 2, l_BGUI.getPosition().y + 45);
+        p_Window.draw(l_RightPoint);
+    }
 }
 
 void InterfaceManager::AddExtraUiData(eExtraInterface p_Interface, const uint8 & p_Index, const uint8 & p_Type, const int16 & p_Data)
@@ -582,10 +608,10 @@ void InterfaceManager::Draw(Window & p_Window)
             sf::Vector2i l_FieldSize = TextSplitToFit(X_WINDOW, l_Text);
 
             DrawField(p_Window, 0, 0, X_WINDOW, l_FieldSize.y + 14);
-            p_Window.draw(m_WritingField->GetText());
+            //p_Window.draw(m_WritingField->GetText());
 
             l_Text.setColor(sf::Color::White);
-            l_Text.setPosition(0.0f, 0.0f);
+            l_Text.setPosition(10.0f, 4.0f);
             p_Window.draw(l_Text);
         }
     }
@@ -705,17 +731,27 @@ sf::Vector2i InterfaceManager::TextSplitToFit(uint16 p_MaxSizeX, sf::Text & p_Tx
     std::string l_FinalString = "";
     std::string l_StringSplitter = "";
     l_TxtSpliter.setString(l_StringSplitter);
+
+    uint16 j = 0;
     for (uint16 i = 0; i < l_ActualString.size(); ++i)
     {
-        if (l_TxtSpliter.getGlobalBounds().width > (float)p_MaxSizeX)
+        if (l_TxtSpliter.getGlobalBounds().width >(float)p_MaxSizeX - 10)
         {
+            while (l_ActualString[i] != ' ' && i != 0)
+                i--;
+
+            for (uint16 k = j; k < i; k++)
+            {
+                l_FinalString += l_ActualString[k];
+            }
             l_FinalString += "\n";
             l_StringSplitter = "";
+            j = i;
         }
-        l_FinalString += l_ActualString[i];
         l_StringSplitter += l_ActualString[i];
         l_TxtSpliter.setString(l_StringSplitter);
     }
+    l_FinalString += l_StringSplitter;
     p_Txt.setString(l_FinalString);
     l_FinalSquare.x = (uint16)p_Txt.getGlobalBounds().width;
     l_FinalSquare.y = (uint16)p_Txt.getGlobalBounds().height;

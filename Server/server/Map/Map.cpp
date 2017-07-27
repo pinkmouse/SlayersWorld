@@ -10,51 +10,7 @@ Map::Map(uint16 p_InstanceID,  MapTemplate* p_Template)
     m_SizeX = p_Template->GetSizeX();
     m_SizeY = p_Template->GetSizeY();
     printf("[%d] %d\n", m_SizeX, m_SizeY);
-
-    std::vector<Case> l_ListCase = (*p_Template->GetListCase());
-    uint32 i;
-    for (i = 0; i < l_ListCase.size(); i++)
-        AddCase(new Case(l_ListCase[i]));
-
-    std::vector<Zone> l_ListZone = (*p_Template->GetListZone());
-    for ( i = 0; i < l_ListZone.size(); i++)
-        AddZone(new Zone(l_ListZone[i]));
-
-    std::vector<AreaTriggerMapTemplate> l_ListArea = (*p_Template->GetListArea());
-    for (i = 0; i < l_ListArea.size(); i++)
-    {
-        Areatrigger* l_Areatrigger = new Areatrigger(l_ListArea[i].m_ID, this, l_ListArea[i].m_PosX, l_ListArea[i].m_PosY, l_ListArea[i].m_Template);
-        AddUnit(l_Areatrigger);
-        Case* l_Case = GetCase(l_ListArea[i].m_CaseNb);
-
-        if (l_Case == nullptr)
-            continue;
-
-        l_Case->AddDynamicOject(l_Areatrigger);
-    }
-
-    std::vector<GobMapTemplate> l_ListGob = (*p_Template->GetListGob());
-    for (i = 0; i < l_ListGob.size(); i++)
-    {
-        GameObject* l_Gob = new GameObject(l_ListGob[i].m_ID, this, l_ListGob[i].m_PosX, l_ListGob[i].m_PosY, l_ListGob[i].m_Template);
-        l_Gob->SetGossipList(l_ListGob[i].m_GossipList);
-        AddUnit(l_Gob);
-        Case* l_Case = GetCase(l_ListGob[i].m_CaseNb);
-
-        if (l_Case == nullptr)
-            continue;
-
-        l_Case->AddDynamicOject(l_Gob);
-    }
-
-    std::vector<CreatureMapTemplate> l_ListCreature = (*p_Template->GetListCreature());
-    for (i = 0; i < l_ListCreature.size(); i++)
-    {
-        Creature* l_Creature = new Creature(l_ListCreature[i].m_ID, l_ListCreature[i].m_Template, l_ListCreature[i].m_MapID, l_ListCreature[i].m_PosX, l_ListCreature[i].m_PosY);
-        l_Creature->SetGossipList(l_ListCreature[i].m_GossipList);
-        AddUnit(l_Creature);
-    }
-
+    m_MapTemplate = p_Template;
     m_GroupManager = nullptr;
 }
 
@@ -75,6 +31,63 @@ Map::~Map()
 
     delete m_GroupManager;
 }
+
+bool Map::Initialize()
+{
+    std::vector<Case> l_ListCase = (*m_MapTemplate->GetListCase());
+    uint32 i;
+    for (i = 0; i < l_ListCase.size(); i++)
+        AddCase(new Case(l_ListCase[i]));
+
+    std::vector<Zone> l_ListZone = (*m_MapTemplate->GetListZone());
+    for (i = 0; i < l_ListZone.size(); i++)
+        AddZone(new Zone(l_ListZone[i]));
+
+    std::vector<AreaTriggerMapTemplate> l_ListArea = (*m_MapTemplate->GetListArea());
+    for (i = 0; i < l_ListArea.size(); i++)
+    {
+        Areatrigger* l_Areatrigger = new Areatrigger(l_ListArea[i].m_ID, this, l_ListArea[i].m_PosX, l_ListArea[i].m_PosY, l_ListArea[i].m_Template);
+        AddUnit(l_Areatrigger);
+        Case* l_Case = GetCase(l_ListArea[i].m_CaseNb);
+
+        if (l_Case == nullptr)
+            continue;
+
+        l_Case->AddDynamicOject(l_Areatrigger);
+    }
+
+    std::vector<GobMapTemplate> l_ListGob = (*m_MapTemplate->GetListGob());
+    for (i = 0; i < l_ListGob.size(); i++)
+    {
+        GameObject* l_Gob = new GameObject(l_ListGob[i].m_ID, this, l_ListGob[i].m_PosX, l_ListGob[i].m_PosY, l_ListGob[i].m_Template);
+        l_Gob->SetGossipList(l_ListGob[i].m_GossipList);
+        AddUnit(l_Gob);
+        Case* l_Case = GetCase(l_ListGob[i].m_CaseNb);
+
+        if (l_Case == nullptr)
+            continue;
+
+        l_Case->AddDynamicOject(l_Gob);
+    }
+
+    std::vector<CreatureMapTemplate> l_ListCreature = (*m_MapTemplate->GetListCreature());
+    for (i = 0; i < l_ListCreature.size(); i++)
+    {
+        Creature* l_Creature = new Creature(l_ListCreature[i].m_ID, l_ListCreature[i].m_Template, l_ListCreature[i].m_MapID, l_ListCreature[i].m_PosX, l_ListCreature[i].m_PosY);
+        l_Creature->SetGossipList(l_ListCreature[i].m_GossipList);
+        AddUnit(l_Creature);
+    }
+
+    std::vector<AnimationUnitMapTemplate> l_ListAnimationUnit = (*m_MapTemplate->GetListAnimationUnit());
+    for (i = 0; i < l_ListAnimationUnit.size(); i++)
+    {
+        AnimationUnit* l_AnimationUnit = new AnimationUnit(l_ListAnimationUnit[i].m_ID, l_ListAnimationUnit[i].m_Template, l_ListAnimationUnit[i].m_MapID, l_ListAnimationUnit[i].m_PosX, l_ListAnimationUnit[i].m_PosY);
+        l_AnimationUnit->SetGossipList(l_ListAnimationUnit[i].m_GossipList);
+        AddUnit(l_AnimationUnit);
+    }
+    return true;
+}
+
 
 uint16 Map::GetInstanceID() const
 {
@@ -160,6 +173,13 @@ std::vector<Unit*> Map::GetAllUnitWithEntry(TypeUnit p_TypeID, uint16 p_Entry)
         }
     }
     return l_ListUnit;
+}
+
+void Map::SendMsgToMap(const std::string & p_Msg)
+{
+    PacketSrvPlayerMsg l_Packet;
+    l_Packet.BuildPacket(p_Msg);
+    SendToMap(l_Packet.m_Packet);
 }
 
 void Map::Update(sf::Time p_Diff)
@@ -257,7 +277,6 @@ void Map::UpdateForPlayersInNewSquare(Unit* p_Unit, bool p_UpdateAll)
     for (uint16 l_Id : l_DiffSquareSet)
     {
         Square* l_Square = GetSquare(l_Id);
-
         if (l_Square == nullptr)
             continue;
 
@@ -467,7 +486,6 @@ void Map::AddUnit(Unit* p_Unit)
     p_Unit->SetInstanceID(GetInstanceID());
     p_Unit->SetInWorld(true);
     m_ListUnitZone[p_Unit->GetType()][p_Unit->GetID()] = p_Unit;
-
     if (p_Unit->GetPosX() / TILE_SIZE > GetSizeX() || p_Unit->GetPosY() / TILE_SIZE > GetSizeX())
     {
         p_Unit->SetPosX(10);
@@ -476,6 +494,7 @@ void Map::AddUnit(Unit* p_Unit)
     /// Add to square
     uint16 l_SquareId = GetSquareID(p_Unit->GetPosX(), p_Unit->GetPosY());
     AddToSquare(p_Unit, l_SquareId);
+
     UpdateForPlayersInNewSquare(p_Unit, true);
     if (p_Unit->GetType() == TypeUnit::PLAYER)
         p_Unit->ToPlayer()->UpdateNewSquares(0, p_Unit->GetSquareID(), true);
@@ -508,7 +527,6 @@ void Map::AddToSquare(Unit* p_Unit, uint16 p_SquareID)
 {
     Square* l_Square = &m_ListSquare[p_SquareID];
     p_Unit->SetSquareID(p_SquareID);
-
     if (l_Square != nullptr)
         l_Square->AddUnit(p_Unit);
 }

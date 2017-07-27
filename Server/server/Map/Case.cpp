@@ -62,6 +62,17 @@ void Case::AddDynamicOject(DynamicObject* p_DynamicObject)
     m_DynamicObjectList.push_back(p_DynamicObject);
 }
 
+void Case::RemoveDynamicOject(DynamicObject* p_DynamicObject)
+{
+    std::vector<DynamicObject*>::iterator l_It = std::find(m_DynamicObjectList.begin(), m_DynamicObjectList.end(), p_DynamicObject);
+
+    if (l_It == m_DynamicObjectList.end())
+        return;
+
+    m_DynamicObjectList.erase(l_It);
+}
+
+
 void Case::AddZone(Zone* p_Zone)
 {
     m_ZoneList.push_back(p_Zone);

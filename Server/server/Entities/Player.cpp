@@ -103,6 +103,7 @@ void Player::UpdateNewSquares(uint16 p_OldSquareID, uint16 p_NewSquareID, bool p
                 if (l_Unit->IsPlayer() && l_Unit->GetID() == GetID())
                     continue;
 
+                printf("[Send Unit Create] %s\n", l_Unit->GetName().c_str());
                 GetSession()->SendUnitCreate(l_Unit, l_Unit->IsInGroupWith(this));
             }
         }
@@ -315,7 +316,7 @@ void Player::EventAction(eKeyBoardAction p_PlayerAction)
 
 void Player::CastSpell(uint16 p_SpellID)
 {
-    if (!HasSpell(p_SpellID))
+    if (!HasSpell(p_SpellID) && GetAccessType() < eAccessType::Moderator)
     {
         PacketWarningMsg l_Packet;
         l_Packet.BuildPacket(eTypeWarningMsg::Red, "Vous ne possedez pas le sort " + std::to_string(p_SpellID));
@@ -404,20 +405,20 @@ void Player::LearnClass(eClass p_Class)
     switch (p_Class)
     {
     case eClass::ASSASSIN :
-        l_Msg += "Assassin";
+        l_Msg += STR_ASSASSIN;
         LearnSpell(6);
         LearnSpell(7);
         g_SqlManager->AddSpellBind(this, 6, 9);
         g_SqlManager->AddSpellBind(this, 7, 10);
         break;
     case eClass::MAGE:
-        l_Msg += "Mage";
+        l_Msg += STR_MAGE;
         break;
     case eClass::PALADIN:
-        l_Msg += "Paladin";
+        l_Msg += STR_PALADIN;
         break;
     case eClass::PRETRE:
-        l_Msg += "Prêtre";
+        l_Msg += STR_PRETRE;
         break;
     }
     SendMsg(l_Msg);

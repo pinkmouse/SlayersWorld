@@ -8,6 +8,7 @@
 #include "../Entities/DynamicObject.hpp"
 #include "../Entities/Player.hpp"
 #include "../Entities/Creature.hpp"
+#include "../Entities/AnimationUnit.hpp"
 #include "../Entities/GroupManager.hpp"
 #include "Square.hpp"
 #include "../World/WorldPacket.hpp"
@@ -18,6 +19,7 @@ class Map
 public:
     Map(uint16, MapTemplate*);
 	~Map();
+    bool Initialize();
 	bool InitializeMap(const std::string &);
     virtual void Update(sf::Time);
     virtual void AddUnit(Unit*);
@@ -54,7 +56,13 @@ public:
     void AddCase(Case*);
     GroupManager* GetGroupManager();
     bool UnitIsInVisu(Unit*, Unit*);
+    virtual void UnitUnaura(Unit*, const uint16 &) {};
+    virtual void UnitAddaura(Unit*, const uint16 &) {};
 
+    virtual bool LauchTrapHandle(GameObject*, Unit*) { return true; };
+    virtual bool IsBattleground() { return false; };
+
+    void SendMsgToMap(const std::string &);
     /// Enable Zone
     void AddZone(Zone*);
     void EnableZone(uint16, bool);
@@ -77,6 +85,7 @@ private:
     uint16 m_InstanceID;
 	uint16 m_SizeX;
 	uint16 m_SizeY;
+    MapTemplate* m_MapTemplate;
 
     std::map< eInterMapAction, std::queue<Unit* > > m_UnitInterMapActionQueue;
 	std::vector<Case*>	m_ListCase;

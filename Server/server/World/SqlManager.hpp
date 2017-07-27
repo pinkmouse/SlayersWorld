@@ -61,6 +61,7 @@ public:
     bool InitializeSpells();
     bool InitializeSpellEffects();
     bool InitializeCreatureTemplate(UnitManager*);
+    bool InitializeAnimationUnitTemplate(UnitManager*);
     bool InitializeRequired(RequiredManager*);
     bool InitializeGossip(UnitManager*, RequiredManager*);
     bool InitializeSpellsForPlayer(Player*);
@@ -76,6 +77,7 @@ public:
     CreatureTemplate GetCreatureTemplate(uint16);
     uint16 AddNewCreature(uint16, uint16, uint32, uint32);
     bool InitializeCreature(UnitManager*);
+    bool InitializeAnimationUnit(UnitManager*);
     std::map<uint8, uint16> GetXpLevel();
     int32 GetPlayerID(const std::string &);
 

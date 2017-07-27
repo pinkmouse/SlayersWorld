@@ -22,7 +22,6 @@ Aura::Aura(Unit* p_Caster, Unit* p_Target, SpellTemplate* p_SpellTemplate) :
     m_AuraEffectsMap[eTypeAuraEffect::MODIFY_DAMAGE_PCT] = &Aura::AuraEffectModifyDamagePct;
     m_AuraEffectsMap[eTypeAuraEffect::MOUNT] = &Aura::AuraEffectMount;
 
-
     if (m_Target != nullptr && m_SpellTemplate->GetVisualIDTarget() >= 0)
     {
         Map* l_Map = m_Target->GetMap();
@@ -34,6 +33,13 @@ Aura::Aura(Unit* p_Caster, Unit* p_Target, SpellTemplate* p_SpellTemplate) :
         l_Packet.BuildPacket(true, m_Target->GetType(), m_Target->GetID(), m_CasterType, m_CasterID, m_SpellTemplate->GetVisualIDTarget());
         l_Map->SendToSet(l_Packet.m_Packet, m_Target);
     }
+    if (m_Target != nullptr)
+    {
+        Map* l_Map = m_Target->GetMap();
+
+        if (l_Map != nullptr)
+            l_Map->UnitAddaura(m_Target, m_SpellTemplate->GetID());
+    }
 }
 
 Aura::~Aura()
@@ -44,6 +50,14 @@ Aura::~Aura()
         (this->*(l_Fun))((*l_It).second, false);
         delete (*l_It).second;
     }
+    if (m_Target != nullptr)
+    {
+        Map* l_Map = m_Target->GetMap();
+
+        if (l_Map != nullptr)
+            l_Map->UnitUnaura(m_Target, m_SpellTemplate->GetID());
+    }
+
     if (m_Target != nullptr && m_SpellTemplate->GetVisualIDTarget() >= 0)
     {
         Map* l_Map = m_Target->GetMap();

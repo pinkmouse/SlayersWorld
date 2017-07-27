@@ -4,6 +4,20 @@
 #define TIME_START_BG 30
 #define BG_MAX_TIME (120 + TIME_START_BG)
 
+#define MAX_FOINT 3
+
+#define TEAM_RIGHTID 0
+#define TEAM_LEFTID 1
+
+#define BASE_FLAG_RIGHT 1571
+#define AURA_FLAG_RIGHT 9
+#define GOB_FLAG_RIGHT 15
+
+#define BASE_FLAG_LEFT 1530
+#define AURA_FLAG_LEFT 10
+#define GOB_FLAG_LEFT 16
+
+
 class BGCapturePoint : public Map
 {
 public:
@@ -19,6 +33,12 @@ public:
     void ChronoPeriodic();
     void EndBG();
     bool IsFinish();
+    void UnitUnaura(Unit*, const uint16 &);
+    void UnitAddaura(Unit*, const uint16 &);
+    void PopFlagAtPoint(const uint32 &, GameObject*);
+    bool LauchTrapHandle(GameObject*, Unit*);
+    bool IsBattleground() { return true; };
+    void TeamMakePoint(const uint8 &);
 
 private:
     bool    m_Finished;
@@ -26,4 +46,8 @@ private:
     eBGState m_Step;
     uint8 m_Chrono;
     std::map<uint16, WorldPosition> m_SaveRespawnPoint;
+    GameObject* m_FlagRight;
+    GameObject* m_FlagLeft;
+    uint8 m_PointsRight;
+    uint8 m_PointsLeft;
 };

@@ -9,6 +9,7 @@ WritingField::WritingField() :
     m_Text.setCharacterSize(18);
     m_Text.setColor(sf::Color::White);
     m_Text.setPosition(5, Y_WINDOW - SIZE_FILED_TALK_Y);
+    m_Prefix = "";
 }
 
 
@@ -26,12 +27,33 @@ void WritingField::Close()
     m_IsOpen = false;
     if (!m_WritingString.empty())
         g_Socket->SendTalk(m_WritingString);
+
+    std::string l_Cmd = m_WritingString;
+    std::vector<std::string> l_CmdList;
+
+    size_t l_Pos = 0;
+    std::string l_Token;
+    while ((l_Pos = l_Cmd.find(' ')) != std::string::npos)
+    {
+        l_Token = l_Cmd.substr(0, l_Pos);
+        l_CmdList.push_back(l_Token);
+        l_Cmd.erase(0, l_Pos + 1);
+    }
+    l_CmdList.push_back(l_Cmd.c_str());
+
+    if (!l_CmdList.empty())
+    {
+        if (l_CmdList[0] == "/gr" || l_CmdList[0] == "/team")
+            m_Prefix = l_CmdList[0] + " ";
+        else
+            m_Prefix = "";
+    }
     ClearTxt();
 }
 
 void WritingField::ClearTxt()
 {
-    m_WritingString = "";
+    m_WritingString = m_Prefix;
     m_Text.setString(m_WritingString);
 }
 

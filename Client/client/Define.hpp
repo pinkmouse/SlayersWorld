@@ -21,10 +21,12 @@
 /// SKIN
 #define MAX_SKIN_IMG 91
 #define MAX_SKIN_MOUNT_IMG 2
+#define MAX_SKIN_ANMATIONUNIT_IMG 1
 #define SKIN_ZOOM_FACTOR_DEFAULT 1.0f
 #define UPDATE_OPACITY_TIME 250
 #define SKINS_FOLDER "img/skins/"
 #define SKINS_MOUNT_FOLDER "img/skins/mount/"
+#define SKINS_ANIMATIONUNIT_FOLDER "img/skins/animationUnit/"
 #define SKIN_SIZE_X 24
 #define SKIN_SIZE_Y 32
 #define SKIN_MOUNT_SIZE_X 48
@@ -36,7 +38,7 @@
 #define MAX_OPACITY 255
 
 /// GOB
-#define MAX_GOB_IMG 15
+#define MAX_GOB_IMG 20
 #define GOBS_SKIN_FOLDER "img/gobs/"
 
 /// SPELL
@@ -125,6 +127,7 @@ enum TypeUnit
 {
     CREATURE = 0,
     PLAYER,
+    ANIMATIONUNIT,
     AREATRIGGER,
     GAMEOBJECT
 };
@@ -185,7 +188,8 @@ enum eVisualType
     VisualSkin = 0,
     VisualSpell = 1,
     VisualGob = 2,
-    VisualSkinMount = 3
+    VisualSkinMount = 3,
+    VisualAnimationUnit = 4
 };
 
 enum eTimeSpellAttribute

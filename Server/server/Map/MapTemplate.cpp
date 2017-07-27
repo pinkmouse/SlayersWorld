@@ -82,6 +82,11 @@ void MapTemplate::AddCreatureMapTemplate(CreatureMapTemplate p_Creature)
     m_ListCreature.push_back(p_Creature);
 }
 
+void MapTemplate::AddAnimationUnitMapTemplate(AnimationUnitMapTemplate p_AnimationUnit)
+{
+    m_ListAnimationUnit.push_back(p_AnimationUnit);
+}
+
 void MapTemplate::AddZone(Zone p_Zone)
 {
     m_ListZone.push_back(p_Zone);
@@ -110,6 +115,11 @@ std::vector<Zone>*	MapTemplate::GetListZone()
 std::vector<GobMapTemplate>* MapTemplate::GetListGob()
 {
     return &m_ListGoB;
+}
+
+std::vector<AnimationUnitMapTemplate>*	MapTemplate::GetListAnimationUnit()
+{
+    return &m_ListAnimationUnit;
 }
 
 std::vector<AreaTriggerMapTemplate>* MapTemplate::GetListArea()

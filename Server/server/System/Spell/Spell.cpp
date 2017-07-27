@@ -3,6 +3,7 @@
 #include "../../Entities/Player.hpp"
 #include "../../World/WorldSocket.hpp"
 #include "../../Map/Map.hpp"
+#include "../../Map/Case.hpp"
 
 
 Spell::Spell(SpellTemplate* p_SpellTemplate) :
@@ -14,10 +15,12 @@ Spell::Spell(SpellTemplate* p_SpellTemplate) :
     m_SpellEffectsMap[SpellEffectType::ApplyAura] = &Spell::EffectApplyAura;
     m_SpellEffectsMap[SpellEffectType::LearnClass] = &Spell::EffectLearnClass;
     m_SpellEffectsMap[SpellEffectType::LearnSpell] = &Spell::EffectLearnSpell;
+    m_SpellEffectsMap[SpellEffectType::Teleport] = &Spell::EffectTeleport;
 }
 
 Spell::~Spell()
 {
+    m_TargetList.clear();
 }
 
 SpellTemplate* Spell::GetTemplate() const
@@ -112,6 +115,147 @@ void Spell::EffectHeal(uint8 p_ID, Unit* p_Target, SpellEffect* p_SpellEffect)
 {
     DamageInfo l_DamageInfo = m_Caster->CalculHealToTarget(p_Target, p_SpellEffect->m_BasePoint1, m_SpellTemplate->GetLevel());
     m_Caster->DealHeal(p_Target, l_DamageInfo);
+}
+
+void Spell::EffectTeleport(uint8 p_ID, Unit* p_Target, SpellEffect* p_SpellEffect)
+{
+    if (p_Target->GetMap() == nullptr)
+        return;
+
+    int32 l_DistanceCase = p_SpellEffect->m_BasePoint1 / TILE_SIZE;
+    int32 l_NbCaseCheck = 0;
+    uint32 l_Case = (p_Target->GetPosX() / TILE_SIZE) + ((p_Target->GetPosX() / TILE_SIZE) * p_Target->GetMap()->GetSizeX());
+    switch (p_Target->GetOrientation())
+    {
+    case Orientation::Up :
+        for (uint8 i = 0; i < l_DistanceCase; i++)
+        {
+            if (p_Target->GetMovementHandler()->IsInColision(p_Target->GetPosX(), p_Target->GetPosY() - (TILE_SIZE * i)))
+                break;
+            l_NbCaseCheck = i;
+        }
+        break;
+    case Orientation::Down :
+        for (uint8 i = 0; i < l_DistanceCase; i++)
+        {
+            if (p_Target->GetMovementHandler()->IsInColision(p_Target->GetPosX(), p_Target->GetPosY() + (TILE_SIZE * i)))
+                break;
+            l_NbCaseCheck = i;
+        }
+        break;
+    case Orientation::Left :
+        for (uint8 i = 0; i < l_DistanceCase; i++)
+        {
+            if (p_Target->GetMovementHandler()->IsInColision(p_Target->GetPosX() - (TILE_SIZE * i), p_Target->GetPosY()))
+                break;
+            l_NbCaseCheck = i;
+        }
+        break;
+    case Orientation::Right :
+        for (uint8 i = 0; i < l_DistanceCase; i++)
+        {
+            if (p_Target->GetMovementHandler()->IsInColision(p_Target->GetPosX() + (TILE_SIZE * i), p_Target->GetPosY()))
+                break;
+            l_NbCaseCheck = i;
+        }
+        break;
+    }
+    uint8 l_NbPixel = 0;
+    if (l_NbCaseCheck < l_DistanceCase)
+    {
+        switch (p_Target->GetOrientation())
+        {
+            case Orientation::Up :
+                for (uint8 i = 0; i < TILE_SIZE; i++)
+                {
+                    if (p_Target->GetMovementHandler()->IsInColision(p_Target->GetPosX(), (uint32)(p_Target->GetPosY() - (uint32)(TILE_SIZE * l_NbCaseCheck) - i)))
+                        break;
+                    l_NbPixel = i;
+                }
+                break;
+            case Orientation::Down :
+            
+                for (uint8 i = 0; i < TILE_SIZE; i++)
+                {
+                    if (p_Target->GetMovementHandler()->IsInColision(p_Target->GetPosX(), (uint32)(p_Target->GetPosY() + (uint32)(TILE_SIZE * l_NbCaseCheck) + i)))
+                        break;
+                    l_NbPixel = i;
+                }
+                break;
+            case Orientation::Left :
+                for (uint8 i = 0; i < TILE_SIZE; i++)
+                {
+                    if (p_Target->GetMovementHandler()->IsInColision(p_Target->GetPosX() - (uint32)(TILE_SIZE * l_NbCaseCheck) - i, (uint32)(p_Target->GetPosY())))
+                        break;
+                    l_NbPixel = i;
+                }
+                break;
+            case Orientation::Right :
+                for (uint8 i = 0; i < TILE_SIZE; i++)
+                {
+                    if (p_Target->GetMovementHandler()->IsInColision(p_Target->GetPosX() - (uint32)(TILE_SIZE * l_NbCaseCheck) + i, (uint32)(p_Target->GetPosY())))
+                        break;
+                    l_NbPixel = i;
+                }
+                break;
+        }
+    }
+    else
+    {
+        switch (p_Target->GetOrientation())
+        {
+        case Orientation::Up:
+            for (uint8 i = 0; i < p_SpellEffect->m_BasePoint1 % TILE_SIZE; i++)
+            {
+                if (p_Target->GetMovementHandler()->IsInColision(p_Target->GetPosX(), (uint32)(p_Target->GetPosY() - (uint32)(TILE_SIZE * l_NbCaseCheck) - i)))
+                    break;
+                l_NbPixel = i;
+            }
+            break;
+        case Orientation::Down:
+
+            for (uint8 i = 0; i < p_SpellEffect->m_BasePoint1 % TILE_SIZE; i++)
+            {
+                if (p_Target->GetMovementHandler()->IsInColision(p_Target->GetPosX(), (uint32)(p_Target->GetPosY() + (uint32)(TILE_SIZE * l_NbCaseCheck) + i)))
+                    break;
+                l_NbPixel = i;
+            }
+            break;
+        case Orientation::Left:
+            for (uint8 i = 0; i < p_SpellEffect->m_BasePoint1 % TILE_SIZE; i++)
+            {
+                if (p_Target->GetMovementHandler()->IsInColision(p_Target->GetPosX() - (uint32)(TILE_SIZE * l_NbCaseCheck) - i, (uint32)(p_Target->GetPosY())))
+                    break;
+                l_NbPixel = i;
+            }
+            break;
+        case Orientation::Right:
+            for (uint8 i = 0; i < p_SpellEffect->m_BasePoint1 % TILE_SIZE; i++)
+            {
+                if (p_Target->GetMovementHandler()->IsInColision(p_Target->GetPosX() - (uint32)(TILE_SIZE * l_NbCaseCheck) + i, (uint32)(p_Target->GetPosY())))
+                    break;
+                l_NbPixel = i;
+            }
+            break;
+        }
+    }
+
+    /// TELEPORT
+    switch (p_Target->GetOrientation())
+    {
+    case Orientation::Up:
+        p_Target->TeleportTo(p_Target->GetPosX(), (uint32)(p_Target->GetPosY() - (uint32)(TILE_SIZE * l_NbCaseCheck) - l_NbPixel), (Orientation)p_Target->GetOrientation());
+        break;
+    case Orientation::Down:
+        p_Target->TeleportTo(p_Target->GetPosX(), (uint32)(p_Target->GetPosY() + (uint32)(TILE_SIZE * l_NbCaseCheck) + l_NbPixel), (Orientation)p_Target->GetOrientation());
+        break;
+    case Orientation::Left:
+        p_Target->TeleportTo(p_Target->GetPosX() - (uint32)(TILE_SIZE * l_NbCaseCheck) - l_NbPixel, (uint32)(p_Target->GetPosY()), (Orientation)p_Target->GetOrientation());
+        break;
+    case Orientation::Right:
+        p_Target->TeleportTo(p_Target->GetPosX() + (uint32)(TILE_SIZE * l_NbCaseCheck) + l_NbPixel, (uint32)(p_Target->GetPosY()), (Orientation)p_Target->GetOrientation());
+        break;
+    }
 }
 
 void Spell::LaunchEffects()

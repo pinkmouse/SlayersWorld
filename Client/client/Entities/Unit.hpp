@@ -9,6 +9,7 @@
 
 class Player;
 class DynamicObject;
+class AnimationUnit;
 
 class Unit : public WorldObject
 {
@@ -56,6 +57,7 @@ public:
     MovementHandler* GetMovementHandler();
     Player* ToPlayer();
     DynamicObject* ToDynamicObject();
+    AnimationUnit* ToAnimationUnit();
 
     Resource* GetResource(eResourceType);
     uint8 GetResourceNb(eResourceType);
@@ -72,8 +74,9 @@ public:
     void LaunchCastBar(uint16);
     uint8 GetCastPct();
     void CleanCastBar();
+    virtual void LaunchAnim() {};
 
-    void Update(sf::Time);
+    virtual void Update(sf::Time);
     void UpdateOpacity();
 
 protected:

@@ -88,6 +88,16 @@ Creature* Unit::ToCreature()
         return nullptr;
 }
 
+AnimationUnit* Unit::ToAnimationUnit()
+{
+    /// Convert to Animation Unit
+
+    if (m_Type == TypeUnit::ANIMATIONUNIT)
+        return  reinterpret_cast<AnimationUnit*>(this);
+    else
+        return nullptr;
+}
+
 Unit::~Unit()
 {
     CleanAttackers();
@@ -380,7 +390,7 @@ void Unit::DealDamage(Unit* p_Victim, DamageInfo p_DamageInfo)
             l_Player->SetXp(l_Player->GetXp() + l_Victim->GetXpEarn());
             l_Player->CheckQuestObjective(eObjectifType::KillMob, l_Victim->GetEntry());
         }
-        if (IsPlayer() && p_Victim->IsPlayer())
+        if (IsPlayer() && p_Victim->IsPlayer() && !m_Map->IsBattleground())
         {
             Player* l_Player = ToPlayer();
             l_Player->AddResourceNb(eResourceType::Alignment, -15);
@@ -958,13 +968,20 @@ void Unit::ActionFrom(Player* p_Player)
     GossipTo(p_Player);
 
     Creature* l_Creature = ToCreature();
-    if (l_Creature == nullptr)
-        return;
+    if (l_Creature != nullptr)
+    {
+        if (IsInMovement())
+            l_Creature->StopMovement();
+        l_Creature->UpdateOrientation(GetOrientationToPoint(p_Player->GetPosition()));
+        l_Creature->ResetRandMovementTime(false);
+    }
+    else
+    {
+        AnimationUnit* l_AnimationUnit = ToAnimationUnit();
 
-    if (IsInMovement())
-        l_Creature->StopMovement();
-    l_Creature->UpdateOrientation(GetOrientationToPoint(p_Player->GetPosition()));
-    l_Creature->ResetRandMovementTime(false);
+        if (l_AnimationUnit)
+            l_AnimationUnit->UpdateOrientation(GetOrientationToPoint(p_Player->GetPosition()));
+    }
 }
 
 Gossip* Unit::GetGossip(const uint16 & p_ID)
@@ -1348,6 +1365,28 @@ void Unit::RemoveAura(Aura* p_Aura)
     }
 }
 
+void Unit::RemoveAura(const uint16 & p_ID)
+{
+    Aura* l_Aura = nullptr;
+    for (uint16 i = 0; i < m_AuraList.size(); i++)
+    {
+        if (m_AuraList[i]->GetSpellTemplate()->GetID() == p_ID)
+            l_Aura = m_AuraList[i];
+    }
+    if (l_Aura != nullptr)
+        RemoveAura(l_Aura);
+}
+
+bool Unit::HasAura(const uint16 & p_ID)
+{
+    for (uint16 i = 0; i < m_AuraList.size(); i++)
+    {
+        if (m_AuraList[i] != nullptr && m_AuraList[i]->GetSpellTemplate()->GetID() == p_ID)
+            return true;
+    }
+    return false;
+}
+
 void Unit::RemoveAllAura()
 {
     for (std::vector<Aura*>::iterator l_It = m_AuraList.begin(); l_It != m_AuraList.end();)
@@ -1449,6 +1488,9 @@ void Unit::InterruptCast()
     if (m_CurrentSpell == nullptr)
         return;
     
+    if (m_CurrentSpell->IsReadyToLaunch())
+        return;
+
     m_CurrentSpell->Interrupt();
     m_CurrentSpell = nullptr;
     /// Send Cast Bar visual
@@ -1575,45 +1617,7 @@ void Unit::EnterInGroup(const std::string & p_GroupeName)
 
 void Unit::LeaveGroup(const std::string & p_Name)
 {
-    /*Player* l_ThisPlayer = ToPlayer();
-    std::vector< std::string >* l_Groups = GetAllGroupsForType(eGroupType::SIMPLE);
-    if (l_Groups == nullptr)
-        return;
-    for (std::vector< std::string >::iterator l_It = l_Groups->begin(); l_It != l_Groups->end();)
-    {
-        std::string l_GroupName = (*l_It);
-        LeaveGroup(eGroupType::SIMPLE, l_GroupName);
-        l_It = l_Groups->begin();
-        if (l_ThisPlayer != nullptr)
-            l_ThisPlayer->SendMsg("Vous venez de quitter le groupe '" + l_GroupName + "'");
-        std::vector< Unit* >* l_Units = g_GroupManager->GetUnitForGroup(eGroupType::SIMPLE, l_GroupName);
-        if (l_Units == nullptr)
-            continue;
-        for (std::vector< Unit* >::iterator l_Itr = l_Units->begin(); l_Itr != l_Units->end(); ++l_Itr)
-        {
-            Player* l_Player = (*l_Itr)->ToPlayer();
-            if (l_Player == nullptr)
-                continue;
-
-            l_Player->SendMsg(GetName() + " vient de quitter le groupe '" + l_GroupName + "'");
-
-            if (l_Player->IsInSetWith(this))
-            {
-                PacketUnitIsInGroup l_Packet;
-                /// Send to others of group
-                l_Packet.BuildPacket(TypeUnit::PLAYER, GetID(), false);
-                l_Player->GetSession()->SendPacket(l_Packet.m_Packet);
-
-                PacketUnitIsInGroup l_PacketNew;
-                /// Send to new one all people
-                if (l_ThisPlayer != nullptr)
-                {
-                    l_PacketNew.BuildPacket(TypeUnit::PLAYER, l_Player->GetID(), false);
-                    l_ThisPlayer->GetSession()->SendPacket(l_PacketNew.m_Packet);
-                }
-            }
-        }
-    }*/
+    ;
 }
 
 bool Unit::IsInGroupWith(Unit* p_Unit)

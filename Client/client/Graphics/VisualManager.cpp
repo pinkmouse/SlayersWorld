@@ -90,6 +90,35 @@ bool VisualManager::LoadSkins()
                 l_Skin.AddSprite(l_SkinSprite);
             }
         }
+        m_VisualsMap[l_Skin.GetType()][i] = l_Skin;
+    }
+
+    /// SKINS ANIMATIONUNIT
+    for (uint8 i = 0; i < MAX_SKIN_ANMATIONUNIT_IMG; ++i)
+    {
+        l_Texture = new sf::Texture();
+        std::string l_FileName = std::to_string(i) + ".png";
+        if (!l_Texture->loadFromFile(SKINS_ANIMATIONUNIT_FOLDER + l_FileName))
+        {
+            printf("Load Skin %s Failed\n", l_FileName.c_str());
+            return false;
+        }
+        m_TextureSkinsMap[i] = l_Texture;
+
+        uint32 l_NbSkinX = l_Texture->getSize().x / SKIN_SIZE_X;
+        uint32 l_NbSkinY = l_Texture->getSize().y / SKIN_SIZE_Y;
+        Visual l_Skin(eVisualType::VisualAnimationUnit, l_NbSkinX, l_NbSkinY);
+
+        for (uint8 j = 0; j < l_NbSkinY; ++j)
+        {
+            for (uint8 k = 0; k < l_NbSkinX; ++k)
+            {
+                SkinSprite l_SkinSprite(l_NbSkinX, l_NbSkinY);
+                l_SkinSprite.setTexture(*l_Texture);
+                l_SkinSprite.setTextureRect(sf::IntRect(k * SKIN_SIZE_X, j * SKIN_SIZE_Y, SKIN_SIZE_X, SKIN_SIZE_Y));
+                l_Skin.AddSprite(l_SkinSprite);
+            }
+        }
 
         m_VisualsMap[l_Skin.GetType()][i] = l_Skin;
     }

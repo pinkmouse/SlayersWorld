@@ -94,6 +94,7 @@ public:
     bool HandleCommandLevel(std::vector<std::string>);
     bool HandleCommandWisp(std::vector<std::string>);
 	bool HandleCommandAddPoint(std::vector<std::string>);
+    bool HandleCommandClass(std::vector<std::string>);
     bool HandleSave(std::vector<std::string>);
     bool HandleCommandCreature(std::vector<std::string>);
     bool HandleCommandWho(std::vector<std::string>);
@@ -107,7 +108,8 @@ public:
     bool HandleCommandServer(std::vector<std::string>);
     bool HandleCommandBG(std::vector<std::string>);
     bool HandleCommandSummonPlayer(std::vector<std::string>);
-    bool HandleCommandGroupWisp(std::vector<std::string>);
+    bool HandleCommandGroupWisp(std::vector<std::string>);    
+    bool HandleCommandTeamWisp(std::vector<std::string>);
     bool HandleRegen(std::vector<std::string>);
     bool HandleKick(std::vector<std::string>);
     bool HandleMount(std::vector<std::string>);
@@ -117,6 +119,7 @@ public:
     bool HandleBanAccount(std::vector<std::string>);
     bool HandleBind(std::vector<std::string>);
     bool handleGodMod(std::vector<std::string>);
+    bool handleCast(std::vector<std::string>);
     bool HandleTest(std::vector<std::string>);
 
 private:

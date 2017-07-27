@@ -1,5 +1,7 @@
 #include "GroupManager.hpp"
 #include "Unit.hpp"
+#include "Player.hpp"
+#include "../World/WorldSocket.hpp"
 
 GroupManager::GroupManager()
 {
@@ -147,4 +149,23 @@ bool GroupManager::UnitsInGroup(Unit* p_Unit1, Unit* p_Unit2)
         }
     }
     return false;
+}
+
+void GroupManager::SendPacketForGroup(eGroupType p_GroupType, const std::string & p_GroupName, const WorldPacket & p_Packet)
+{
+    if (m_GroupList.find(p_GroupType) == m_GroupList.end())
+        return;
+
+    if (m_GroupList[p_GroupType].find(p_GroupName) == m_GroupList[p_GroupType].end())
+        return;
+
+    for (std::vector<Unit*>::iterator l_It = m_GroupList[p_GroupType][p_GroupName].begin(); l_It != m_GroupList[p_GroupType][p_GroupName].end(); l_It++)
+    {
+        Player* l_Player = (*l_It)->ToPlayer();
+
+        if (l_Player == nullptr)
+            continue;
+
+        l_Player->GetSession()->SendPacket(p_Packet);
+    }
 }

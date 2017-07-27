@@ -13,6 +13,8 @@ void Player::InitializeCommands()
     m_CmdHandleMap["where"].second = &Player::HandleCommandWhere;
     m_CmdHandleMap["level"].first = eAccessType::Dummy;
     m_CmdHandleMap["level"].second = &Player::HandleCommandLevel;
+    m_CmdHandleMap["class"].first = eAccessType::Dummy;
+    m_CmdHandleMap["class"].second = &Player::HandleCommandClass;
     m_CmdHandleMap["points"].first = eAccessType::Dummy;
 	m_CmdHandleMap["points"].second = &Player::HandleCommandAddPoint;
     m_CmdHandleMap["bind"].first = eAccessType::Dummy;
@@ -27,6 +29,8 @@ void Player::InitializeCommands()
     m_CmdHandleMap["join"].second = &Player::HandleCommandJoin;
     m_CmdHandleMap["gr"].first = eAccessType::Dummy;
     m_CmdHandleMap["gr"].second = &Player::HandleCommandGroupWisp;
+    m_CmdHandleMap["team"].first = eAccessType::Dummy;
+    m_CmdHandleMap["team"].second = &Player::HandleCommandTeamWisp;
     m_CmdHandleMap["leave"].first = eAccessType::Dummy;
     m_CmdHandleMap["leave"].second = &Player::HandleCommandLeave;
     m_CmdHandleMap["kiss"].first = eAccessType::Dummy;
@@ -63,6 +67,8 @@ void Player::InitializeCommands()
     m_CmdHandleMap["banAccount"].second = &Player::HandleBanAccount;
     m_CmdHandleMap["godmod"].first = eAccessType::Moderator;
     m_CmdHandleMap["godmod"].second = &Player::handleGodMod;
+    m_CmdHandleMap["cast"].first = eAccessType::Moderator;
+    m_CmdHandleMap["cast"].second = &Player::handleCast;
     m_CmdHandleMap["bg"].first = eAccessType::Moderator;
     m_CmdHandleMap["bg"].second = &Player::HandleCommandBG;
 }
@@ -101,6 +107,16 @@ bool Player::handleGodMod(std::vector<std::string> p_ListCmd)
     else
         SetPlayerMod(ePlayerMod::GODMOD);
 return true;
+}
+
+bool Player::handleCast(std::vector<std::string> p_ListCmd)
+{
+    if (p_ListCmd.empty())
+        return true;
+
+    uint16 l_SpellID = atoi(p_ListCmd[0].c_str());
+    CastSpell(l_SpellID);
+    return true;
 }
 
 
@@ -241,7 +257,8 @@ bool Player::HandleCommandWhere(std::vector<std::string> p_ListCmd)
 
         Player* l_Player = g_MapManager->GetPlayer(l_Id);
     }
-
+    if (l_Player == nullptr)
+        return false;
     SendMsg(l_Name + " -> Map:" + std::to_string(l_Player->GetMapID()) + " X:" + std::to_string(l_Player->GetPosX()) + " Y:" + std::to_string(l_Player->GetPosY()) + " caseNb:" + std::to_string((uint16)((l_Player->GetPosY() / TILE_SIZE) * l_Player->GetMap()->GetSizeX()) + (l_Player->GetPosX() / TILE_SIZE)));
 
     return true;
@@ -262,10 +279,58 @@ bool Player::HandleCommandLevel(std::vector<std::string> p_ListCmd)
     }
 
     Player* l_Player = g_MapManager->GetPlayer(l_Id);
+    if (l_Player == nullptr)
+        return true;
+
     SendMsg(l_Name + " est de niveau " + std::to_string(l_Player->GetLevel()));
 
     return true;
 }
+
+bool Player::HandleCommandClass(std::vector<std::string> p_ListCmd)
+{
+    if (p_ListCmd.empty())
+        return false;
+
+    std::string l_Name = p_ListCmd[0];
+
+    int32 l_Id = g_SqlManager->GetPlayerID(l_Name);
+    if (l_Id <= 0)
+    {
+        SendMsg(l_Name + " est introuvable");
+        return true;
+    }
+
+    Player* l_Player = g_MapManager->GetPlayer(l_Id);
+    if (l_Player == nullptr)
+        return true;
+    eClass l_Class = l_Player->GetClass();
+    std::string l_Msg = l_Name;
+    if (l_Class == eClass::NONECLASS)
+        l_Msg += " n'a pas de classe";
+    else
+    {
+        l_Msg += " à pour classe : ";
+        switch (l_Player->GetClass())
+        {
+        case eClass::ASSASSIN:
+            l_Msg += STR_ASSASSIN;
+            break;
+        case eClass::MAGE:
+            l_Msg += STR_MAGE;
+            break;
+        case eClass::PALADIN:
+            l_Msg += STR_PALADIN;
+            break;
+        case eClass::PRETRE:
+            l_Msg += STR_PRETRE;
+            break;
+        }
+    }
+    SendMsg(l_Msg);
+    return true;
+}
+
 
 bool Player::HandleCommandEmote(std::vector<std::string> p_ListCmd)
 {
@@ -301,26 +366,48 @@ bool Player::HandleCommandGroupWisp(std::vector<std::string> p_ListCmd)
     for (uint8 i = 0; i < p_ListCmd.size(); ++i)
         l_Msg += " " + p_ListCmd[i];
 
-    /*std::vector< std::string >* l_Groups = GetAllGroupsForType(eGroupType::SIMPLE);
-    if (l_Groups == nullptr)
-    {
-        SendMsg("Vous ne faite pas partie d'un groupe");
-        return true;
-    }
-    for (std::vector< std::string >::iterator l_It = l_Groups->begin(); l_It != l_Groups->end(); ++l_It)
-    {
-        std::vector< Unit* >* l_Units = g_GroupManager->GetUnitForGroup(eGroupType::SIMPLE, (*l_It));
-        if (l_Units == nullptr)
-            continue;
-        for (std::vector< Unit* >::iterator l_Itr = l_Units->begin(); l_Itr != l_Units->end(); ++l_Itr)
-        {
-            Player* l_Player = (*l_Itr)->ToPlayer();
-            if (l_Player == nullptr)
-                continue;
+    ParseStringWithTag(l_Msg);
 
-            l_Player->SendMsg(GetName() + "(gr): " + l_Msg);
-        }
-    }*/
+    std::vector<std::string>* l_Groupes = g_GroupManager->GetGroupForUnit(eGroupType::SIMPLE, this);
+    if (l_Groupes == nullptr)
+        return false;
+
+    for (std::vector<std::string>::iterator l_It = l_Groupes->begin(); l_It != l_Groupes->end(); l_It++)
+    {
+        l_Msg = "(" + (*l_It) + ") " + GetName() + ":" + l_Msg;
+        PacketSrvPlayerMsg l_Packet;
+        l_Packet.BuildPacket(l_Msg);
+        g_GroupManager->SendPacketForGroup(eGroupType::SIMPLE, (*l_It), l_Packet.m_Packet);
+    }
+
+    return true;
+}
+
+bool Player::HandleCommandTeamWisp(std::vector<std::string> p_ListCmd)
+{
+    if (p_ListCmd.empty())
+        return false;
+
+    std::string l_Msg = "";
+    for (uint8 i = 0; i < p_ListCmd.size(); ++i)
+        l_Msg += " " + p_ListCmd[i];
+
+    ParseStringWithTag(l_Msg);
+
+    if (GetMap()->GetGroupManager() == nullptr)
+        return false;
+
+    std::vector<std::string>* l_Groupes = GetMap()->GetGroupManager()->GetGroupForUnit(eGroupType::BG, this);
+    if (l_Groupes == nullptr)
+        return false;
+
+    for (std::vector<std::string>::iterator l_It = l_Groupes->begin(); l_It != l_Groupes->end(); l_It++)
+    {
+        l_Msg = "(" + (*l_It) + ") " + GetName() + ":" + l_Msg;
+        PacketSrvPlayerMsg l_Packet;
+        l_Packet.BuildPacket(l_Msg);
+        GetMap()->GetGroupManager()->SendPacketForGroup(eGroupType::BG, (*l_It), l_Packet.m_Packet);
+    }
 
     return true;
 }

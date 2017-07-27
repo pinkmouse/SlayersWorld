@@ -1,5 +1,6 @@
 #pragma once
 #include "../Define.hpp"
+#include "../World/WorldPacket.hpp"
 #include <map>
 #include <vector>
 
@@ -14,6 +15,7 @@ public:
     void RemoveUnitFromAllGroupType(eGroupType, Unit*);
     void RemoveUnitFromAllGroup(Unit*);
     std::vector< Unit* >* GetUnitForGroup(eGroupType,  const std::string &);
+    void SendPacketForGroup(eGroupType, const std::string &, const WorldPacket &);
     uint16 GetNBPlayerForGroup(eGroupType, const std::string &);
     std::vector<std::string>* GetGroupForUnit(eGroupType, Unit*);
     bool UnitsInGroup(Unit*, Unit*);

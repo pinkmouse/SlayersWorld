@@ -91,6 +91,8 @@ add_executable(${EXECUTABLE_NAME}
               server/Entities/Creature.cpp
 	      server/Entities/CreatureAI.cpp
               server/Entities/Creature.hpp
+              server/Entities/AnimationUnit.cpp
+              server/Entities/AnimationUnit.hpp
               server/Entities/MovementHandler.cpp
               server/Entities/MovementHandler.hpp
               server/Entities/MovementHandlerCreature.cpp

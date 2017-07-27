@@ -95,6 +95,14 @@ bool World::Initialize()
     if (!g_SqlManager->InitializeCreature(m_CreatureManager))
         printf("Error Initialize CreatureTemplate...\n");
 
+    printf("Initialize AnimationUnitTemplate\n");
+    if (!g_SqlManager->InitializeAnimationUnitTemplate(m_CreatureManager))
+        printf("Error Initialize AnimationUnitTemplate...\n");
+
+    printf("Initialize AnimationUnit\n");
+    if (!g_SqlManager->InitializeAnimationUnit(m_CreatureManager))
+        printf("Error Initialize AnimationUnit...\n");
+
     printf("Initialize Battledrounds\n");
     if (!g_SqlManager->InitializeBattlegrounds())
         printf("Error Initialize Battledrounds...\n");

@@ -32,6 +32,7 @@ public:
     Position GetCenterPositionOnUnit(Unit*, sf::Sprite*);
     bool IsInRayWindow(WorldObject*, WorldObject*);
     sf::Vector2f CoordFromViewToView(const sf::Vector2f &, const sf::View &, const sf::View &);
+    uint8 GetFrameNbForAnimationUnit(Unit*);
 
     /// DRAW THREAD
     void DrawLoop();

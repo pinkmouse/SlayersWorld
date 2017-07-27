@@ -1,6 +1,7 @@
 #include <cstdio>
 #include "MapManager.hpp"
 #include "../World/WorldSocket.hpp"
+#include "../World/PacketDefine.hpp"
 #include "../System/Instance/BattleGround/BGCapturePoint.hpp"
 
 #define NB_MAP 2
@@ -39,6 +40,7 @@ Map* MapManager::LaunchMap(uint16 p_MapID)
         return nullptr;
 
     Map* l_Map = new Map(0, m_MapListTemplate[p_MapID]);
+    l_Map->Initialize();
     return l_Map;
 }
 
@@ -133,6 +135,7 @@ void MapManager::UpdateQueues(sf::Time p_Diff)
             {
                 case 0 :
                     l_NewBGInstance = new BGCapturePoint(l_InstanceID, (*l_Itr).second.first->m_MapID);
+                    l_NewBGInstance->Initialize();
                 default :
                 break;
             }
@@ -255,6 +258,24 @@ void MapManager::AddBGTemplate(BGTemplate* p_BGTemplate)
 
 void MapManager::AddPlayerToQueue(uint16 m_BGID, Player* m_Player)
 {
+    uint8 l_MinPlayer = m_BGListTemplate[m_BGID].first->m_MinPlayer;
+
+    PacketSrvPlayerMsg l_Packet;
+    std::string l_Msg = "Le joueur " + m_Player->GetName() + " à rejoin la file d'attente : " + std::to_string(m_BGListTemplate[m_BGID].second.size() + 1) + "/" + std::to_string(l_MinPlayer);
+    l_Packet.BuildPacket(l_Msg);
+    for (uint8 i = 0; i < m_BGListTemplate[m_BGID].second.size(); i++)
+    {
+        Player* l_Player = m_BGListTemplate[m_BGID].second[i];
+        if (l_Player == nullptr)
+            continue;
+        l_Player->GetSession()->send(l_Packet.m_Packet);
+    }
+
+    PacketSrvPlayerMsg l_PacketNewPLayer;
+    l_Msg = "Vous êtes inscrit : " + std::to_string(m_BGListTemplate[m_BGID].second.size() + 1) + "/" + std::to_string(l_MinPlayer);
+    l_PacketNewPLayer.BuildPacket(l_Msg);
+    m_Player->GetSession()->send(l_PacketNewPLayer.m_Packet);
+
     m_BGListTemplate[m_BGID].second.push_back(m_Player);
 }
 

@@ -79,7 +79,6 @@ void WorldSocket::SendUnitCreate(Unit* p_Unit, bool p_IsInGroup)
         l_Packet.BuildPacket(p_Unit->GetType(), p_Unit->GetID(), p_Unit->GetName(), p_Unit->GetSkinID(), p_Unit->GetSizeX(), p_Unit->GetSizeY(), p_Unit->GetSpeedUint8(), p_Unit->GetMapID(), p_Unit->GetPosition(), p_Unit->GetOrientation(), p_Unit->IsInMovement(), p_Unit->IsBlocking());
 
     send(l_Packet.m_Packet);
-
     if (p_IsInGroup)
         SendUnitIsInGroup(p_Unit->GetType(), p_Unit->GetID(), true);
 

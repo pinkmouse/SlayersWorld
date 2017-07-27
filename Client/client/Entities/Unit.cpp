@@ -195,6 +195,14 @@ DynamicObject* Unit::ToDynamicObject()
         return nullptr;
 }
 
+AnimationUnit* Unit::ToAnimationUnit()
+{
+    if (m_Type == TypeUnit::ANIMATIONUNIT)
+        return  reinterpret_cast<AnimationUnit*>(this);
+    else
+        return nullptr;
+}
+
 uint16 Unit::GetID() const
 {
     return m_ID;

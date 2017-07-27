@@ -12,6 +12,7 @@ public:
     ~DynamicObject();
     virtual void Update(sf::Time) = 0;
     void Respawn();
+    void RespawnInCase(const uint32 &);
     void SetResourceNb(eResourceType, uint8);
     uint16 GetEntry() const;
     virtual void ActionFrom(Player*);

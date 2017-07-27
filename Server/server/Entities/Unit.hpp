@@ -17,6 +17,7 @@ class Player;
 class Creature;
 class GameObject;
 class DynamicObject;
+class AnimationUnit;
 
 class Unit : public WorldObject
 {
@@ -46,6 +47,7 @@ public:
     void SetSpeed(float);
     TypeUnit GetType() const;
     Creature* ToCreature();
+    AnimationUnit* ToAnimationUnit();
     Player* ToPlayer();
     GameObject* ToGameObject();
     DynamicObject* ToDynamicObject();
@@ -158,6 +160,8 @@ public:
     void AddAura(Aura*);
     void RemoveAllAura();
     void RemoveAura(Aura*);
+    bool HasAura(const uint16 &);
+    void RemoveAura(const uint16 &);
     std::vector<AuraEffect*> GetAuraEffectType(eTypeAuraEffect);
     std::vector<Aura*> GetAura(uint16);
     std::vector<Aura*>* GetAuraList();

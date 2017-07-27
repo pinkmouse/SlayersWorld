@@ -22,4 +22,5 @@ private:
     bool m_IsOpen;
     sf::Text m_Text;
     std::string m_WritingString;
+    std::string m_Prefix;
 };

@@ -36,6 +36,11 @@
 #define CREATION_POINT_Y 145
 #define CREATION_POINT_MAP 2
 
+#define STR_ASSASSIN "Assassin"
+#define STR_PALADIN "Paladin"
+#define STR_MAGE "Mage"
+#define STR_PRETRE "Prêtre"
+
 typedef char int8;
 typedef short int16;
 typedef int int32;
@@ -60,7 +65,8 @@ enum Orientation
 enum TypeUnit
 {
     CREATURE = 0,
-    PLAYER, 
+    PLAYER,
+    ANIMATIONUNIT,
     AREATRIGGER,
     GAMEOBJECT
 };
@@ -207,7 +213,7 @@ enum SpellEffectType
     LaunchSpell = 3,
     ApplyAura = 4,
     LearnClass = 5,
-    LearnSpell = 6
+    LearnSpell = 6,
 };
 
 enum SpellTarget
@@ -429,6 +435,23 @@ struct Zone
 
     Zone(uint16 p_ID, eTypeZone p_TypeID, std::string p_Name, uint32 p_CaseBegin, uint32 p_CaseEnd) :
         m_ID(p_ID), m_TypeID(p_TypeID), m_Name(p_Name), m_CaseBegin(p_CaseBegin), m_CaseEnd(p_CaseEnd), m_enabled(true) {}
+};
+
+struct AnimationUnitTemplate
+{
+    uint32 m_Entry;
+    int16 m_SkinID;
+    uint16 m_TypeID;
+    std::string m_Name;
+
+    float m_StopTimeMin;
+    float m_StopTimeMax;
+
+    AnimationUnitTemplate() :
+        m_Entry(0), m_SkinID(0), m_TypeID(0), m_Name(""), m_StopTimeMin(0.0f), m_StopTimeMax(0.0f) {}
+
+    AnimationUnitTemplate(uint32 p_Entry, int16 p_SkinID, uint16 p_TypeID, std::string p_Name, float p_StopTimeMin, float p_StopTimeMax) :
+        m_Entry(p_Entry), m_SkinID(p_SkinID), m_TypeID(p_TypeID), m_Name(p_Name), m_StopTimeMin(p_StopTimeMin), m_StopTimeMax(p_StopTimeMax) {}
 };
 
 struct CreatureTemplate

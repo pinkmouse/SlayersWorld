@@ -1,5 +1,6 @@
 #include "GameObject.hpp"
 #include "../System/Required/Required.hpp"
+#include "../Map/Map.hpp"
 
 
 GameObjectTemplate::GameObjectTemplate() :
@@ -127,16 +128,21 @@ void GameObject::UnitEnterInCase(Unit* p_Unit)
 
     switch (m_GobTemplate->GetType())
     {
-    case eGameObjectTemplate::GameObjectTrap:
-    {
-        if (m_GobTemplate->GetData(0) < 0) ///< No Spells
+        case eGameObjectTemplate::GameObjectTrap:
+        {
+            bool l_Launch = GetMap()->LauchTrapHandle(this, p_Unit);
+
+            if (!l_Launch)
+                break;
+
+            SetResourceNb(eResourceType::Health, 0);
+            if (m_GobTemplate->GetData(0) < 0) ///< No Spells
+                break;
+            std::vector<Unit*> l_TargetList;
+            l_TargetList.push_back(p_Unit);
+            CastSpell(m_GobTemplate->GetData(0), l_TargetList);
             break;
-        std::vector<Unit*> l_TargetList;
-        l_TargetList.push_back(p_Unit);
-        CastSpell(m_GobTemplate->GetData(0), l_TargetList);
-        SetResourceNb(eResourceType::Health, 0);
-        break;
-    }
+        }
     default:
         break;
     }
@@ -149,6 +155,11 @@ void GameObject::UnitAction(Unit* p_Unit)
 bool GameObject::CanBeWalk()
 {
     return true;
+}
+
+GameObjectTemplate* GameObject::GetGameObjectTemplate() const
+{
+    return m_GobTemplate;
 }
 
 void GameObject::ActionFrom(Player* p_Player)

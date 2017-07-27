@@ -1,6 +1,7 @@
 #include "PacketHandler.hpp"
 #include "../Entities/Player.hpp"
 #include "../Entities/Creature.hpp"
+#include "../Entities/AnimationUnit.hpp"
 #include "../Entities/DynamicObject.hpp"
 #include "../Global.hpp"
 #include "PacketDefine.hpp"
@@ -219,7 +220,7 @@ void PacketHandler::HandleUnitStartAttack(WorldPacket &p_Packet)
     p_Packet >> l_Pos.y;
     p_Packet >> l_Orientation;
 
-    printf("Attack for Type :%d, ID:%d, posX:%d, posY:%d, orientation:%d\n", l_TypeID, l_ID, l_Pos.x, l_Pos.y, l_Orientation);
+    //printf("Attack for Type :%d, ID:%d, posX:%d, posY:%d, orientation:%d\n", l_TypeID, l_ID, l_Pos.x, l_Pos.y, l_Orientation);
     if (Map* l_Map = m_MapManager->GetActualMap())
     {
         Unit* l_Unit = l_Map->GetUnit((TypeUnit)l_TypeID, l_ID);
@@ -230,7 +231,10 @@ void PacketHandler::HandleUnitStartAttack(WorldPacket &p_Packet)
             return;
         }
 
-        l_Unit->GetMovementHandler()->AddMovementToStack(eActionType::Attack, l_Pos, (Orientation)l_Orientation);
+        if ((TypeUnit)l_TypeID == TypeUnit::ANIMATIONUNIT)
+            l_Unit->LaunchAnim();
+        else
+            l_Unit->GetMovementHandler()->AddMovementToStack(eActionType::Attack, l_Pos, (Orientation)l_Orientation);
     }
 }
 
@@ -432,7 +436,7 @@ void PacketHandler::HandleCreateUnit(WorldPacket &p_Packet)
     p_Packet >> l_TypeID;
     p_Packet >> l_ID;
     p_Packet >> l_Name;
-    if (l_TypeID < 2) ///< Only Player and Creature
+    if (l_TypeID < TypeUnit::AREATRIGGER) ///< Only Player and Creature
     {
         p_Packet >> l_Level;
         p_Packet >> l_Health;
@@ -472,6 +476,8 @@ void PacketHandler::HandleCreateUnit(WorldPacket &p_Packet)
             l_NewUnit = new Player(l_ID, l_Name, l_Level, l_Health, l_Mana, l_Alignment, l_SkinID, l_SizeX, l_SizeY, l_MapID, l_Pos.x, l_Pos.y, (Orientation)l_Orientation);
         else if (l_TypeID == (uint8)TypeUnit::CREATURE)
             l_NewUnit = new Creature(l_ID, l_Name, l_Level, l_Health, l_SkinID, l_SizeX, l_SizeY, l_MapID, l_Pos.x, l_Pos.y, (Orientation)l_Orientation);
+        else if (l_TypeID == (uint8)TypeUnit::ANIMATIONUNIT)
+            l_NewUnit = new AnimationUnit(l_ID, l_Name, l_Level, l_Health, l_SkinID, l_SizeX, l_SizeY, l_MapID, l_Pos.x, l_Pos.y, (Orientation)l_Orientation);
         else if (l_TypeID == (uint8)TypeUnit::AREATRIGGER || l_TypeID == (uint8)TypeUnit::GAMEOBJECT)
         {
            /* DynamicObject* l_DynIbj*/l_NewUnit = new DynamicObject(l_ID, (TypeUnit)l_TypeID, l_Name, l_Level, l_Health, l_SkinID, l_SizeX, l_SizeY, l_MapID, l_Pos.x, l_Pos.y, (Orientation)l_Orientation, l_IsBlocking);

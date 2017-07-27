@@ -40,6 +40,7 @@ public:
     void UnitAction(Unit*);
     bool CanBeWalk();
     bool IsBlocking() const;
+    GameObjectTemplate* GetGameObjectTemplate() const;
 
 private:
     /* BASIC */

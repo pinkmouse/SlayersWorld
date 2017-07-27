@@ -15,6 +15,7 @@ public:
     bool IsBlocking() const;
     uint32 GetID() const;
     void AddDynamicOject(DynamicObject*);
+    void RemoveDynamicOject(DynamicObject*);
     void AddZone(Zone*);
     void UnitEnterInCase(Unit*, Case*);
     void UnitOutOfCase(Unit*, Case*);

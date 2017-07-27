@@ -309,7 +309,7 @@ void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldS
 
     p_WorldSocket->SetPlayer(l_Player);
 
-    printf("Player pos=%d-%d, %d, %d\n", l_Player->GetPosX(), l_Player->GetPosY(), l_Player->GetSizeX(), (l_Player->GetPosY() / TILE_SIZE) * (uint32)l_Player->GetSizeX()) + (l_Player->GetPosX() / TILE_SIZE);
+    //printf("Player pos=%d-%d, %d, %d\n", l_Player->GetPosX(), l_Player->GetPosY(), l_Player->GetSizeX(), (l_Player->GetPosY() / TILE_SIZE) * (uint32)l_Player->GetSizeX()) + (l_Player->GetPosX() / TILE_SIZE);
     l_Map->AddUnit(l_Player);
     l_Player->HasBeenInitialize();
 

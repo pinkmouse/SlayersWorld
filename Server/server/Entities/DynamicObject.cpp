@@ -53,6 +53,35 @@ void DynamicObject::Respawn()
         UnitEnterInCase(l_ListUnit.front());
 }
 
+void DynamicObject::RespawnInCase(const uint32 & p_CaseNb)
+{
+    //Unit::Respawn();
+    SetInWorld(true);
+
+    SetResourceNb(eResourceType::Health, MAX_HEALTH);
+    m_ResTimer = 0;
+
+    Case* l_Case = m_Map->GetCase(GetPosX(), GetPosY());
+    l_Case->RemoveDynamicOject(this);
+
+    uint32 l_PosX = (p_CaseNb % m_Map->GetSizeX() * TILE_SIZE) + TILE_SIZE / 2;
+    uint32 l_PosY = (p_CaseNb / m_Map->GetSizeX() * TILE_SIZE) + TILE_SIZE / 2;
+
+    SetPosX(l_PosX);
+    SetPosY(l_PosY);
+    l_Case = m_Map->GetCase(GetPosX(), GetPosY());
+    l_Case->AddDynamicOject(this);
+
+    /// Respawn dynamic object for players
+    PacketUnitCreate l_Packet;
+    l_Packet.BuildPacket(GetType(), GetID(), GetName(), GetSkinID(), GetSizeX(), GetSizeY(), GetSpeedUint8(), GetMapID(), GetPosition(), GetOrientation(), m_MovementHandler->IsInMovement(), IsBlocking());
+    m_Map->SendToSet(l_Packet.m_Packet, this);
+
+    std::vector<Unit*> l_ListUnit = m_Map->GetUnitsInCase(GetPosX(), GetPosY() - TILE_SIZE);
+    if (!l_ListUnit.empty())
+        UnitEnterInCase(l_ListUnit.front());
+}
+
 void DynamicObject::SetResourceNb(eResourceType p_Resource, uint8 p_Nb)
 {
     Unit::SetResourceNb(p_Resource, p_Nb);
