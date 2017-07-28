@@ -45,6 +45,7 @@ uint8 AnimationUnit::GetFrame() const
 
 void AnimationUnit::Update(sf::Time p_Diff)
 {
+    Unit::Update(p_Diff);
     if (!m_IsInAnimation)
         return;
 

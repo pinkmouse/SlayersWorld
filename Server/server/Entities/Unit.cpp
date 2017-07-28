@@ -919,6 +919,15 @@ bool Unit::CanAttack(Unit* p_Unit)
     return IsHostileTo(p_Unit);
 }
 
+bool Unit::CanBeTarget()
+{
+    /// Check if target is a valid attack target
+    if (!IsInWorld() || IsDeath())
+        return false;
+
+    return true;
+}
+
 bool Unit::IsFriendlyTo(Unit* p_Unit)
 {
     if (GetFaction() == eFactionType::Neutral || p_Unit->GetFaction() == eFactionType::Neutral)

@@ -195,7 +195,7 @@ void Creature::UpdateAgresive(sf::Time p_Diff)
                 ResetRandMovementTime(false);
                 StopMovement();
             }
-            if (Unit* l_Victim = m_Map->GetCloserUnit(this, (float)CaseToPixel(m_CreatureTemplate->m_MaxVision), true, false, true))
+            if (Unit* l_Victim = m_Map->GetCloserUnit(this, m_CreatureTemplate->m_MaxVision, true, false, true))
             {
                 EnterInCombat(l_Victim);
                 Position p_Pos = l_Victim->GetPositionAtDistance(l_Victim->GetDistance(this), l_Victim->GetAngle(GetPosition()));

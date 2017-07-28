@@ -130,6 +130,9 @@ void GameObject::UnitEnterInCase(Unit* p_Unit)
     {
         case eGameObjectTemplate::GameObjectTrap:
         {
+            if (!p_Unit->CanBeTarget())
+                return;
+
             bool l_Launch = GetMap()->LauchTrapHandle(this, p_Unit);
 
             if (!l_Launch)

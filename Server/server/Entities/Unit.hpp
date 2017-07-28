@@ -115,6 +115,7 @@ public:
     void AddThreadFromAttacker(Unit*, uint16);
     Unit* GetVictim() const;
     bool CanAttack(Unit*);
+    bool CanBeTarget();
     bool IsHostileTo(Unit*);
     bool IsFriendlyTo(Unit*);
     bool IsAttackableTarget() const;

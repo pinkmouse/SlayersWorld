@@ -120,6 +120,42 @@ void Graphics::DrawUnitDetails(Unit* p_Unit)
     if (p_Unit == nullptr)
         return;
 
+    if (p_Unit->IsDynamicObject())
+        return;
+
+    int8 l_OffsetLifeBar = 0;
+    if (p_Unit->GetIsInGroup())
+        l_OffsetLifeBar = -6;
+    /// LIFE BAR
+    if (p_Unit != g_Player)
+    {
+        TileSprite l_LifeBar;
+        l_LifeBar.setTexture(m_LifeBarTexture);
+        l_LifeBar.setTextureRect(sf::IntRect(0, 0, (m_LifeBarTexture.getSize().x / 100.0f) * p_Unit->GetResourceNb(eResourceType::Health), m_LifeBarTexture.getSize().y));
+        l_LifeBar.setPosition(p_Unit->GetPosXAtIntant() - (p_Unit->GetSizeX() / 2) + p_Unit->GetPosXOffset(), p_Unit->GetPosYAtIntant() - p_Unit->GetSizeY() - 4 + l_OffsetLifeBar + p_Unit->GetPosYOffset());
+        m_Window.draw(l_LifeBar);
+    }
+
+    /// CAST BAR
+    if (p_Unit != g_Player && p_Unit->GetCastPct() > 0)
+    {
+        TileSprite l_CastBar;
+        l_CastBar.setTexture(m_CastBarTexture);
+        l_CastBar.setTextureRect(sf::IntRect(0, 0, (m_CastBarTexture.getSize().x / 100.0f) * p_Unit->GetCastPct(), m_CastBarTexture.getSize().y));
+        l_CastBar.setPosition(p_Unit->GetPosXAtIntant() - (p_Unit->GetSizeX() / 2) + p_Unit->GetPosXOffset(), p_Unit->GetPosYAtIntant() - p_Unit->GetSizeY() - 4 + p_Unit->GetPosYOffset());
+        m_Window.draw(l_CastBar);
+    }
+
+    /// UI GROUP
+    if (p_Unit != g_Player && p_Unit->GetIsInGroup())
+    {
+        TileSprite l_UiGroup;
+        l_UiGroup.setTexture(m_UiMiniTexture);
+        l_UiGroup.setTextureRect(sf::IntRect(0, 0, m_UiMiniTexture.getSize().x, m_UiMiniTexture.getSize().y));
+        l_UiGroup.setPosition(p_Unit->GetPosXAtIntant() - (p_Unit->GetSizeX() / 2) - 6 + p_Unit->GetPosXOffset(), p_Unit->GetPosYAtIntant() - p_Unit->GetSizeY() - 12 + p_Unit->GetPosYOffset());
+        m_Window.draw(l_UiGroup);
+    }
+
     /// Set view to don t have a zoom on text
     m_Window.setView(m_ViewFont);
 
@@ -160,36 +196,6 @@ void Graphics::DrawUnitDetails(Unit* p_Unit)
 
     /// Reset the view
     m_Window.setView(m_View);
-
-    /// LIFE BAR
-    if (p_Unit != g_Player && p_Unit->GetIsInGroup())
-    {
-        TileSprite l_LifeBar;
-        l_LifeBar.setTexture(m_LifeBarTexture);
-        l_LifeBar.setTextureRect(sf::IntRect(0, 0, (m_LifeBarTexture.getSize().x / 100.0f) * p_Unit->GetResourceNb(eResourceType::Health), m_LifeBarTexture.getSize().y));
-        l_LifeBar.setPosition(p_Unit->GetPosXAtIntant() - (p_Unit->GetSizeX() / 2) + p_Unit->GetPosXOffset(), p_Unit->GetPosYAtIntant() - p_Unit->GetSizeY() - 10 + p_Unit->GetPosYOffset());
-        m_Window.draw(l_LifeBar);
-    }
-
-    /// CAST BAR
-    if (p_Unit != g_Player && p_Unit->GetCastPct() > 0)
-    {
-        TileSprite l_CastBar;
-        l_CastBar.setTexture(m_CastBarTexture);
-        l_CastBar.setTextureRect(sf::IntRect(0, 0, (m_CastBarTexture.getSize().x / 100.0f) * p_Unit->GetCastPct(), m_CastBarTexture.getSize().y));
-        l_CastBar.setPosition(p_Unit->GetPosXAtIntant() - (p_Unit->GetSizeX() / 2) + p_Unit->GetPosXOffset(), p_Unit->GetPosYAtIntant() - p_Unit->GetSizeY() - 4 + p_Unit->GetPosYOffset());
-        m_Window.draw(l_CastBar);
-    }
-
-    /// UI GROUP
-    if (p_Unit != g_Player && p_Unit->GetIsInGroup())
-    {
-        TileSprite l_UiGroup;
-        l_UiGroup.setTexture(m_UiMiniTexture);
-        l_UiGroup.setTextureRect(sf::IntRect(0, 0, m_UiMiniTexture.getSize().x, m_UiMiniTexture.getSize().y));
-        l_UiGroup.setPosition(p_Unit->GetPosXAtIntant() - (p_Unit->GetSizeX() / 2) - 6 + p_Unit->GetPosXOffset(), p_Unit->GetPosYAtIntant() - p_Unit->GetSizeY() - 12 + p_Unit->GetPosYOffset());
-        m_Window.draw(l_UiGroup);
-    }
 }
 
 void Graphics::DrawWorldObjects(std::map<uint32, std::vector<WorldObject*> > *p_ListWorldObjectsByZ)

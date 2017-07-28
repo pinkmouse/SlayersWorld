@@ -628,7 +628,8 @@ void SqlManager::AddSpellForPlayer(Player* p_Player, uint16 l_SpellID)
 
 void SqlManager::RemoveSpellForPlayer(Player* p_Player, uint16 l_SpellID)
 {
-    std::string l_Query = "REMOVE FROM `characters_spells` WHERE characterID = '" + std::to_string(p_Player->GetID()) + "' and spellID = '" + std::to_string(l_SpellID) + "');";
+    std::string l_Query = "DELETE FROM `characters_spells` WHERE characterID = '" + std::to_string(p_Player->GetID()) + "' and spellID = '" + std::to_string(l_SpellID) + "';";
+    printf("----> %s\n", l_Query.c_str());
     mysql_query(&m_MysqlCharacters, l_Query.c_str());
 }
 

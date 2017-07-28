@@ -295,7 +295,7 @@ void Player::EventAction(eKeyBoardAction p_PlayerAction)
     {
         case eKeyBoardAction::KeyBoardAction: /// GOSSIP
         {
-            Unit* l_Unit = m_Map->GetCloserUnit(this, MELEE_RANGE + 4, true, false);
+            Unit* l_Unit = m_Map->GetCloserUnit(this, 1.5f, true, false);
             if (l_Unit == nullptr)
                 return;
 
@@ -413,12 +413,24 @@ void Player::LearnClass(eClass p_Class)
         break;
     case eClass::MAGE:
         l_Msg += STR_MAGE;
+        LearnSpell(11);
+        LearnSpell(12);
+        g_SqlManager->AddSpellBind(this, 11, 9);
+        g_SqlManager->AddSpellBind(this, 12, 10);
         break;
     case eClass::PALADIN:
         l_Msg += STR_PALADIN;
+        LearnSpell(14);
+        LearnSpell(15);
+        g_SqlManager->AddSpellBind(this, 14, 9);
+        g_SqlManager->AddSpellBind(this, 15, 10);
         break;
     case eClass::PRETRE:
         l_Msg += STR_PRETRE;
+        LearnSpell(17);
+        LearnSpell(18);
+        g_SqlManager->AddSpellBind(this, 17, 9);
+        g_SqlManager->AddSpellBind(this, 18, 10);
         break;
     }
     SendMsg(l_Msg);

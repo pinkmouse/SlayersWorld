@@ -370,7 +370,7 @@ Unit* Map::GetCloserUnit(Unit* p_Unit, float p_Range /*= 2.0f*/, bool p_OnlyInLi
                 if (p_Attackable && !p_Unit->CanAttack(l_Unit))
                     continue;
 
-                float l_Dist = p_Unit->GetDistance(l_Unit);
+                float l_Dist = InYard(p_Unit->GetDistance(l_Unit));
 
                 if (l_Dist > p_Range)
                     continue;

@@ -13,7 +13,7 @@ QuestionBox::QuestionBox(const uint16 & p_QuestionID, const std::string & p_Titl
     m_Pos.y = 70;
 
     SetTitle(p_Title);
-    AddElement(1, 0, "Accépter");
+    AddElement(1, 0, "Accepter");
     GetElement(1, 0)->SetFunc(&Menu::GenericAction, 0);
     AddElement(3, 0, "Refuser");
     GetElement(3, 0)->SetFunc(&Menu::GenericAction, 1);
