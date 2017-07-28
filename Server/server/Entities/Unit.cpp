@@ -280,7 +280,7 @@ void Unit::Update(sf::Time p_Diff)
 
     if (m_MovementHandler->IsDamageReady())
     {
-        Unit* l_Unit = m_Map->GetCloserUnit(this, MELEE_RANGE, true, true ,true);
+        Unit* l_Unit = m_Map->GetCloserUnit(this, 1.5f, true, true ,true);
 
         if (l_Unit != nullptr)
             AutoAttack(l_Unit);
