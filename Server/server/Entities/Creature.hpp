@@ -17,6 +17,7 @@ public:
     void Respawn();
     void Unspawn();
     void SetResourceNb(eResourceType, uint8);
+    void AddResourceNb(eResourceType, uint8);
     void ResetRandMovementTime(bool);
     uint32 GetXpEarn() const;
     Orientation GetOrientationByPath(Path &);

@@ -38,7 +38,7 @@
 #define MAX_OPACITY 255
 
 /// GOB
-#define MAX_GOB_IMG 20
+#define MAX_GOB_IMG 22
 #define GOBS_SKIN_FOLDER "img/gobs/"
 
 /// SPELL

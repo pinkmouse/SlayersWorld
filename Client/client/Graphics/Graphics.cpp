@@ -123,11 +123,11 @@ void Graphics::DrawUnitDetails(Unit* p_Unit)
     if (p_Unit->IsDynamicObject())
         return;
 
-    int8 l_OffsetLifeBar = 0;
+    int8 l_OffsetLifeBar = -4;
     if (p_Unit->GetIsInGroup())
         l_OffsetLifeBar = -6;
     /// LIFE BAR
-    if (p_Unit != g_Player)
+    if (p_Unit != g_Player && p_Unit->IsPlayer())
     {
         TileSprite l_LifeBar;
         l_LifeBar.setTexture(m_LifeBarTexture);

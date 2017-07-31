@@ -105,6 +105,29 @@ void Creature::SetResourceNb(eResourceType p_Resource, uint8 p_Nb)
     Unit::SetResourceNb(p_Resource, p_Nb);
     if (IsDeath())
         Unspawn();
+    else
+    {
+        WorldPacket l_Packet;
+        uint8 l_ID = SMSG::S_UnitUpdateResource;
+
+        l_Packet << l_ID << GetType() << GetID() << p_Resource << GetResourceNb(p_Resource);
+        m_Map->SendToSet(l_Packet, this);
+    }
+}
+
+void Creature::AddResourceNb(eResourceType p_Resource, uint8 p_Nb)
+{
+    Unit::AddResourceNb(p_Resource, p_Nb);
+    if (IsDeath())
+        Unspawn();
+    else
+    {
+        WorldPacket l_Packet;
+        uint8 l_ID = SMSG::S_UnitUpdateResource;
+
+        l_Packet << l_ID << GetType() << GetID() << p_Resource << GetResourceNb(p_Resource);
+        m_Map->SendToSet(l_Packet, this);
+    }
 }
 
 uint32 Creature::GetXpEarn() const
