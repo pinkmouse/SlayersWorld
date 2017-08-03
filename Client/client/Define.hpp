@@ -42,7 +42,7 @@
 #define GOBS_SKIN_FOLDER "img/gobs/"
 
 /// SPELL
-#define MAX_SPELL_IMG 12
+#define MAX_SPELL_IMG 13
 #define SPELLS_FOLDER "img/spells/"
 #define MAX_VISUAL_IMG_X 9
 #define MAX_VISUAL_IMG_Y 4

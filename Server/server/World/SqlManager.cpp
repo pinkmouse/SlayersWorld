@@ -120,7 +120,7 @@ std::string SqlManager::GetLoginName(uint32 p_AccountID)
 
 void SqlManager::AddNewPlayer(uint32 p_AccountID)
 {
-    std::string l_Query = "insert into `characters` (`accountID`, `name`, `skinID`, `level`, `health`, `alignment`, `mapID`, `posX`, `posY`, `orientation`, `xp`) values('" + std::to_string(p_AccountID) + "', '" + GetLoginName(p_AccountID) + "','0','1','100','0','" + std::to_string(CREATION_POINT_MAP) + "','" + std::to_string(CREATION_POINT_X) + "','" + std::to_string(CREATION_POINT_Y) + "','2','0');";
+    std::string l_Query = "insert into `characters` (`accountID`, `name`, `skinID`, `level`, `health`, `alignment`, `mapID`, `posX`, `posY`, `orientation`, `xp`) values('" + std::to_string(p_AccountID) + "', '" + GetLoginName(p_AccountID) + "','49','1','100','0','" + std::to_string(CREATION_POINT_MAP) + "','" + std::to_string(CREATION_POINT_X) + "','" + std::to_string(CREATION_POINT_Y) + "','2','0');";
     mysql_query(&m_MysqlCharacters, l_Query.c_str());
 }
 

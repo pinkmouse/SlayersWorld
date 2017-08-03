@@ -147,7 +147,7 @@ bool BGCapturePoint::LauchTrapHandle(GameObject* p_Gob, Unit* p_Unit)
         else if (p_Unit->HasAura(AURA_FLAG_RIGHT))
         {
             p_Unit->RemoveAura(AURA_FLAG_RIGHT);
-            PopFlagAtPoint(BASE_FLAG_RIGHT, m_FlagLeft);
+            PopFlagAtPoint(BASE_FLAG_RIGHT, m_FlagRight);
             TeamMakePoint(TEAM_LEFTID);
         }
         return false;
