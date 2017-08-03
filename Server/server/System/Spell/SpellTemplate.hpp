@@ -11,6 +11,8 @@ public:
     uint8 GetLevel() const;
     int16 GetVisualID() const;
     int16 GetVisualIDTarget() const;
+    int16 GetVisualIDUnder() const;
+    int16 GetVisualIDTargetUnder() const;
     uint16 GetCastTime() const;
     uint32 GetCooldown() const;
     int32 GetDuration() const;
@@ -18,7 +20,7 @@ public:
     std::vector<SpellEffect*>* GetListEffect();
     std::vector<ResourceNeed>* GetReousrcesNeed();
     void SetLevel(uint8);
-    void SetVisualsID(int16, int16);
+    void SetVisualsID(const int16 &, const int16 &, const int16 &, const int16 &);
     void SetCooldown(uint32);
     void SetCastTime(uint16);
     void SetDuration(int32);
@@ -26,11 +28,14 @@ public:
     void SetName(const std::string &);
     void AddSpellEffect(SpellEffect*);
     void AddResourceNeed(ResourceNeed);
+    bool HasAuraEffect(const eTypeAuraEffect &);
 
 private:
     uint16 m_ID;
     uint8 m_Level;
+    int16 m_VisualIDUnder;
     int16 m_VisualID;
+    int16 m_VisualIDTargetUnder;
     int16 m_VisualIDTarget;
     uint32 m_Cooldown; ///< In Millisecond
     uint16 m_CastTime; ///< In Millisecond

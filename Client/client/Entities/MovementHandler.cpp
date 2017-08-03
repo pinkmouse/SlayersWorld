@@ -206,7 +206,10 @@ void MovementHandler::Update(sf::Time p_Diff)
 
 void MovementHandler::UpdateAnimationWalk(sf::Time p_Diff)
 {
-    if (!m_InMovement && !m_InAttack)
+    if (!m_InMovement)
+        return;
+
+    if (m_InAttack)
         return;
 
     m_DiffTimeAnim += p_Diff.asMicroseconds();
@@ -247,7 +250,7 @@ void MovementHandler::UpdateAnimationWalk(sf::Time p_Diff)
 
 void MovementHandler::UpdateAnimationAttack(sf::Time p_Diff)
 {
-    /*if (!m_InAttack)
+    if (!m_InAttack)
         return;
 
     m_DiffTimeAnimAttack += p_Diff.asMicroseconds();
@@ -257,14 +260,12 @@ void MovementHandler::UpdateAnimationAttack(sf::Time p_Diff)
         /// UPDATE ANIMATION
         m_MovementPosition++;
 
-        printf("-> Anim Attack %d\n", m_MovementPosition);
         if (m_MovementPosition >= MAX_MOVEMENT_POSITION)
         {
             m_MovementPosition = 0;
             m_DiffTimeAnimAttack = 0;
             if (m_StopAttack)
             {
-                printf("-> Stop Attack %d\n", m_MovementPosition);
                 m_InAttack = false;
                 m_MovementPosition = 1;
             }
@@ -272,7 +273,7 @@ void MovementHandler::UpdateAnimationAttack(sf::Time p_Diff)
         }
         else
         m_DiffTimeAnimAttack -= (uint64)(UPDATE_TIME_MOVEMENT * 1000);
-    }*/
+    }
 }
 
 bool MovementHandler::IsInMovement() const

@@ -80,6 +80,7 @@ void PacketHandler::HandleExtraUIData(WorldPacket &p_Packet)
     p_Packet >> l_Data;
 
     m_InterfaceManager->AddExtraUiData((eExtraInterface)l_ExtraUI, l_Index, l_Type, l_Data);
+    printf("Data = %d\n", l_Data);
 }
 
 void PacketHandler::HandleMount(WorldPacket &p_Packet)
@@ -481,7 +482,7 @@ void PacketHandler::HandleCreateUnit(WorldPacket &p_Packet)
         else if (l_TypeID == (uint8)TypeUnit::AREATRIGGER || l_TypeID == (uint8)TypeUnit::GAMEOBJECT)
         {
            /* DynamicObject* l_DynIbj*/l_NewUnit = new DynamicObject(l_ID, (TypeUnit)l_TypeID, l_Name, l_Level, l_Health, l_SkinID, l_SizeX, l_SizeY, l_MapID, l_Pos.x, l_Pos.y, (Orientation)l_Orientation, l_IsBlocking);
-            VisualEffect l_VisualEffect(eVisualType::VisualGob, l_SkinID, 3);
+            VisualEffect l_VisualEffect(eVisualType::VisualGob, false, l_SkinID, 3);
             l_VisualEffect.StartAnim();
             l_NewUnit->AddVisualEffect(l_NewUnit->GetType(), l_NewUnit->GetID(), l_VisualEffect);
 
@@ -634,10 +635,12 @@ void PacketHandler::HandleUnitPlayVisual(WorldPacket &p_Packet)
 {
     uint8 l_TypeID;
     uint16 l_ID;
+    bool l_Under;
     uint8 l_VisualID;
 
     p_Packet >> l_TypeID;
     p_Packet >> l_ID;
+    p_Packet >> l_Under;
     p_Packet >> l_VisualID;
 
     if (Map* l_Map = m_MapManager->GetActualMap())
@@ -649,7 +652,7 @@ void PacketHandler::HandleUnitPlayVisual(WorldPacket &p_Packet)
             g_Socket->SendUnitUnknow(l_TypeID, l_ID); ///< Ask for unknow unit to server
             return;
         }
-        VisualEffect l_VisualEffect(eVisualType::VisualSpell, l_VisualID, 3);
+        VisualEffect l_VisualEffect(eVisualType::VisualSpell, l_Under, l_VisualID, MAX_VISUAL_IMG_X);
         l_VisualEffect.StartAnimAndStop();
         l_Unit->AddVisualEffect(l_Unit->GetType(), l_Unit->GetID(), l_VisualEffect);
     }
@@ -662,6 +665,7 @@ void PacketHandler::HandleUnitPlayVisualAura(WorldPacket &p_Packet)
     uint16 l_ID;
     uint8 l_TypeIDFrom;
     uint16 l_IDFrom;
+    bool l_Under;
     uint8 l_VisualID;
 
     p_Packet >> l_Apply;
@@ -669,6 +673,7 @@ void PacketHandler::HandleUnitPlayVisualAura(WorldPacket &p_Packet)
     p_Packet >> l_ID;
     p_Packet >> l_TypeIDFrom;
     p_Packet >> l_IDFrom;
+    p_Packet >> l_Under;
     p_Packet >> l_VisualID;
 
     if (Map* l_Map = m_MapManager->GetActualMap())
@@ -682,14 +687,12 @@ void PacketHandler::HandleUnitPlayVisualAura(WorldPacket &p_Packet)
         }
         if (l_Apply)
         {
-            printf("Ad Visual Effect %d\n", l_VisualID);
-            VisualEffect l_VisualEffect(eVisualType::VisualSpell, l_VisualID, 3);
+            VisualEffect l_VisualEffect(eVisualType::VisualSpell, l_Under, l_VisualID, MAX_VISUAL_IMG_X);
             l_VisualEffect.StartAnim();
             l_Unit->AddVisualEffect((TypeUnit)l_TypeIDFrom, l_IDFrom, l_VisualEffect);
         }
         else
         {
-            printf("`Remove Visual Effect\n");
             l_Unit->RemoveVisualEffect((TypeUnit)l_TypeIDFrom, l_IDFrom, l_VisualID);
         }
     }

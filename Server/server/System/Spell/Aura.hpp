@@ -22,6 +22,7 @@ public:
     Unit* GetCaster() const;
     TypeUnit GetCasterType() const;
     uint16 GetCasterID() const;
+    bool HasEffect(const eTypeAuraEffect &);
 
     /// AURA EFFECTS
     void AuraEffectUpdateSpeed(AuraEffect*, bool);

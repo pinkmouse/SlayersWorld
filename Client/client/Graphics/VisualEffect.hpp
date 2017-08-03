@@ -13,10 +13,11 @@ enum eTypeAnim
 class VisualEffect
 {
 public:
-    VisualEffect(eVisualType, uint8, uint8);
+    VisualEffect(eVisualType, bool, uint8, uint8);
     ~VisualEffect();
     void Update(sf::Time);
     uint8 GetFrame();
+    uint8 GetMaxFrame() const;
     void StartAnim();
     void StartAnimAndStop();
     void StartAnimAndShow();
@@ -24,6 +25,7 @@ public:
     bool HasFinishAnim() const;
     uint8 GetID() const;
     eVisualType GetType() const;
+    bool IsUnder() const;
 
 private:
     eVisualType m_Type;
@@ -37,6 +39,7 @@ private:
     uint8 m_ActualFrame;
     uint8 m_NbFrames;
 
+    bool m_Under;
     uint32 m_TimerUpdate;
     uint64 m_DiffTimeAnim;
 };

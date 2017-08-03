@@ -211,6 +211,7 @@ void Graphics::DrawWorldObjects(std::map<uint32, std::vector<WorldObject*> > *p_
 
             float l_OffsetX = 0;
             float l_OffsetY = 0;
+
             /// MOUNT
             if (l_WorldObject->GetType() == TypeWorldObject::UNIT)
             {
@@ -229,6 +230,33 @@ void Graphics::DrawWorldObjects(std::map<uint32, std::vector<WorldObject*> > *p_
                         l_MountSkin->setPosition(l_Pos.x - (l_Unit->GetSizeX() / 2), l_Pos.y - l_Unit->GetSizeY());
                         if (l_Unit->GetOrientation() != Orientation::Down && l_Unit->GetOrientation() != Orientation::Up)
                             m_Window.draw(*l_MountSkin);
+                    }
+                }
+            }
+
+            if (l_WorldObject->GetType() == TypeWorldObject::UNIT)
+            {
+                Unit* l_Unit = l_WorldObject->ToUnit();
+                std::map< std::pair<TypeUnit, uint16>, std::map<uint8, VisualEffect> >  *l_VisualsEffect = l_Unit->GetVisualsEffect();
+
+                /// VISUAL EFFECT UNDER
+                for (std::map< std::pair<TypeUnit, uint16>, std::map<uint8, VisualEffect> >::iterator l_It = l_VisualsEffect->begin(); l_It != l_VisualsEffect->end(); ++l_It)
+                {
+                    for (std::map<uint8, VisualEffect>::iterator l_Itr = (*l_It).second.begin(); l_Itr != (*l_It).second.end(); l_Itr++)
+                    {
+                        if (!(*l_Itr).second.IsUnder())
+                            continue;
+
+                        SkinSprite* l_SkinSprite = m_VisualManager->GetVisualSprite((*l_Itr).second.GetType(), (*l_Itr).second.GetID(), l_Unit->GetOrientation() * (*l_Itr).second.GetMaxFrame() + (*l_Itr).second.GetFrame());
+                        if (l_SkinSprite)
+                        {
+                            l_SkinSprite->setScale(sf::Vector2f(l_Unit->GetSkinZoomFactor(), l_Unit->GetSkinZoomFactor()));
+                            Position l_Pos = l_Unit->GetPosition();
+                            if (!l_Unit->IsDynamicObject())
+                                GetCenterPositionOnUnit(l_Unit, l_SkinSprite);
+                            l_SkinSprite->setPosition(l_Pos.x + l_OffsetX - (l_SkinSprite->getGlobalBounds().width / 2), l_Pos.y - (l_Unit->GetSizeY() / 2) + l_OffsetY - (l_SkinSprite->getGlobalBounds().height / 2));
+                            m_Window.draw(*l_SkinSprite);
+                        }
                     }
                 }
             }
@@ -261,7 +289,10 @@ void Graphics::DrawWorldObjects(std::map<uint32, std::vector<WorldObject*> > *p_
                 {
                     for (std::map<uint8, VisualEffect>::iterator l_Itr = (*l_It).second.begin(); l_Itr != (*l_It).second.end(); l_Itr++)
                     {
-                        SkinSprite* l_SkinSprite = m_VisualManager->GetVisualSprite((*l_Itr).second.GetType(), (*l_Itr).second.GetID(), l_Unit->GetOrientation() * 3 + (*l_Itr).second.GetFrame());
+                        if ((*l_Itr).second.IsUnder())
+                            continue;
+
+                        SkinSprite* l_SkinSprite = m_VisualManager->GetVisualSprite((*l_Itr).second.GetType(), (*l_Itr).second.GetID(), l_Unit->GetOrientation() * (*l_Itr).second.GetMaxFrame() + (*l_Itr).second.GetFrame());
                         if (l_SkinSprite)
                         {
                             l_SkinSprite->setScale(sf::Vector2f(l_Unit->GetSkinZoomFactor(), l_Unit->GetSkinZoomFactor()));

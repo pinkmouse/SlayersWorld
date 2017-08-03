@@ -193,7 +193,7 @@ void Spell::EffectTeleport(uint8 p_ID, Unit* p_Target, SpellEffect* p_SpellEffec
             case Orientation::Right :
                 for (uint8 i = 0; i < TILE_SIZE; i++)
                 {
-                    if (p_Target->GetMovementHandler()->IsInColision(p_Target->GetPosX() - (uint32)(TILE_SIZE * l_NbCaseCheck) + i, (uint32)(p_Target->GetPosY())))
+                    if (p_Target->GetMovementHandler()->IsInColision(p_Target->GetPosX() + (uint32)(TILE_SIZE * l_NbCaseCheck) + i, (uint32)(p_Target->GetPosY())))
                         break;
                     l_NbPixel = i;
                 }
@@ -213,7 +213,6 @@ void Spell::EffectTeleport(uint8 p_ID, Unit* p_Target, SpellEffect* p_SpellEffec
             }
             break;
         case Orientation::Down:
-
             for (uint8 i = 0; i < p_SpellEffect->m_BasePoint1 % TILE_SIZE; i++)
             {
                 if (p_Target->GetMovementHandler()->IsInColision(p_Target->GetPosX(), (uint32)(p_Target->GetPosY() + (uint32)(TILE_SIZE * l_NbCaseCheck) + i)))
@@ -290,7 +289,13 @@ void Spell::LaunchEffects()
                 if (m_SpellTemplate->GetVisualIDTarget() >= 0 && m_SpellTemplate->GetDuration() == 0)
                 {
                     PacketUnitPlayVisual l_Packet;
-                    l_Packet.BuildPacket(l_Targets[i]->GetType(), l_Targets[i]->GetID(), (uint8)m_SpellTemplate->GetVisualIDTarget());
+                    l_Packet.BuildPacket(l_Targets[i]->GetType(), l_Targets[i]->GetID(), false, (uint8)m_SpellTemplate->GetVisualIDTarget());
+                    l_Targets[i]->GetMap()->SendToSet(l_Packet.m_Packet, l_Targets[i]);
+                }
+                if (m_SpellTemplate->GetVisualIDTargetUnder() >= 0 && m_SpellTemplate->GetDuration() == 0)
+                {
+                    PacketUnitPlayVisual l_Packet;
+                    l_Packet.BuildPacket(l_Targets[i]->GetType(), l_Targets[i]->GetID(), true, (uint8)m_SpellTemplate->GetVisualIDTargetUnder());
                     l_Targets[i]->GetMap()->SendToSet(l_Packet.m_Packet, l_Targets[i]);
                 }
 

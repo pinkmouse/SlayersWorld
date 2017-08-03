@@ -362,6 +362,28 @@ int32 SqlManager::GetDaysSinceLastQuestDone(Player const* p_Player, uint16 p_Que
     return l_Days;
 }
 
+std::vector<uint16> SqlManager::GetListTitle(Player const* p_Player)
+{
+    std::string l_Query = "SELECT titleID FROM characters_titles WHERE characterID = '" + std::to_string(p_Player->GetID()) + "'";
+    mysql_query(&m_MysqlCharacters, l_Query.c_str());
+
+    std::vector<uint16> l_ListTitle;
+
+    MYSQL_RES *l_Result = NULL;
+    MYSQL_ROW l_Row;
+    l_Result = mysql_use_result(&m_MysqlCharacters);
+    while ((l_Row = mysql_fetch_row(l_Result)))
+    {
+        if (l_Row == NULL)
+            break;
+        if (l_Row[0])
+            l_ListTitle.push_back((uint16)atoi(l_Row[0]));
+    }
+    mysql_free_result(l_Result);
+
+    return l_ListTitle;
+}
+
 void SqlManager::UpdatePointsSet(Player const* p_Player)
 {
 	std::string l_Query = "UPDATE `characters_point` SET `free_point` = '" + std::to_string(p_Player->GetPointsSet().GetStat(eStats::Free)) + "', `force` = '" + std::to_string(p_Player->GetPointsSet().GetStat(eStats::Force)) + "', `stamina` = '" + std::to_string(p_Player->GetPointsSet().GetStat(eStats::Stamina)) + "', `dexterity` = '" + std::to_string(p_Player->GetPointsSet().GetStat(eStats::Dexterity)) + "' WHERE characterID = '" + std::to_string(p_Player->GetID()) + "';";
@@ -796,11 +818,13 @@ bool SqlManager::InitializeCreature(UnitManager* p_CreatureManager)
 
 bool  SqlManager::InitializeSpells()
 {
-    std::string l_Query = "SELECT `id`, `level`, `visualID`, `visualIDTarget`,`castTime`, `cooldown`, `duration`, `speed`,`resourceType`, `resourceNb`, `effect1`, `effect2`, `effect3`, `effect4`, `name` FROM spell_template";
+    std::string l_Query = "SELECT `id`, `level`, `visualIDUnder`, `visualID`, `visualIDTargetUnder`, `visualIDTarget`,`castTime`, `cooldown`, `duration`, `speed`,`resourceType`, `resourceNb`, `effect1`, `effect2`, `effect3`, `effect4`, `name` FROM spell_template";
     mysql_query(&m_MysqlWorld, l_Query.c_str());
 
     uint16 l_Id = 0;
     uint8 l_Level = 0;
+    int32 l_VisualIDUnder = -1;
+    int32 l_VisualIDTargetUnder = -1;
     int32 l_VisualID = -1;
     int32 l_VisualIDTarget = -1;
     uint16 l_CastTime = 0;
@@ -819,21 +843,23 @@ bool  SqlManager::InitializeSpells()
     {
         l_Id = atoi(l_Row[0]);
         l_Level = atoi(l_Row[1]);
-        l_VisualID = atoi(l_Row[2]);
-        l_VisualIDTarget = atoi(l_Row[3]);
-        l_CastTime = atoi(l_Row[4]);
-        l_Cooldown = atoi(l_Row[5]);
-        l_Duration = atoi(l_Row[6]);
-        l_Speed = (float)atof(l_Row[7]);
-        l_ResourceType = atoi(l_Row[8]);
-        l_ResourceNb = atoi(l_Row[9]);
+        l_VisualIDUnder = atoi(l_Row[2]);
+        l_VisualID = atoi(l_Row[3]);
+        l_VisualIDTargetUnder = atoi(l_Row[4]);
+        l_VisualIDTarget = atoi(l_Row[5]);
+        l_CastTime = atoi(l_Row[6]);
+        l_Cooldown = atoi(l_Row[7]);
+        l_Duration = atoi(l_Row[8]);
+        l_Speed = (float)atof(l_Row[9]);
+        l_ResourceType = atoi(l_Row[10]);
+        l_ResourceNb = atoi(l_Row[11]);
         for (uint8 i = 0; i < MAX_EFFECTS_FOR_SPELL; ++i)
-            l_EffectList.push_back(atoi(l_Row[10 + i]));
-        l_Name = std::string(l_Row[10 + MAX_EFFECTS_FOR_SPELL]);
+            l_EffectList.push_back(atoi(l_Row[12 + i]));
+        l_Name = std::string(l_Row[12 + MAX_EFFECTS_FOR_SPELL]);
 
         SpellTemplate* l_Spell = new SpellTemplate(l_Id);
         l_Spell->SetLevel(l_Level);
-        l_Spell->SetVisualsID(l_VisualID, l_VisualIDTarget);
+        l_Spell->SetVisualsID(l_VisualIDUnder, l_VisualID, l_VisualIDTargetUnder, l_VisualIDTarget);
         l_Spell->SetCastTime(l_CastTime);
         l_Spell->SetCooldown(l_Cooldown);
         l_Spell->SetSpeed(l_Speed);

@@ -95,7 +95,13 @@ void WorldSocket::SendUnitCreate(Unit* p_Unit, bool p_IsInGroup)
         if ((*l_It)->GetSpellTemplate()->GetVisualIDTarget() >= 0)
         {
             PacketPlayAuraVisual l_Packet;
-            l_Packet.BuildPacket(true, p_Unit->GetType(), p_Unit->GetID(), (*l_It)->GetCasterType(), (*l_It)->GetCasterID(), (*l_It)->GetSpellTemplate()->GetVisualIDTarget());
+            l_Packet.BuildPacket(true, p_Unit->GetType(), p_Unit->GetID(), (*l_It)->GetCasterType(), (*l_It)->GetCasterID(), false, (*l_It)->GetSpellTemplate()->GetVisualIDTarget());
+            send(l_Packet.m_Packet);
+        }
+        if ((*l_It)->GetSpellTemplate()->GetVisualIDTargetUnder() >= 0)
+        {
+            PacketPlayAuraVisual l_Packet;
+            l_Packet.BuildPacket(true, p_Unit->GetType(), p_Unit->GetID(), (*l_It)->GetCasterType(), (*l_It)->GetCasterID(), true, (*l_It)->GetSpellTemplate()->GetVisualIDTargetUnder());
             send(l_Packet.m_Packet);
         }
     }

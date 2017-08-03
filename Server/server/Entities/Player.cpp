@@ -184,7 +184,7 @@ void Player::SetXp(uint32 p_Xp)
         AddPointsStat(eStats::Free, 1);
 
         PacketUnitPlayVisual l_Packet;
-        l_Packet.BuildPacket(GetType(), GetID(), 4);
+        l_Packet.BuildPacket(GetType(), GetID(), false, 4);
         GetMap()->SendToSet(l_Packet.m_Packet, this);
 		SendMsg("Level UP : " + std::to_string(GetLevel()));
     }

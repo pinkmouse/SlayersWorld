@@ -1,6 +1,6 @@
 #include "VisualEffect.hpp"
 
-VisualEffect::VisualEffect(eVisualType p_Type, uint8 p_ID, uint8 p_NbFrames) :
+VisualEffect::VisualEffect(eVisualType p_Type, bool p_Under, uint8 p_ID, uint8 p_NbFrames) :
     m_Type(p_Type),
     m_ID(p_ID),
     m_NbFrames(p_NbFrames)
@@ -10,7 +10,7 @@ VisualEffect::VisualEffect(eVisualType p_Type, uint8 p_ID, uint8 p_NbFrames) :
     m_Started = false;
     m_Show = false;
     m_IsFinish = false;
-
+    m_Under = p_Under;
     m_TypeAnim = eTypeAnim::AnimLoop;
     switch (p_Type)
     {
@@ -26,6 +26,11 @@ VisualEffect::VisualEffect(eVisualType p_Type, uint8 p_ID, uint8 p_NbFrames) :
 
 VisualEffect::~VisualEffect()
 {
+}
+
+uint8 VisualEffect::GetMaxFrame() const
+{
+    return m_NbFrames;
 }
 
 void VisualEffect::Update(sf::Time p_Time)
@@ -60,6 +65,11 @@ void VisualEffect::Update(sf::Time p_Time)
 uint8 VisualEffect::GetID() const
 {
     return m_ID;
+}
+
+bool VisualEffect::IsUnder() const
+{
+    return m_Under;
 }
 
 void VisualEffect::StartAnim()

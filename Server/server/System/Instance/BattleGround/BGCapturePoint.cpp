@@ -1,5 +1,6 @@
 #include "BGCapturePoint.hpp"
 #include "../../../Global.hpp"
+#include "../../../System/Spell/Aura.hpp"
 #include "../../../World/PacketDefine.hpp"
 #include "../../../World/WorldSocket.hpp"
 
@@ -60,25 +61,33 @@ void BGCapturePoint::OpenGraveyard()
 
 void BGCapturePoint::UnitUnaura(Unit* p_Unit, const uint16 & p_SpellID)
 {
-    if (p_SpellID == AURA_FLAG_RIGHT && m_GroupManager->GetGroupForUnit(eGroupType::BG, p_Unit)->at(0) == "Left") ///< Right flag
+    if (m_Step != eBGState::STEP1)
+        return;
+
+    if (p_SpellID == AURA_FLAG_RIGHT && m_GroupManager->GetGroupForUnit(eGroupType::BG, p_Unit)->at(0) == TEAM_LEFT_NAME) ///< Right flag
     {
         PopFlagAtPoint((p_Unit->GetPosX() / TILE_SIZE) + (p_Unit->GetPosY() / TILE_SIZE) * p_Unit->GetMap()->GetSizeX(), m_FlagRight);
         //SendMsgToMap("L'équipe Left perd le tonneau !");
     }
-    if (p_SpellID == AURA_FLAG_LEFT && m_GroupManager->GetGroupForUnit(eGroupType::BG, p_Unit)->at(0) == "Right") ///< Right flag
+    else if (p_SpellID == AURA_FLAG_LEFT && m_GroupManager->GetGroupForUnit(eGroupType::BG, p_Unit)->at(0) == TEAM_RIGHT_NAME) ///< Right flag
     {
         PopFlagAtPoint((p_Unit->GetPosX() / TILE_SIZE) + (p_Unit->GetPosY() / TILE_SIZE) * p_Unit->GetMap()->GetSizeX(), m_FlagLeft);
         //SendMsgToMap("L'équipe Right perd le tonneau !");
     }
 }
 
-void BGCapturePoint::UnitAddaura(Unit* p_Unit, const uint16 & p_SpellID)
+void BGCapturePoint::UnitAddaura(Unit* p_Unit, const uint16 & p_SpellID, Aura* p_Aura)
 {
-    /*if (p_SpellID == AURA_FLAG_RIGHT && m_GroupManager->GetGroupForUnit(eGroupType::BG, p_Unit)->at(0) == "Right") ///< Right flag
+    if (p_SpellID == AURA_FLAG_RIGHT || p_SpellID == AURA_FLAG_LEFT)
     {
-        //p_Unit->RemoveAura(p_SpellID);
-        PopFlagAtPoint(BASE_FLAG_RIGHT, m_FlagRight);
-    }*/
+        if (p_Unit->HasAuraType(eTypeAuraEffect::MOUNT))
+            p_Unit->RemoveAuraType(eTypeAuraEffect::MOUNT);
+    }
+    if (p_Aura->GetSpellTemplate()->HasAuraEffect(eTypeAuraEffect::MOUNT) && (p_Unit->HasAura(AURA_FLAG_RIGHT) || p_Unit->HasAura(AURA_FLAG_LEFT)))
+    {
+        p_Unit->RemoveAura(AURA_FLAG_RIGHT);
+        p_Unit->RemoveAura(AURA_FLAG_LEFT);
+    }
 }
 
 void BGCapturePoint::TeamMakePoint(const uint8 & p_TeamID)
@@ -91,12 +100,12 @@ void BGCapturePoint::TeamMakePoint(const uint8 & p_TeamID)
     {
     case TEAM_LEFTID:
         m_PointsLeft++;
-        l_Msg += "Left ";
+        l_Msg += std::string(TEAM_LEFT_NAME) + " ";
         l_PacketData.BuildPacket(eExtraInterface::eBattelGroundUI, 1, 0, m_PointsLeft);
         break;
     case TEAM_RIGHTID:
         m_PointsRight++;
-        l_Msg += "Right ";
+        l_Msg += std::string(TEAM_RIGHT_NAME) + " ";
         l_PacketData.BuildPacket(eExtraInterface::eBattelGroundUI, 2, 0, m_PointsRight);
         break;
     }
@@ -113,7 +122,7 @@ void BGCapturePoint::TeamMakePoint(const uint8 & p_TeamID)
 
 bool BGCapturePoint::LauchTrapHandle(GameObject* p_Gob, Unit* p_Unit)
 {
-    if (p_Gob->GetGameObjectTemplate()->GetID() == GOB_FLAG_RIGHT && m_GroupManager->GetGroupForUnit(eGroupType::BG, p_Unit)->at(0) == "Right")
+    if (p_Gob->GetGameObjectTemplate()->GetID() == GOB_FLAG_RIGHT && m_GroupManager->GetGroupForUnit(eGroupType::BG, p_Unit)->at(0) == TEAM_RIGHT_NAME)
     {
         if (p_Gob->GetPosX() / TILE_SIZE + ((p_Gob->GetPosY() / TILE_SIZE) * GetSizeX()) != BASE_FLAG_RIGHT)
         {
@@ -128,7 +137,7 @@ bool BGCapturePoint::LauchTrapHandle(GameObject* p_Gob, Unit* p_Unit)
         }
         return false;
     }
-    else if (p_Gob->GetGameObjectTemplate()->GetID() == GOB_FLAG_LEFT && m_GroupManager->GetGroupForUnit(eGroupType::BG, p_Unit)->at(0) == "Left")
+    else if (p_Gob->GetGameObjectTemplate()->GetID() == GOB_FLAG_LEFT && m_GroupManager->GetGroupForUnit(eGroupType::BG, p_Unit)->at(0) == TEAM_LEFT_NAME)
     {
         if (p_Gob->GetPosX() / TILE_SIZE + ((p_Gob->GetPosY() / TILE_SIZE) * GetSizeX()) != BASE_FLAG_LEFT)
         {
@@ -144,9 +153,9 @@ bool BGCapturePoint::LauchTrapHandle(GameObject* p_Gob, Unit* p_Unit)
         return false;
     }
     if (p_Gob->GetGameObjectTemplate()->GetID() == GOB_FLAG_RIGHT)
-        SendMsgToMap("L'équipe Left prend le tonneau !");
+        SendMsgToMap("L'équipe " + std::string(TEAM_LEFT_NAME) + " prend le tonneau !");
     if (p_Gob->GetGameObjectTemplate()->GetID() == GOB_FLAG_LEFT)
-        SendMsgToMap("L'équipe Right prend le tonneau !");
+        SendMsgToMap("L'équipe " + std::string(TEAM_RIGHT_NAME) + " prend le tonneau !");
 
     return true;
 }
@@ -163,9 +172,9 @@ void BGCapturePoint::StartBG()
 
     PacketExtraInterfaceData l_Packet;
     std::string l_Time;
-    l_Packet.BuildPacket(eExtraInterface::eBattelGroundUI, 0, 1, (uint8)(BG_MAX_TIME - (m_GlobalTimes / 1000 / 1000)));
+    l_Packet.BuildPacket(eExtraInterface::eBattelGroundUI, 0, 1, (int16)(BG_MAX_TIME - (m_GlobalTimes / 1000 / 1000)));
     SendToMap(l_Packet.m_Packet);
-    
+
     PacketExtraInterfaceData l_PackePointLeft;
     l_PackePointLeft.BuildPacket(eExtraInterface::eBattelGroundUI, 1, 0, m_PointsLeft);
     SendToMap(l_PackePointLeft.m_Packet);
@@ -254,17 +263,17 @@ void BGCapturePoint::AddUnit(Unit* p_Unit)
     else if (p_Unit->IsPlayer())
     {
         m_SaveRespawnPoint[p_Unit->GetID()] = p_Unit->GetRespawnPoint();
-        if (m_GroupManager->GetNBPlayerForGroup(eGroupType::BG, "Left") < m_GroupManager->GetNBPlayerForGroup(eGroupType::BG, "Right"))
+        if (m_GroupManager->GetNBPlayerForGroup(eGroupType::BG, TEAM_LEFT_NAME) < m_GroupManager->GetNBPlayerForGroup(eGroupType::BG, TEAM_RIGHT_NAME))
         {
             p_Unit->TeleportTo(150, 380, Orientation::Right);
             p_Unit->SetRespawnPosition(WorldPosition(173, 570, GetID(), GetInstanceID(), Orientation::Left));
-            m_GroupManager->AddUnitToGroup(eGroupType::BG, "Left", p_Unit);
+            m_GroupManager->AddUnitToGroup(eGroupType::BG, TEAM_LEFT_NAME, p_Unit);
         }
         else
         {
             p_Unit->TeleportTo(900, 380, Orientation::Left);
             p_Unit->SetRespawnPosition(WorldPosition(885, 168, GetID(), GetInstanceID(), Orientation::Left));
-            m_GroupManager->AddUnitToGroup(eGroupType::BG, "Right", p_Unit);
+            m_GroupManager->AddUnitToGroup(eGroupType::BG, TEAM_RIGHT_NAME, p_Unit);
         }
 
         Player* l_Player = p_Unit->ToPlayer();
@@ -284,7 +293,7 @@ void BGCapturePoint::AddUnit(Unit* p_Unit)
         {
             PacketExtraInterfaceData l_Packet;
             std::string l_Time;
-            l_Packet.BuildPacket(eExtraInterface::eBattelGroundUI, 0, 1, (uint8)(BG_MAX_TIME - (m_GlobalTimes / 1000 / 1000)));
+            l_Packet.BuildPacket(eExtraInterface::eBattelGroundUI, 0, 1, (int16)(BG_MAX_TIME - (m_GlobalTimes / 1000 / 1000)));
             l_Player->GetSession()->SendPacket(l_Packet.m_Packet);
 
             PacketExtraInterfaceData l_PackePointLeft;

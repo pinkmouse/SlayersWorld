@@ -22,23 +22,32 @@ Aura::Aura(Unit* p_Caster, Unit* p_Target, SpellTemplate* p_SpellTemplate) :
     m_AuraEffectsMap[eTypeAuraEffect::MODIFY_DAMAGE_PCT] = &Aura::AuraEffectModifyDamagePct;
     m_AuraEffectsMap[eTypeAuraEffect::MOUNT] = &Aura::AuraEffectMount;
 
-    if (m_Target != nullptr && m_SpellTemplate->GetVisualIDTarget() >= 0)
+    if (m_Target != nullptr && (m_SpellTemplate->GetVisualIDTarget() >= 0 || m_SpellTemplate->GetVisualIDTargetUnder() >= 0))
     {
         Map* l_Map = m_Target->GetMap();
 
         if (l_Map == nullptr)
             return;
 
-        PacketPlayAuraVisual l_Packet;
-        l_Packet.BuildPacket(true, m_Target->GetType(), m_Target->GetID(), m_CasterType, m_CasterID, m_SpellTemplate->GetVisualIDTarget());
-        l_Map->SendToSet(l_Packet.m_Packet, m_Target);
+        if (m_SpellTemplate->GetVisualIDTarget() >= 0)
+        {
+            PacketPlayAuraVisual l_Packet;
+            l_Packet.BuildPacket(true, m_Target->GetType(), m_Target->GetID(), m_CasterType, m_CasterID, false, m_SpellTemplate->GetVisualIDTarget());
+            l_Map->SendToSet(l_Packet.m_Packet, m_Target);
+        }
+        if (m_SpellTemplate->GetVisualIDTargetUnder() >= 0)
+        {
+            PacketPlayAuraVisual l_Packet;
+            l_Packet.BuildPacket(true, m_Target->GetType(), m_Target->GetID(), m_CasterType, m_CasterID, true, m_SpellTemplate->GetVisualIDTargetUnder());
+            l_Map->SendToSet(l_Packet.m_Packet, m_Target);
+        }
     }
     if (m_Target != nullptr)
     {
         Map* l_Map = m_Target->GetMap();
 
         if (l_Map != nullptr)
-            l_Map->UnitAddaura(m_Target, m_SpellTemplate->GetID());
+            l_Map->UnitAddaura(m_Target, m_SpellTemplate->GetID(), this);
     }
 }
 
@@ -58,17 +67,36 @@ Aura::~Aura()
             l_Map->UnitUnaura(m_Target, m_SpellTemplate->GetID());
     }
 
-    if (m_Target != nullptr && m_SpellTemplate->GetVisualIDTarget() >= 0)
+    if (m_Target != nullptr && (m_SpellTemplate->GetVisualIDTarget() >= 0 || m_SpellTemplate->GetVisualIDTargetUnder() >= 0))
     {
         Map* l_Map = m_Target->GetMap();
 
         if (l_Map == nullptr)
             return;
 
-        PacketPlayAuraVisual l_Packet;
-        l_Packet.BuildPacket(false, m_Target->GetType(), m_Target->GetID(), m_CasterType, m_CasterID, m_SpellTemplate->GetVisualIDTarget());
-        l_Map->SendToSet(l_Packet.m_Packet, m_Target);
+        if (m_SpellTemplate->GetVisualIDTarget() >= 0)
+        {
+            PacketPlayAuraVisual l_Packet;
+            l_Packet.BuildPacket(false, m_Target->GetType(), m_Target->GetID(), m_CasterType, m_CasterID, false, m_SpellTemplate->GetVisualIDTarget());
+            l_Map->SendToSet(l_Packet.m_Packet, m_Target);
+        }
+        if (m_SpellTemplate->GetVisualIDTargetUnder() >= 0)
+        {
+            PacketPlayAuraVisual l_Packet;
+            l_Packet.BuildPacket(false, m_Target->GetType(), m_Target->GetID(), m_CasterType, m_CasterID, true, m_SpellTemplate->GetVisualIDTargetUnder());
+            l_Map->SendToSet(l_Packet.m_Packet, m_Target);
+        }
     }
+}
+
+bool Aura::HasEffect(const eTypeAuraEffect & p_AuraEffect)
+{
+    for (auto l_AuraEffect : m_AuraEffectList)
+    {
+        if (l_AuraEffect.second->GetType() == p_AuraEffect)
+            return true;
+    }
+    return false;
 }
 
 int64 Aura::GetDuration() const

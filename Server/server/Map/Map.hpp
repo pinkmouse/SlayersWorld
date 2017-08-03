@@ -57,7 +57,7 @@ public:
     GroupManager* GetGroupManager();
     bool UnitIsInVisu(Unit*, Unit*);
     virtual void UnitUnaura(Unit*, const uint16 &) {};
-    virtual void UnitAddaura(Unit*, const uint16 &) {};
+    virtual void UnitAddaura(Unit*, const uint16 &, Aura*) {};
 
     virtual bool LauchTrapHandle(GameObject*, Unit*) { return true; };
     virtual bool IsBattleground() { return false; };

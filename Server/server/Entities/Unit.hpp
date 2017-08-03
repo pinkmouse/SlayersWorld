@@ -162,7 +162,9 @@ public:
     void RemoveAllAura();
     void RemoveAura(Aura*);
     bool HasAura(const uint16 &);
+    bool HasAuraType(const eTypeAuraEffect &);
     void RemoveAura(const uint16 &);
+    void RemoveAuraType(const eTypeAuraEffect &);
     std::vector<AuraEffect*> GetAuraEffectType(eTypeAuraEffect);
     std::vector<Aura*> GetAura(uint16);
     std::vector<Aura*>* GetAuraList();

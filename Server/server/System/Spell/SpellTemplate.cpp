@@ -31,6 +31,16 @@ int16 SpellTemplate::GetVisualIDTarget() const
     return m_VisualIDTarget;
 }
 
+int16 SpellTemplate::GetVisualIDUnder() const
+{
+    return m_VisualIDUnder;
+}
+
+int16 SpellTemplate::GetVisualIDTargetUnder() const
+{
+    return m_VisualIDTargetUnder;
+}
+
 uint32 SpellTemplate::GetCooldown() const
 {
     return m_Cooldown;
@@ -66,9 +76,21 @@ void SpellTemplate::SetLevel(uint8 p_Level)
     m_Level = p_Level;
 }
 
-void SpellTemplate::SetVisualsID(int16 p_VisualID, int16 p_VisualIDTarget)
+bool SpellTemplate::HasAuraEffect(const eTypeAuraEffect & p_AuraEffect)
 {
+    for (auto l_Effect : m_ListEffect)
+    {
+        if (l_Effect->m_EffectID == SpellEffectType::ApplyAura && l_Effect->m_BasePoint1 == p_AuraEffect)
+            return true;
+    }
+    return false;
+}
+
+void SpellTemplate::SetVisualsID(const int16 & p_VisualIDUnder, const int16 & p_VisualID, const int16 & p_VisualIDTargetUnder, const int16 & p_VisualIDTarget)
+{
+    m_VisualIDUnder = p_VisualIDUnder;
     m_VisualID = p_VisualID;
+    m_VisualIDTargetUnder = p_VisualIDTargetUnder;
     m_VisualIDTarget = p_VisualIDTarget;
 }
 

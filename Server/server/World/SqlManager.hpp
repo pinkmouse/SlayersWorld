@@ -56,6 +56,7 @@ public:
     void SaveQuestForPlayer(Player const*, Quest const*);
 	void UpdatePointsSet(Player const*);
     void AddConnectionLogin(uint32);
+    std::vector<uint16> GetListTitle(Player const*);
     int32 GetDaysSinceLastQuestDone(Player const*,  uint16);
 
     bool InitializeSpells();

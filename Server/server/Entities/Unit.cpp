@@ -209,7 +209,13 @@ void Unit::UpdateSpell(sf::Time p_Diff)
         if (m_CurrentSpell->GetTemplate()->GetVisualID() >= 0)
         {
             PacketUnitPlayVisual l_Packet;
-            l_Packet.BuildPacket(GetType(), GetID(), (uint8)m_CurrentSpell->GetTemplate()->GetVisualID());
+            l_Packet.BuildPacket(GetType(), GetID(), false, (uint8)m_CurrentSpell->GetTemplate()->GetVisualID());
+            m_Map->SendToSet(l_Packet.m_Packet, this);
+        }
+        if (m_CurrentSpell->GetTemplate()->GetVisualIDUnder() >= 0)
+        {
+            PacketUnitPlayVisual l_Packet;
+            l_Packet.BuildPacket(GetType(), GetID(), true, (uint8)m_CurrentSpell->GetTemplate()->GetVisualIDUnder());
             m_Map->SendToSet(l_Packet.m_Packet, this);
         }
 
@@ -1394,6 +1400,23 @@ bool Unit::HasAura(const uint16 & p_ID)
             return true;
     }
     return false;
+}
+
+bool Unit::HasAuraType(const eTypeAuraEffect & p_AuraType)
+{
+    std::vector<AuraEffect*> l_ListMount = GetAuraEffectType(eTypeAuraEffect::MOUNT);
+    if (l_ListMount.empty())
+        return false;
+    return true;
+}
+
+void Unit::RemoveAuraType(const eTypeAuraEffect & p_AuraType)
+{
+    std::vector<AuraEffect*> l_ListMount = GetAuraEffectType(eTypeAuraEffect::MOUNT);
+    for (std::vector<AuraEffect*>::iterator l_It = l_ListMount.begin(); l_It != l_ListMount.end(); l_It++)
+    {
+        RemoveAura((*l_It)->GetAura());
+    }
 }
 
 void Unit::RemoveAllAura()

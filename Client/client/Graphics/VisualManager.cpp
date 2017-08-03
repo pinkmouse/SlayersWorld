@@ -169,11 +169,11 @@ bool VisualManager::LoadVisuals()
         }
         m_TextureSkinsMap[i] = l_Texture;
 
-        uint32 l_NbVisuSizeX = l_Texture->getSize().x / MAX_VISUAL_IMG_X;
+        uint32 l_NbVisuSizeX = l_Texture->getSize().x / MAX_GOB_IMG_X;
         uint32 l_NbVisuSizeY = l_Texture->getSize().y;
-        Visual l_Visual(eVisualType::VisualGob, MAX_VISUAL_IMG_X, 0);
+        Visual l_Visual(eVisualType::VisualGob, MAX_GOB_IMG_X, 0);
 
-        for (uint8 i = 0; i < MAX_VISUAL_IMG_X; ++i)
+        for (uint8 i = 0; i < MAX_GOB_IMG_X; ++i)
         {
             SkinSprite l_SkinSprite(l_NbVisuSizeX, l_NbVisuSizeY);
             l_SkinSprite.setTexture(*l_Texture);

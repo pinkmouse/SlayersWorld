@@ -373,9 +373,9 @@ struct PacketUnitPlayVisual
     PacketUnitPlayVisual() :
         m_PacketID(SMSG::S_UnitPlayVisual) {}
 
-    void BuildPacket(uint8 p_TypeID, uint16 p_ID, uint8 p_VisualID)
+    void BuildPacket(uint8 p_TypeID, uint16 p_ID, bool p_Under, uint8 p_VisualID)
     {
-        m_Packet << m_PacketID << p_TypeID << p_ID << p_VisualID;
+        m_Packet << m_PacketID << p_TypeID << p_ID << p_Under << p_VisualID;
         m_VisualID = p_VisualID;
         m_TypeID = p_TypeID;
         m_ID = p_ID;
@@ -558,9 +558,9 @@ struct PacketPlayAuraVisual
     PacketPlayAuraVisual() :
         m_PacketID(SMSG::S_UnitPlayAuraVisual) {}
 
-    void BuildPacket(bool p_Apply, uint8 p_TypeID, uint16 p_ID, uint8 p_TypeIDFrom, uint16 p_IDFrom, uint8 p_VisualID)
+    void BuildPacket(bool p_Apply, uint8 p_TypeID, uint16 p_ID, uint8 p_TypeIDFrom, uint16 p_IDFrom, bool p_Under, uint8 p_VisualID)
     {
-        m_Packet << m_PacketID << p_Apply << p_TypeID << p_ID << p_TypeIDFrom << p_IDFrom << p_VisualID;
+        m_Packet << m_PacketID << p_Apply << p_TypeID << p_ID << p_TypeIDFrom << p_IDFrom << p_Under << p_VisualID;
     }
 };
 

@@ -38,14 +38,17 @@
 #define MAX_OPACITY 255
 
 /// GOB
-#define MAX_GOB_IMG 22
+#define MAX_GOB_IMG 23
 #define GOBS_SKIN_FOLDER "img/gobs/"
 
 /// SPELL
-#define MAX_SPELL_IMG 6
+#define MAX_SPELL_IMG 12
 #define SPELLS_FOLDER "img/spells/"
-#define MAX_VISUAL_IMG_X 3 
+#define MAX_VISUAL_IMG_X 9
 #define MAX_VISUAL_IMG_Y 4
+
+#define MAX_GOB_IMG_X 3
+#define MAX_GOB_IMG_Y 4
 
 /// UNIT
 #define TALK_TIME_SHOW 5000
