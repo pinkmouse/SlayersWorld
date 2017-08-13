@@ -1,5 +1,6 @@
 #ifdef __linux__
     #include <execinfo.h>
+    #include <unistd.h>
 #endif
 
 #include "Map/Map.hpp"
