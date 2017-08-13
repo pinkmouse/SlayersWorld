@@ -256,27 +256,39 @@ void MapManager::AddBGTemplate(BGTemplate* p_BGTemplate)
     m_BGListTemplate[p_BGTemplate->m_ID].first = p_BGTemplate;
 }
 
-void MapManager::AddPlayerToQueue(uint16 m_BGID, Player* m_Player)
+void MapManager::AddPlayerToQueue(uint16 p_BGID, Player* p_Player)
 {
-    uint8 l_MinPlayer = m_BGListTemplate[m_BGID].first->m_MinPlayer;
+    if (m_BGListTemplate.find(p_BGID) == m_BGListTemplate.end())
+        return;
+
+    uint8 l_MinPlayer = m_BGListTemplate[p_BGID].first->m_MinPlayer;
+
+    if (std::find(m_BGListTemplate[p_BGID].second.begin(), m_BGListTemplate[p_BGID].second.end(), p_Player) != m_BGListTemplate[p_BGID].second.end())
+    {
+        PacketSrvPlayerMsg l_PacketNewPLayer;
+        std::string l_MsgError = "Vous êtes déjà inscrit pour ce champs de bataille : " + std::to_string(m_BGListTemplate[p_BGID].second.size()) + "/" + std::to_string(l_MinPlayer);
+        l_PacketNewPLayer.BuildPacket(l_MsgError);
+        p_Player->GetSession()->send(l_PacketNewPLayer.m_Packet);
+        return;
+    }
 
     PacketSrvPlayerMsg l_Packet;
-    std::string l_Msg = "Le joueur " + m_Player->GetName() + " à rejoin la file d'attente : " + std::to_string(m_BGListTemplate[m_BGID].second.size() + 1) + "/" + std::to_string(l_MinPlayer);
+    std::string l_Msg = "Le joueur " + p_Player->GetName() + " à rejoin la file d'attente : " + std::to_string(m_BGListTemplate[p_BGID].second.size() + 1) + "/" + std::to_string(l_MinPlayer);
     l_Packet.BuildPacket(l_Msg);
-    for (uint8 i = 0; i < m_BGListTemplate[m_BGID].second.size(); i++)
+    for (uint8 i = 0; i < m_BGListTemplate[p_BGID].second.size(); i++)
     {
-        Player* l_Player = m_BGListTemplate[m_BGID].second[i];
+        Player* l_Player = m_BGListTemplate[p_BGID].second[i];
         if (l_Player == nullptr)
             continue;
         l_Player->GetSession()->send(l_Packet.m_Packet);
     }
 
     PacketSrvPlayerMsg l_PacketNewPLayer;
-    l_Msg = "Vous êtes inscrit : " + std::to_string(m_BGListTemplate[m_BGID].second.size() + 1) + "/" + std::to_string(l_MinPlayer);
+    l_Msg = "Vous êtes inscrit : " + std::to_string(m_BGListTemplate[p_BGID].second.size() + 1) + "/" + std::to_string(l_MinPlayer);
     l_PacketNewPLayer.BuildPacket(l_Msg);
-    m_Player->GetSession()->send(l_PacketNewPLayer.m_Packet);
+    p_Player->GetSession()->send(l_PacketNewPLayer.m_Packet);
 
-    m_BGListTemplate[m_BGID].second.push_back(m_Player);
+    m_BGListTemplate[p_BGID].second.push_back(p_Player);
 }
 
 uint16 MapManager::GetValidInstanceIDForMap(uint16 p_MapID)
