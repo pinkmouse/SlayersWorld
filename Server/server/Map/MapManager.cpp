@@ -268,7 +268,8 @@ void MapManager::AddPlayerToQueue(uint16 p_BGID, Player* p_Player)
         PacketSrvPlayerMsg l_PacketNewPLayer;
         std::string l_MsgError = "Vous êtes déjà inscrit pour ce champs de bataille : " + std::to_string(m_BGListTemplate[p_BGID].second.size()) + "/" + std::to_string(l_MinPlayer);
         l_PacketNewPLayer.BuildPacket(l_MsgError);
-        p_Player->GetSession()->send(l_PacketNewPLayer.m_Packet);
+        if (p_Player->GetSession())
+            p_Player->GetSession()->send(l_PacketNewPLayer.m_Packet);
         return;
     }
 
@@ -280,13 +281,15 @@ void MapManager::AddPlayerToQueue(uint16 p_BGID, Player* p_Player)
         Player* l_Player = m_BGListTemplate[p_BGID].second[i];
         if (l_Player == nullptr)
             continue;
-        l_Player->GetSession()->send(l_Packet.m_Packet);
+        if (p_Player->GetSession())
+            l_Player->GetSession()->send(l_Packet.m_Packet);
     }
 
     PacketSrvPlayerMsg l_PacketNewPLayer;
     l_Msg = "Vous êtes inscrit : " + std::to_string(m_BGListTemplate[p_BGID].second.size() + 1) + "/" + std::to_string(l_MinPlayer);
     l_PacketNewPLayer.BuildPacket(l_Msg);
-    p_Player->GetSession()->send(l_PacketNewPLayer.m_Packet);
+    if (p_Player->GetSession())
+        p_Player->GetSession()->send(l_PacketNewPLayer.m_Packet);
 
     m_BGListTemplate[p_BGID].second.push_back(p_Player);
 }
