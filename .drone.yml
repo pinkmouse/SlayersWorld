@@ -20,7 +20,7 @@ pipeline:
         libsndfile1-dev \
         libopenal-dev \
         libudev-dev \
-        default-libmysqlclient-dev \
+        libmysqlclient-dev \
         mysql-common"
       - "git clone -b 2.4.x https://github.com/SFML/SFML.git sfml; \
         cd sfml; \
