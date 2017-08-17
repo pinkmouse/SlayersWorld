@@ -1,44 +1,30 @@
 pipeline:
+  discordMsg:
+    image: appleboy/drone-discord
+    webhook_id: 347774727512915969
+    webhook_token: FPaCwc48piQUuIQp90AwbdnD9drNC8SXAbOtQ5rDW_i9TFwncC0d0SiwnpPz89IbH_87
+    message: "Début de la création du serveur..."
+
   build:
-    image: debian:stretch
-    commands:
-      - "pwd; ls;\
-        apt-get update && apt-get install -y \
-        build-essential \
-        g++ \
-        cmake \
-        make \
-        git"
-      - "apt-get install -y \
-        libx11-xcb-dev \
-        libglew-dev \
-        freeglut3-dev \
-        libjpeg-dev \
-        libfreetype6-dev \
-        libxrandr-dev \
-        libglew-dev \
-        libsndfile1-dev \
-        libopenal-dev \
-        libudev-dev \
-        default-libmysqlclient-dev \
-        mysql-common"
-      - "git clone -b 2.4.x https://github.com/SFML/SFML.git sfml; \
-        cd sfml; \
-        mkdir -p build; \
-        cd build; \
-        cmake -DCMAKE_BUILD_TYPE=Release ../; \
-        make install ."
-      - "cd ../../Server; \
-        mkdir -p build; \
-        cd build; \
-        cmake -DCMAKE_BUILD_TYPE=Release ../; \
-        make"
+    image: plugins/docker
+
+  discordMsg:
+    image: appleboy/drone-discord
+    webhook_id: 347774727512915969
+    webhook_token: FPaCwc48piQUuIQp90AwbdnD9drNC8SXAbOtQ5rDW_i9TFwncC0d0SiwnpPz89IbH_87
+    message: "Déploiement du serveur..."
 
   publish:
     image: plugins/docker
     repo: pinkmouse/swserver
     username: pinkmouse
     password: Pierro41
-    tag: [ latest ]
+    tag: latest
     when:
       branch: master
+
+  discordMsg:
+    image: appleboy/drone-discord
+    webhook_id: 347774727512915969
+    webhook_token: FPaCwc48piQUuIQp90AwbdnD9drNC8SXAbOtQ5rDW_i9TFwncC0d0SiwnpPz89IbH_87
+    message: "Déploiement términé."
