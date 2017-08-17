@@ -2,7 +2,7 @@ pipeline:
   build:
     image: debian:stretch
     commands:
-      - "pwd; \
+      - "pwd; ls;\
         apt-get update && apt-get install -y \
         build-essential \
         g++ \
