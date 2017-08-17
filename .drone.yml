@@ -34,7 +34,7 @@ pipeline:
         cmake -DCMAKE_BUILD_TYPE=Release ../; \
         make"
 
-    publish_server:
+  publish_server:
     image: swserver
     repo: pinkmouse
     secrets: [ pinkmouse, titouillegwada94 ]
