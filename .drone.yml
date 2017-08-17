@@ -37,8 +37,7 @@ pipeline:
   publish_server:
     image: swserver
     repo: pinkmouse
-    secrets: [ pinkmouse, titouillegwada94 ]
+    secrets: [ pinkmouse, Pierro41 ]
     tag: [ latest ]
     when:
       branch: master
-      event: push
