@@ -34,9 +34,9 @@ pipeline:
         cmake -DCMAKE_BUILD_TYPE=Release ../; \
         make"
 
-  publish_server:
-    image: swserver
-    repo: pinkmouse
+  publish:
+    image: plugins/docker
+    repo: pinkmouse/swserver
     username: pinkmouse
     password: Pierro41
     tag: [ latest ]
