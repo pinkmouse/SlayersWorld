@@ -37,7 +37,8 @@ pipeline:
   publish_server:
     image: swserver
     repo: pinkmouse
-    secrets: [ pinkmouse, Pierro41 ]
+    username: pinkmouse
+    password: Pierro41
     tag: [ latest ]
     when:
       branch: master
