@@ -21,8 +21,7 @@ pipeline:
         libudev-dev \
         default-libmysqlclient-dev \
         mysql-common"
-      - "rm -R sfml; \
-        git clone -b 2.4.x https://github.com/SFML/SFML.git sfml; \
+      - "git clone -b 2.4.x https://github.com/SFML/SFML.git sfml; \
         cd sfml; \
         mkdir -p build; \
         cd build; \
