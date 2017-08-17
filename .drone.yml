@@ -1,0 +1,35 @@
+pipeline:
+  build:
+    image: debian:stretch
+    commands:
+      - "apt-get update && apt-get install -y \
+        build-essential \
+        g++ \
+        cmake \
+        make \
+        git"
+      - "apt-get install -y \
+        libx11-xcb-dev \
+        libglew-dev \
+        freeglut3-dev \
+        libjpeg-dev \
+        libfreetype6-dev \
+        libxrandr-dev \
+        libglew-dev \
+        libsndfile1-dev \
+        libopenal-dev \
+        libudev-dev \
+        default-libmysqlclient-dev \
+        mysql-common"
+      - "rm -R sfml; \
+        git clone -b 2.4.x https://github.com/SFML/SFML.git sfml; \
+        cd sfml; \
+        mkdir -p build; \
+        cd build; \
+        cmake -DCMAKE_BUILD_TYPE=Release ../; \
+        make install ."
+      - "cd /drone/src/git.slayersworld.com/LasTeck/SlayersWorld; \
+        mkdir -p build; \
+        cd build; \
+        cmake -DCMAKE_BUILD_TYPE=Release ../; \
+        make"
