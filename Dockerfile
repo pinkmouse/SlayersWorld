@@ -21,7 +21,7 @@ RUN apt-get install -y \
     libsndfile1-dev \
     libopenal-dev \
     libudev-dev \
-    libmysqlclient-dev \
+    default-libmysqlclient-dev \
     mysql-common
 
 
