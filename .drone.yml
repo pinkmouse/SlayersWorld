@@ -28,7 +28,7 @@ pipeline:
         cd build; \
         cmake -DCMAKE_BUILD_TYPE=Release ../; \
         make install ."
-      - "cd /drone/src/git.slayersworld.com:6000/LasTeck/SlayersWorld; \
+      - "cd /drone/src/git.slayersworld.com:6000/LasTeck/SlayersWorld/Server; \
         mkdir -p build; \
         cd build; \
         cmake -DCMAKE_BUILD_TYPE=Release ../; \
