@@ -33,3 +33,12 @@ pipeline:
         cd build; \
         cmake -DCMAKE_BUILD_TYPE=Release ../; \
         make"
+
+    publish_server:
+    image: swserver
+    repo: pinkmouse
+    secrets: [ pinkmouse, titouillegwada94 ]
+    tag: [ latest ]
+    when:
+      branch: master
+      event: push
