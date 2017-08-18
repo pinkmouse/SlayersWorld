@@ -21,6 +21,7 @@ public:
             curl_easy_setopt(l_Curl, CURLOPT_HTTPHEADER, list);
             curl_easy_setopt(l_Curl, CURLOPT_SSL_VERIFYHOST, false);
             curl_easy_setopt(l_Curl, CURLOPT_SSL_VERIFYPEER, false);
+            curl_easy_setopt(l_Curl, CURLOPT_POSTFIELDSIZE, p_Msg.size());
             curl_easy_setopt(l_Curl, CURLOPT_POSTFIELDS, p_Msg.c_str());
             l_Result = curl_easy_perform(l_Curl);
             curl_easy_cleanup(l_Curl);
