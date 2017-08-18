@@ -10,7 +10,7 @@ public:
         CURLcode l_Result;
         CURL *l_Curl = nullptr;
         struct curl_slist *list = nullptr;
-        char* l_Msg = "{content:Ttest}";
+        std::string l_Msg = "{\"content\" : \"there\"}";
         l_Curl = curl_easy_init();
         if (l_Curl != nullptr)
         {
@@ -21,11 +21,11 @@ public:
             curl_easy_setopt(l_Curl, CURLOPT_HTTPHEADER, list);
             curl_easy_setopt(l_Curl, CURLOPT_SSL_VERIFYHOST, false);
             curl_easy_setopt(l_Curl, CURLOPT_SSL_VERIFYPEER, false);
-            curl_easy_setopt(l_Curl, CURLOPT_POSTFIELDSIZE, sizeof(l_Msg));
-            curl_easy_setopt(l_Curl, CURLOPT_POSTFIELDS, l_Msg);
+            curl_easy_setopt(l_Curl, CURLOPT_POSTFIELDSIZE, l_Msg.size());
+            curl_easy_setopt(l_Curl, CURLOPT_POSTFIELDS, l_Msg.c_str());
             l_Result = curl_easy_perform(l_Curl);
             curl_easy_cleanup(l_Curl);
-            printf("Result = %d, %s\n", l_Result, l_Msg);
+            printf("Result = %d, %s\n", l_Result, l_Msg.c_str());
         }
     }
 };
