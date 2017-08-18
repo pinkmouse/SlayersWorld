@@ -22,6 +22,7 @@ RUN apt-get install -y \
     libopenal-dev \
     libudev-dev \
     default-libmysqlclient-dev \
+    libcurl4-openssl-dev \
     mysql-common
 
 
