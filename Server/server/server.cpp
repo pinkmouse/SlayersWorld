@@ -31,7 +31,13 @@ void handler_segfault(int sig) {
     fprintf(stderr, "Error: signal %d:\n", sig);
     backtrace_symbols_fd(array, size, STDERR_FILENO);
     WebHook::sendMsg(g_Config->GetValue("WebhookUrl"), "Serveur Crash !");
-    WebHook::sendMsg(g_Config->GetValue("WebhookUrl"), static_cast<std::string*>(array));
+    std::string l_FinalStr = "";
+    for (uint8 = 0; i < 20)
+    {
+        char* l_Str = std_sstatic_cast<char*>array[i];
+        l_FinalStr += std::string(l_Str) + " ";
+    }
+    WebHook::sendMsg(g_Config->GetValue("WebhookUrl"), l_FinalStr);
 #endif
     exit(1);
 }
