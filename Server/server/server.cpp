@@ -34,7 +34,7 @@ void handler_segfault(int sig) {
     std::string l_FinalStr = "";
     for (uint8 i = 0; i < 20; i++)
     {
-        char* l_Str = static_cast<char*>l_Array[i];
+        char* l_Str = static_cast<char*>(l_Array[i]);
         l_FinalStr += std::string(l_Str) + " ";
     }
     WebHook::sendMsg(g_Config->GetValue("WebhookUrl"), l_FinalStr);
