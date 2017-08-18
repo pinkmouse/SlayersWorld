@@ -32,7 +32,8 @@ bool World::Initialize()
 		printf("Config error\n");
 		return false;
 	}
-    WebHook::sendMsg(g_Config->GetValue("WebhookUrl"), "Initialisation du serveur ...");
+    //std::string l_Msg = "Initialisation du serveur " + g_Config->GetValue("ServerName").c_str() + "...";
+    WebHook::sendMsg(g_Config->GetValue("WebhookUrl"), g_Config->GetValue("ServerName"));
 
 	printf("Load Maps...\n");
 	if (!g_MapManager->InitializeMapsTemplate())
