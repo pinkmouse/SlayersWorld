@@ -25,7 +25,7 @@ public:
             curl_easy_setopt(l_Curl, CURLOPT_POSTFIELDS, p_Msg.c_str());
             l_Result = curl_easy_perform(l_Curl);
             curl_easy_cleanup(l_Curl);
-            printf("Result = %d\n", l_Result);
+            printf("Result = %d, %s\n", l_Result, p_Msg.c_str());
         }
     }
 };
