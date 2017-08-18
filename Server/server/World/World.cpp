@@ -26,8 +26,7 @@ World::~World()
 
 bool World::Initialize()
 {
-    WebHook::sendMsg("https://discordapp.com/api/webhooks/347831753571958785/ahDGvhOwxuT1GKxWIFd25gRQE765oH2qkEyZuAX7br41RgiwvYi0sg4CTl6IKEgyF9yB", "test ingame");
-    //WebHook::sendMsg("http://google.com", "test ingame");
+    WebHook::sendMsg(g_Config->GetValue("WebhookUrl"), "Démarrage du serveur...");
 
 	printf("Load Config...\n");
 	if (!g_Config->Initialize())

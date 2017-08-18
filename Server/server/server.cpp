@@ -5,6 +5,7 @@
 
 #include "Map/Map.hpp"
 #include "World/World.hpp"
+#include "System\WebHook.hpp"
 #include <csignal>
 #include <stdlib.h>
 #include <SFML/Network.hpp>
@@ -29,6 +30,8 @@ void handler_segfault(int sig) {
     // print out all the frames to stderr
     fprintf(stderr, "Error: signal %d:\n", sig);
     backtrace_symbols_fd(array, size, STDERR_FILENO);
+    WebHook::sendMsg(g_Config->GetValue("WebhookUrl"), "Serveur Crash !");
+    WebHook::sendMsg(g_Config->GetValue("WebhookUrl"), static_cast<std::string*>(array));
 #endif
     exit(1);
 }
