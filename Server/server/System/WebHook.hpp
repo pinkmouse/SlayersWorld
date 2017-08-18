@@ -10,7 +10,7 @@ public:
         CURLcode l_Result;
         CURL *l_Curl = nullptr;
         struct curl_slist *list = nullptr;
-        std::string l_Msg = "{\"content\" : \"test test\"}";
+        std::string l_Msg = "{\"content\" : \"" + p_Msg + "\"}";
         l_Curl = curl_easy_init();
         if (l_Curl != nullptr)
         {
