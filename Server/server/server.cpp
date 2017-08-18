@@ -20,21 +20,21 @@ QuestManager* g_QuestManager;
 GroupManager* g_GroupManager;
 
 void handler_segfault(int sig) {
-    void *array[20];
+    void *l_Array[20];
     size_t size = 0;
 
 #ifdef __linux__
     // get void*'s for all entries on the stack
-    size = backtrace(array, 20);
+    size = backtrace(l_Array, 20);
 
     // print out all the frames to stderr
     fprintf(stderr, "Error: signal %d:\n", sig);
-    backtrace_symbols_fd(array, size, STDERR_FILENO);
+    backtrace_symbols_fd(l_Array, size, STDERR_FILENO);
     WebHook::sendMsg(g_Config->GetValue("WebhookUrl"), "Serveur Crash !");
     std::string l_FinalStr = "";
     for (uint8 i = 0; i < 20; i++)
     {
-        char* l_Str = static_cast<char*>array[i];
+        char* l_Str = static_cast<char*>l_Array[i];
         l_FinalStr += std::string(l_Str) + " ";
     }
     WebHook::sendMsg(g_Config->GetValue("WebhookUrl"), l_FinalStr);
