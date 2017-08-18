@@ -22,7 +22,7 @@ void ConfigHandler::ParseLine(const std::string & p_String)
 		return;
 
 	std::string l_Key = p_String.substr(0, p_String.find(l_Delimiter));
-	std::string l_Value = p_String.substr(p_String.find(l_Delimiter) + l_Delimiter.length(), p_String.length());
+	std::string l_Value = p_String.substr(p_String.find(l_Delimiter) + l_Delimiter.length(), p_String.length() - 1);
 	m_StockConfig[l_Key] = l_Value;
 }
 
