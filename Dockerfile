@@ -42,4 +42,4 @@ cd build; \
 cmake -DCMAKE_BUILD_TYPE=Release ../; \
 make
 
-CMD cd /SlayersWorld/Server/build/; ./SWServer
+CMD cd /SlayersWorld/Server/build/; git pull; cmake -DCMAKE_BUILD_TYPE=Release ../; make; ./SWServer
