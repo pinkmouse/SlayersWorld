@@ -11,7 +11,7 @@ public:
         CURL *l_Curl = nullptr;
         struct curl_slist *list = nullptr;
         printf("URL = %s\n", p_URL.c_str());
-        std::string l_Msg = "{\"content\" : \"" + p_Msg + "\"}";
+        std::string l_Msg = "{\"content\" : \"test\"}";
         l_Curl = curl_easy_init();
         if (l_Curl != nullptr)
         {
