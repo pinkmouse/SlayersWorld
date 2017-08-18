@@ -32,7 +32,7 @@ bool World::Initialize()
 		printf("Config error\n");
 		return false;
 	}
-    WebHook::sendMsg(g_Config->GetValue("WebhookUrl"), "Initialisation du serveur " + g_Config->GetValue("ServerName") + " ...");
+    WebHook::sendMsg(g_Config->GetValue("WebhookUrl"), "Initialisation du serveur ...");
 
 	printf("Load Maps...\n");
 	if (!g_MapManager->InitializeMapsTemplate())
@@ -136,7 +136,7 @@ void World::Run()
 	if (Initialize())
     {
         printf("====== WorldServer Start =====\n");
-        WebHook::sendMsg(g_Config->GetValue("WebhookUrl"), "Server " + g_Config->GetValue("ServerName") + " start...");
+        WebHook::sendMsg(g_Config->GetValue("WebhookUrl"), "Server start...");
     }
     else
         printf("WorldServer didn't start\n");
