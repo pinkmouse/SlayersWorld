@@ -1,5 +1,6 @@
 #include "World.hpp"
 #include "WorldPacket.hpp"
+#include "../System/WebHook.hpp"
 
 World::World()
     : m_Thread(&World::NetworkLoop, this),
@@ -25,6 +26,9 @@ World::~World()
 
 bool World::Initialize()
 {
+    WebHook::sendMsg("https://discordapp.com/api/webhooks/347831753571958785/ahDGvhOwxuT1GKxWIFd25gRQE765oH2qkEyZuAX7br41RgiwvYi0sg4CTl6IKEgyF9yB", "test ingame");
+    //WebHook::sendMsg("http://google.com", "test ingame");
+
 	printf("Load Config...\n");
 	if (!g_Config->Initialize())
 	{

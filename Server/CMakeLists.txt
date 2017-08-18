@@ -31,6 +31,7 @@ add_executable(${EXECUTABLE_NAME}
               server/World/WorldSocket.cpp
               server/World/WorldSocket.hpp
 
+	      server/System/WebHook.hpp
               server/System/WorldPosition.cpp
               server/System/WorldPosition.hpp
 	      server/System/Commands.cpp
@@ -121,10 +122,12 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})
 
 find_package(SFML 2 REQUIRED system window graphics network audio)
 find_package(MySQL REQUIRED)
+find_package(CURL REQUIRED)
 
 include_directories(${SFML_INCLUDE_DIR}
-                    ${MYSQL_INCLUDE_DIR})
-target_link_libraries(${EXECUTABLE_NAME} ${MYSQL_LIBRARY} ${SFML_LIBRARIES})
+                    ${MYSQL_INCLUDE_DIR}
+		    ${CURL_INCLUDE_DIR})
+target_link_libraries(${EXECUTABLE_NAME} ${MYSQL_LIBRARY} ${SFML_LIBRARIES} ${CURL_LIBRARIES})
 add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 
 if(CMAKE_COMPILER_IS_GNUCXX)
