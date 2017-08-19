@@ -35,7 +35,8 @@ cmake -DCMAKE_BUILD_TYPE=Release ../; \
 make install .
 
 # Install SlayersWorld Server
-RUN git clone -b master https://c740de879739d230a4d377347851f4d141a11613@github.com/pinkmouse/SlayersWorld.git SlayersWorld; \
+
+RUN git clone -b master http://d360df8be5b55779c9fabf7ff235494bd7696ca0@git.slayersworld.com:6000/LasTeck/SlayersWorld.git SlayersWorld; \
 cd SlayersWorld/Server; \
 mkdir build; \
 cd build; \
