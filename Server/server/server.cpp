@@ -39,10 +39,12 @@ void handler_segfault(int sig) {
         perror("backtrace_symbols");
         exit(EXIT_FAILURE);
     }
+    std::string l_TotalBuffer = "";
     for (uint16 j = 0; j < size; j++) {
-        WebHook::sendMsg(g_Config->GetValue("WebhookUrl"), std::string(l_StrArray[j]));
         printf("%s\n", l_StrArray[j]);
+        l_TotalBuffer += (std::string(l_StrArray[j]) + "\\n");
     }
+    WebHook::sendMsg(g_Config->GetValue("WebhookUrl"), l_TotalBuffer);
     /*std::string l_FinalStr = "";
     for (uint8 i = 0; i < size; i++)
     {
