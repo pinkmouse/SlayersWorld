@@ -13,7 +13,7 @@ ConfigHandler::~ConfigHandler()
 {
 }
 
-std::string ConfigHandler::CutString(const std::string & p_String, const uint16 & p_FirstPos, const uint16 & p_Size) ///< Did this because of encoding of substr
+/*std::string ConfigHandler::CutString(const std::string & p_String, const uint16 & p_FirstPos, const uint16 & p_Size) ///< Did this because of encoding of substr
 {
     char* l_Result = (char*)malloc((p_Size) * sizeof(char));
 
@@ -21,6 +21,32 @@ std::string ConfigHandler::CutString(const std::string & p_String, const uint16 
         l_Result[i] = p_String[p_FirstPos + i];
     l_Result[p_Size] = NULL;
     return std::string(l_Result);
+}*/
+
+std::string ConfigHandler::CutString(const std::string & originalString, const uint16 & maxLength, const uint16 & )
+{
+    std::string resultString = originalString;
+
+    int len = 0;
+    int byteCount = 0;
+
+    const char* aStr = originalString.c_str();
+
+    while (*aStr)
+    {
+        if ((*aStr & 0xc0) != 0x80)
+            len += 1;
+
+        if (len>maxLength)
+        {
+            resultString = resultString.substr(0, byteCount);
+            break;
+        }
+        byteCount++;
+        aStr++;
+    }
+
+    return resultString;
 }
 
 void ConfigHandler::ParseLine(const std::string & p_String)
@@ -32,9 +58,9 @@ void ConfigHandler::ParseLine(const std::string & p_String)
 		return;
 
 	std::string l_Key = p_String.substr(0, p_String.find(l_Delimiter));
-    std::string l_Value = p_String.substr(p_String.find(l_Delimiter) + l_Delimiter.length(), p_String.length() - (l_Key.length() + l_Delimiter.length()));
+    std::string l_Value = p_String.substr(p_String.find(l_Delimiter) + l_Delimiter.length(), p_String.length() -(l_Key.length() + l_Delimiter.length()));
     //std::string l_Value = CutString(p_String, p_String.find(l_Delimiter) + l_Delimiter.length(), p_String.length() - (l_Key.length() + l_Delimiter.length()));
-	m_StockConfig[l_Key] = l_Value;
+	m_StockConfig[l_Key] = CutString(l_Value, l_Value.size(), 0);
 }
 
 std::string ConfigHandler::GetValue(const std::string & p_Key)
