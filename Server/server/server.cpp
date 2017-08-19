@@ -39,7 +39,7 @@ void handler_segfault(int sig) {
         perror("backtrace_symbols");
         exit(EXIT_FAILURE);
     }
-    std::string l_TotalBuffer = "";
+    std::string l_TotalBuffer = "==== BACKTRACE ===\\n";
     for (uint16 j = 0; j < size; j++) {
         printf("%s\n", l_StrArray[j]);
         l_TotalBuffer += (std::string(l_StrArray[j]) + "\\n");
