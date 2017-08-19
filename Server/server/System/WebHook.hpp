@@ -1,4 +1,5 @@
 #pragma once
+#include <sstream>
 #include <curl/curl.h>
 #include "../Define.hpp"
 
@@ -10,7 +11,12 @@ public:
         CURLcode l_Result;
         CURL *l_Curl = nullptr;
         struct curl_slist *list = nullptr;
-        std::string l_Msg = "{\"content\" : \"" + p_Msg + "\"}";
+
+        std::ostringstream l_BufferStr;
+        l_BufferStr << "{ \"content\" : \"";
+        l_BufferStr << p_Msg;
+        l_BufferStr << "\" }";
+
         l_Curl = curl_easy_init();
         if (l_Curl != nullptr)
         {
@@ -22,11 +28,11 @@ public:
             curl_easy_setopt(l_Curl, CURLOPT_HTTPHEADER, list);
             curl_easy_setopt(l_Curl, CURLOPT_SSL_VERIFYHOST, false);
             curl_easy_setopt(l_Curl, CURLOPT_SSL_VERIFYPEER, false);
-            curl_easy_setopt(l_Curl, CURLOPT_POSTFIELDSIZE, l_Msg.size());
-            curl_easy_setopt(l_Curl, CURLOPT_POSTFIELDS, l_Msg.c_str());
+            curl_easy_setopt(l_Curl, CURLOPT_POSTFIELDSIZE, l_BufferStr.str().size());
+            curl_easy_setopt(l_Curl, CURLOPT_POSTFIELDS, l_BufferStr.str().c_str());
             l_Result = curl_easy_perform(l_Curl);
             curl_easy_cleanup(l_Curl);
-            printf("Result = %d, %s\n", l_Result, l_Msg.c_str());
+            printf("Result = %d, %s\n", l_Result, l_BufferStr.str().c_str());
         }
     }
 };
