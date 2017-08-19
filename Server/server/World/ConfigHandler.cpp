@@ -22,13 +22,13 @@ void ConfigHandler::ParseLine(const std::string & p_String)
 		return;
 
 	std::string l_Key = p_String.substr(0, p_String.find(l_Delimiter));
-	std::string l_Value = p_String.substr(p_String.find(l_Delimiter) + l_Delimiter.length(), p_String.length() - (l_Key.length() + l_Delimiter.length()));
+    std::string l_Value = "test";// p_String.substr(p_String.find(l_Delimiter) + l_Delimiter.length(), p_String.length() - (l_Key.length() + l_Delimiter.length()));
 	m_StockConfig[l_Key] = l_Value;
 }
 
 std::string ConfigHandler::GetValue(const std::string & p_Key)
 {
-    std::string l_Value = "test";// m_StockConfig[p_Key];
+    std::string l_Value = m_StockConfig[p_Key];
 	return l_Value;
 }
 
