@@ -28,7 +28,7 @@ void ConfigHandler::ParseLine(const std::string & p_String)
 
 std::string ConfigHandler::GetValue(const std::string & p_Key)
 {
-	std::string l_Value = m_StockConfig[p_Key];
+    std::string l_Value = "test";// m_StockConfig[p_Key];
 	return l_Value;
 }
 
