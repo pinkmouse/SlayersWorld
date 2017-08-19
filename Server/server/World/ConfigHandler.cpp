@@ -15,11 +15,11 @@ ConfigHandler::~ConfigHandler()
 
 std::string ConfigHandler::CutString(const std::string & p_String, const uint16 & p_FirstPos, const uint16 & p_Size) ///< Did this because of encoding of substr
 {
-    char* l_Result = (char*)malloc(p_Size * sizeof(char*));
+    char* l_Result = (char*)malloc((p_Size) * sizeof(char));
 
     for (uint16 i = 0; i < p_Size; i++)
         l_Result[i] = p_String[p_FirstPos + i];
-    l_Result[p_Size] = '\0';
+    l_Result[p_Size] = NULL;
     return std::string(l_Result);
 }
 
