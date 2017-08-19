@@ -16,7 +16,7 @@ public:
         l_BufferStr << "{ \"content\" : \"";
         l_BufferStr << p_Msg;
         l_BufferStr << "\" }";
-
+        std::string l_Str = "{ \"content\" : \"" + p_Msg + "\" }";
         l_Curl = curl_easy_init();
         if (l_Curl != nullptr)
         {
@@ -28,11 +28,11 @@ public:
             curl_easy_setopt(l_Curl, CURLOPT_HTTPHEADER, list);
             curl_easy_setopt(l_Curl, CURLOPT_SSL_VERIFYHOST, false);
             curl_easy_setopt(l_Curl, CURLOPT_SSL_VERIFYPEER, false);
-            curl_easy_setopt(l_Curl, CURLOPT_POSTFIELDSIZE, l_BufferStr.str().size());
-            curl_easy_setopt(l_Curl, CURLOPT_POSTFIELDS, l_BufferStr.str().c_str());
+            curl_easy_setopt(l_Curl, CURLOPT_POSTFIELDSIZE, l_Str.size());
+            curl_easy_setopt(l_Curl, CURLOPT_POSTFIELDS, l_Str.c_str());
             l_Result = curl_easy_perform(l_Curl);
             curl_easy_cleanup(l_Curl);
-            printf("Result = %d, %s\n", l_Result, l_BufferStr.str().c_str());
+            printf("Result = %d, %s\n", l_Result, l_Str.c_str());
         }
     }
 };
