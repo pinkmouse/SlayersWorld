@@ -32,7 +32,7 @@ void handler_segfault(int sig) {
     backtrace_symbols_fd(l_Array, size, STDERR_FILENO);
     WebHook::sendMsg(g_Config->GetValue("WebhookUrl"), "Serveur " + g_Config->GetValue("ServerName") + " Crash !");
     std::string l_FinalStr = "";
-    for (uint8 i = 0; i < 20; i++)
+    for (uint8 i = 0; i < size; i++)
     {
         printf("Debug [%d]\n", i);
         if (l_Array[i] != NULL)
