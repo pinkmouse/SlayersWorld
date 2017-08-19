@@ -49,20 +49,15 @@ std::string ConfigHandler::CutString(const std::string & originalString, const u
     return resultString;
 }
 
-void ConfigHandler::ParseLine(std::string & p_String)
-{
-    if (!p_String.empty() && *p_String.rbegin() == '\r') {
-        p_String.erase(p_String.length() - 1, 1);
-    }
-
-	std::string l_Delimiter = " = ";
+void ConfigHandler::ParseLine(const std::string & p_String)
+{	std::string l_Delimiter = " = ";
 	size_t l_Find = p_String.find(l_Delimiter);
 
 	if (l_Find == -1)
 		return;
 
 	std::string l_Key = p_String.substr(0, p_String.find(l_Delimiter));
-    std::string l_Value = p_String;// p_String.substr(p_String.find(l_Delimiter) + l_Delimiter.length(), p_String.length() - (l_Key.length() + l_Delimiter.length()));
+    std::string l_Value = p_String.substr(p_String.find(l_Delimiter) + l_Delimiter.length(), p_String.length() - (l_Key.length() + l_Delimiter.length()));
     //std::string l_Value = CutString(p_String, p_String.find(l_Delimiter) + l_Delimiter.length(), p_String.length() - (l_Key.length() + l_Delimiter.length()));
 	m_StockConfig[l_Key] = l_Value;
     printf("[%s] %s\n", l_Key.c_str(), l_Value.c_str());
@@ -107,7 +102,13 @@ bool ConfigHandler::Initialize()
 
 	std::string l_Line;
 	while (std::getline(l_File, l_Line))
+    {
+        if (!l_Line.empty() && *l_Line.rbegin() == '\r') {
+            l_Line.erase(l_Line.length() - 1, 1);
+        }
+        l_Line += '\0';
 		ParseLine(l_Line);
+    }
     l_File.close();
 	return true;
 }
