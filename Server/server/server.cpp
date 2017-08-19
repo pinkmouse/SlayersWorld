@@ -37,7 +37,7 @@ void handler_segfault(int sig) {
         if (l_Array[i] != NULL)
         {
             char* l_Str = static_cast<char*>(l_Array[i]);
-            printf("Debug [%s]\n", l_Str.c_str());
+            printf("Debug [%s]\n", l_Str);
             l_FinalStr += std::string(l_Str) + " ";
         }
     }
