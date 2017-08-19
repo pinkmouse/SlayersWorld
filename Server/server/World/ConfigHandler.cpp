@@ -106,7 +106,6 @@ bool ConfigHandler::Initialize()
         if (!l_Line.empty() && *l_Line.rbegin() == '\r') {
             l_Line.erase(l_Line.length() - 1, 1);
         }
-        l_Line += '\0';
 		ParseLine(l_Line);
     }
     l_File.close();
