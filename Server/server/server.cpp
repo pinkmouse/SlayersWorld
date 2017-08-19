@@ -30,10 +30,11 @@ void handler_segfault(int sig) {
     // print out all the frames to stderr
     fprintf(stderr, "Error: signal %d:\n", sig);
     backtrace_symbols_fd(l_Array, size, STDERR_FILENO);
-    //WebHook::sendMsg(g_Config->GetValue("WebhookUrl"), "Serveur " + g_Config->GetValue("ServerName") + " Crash !");
+    WebHook::sendMsg(g_Config->GetValue("WebhookUrl"), "Serveur " + g_Config->GetValue("ServerName") + " Crash !");
     std::string l_FinalStr = "";
     for (uint8 i = 0; i < 20; i++)
     {
+        printf("Debug [%d]\n", i);
         char* l_Str = static_cast<char*>(l_Array[i]);
         l_FinalStr += std::string(l_Str) + " ";
     }
