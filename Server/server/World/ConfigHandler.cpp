@@ -13,13 +13,13 @@ ConfigHandler::~ConfigHandler()
 {
 }
 
-std::string ConfigHandler::CutString(const std::string & p_String, const uint16 & p_FirstPos, const uint16 & p_LastPos) ///< Did this because of encoding of substr
+std::string ConfigHandler::CutString(const std::string & p_String, const uint16 & p_FirstPos, const uint16 & p_Size) ///< Did this because of encoding of substr
 {
-    std::string l_Result = "";
+    char* l_Result = (char*)malloc(p_Size * sizeof(char*));
 
-    for (uint16 i = 0; i < p_LastPos; i++)
-        l_Result += p_String[p_FirstPos + i];
-    return "test";
+    for (uint16 i = 0; i < p_Size; i++)
+        l_Result[i] = p_String[p_FirstPos + i];
+    return std::string(l_Result);
 }
 
 void ConfigHandler::ParseLine(const std::string & p_String)
