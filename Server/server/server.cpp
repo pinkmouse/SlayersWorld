@@ -34,14 +34,13 @@ void handler_segfault(int sig) {
     std::string l_FinalStr = "";
     for (uint8 i = 0; i < size; i++)
     {
-        printf("Debug [%d]\n", i);
         if (l_Array[i] != NULL)
         {
             char* l_Str = static_cast<char*>(l_Array[i]);
             l_FinalStr += std::string(l_Str) + " ";
         }
     }
-    WebHook::sendMsg(g_Config->GetValue("WebhookUrl"), "test");
+    WebHook::sendMsg(g_Config->GetValue("WebhookUrl"), "l_FinalStr");
 #endif
     exit(1);
 }
