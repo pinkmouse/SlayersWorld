@@ -9,6 +9,7 @@ class ConfigHandler
 public:
 	ConfigHandler();
 	~ConfigHandler();
+    std::string CutString(const std::string &, const uint16 &, const uint16 &);
 	void ParseLine(const std::string & p_String);
 	bool Initialize();
 	std::string GetValue(const std::string &);

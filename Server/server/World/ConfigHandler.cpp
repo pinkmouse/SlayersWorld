@@ -13,6 +13,15 @@ ConfigHandler::~ConfigHandler()
 {
 }
 
+std::string ConfigHandler::CutString(const std::string & p_String, const uint16 & p_FirstPos, const uint16 & p_LastPos) ///< Did this because of encoding of substr
+{
+    std::string l_Result = "";
+
+    for (uint16 i = 0; i < p_LastPos; i++)
+        l_Result += p_String[p_FirstPos + i];
+    return l_Result;
+}
+
 void ConfigHandler::ParseLine(const std::string & p_String)
 {
 	std::string l_Delimiter = " = ";
@@ -22,7 +31,8 @@ void ConfigHandler::ParseLine(const std::string & p_String)
 		return;
 
 	std::string l_Key = p_String.substr(0, p_String.find(l_Delimiter));
-    std::string l_Value = "test";// p_String.substr(p_String.find(l_Delimiter) + l_Delimiter.length(), p_String.length() - (l_Key.length() + l_Delimiter.length()));
+    //std::string l_Value = p_String.substr(p_String.find(l_Delimiter) + l_Delimiter.length(), p_String.length() - (l_Key.length() + l_Delimiter.length()));
+    std::string l_Value = CutString(p_String, p_String.find(l_Delimiter) + l_Delimiter.length(), p_String.length() - (l_Key.length() + l_Delimiter.length()));
 	m_StockConfig[l_Key] = l_Value;
 }
 
