@@ -19,6 +19,7 @@ std::string ConfigHandler::CutString(const std::string & p_String, const uint16 
 
     for (uint16 i = 0; i < p_Size; i++)
         l_Result[i] = p_String[p_FirstPos + i];
+    l_Result[p_Size] = '\0';
     return std::string(l_Result);
 }
 
