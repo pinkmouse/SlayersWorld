@@ -3,6 +3,7 @@
     #include <unistd.h>
 #endif
 
+#define MAX_SIZE_BACKTRACE 20
 #include "Map/Map.hpp"
 #include "World/World.hpp"
 #include "System/WebHook.hpp"
@@ -20,18 +21,29 @@ QuestManager* g_QuestManager;
 GroupManager* g_GroupManager;
 
 void handler_segfault(int sig) {
-    void *l_Array[20];
-    size_t size = 0;
 
 #ifdef __linux__
+    void *l_Array[MAX_SIZE_BACKTRACE];
+    char **l_StrArray;
+    size_t size = 0;
+
     // get void*'s for all entries on the stack
-    size = backtrace(l_Array, 20);
+    size = backtrace(l_Array, MAX_SIZE_BACKTRACE);
 
     // print out all the frames to stderr
     fprintf(stderr, "Error: signal %d:\n", sig);
-    backtrace_symbols_fd(l_Array, size, STDERR_FILENO);
+    //backtrace_symbols_fd(l_Array, size, STDERR_FILENO);
+    strings = backtrace_symbols(l_StrArray, size);
     WebHook::sendMsg(g_Config->GetValue("WebhookUrl"), "Serveur " + g_Config->GetValue("ServerName") + " Crash !");
-    std::string l_FinalStr = "";
+    if (strings == NULL) {
+        perror("backtrace_symbols");
+        exit(EXIT_FAILURE);
+    }
+    for (j = 0; j < nptrs; j++) {
+        WebHook::sendMsg(g_Config->GetValue("WebhookUrl"), std::string(strings[j]));
+        printf("%s\n", strings[j]);
+    }
+    /*std::string l_FinalStr = "";
     for (uint8 i = 0; i < size; i++)
     {
         if (l_Array[i] != NULL)
@@ -41,7 +53,7 @@ void handler_segfault(int sig) {
             l_FinalStr += std::string(l_Str) + " ";
         }
     }
-    WebHook::sendMsg(g_Config->GetValue("WebhookUrl"), l_FinalStr);
+    WebHook::sendMsg(g_Config->GetValue("WebhookUrl"), l_FinalStr);*/
 #endif
     exit(1);
 }
