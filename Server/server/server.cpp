@@ -35,8 +35,11 @@ void handler_segfault(int sig) {
     for (uint8 i = 0; i < 20; i++)
     {
         printf("Debug [%d]\n", i);
-        char* l_Str = static_cast<char*>(l_Array[i]);
-        l_FinalStr += std::string(l_Str) + " ";
+        if (l_Array[i] != NULL)
+        {
+            char* l_Str = static_cast<char*>(l_Array[i]);
+            l_FinalStr += std::string(l_Str) + " ";
+        }
     }
     WebHook::sendMsg(g_Config->GetValue("WebhookUrl"), "test");
 #endif
