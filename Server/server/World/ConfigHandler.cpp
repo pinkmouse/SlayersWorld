@@ -49,8 +49,12 @@ std::string ConfigHandler::CutString(const std::string & originalString, const u
     return resultString;
 }
 
-void ConfigHandler::ParseLine(const std::string & p_String)
+void ConfigHandler::ParseLine(std::string & p_String)
 {
+    if (!p_String.empty() && *p_String.rbegin() == '\r') {
+        p_String.erase(p_String.length() - 1, 1);
+    }
+
 	std::string l_Delimiter = " = ";
 	size_t l_Find = p_String.find(l_Delimiter);
 
@@ -104,5 +108,6 @@ bool ConfigHandler::Initialize()
 	std::string l_Line;
 	while (std::getline(l_File, l_Line))
 		ParseLine(l_Line);
+    l_File.close();
 	return true;
 }
