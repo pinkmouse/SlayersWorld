@@ -43,4 +43,9 @@ cd build; \
 cmake -DCMAKE_BUILD_TYPE=Release ../; \
 make
 
-CMD cd /SlayersWorld/Server/; git pull; cmake .; cd build; make; ./SWServer
+ADD Server/deploy/crontab /etc/cron.d/hello-cron
+RUN chmod 0644 /etc/cron.d/hello-cron
+RUN touch /var/log/cron.log
+
+CMD cron && tail -f /var/log/cron.log
+# cd /SlayersWorld/Server/; git pull; cmake .; cd build; make; ./SWServer
