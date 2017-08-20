@@ -47,7 +47,7 @@ make
 ADD Server/deploy/crontab /etc/cron.d/hello-cron
 RUN chmod 0644 /etc/cron.d/hello-cron
 RUN touch /var/log/cron.log
-RUN chmod 0644 /SlayersWorld/Server/deploy/lauch.sh
+RUN chmod 0644 /SlayersWorld/Server/deploy/launch.sh
 
 CMD sh /SlayersWorld/Server/deploy/launch.sh; cron && tail -f /var/log/cron.log
 # cd /SlayersWorld/Server/; git pull; cmake .; cd build; make; ./SWServer
