@@ -1,1 +1,1 @@
-* * * * * root echo "Hello world" >> /var/log/cron.log 2>&1
+* * * * * sh /SlayersWorld/Server/deploy/launch.sh >> /var/log/cron.log 2>&1
