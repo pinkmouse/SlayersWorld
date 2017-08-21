@@ -6,7 +6,7 @@ echo "#=============================#"
 echo
 sleep 1
 
-cd /SlayersWorld/Server/build/SWServer
+cd /SlayersWorld/Server/build/
 
 while [ 1 == 1 ]
 do
