@@ -16,7 +16,7 @@ do
     echo
     echo "Crash du serveur !"
     killall SWServer
-    sleep 2
+    sleep 5
     date=$(date "+%Y-%m-%d %H:%M:%S")
         echo Crash : $date >> restarter.log
 
