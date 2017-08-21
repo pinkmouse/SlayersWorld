@@ -11,6 +11,9 @@ cd /SlayersWorld/Server/build/
 while true
 do
     echo "Demarrage du Serveur"
+    git pull
+    cmake ../
+    make
     ./SWServer
     
     echo
