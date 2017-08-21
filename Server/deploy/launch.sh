@@ -1,9 +1,25 @@
-#!/bin/sh
-echo Launch Script
-ps auxw | grep SWServer | grep -v grep > /dev/null
+#!/bin/bash
 
-if [ $? != 0 ]
-then
-    echo Go into loop
-    ./SlayersWorld/Server/build/SWServer > /dev/null
-fi
+echo "#=============================#"
+echo "#   Chargement du restarter   #"
+echo "#=============================#"
+echo
+sleep 1
+
+cd /SlayersWorld/Server/build/SWServer
+
+while [ 1 == 1 ]
+do
+    echo "Demarrage du Serveur"
+    ./SWServer
+    
+    echo
+    echo "Crash du serveur !"
+    killall SWServer
+    sleep 2
+    date=$(date "+%Y-%m-%d %H:%M:%S")
+        echo Crash : $date >> restarter.log
+
+    echo "Redemarage du Serveur"
+    echo
+done
