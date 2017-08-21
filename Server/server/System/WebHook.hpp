@@ -28,7 +28,6 @@ public:
             curl_easy_setopt(l_Curl, CURLOPT_POSTFIELDS, l_Str.c_str());
             l_Result = curl_easy_perform(l_Curl);
             curl_easy_cleanup(l_Curl);
-            printf("Result = %d, %s\n", l_Result, l_Str.c_str());
         }
     }
 };

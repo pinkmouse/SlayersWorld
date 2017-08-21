@@ -71,6 +71,8 @@ void Player::InitializeCommands()
     m_CmdHandleMap["cast"].second = &Player::handleCast;
     m_CmdHandleMap["bg"].first = eAccessType::Moderator;
     m_CmdHandleMap["bg"].second = &Player::HandleCommandBG;
+    m_CmdHandleMap["restart"].first = eAccessType::Moderator;
+    m_CmdHandleMap["restart"].second = &Player::HandleServerRestart;
 }
 
 bool Player::HandleTest(std::vector<std::string> p_ListCmd)
@@ -758,5 +760,17 @@ bool Player::HandleBanAccount(std::vector<std::string> p_ListCmd)
         l_Msg += " " + p_ListCmd[i];
 
     g_SqlManager->BlackListAccount(l_Account, GetAccountID(), l_Hours, l_Msg);
+    return true;
+}
+
+bool Player::HandleServerRestart(std::vector<std::string> p_ListCmd)
+{
+    if (p_ListCmd.empty())
+    {
+        exit(1);
+        return true;
+    }
+    if (p_ListCmd.size() < 2)
+        return true;
     return true;
 }

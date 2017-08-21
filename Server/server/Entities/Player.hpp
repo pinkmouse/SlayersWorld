@@ -114,6 +114,7 @@ public:
     bool HandleKick(std::vector<std::string>);
     bool HandleMount(std::vector<std::string>);
     bool HandleDismount(std::vector<std::string>);
+    bool HandleServerRestart(std::vector<std::string>);
     bool HandlePlayerInfo(std::vector<std::string>);
     bool HandleBanIP(std::vector<std::string>);
     bool HandleBanAccount(std::vector<std::string>);
