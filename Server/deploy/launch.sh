@@ -8,7 +8,7 @@ sleep 1
 
 cd /SlayersWorld/Server/build/
 
-while [ 1 == 1 ]
+while true
 do
     echo "Demarrage du Serveur"
     ./SWServer
