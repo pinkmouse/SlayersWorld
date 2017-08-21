@@ -32,6 +32,7 @@ add_executable(${EXECUTABLE_NAME}
               server/World/WorldSocket.hpp
 
 	      server/System/WebHook.hpp
+	      server/System/SWExit.hpp
               server/System/WorldPosition.cpp
               server/System/WorldPosition.hpp
 	      server/System/Commands.cpp

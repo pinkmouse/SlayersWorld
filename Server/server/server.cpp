@@ -6,7 +6,8 @@
 #define MAX_SIZE_BACKTRACE 20
 #include "Map/Map.hpp"
 #include "World/World.hpp"
-#include "System/WebHook.hpp"
+#include "Define.hpp"
+#include "System/SWExit.hpp"
 #include <csignal>
 #include <stdlib.h>
 #include <SFML/Network.hpp>
@@ -37,7 +38,7 @@ void handler_segfault(int sig) {
     WebHook::sendMsg(g_Config->GetValue("WebhookUrl"), "Serveur " + g_Config->GetValue("ServerName") + " Crash !");
     if (l_StrArray == NULL) {
         perror("backtrace_symbols");
-        exit(EXIT_FAILURE);
+        SWExit(EXIT_FAILURE);
     }
     std::string l_TotalBuffer = "==== BACKTRACE ===\\n";
     for (uint16 j = 0; j < size; j++) {
@@ -46,7 +47,7 @@ void handler_segfault(int sig) {
     }
     WebHook::sendMsg(g_Config->GetValue("WebhookUrl"), l_TotalBuffer);
 #endif
-    exit(1);
+    SWExit(1);
 }
 
 int main()
@@ -55,5 +56,6 @@ int main()
     signal(SIGSEGV, handler_segfault);
 	World* l_World = new World();
 	l_World->Run();
+    SWExit(1);
 	return 0;
 }

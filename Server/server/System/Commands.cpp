@@ -2,6 +2,7 @@
 #include "../World/PacketDefine.hpp"
 #include "../World/WorldSocket.hpp"
 #include "../Global.hpp"
+#include "../System/SWExit.hpp"
 #include  "../System/Quest/Quest.hpp"
 #include <SFML/Network/IpAddress.hpp>
 
@@ -767,7 +768,7 @@ bool Player::HandleServerRestart(std::vector<std::string> p_ListCmd)
 {
     if (p_ListCmd.empty())
     {
-        exit(1);
+        SWExit(1);
         return true;
     }
     if (p_ListCmd.size() < 2)
