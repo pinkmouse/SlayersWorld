@@ -273,7 +273,7 @@ Orientation Creature::GetOrientationByPath(Path & p_Path)
             return m_MovementHandler->GetOrientation();
         }
         p_NextPos = p_Path[p_Path.size() - 1];
-        printf("#### Go TO : [%d-%d]\n", p_NextPos.m_X, p_NextPos.m_Y);
+        //printf("#### Go TO : [%d-%d]\n", p_NextPos.m_X, p_NextPos.m_Y);
     }
     //printf("#### [%d-%d]\n", p_NextPos.m_X, p_NextPos.m_Y);
     Orientation l_Orien = GetOrientationToCase(GetPositionCentered(), p_NextPos);

@@ -18,7 +18,7 @@ void Creature::UpdateAI(sf::Time p_Diff)
         Orientation l_Orientation = GetOrientationByPath(m_PathToTargetPosition);
         if (IsFollowingPath() && (GetOrientation() != l_Orientation || !IsInMovement()))
         {
-            printf("Change Orientation [%d] to %d\n", GetOrientation(), l_Orientation);
+            //printf("Change Orientation [%d] to %d\n", GetOrientation(), l_Orientation);
             StartMovement(l_Orientation);
         }
     }
