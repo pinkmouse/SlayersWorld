@@ -197,8 +197,8 @@ bool Player::HandleCommandServer(std::vector<std::string> p_ListCmd)
 {
     uint16 l_NbPlayers = 0;
 
-    std::vector<Player*> l_AllPlayers = g_MapManager->GetAllPlayers();
-    SendMsg("-> " + std::to_string(l_AllPlayers.size()) + " joueurs");
+    uint16 l_AllPlayers = g_MapManager->GetTotalPlayers();
+    SendMsg("-> " + std::to_string(l_AllPlayers) + " joueurs");
 
     return true;
 }

@@ -251,6 +251,26 @@ std::vector<Player*> MapManager::GetAllPlayers()
     return l_ListPlayer;
 }
 
+uint16 MapManager::GetTotalPlayers()
+{
+    uint16 l_TotalNb = 0;
+    for (std::pair<uint16, std::map <uint16, Map*> > l_MapInstance : m_MapList)
+    {
+        for (std::pair<uint16, Map*> l_MapPair : l_MapInstance.second)
+        {
+            Map* l_Map = l_MapPair.second;
+
+            if (l_Map == nullptr)
+                continue;
+
+            std::map<uint16, Unit*>* l_ListPlayerMap = l_Map->GetListUnitType(TypeUnit::PLAYER);
+            l_TotalNb += l_ListPlayerMap->size();
+        }
+    }
+    return l_TotalNb;
+}
+
+
 void MapManager::AddBGTemplate(BGTemplate* p_BGTemplate)
 {
     m_BGListTemplate[p_BGTemplate->m_ID].first = p_BGTemplate;

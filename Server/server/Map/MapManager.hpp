@@ -20,6 +20,7 @@ public:
     bool IsOnline(TypeUnit, uint16);
     Player* GetPlayer(uint16);
     std::vector<Player*> GetAllPlayers();
+    uint16 GetTotalPlayers();
     uint16 GetValidInstanceIDForMap(uint16);
     /* Battleground */
     void AddBGTemplate(BGTemplate*);
