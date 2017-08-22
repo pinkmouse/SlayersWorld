@@ -53,9 +53,7 @@ bool MapManager::LaunchWorldsMap()
     {
         if (l_MapTemplate.second->IsInstance())
             continue;
-        printf("Before launch Map [%d]\n", l_MapTemplate.first);
         Map* l_Map = LaunchMap(l_MapTemplate.first);
-        printf("After launch Map [%d]\n", l_MapTemplate.first);
 
         m_MapList[l_Map->GetID()][0] = l_Map;
     }
@@ -215,7 +213,6 @@ void MapManager::Update(sf::Time p_Diff)
     m_Clock += p_Diff.asMicroseconds();
     if (m_Clock >= (SEND_TIME_CLOCK_WEBHOOK * 60) * IN_MICROSECOND)
     {
-        printf("[TIME] CLOCK OK\n");
         SWTime l_Time = ConvertTimeToSWTime(difftime(GetActualTime(), g_MapManager->GetTimeStart()));
         WebHook::sendMsg(g_Config->GetValue("WebhookUrl"), "Serveur " + g_Config->GetValue("ServerName") + " allumé depuis " + std::to_string(l_Time.m_Days) + "j " + std::to_string(l_Time.m_Hours) + "h " + std::to_string(l_Time.m_Minutes) + "m " + std::to_string(l_Time.m_Seconds) + "s  Clock:" + std::to_string(p_Diff.asMicroseconds()));
         m_Clock = 0;

@@ -10,7 +10,6 @@ Map::Map(uint16 p_InstanceID,  MapTemplate* p_Template)
     m_InstanceID = p_InstanceID;
     m_SizeX = p_Template->GetSizeX();
     m_SizeY = p_Template->GetSizeY();
-    printf("[%d] %d\n", m_SizeX, m_SizeY);
     m_MapTemplate = p_Template;
     m_GroupManager = nullptr;
 }
