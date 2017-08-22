@@ -7,7 +7,7 @@
 #define MAP_PATH "map/"
 #define CONF_FILE "conf/server.conf"
 
-#define SEND_TIME_CLOCK_WEBHOOK 2 ///< In Min
+#define SEND_TIME_CLOCK_WEBHOOK 30 ///< In Min
 
 #define GRID_SIZE 12
 #define TILE_SIZE 16
