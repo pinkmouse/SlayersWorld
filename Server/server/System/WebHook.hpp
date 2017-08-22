@@ -12,7 +12,7 @@ public:
         CURL *l_Curl = nullptr;
         struct curl_slist *list = nullptr;
 
-        printf("[Curl Msg]  %s\n", p_Msg);
+        printf("[Curl Msg]  %s\n", p_Msg.c_str());
 
         std::string l_Str = "{ \"content\" : \"" + p_Msg + "\" }";
         l_Curl = curl_easy_init();
