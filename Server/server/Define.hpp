@@ -560,10 +560,10 @@ static SWTime ConvertTimeToSWTime(time_t p_Time)
 
     l_TimeInfo.m_Seconds = l_Time % 60;
     l_TimeInfo.m_Minutes = l_Time / 60;
-    l_TimeInfo.m_Hours= l_TimeInfo.m_Minutes / 60;
-    l_TimeInfo.m_Minutes = l_TimeInfo.m_Hours % 60;
+    l_TimeInfo.m_Hours = l_TimeInfo.m_Minutes / 60;
+    l_TimeInfo.m_Minutes -= (l_TimeInfo.m_Hours * 60);
     uint8 l_Days = l_TimeInfo.m_Hours / 24;
-    l_TimeInfo.m_Hours = l_TimeInfo.m_Days % 24;
+    l_TimeInfo.m_Hours -= (l_TimeInfo.m_Days * 24);
 
     return l_TimeInfo;
 }
