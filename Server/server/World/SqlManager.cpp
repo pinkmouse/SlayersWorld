@@ -4,6 +4,7 @@
 #include "../Entities/Areatrigger.hpp"
 #include "../Entities/GameObject.hpp"
 #include "../Global.hpp"
+#include "../System/WebHook.hpp"
 #include <cstdlib>
 #include <ctime>
 
