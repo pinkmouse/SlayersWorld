@@ -198,6 +198,9 @@ bool Player::HandleCommandServer(std::vector<std::string> p_ListCmd)
     uint16 l_NbPlayers = 0;
 
     uint16 l_AllPlayers = g_MapManager->GetTotalPlayers();
+    SWTime l_Time = ConvertTimeToSWTime(difftime(GetActualTime(), g_MapManager->GetTimeStart()));
+
+    SendMsg("-> Serveur allumé depuis " + std::to_string(l_Time.m_Days) + "j " + std::to_string(l_Time.m_Hours) + "h " + std::to_string(l_Time.m_Minutes) + "m " + std::to_string(l_Time.m_Seconds) + "s ");
     SendMsg("-> " + std::to_string(l_AllPlayers) + " joueurs");
 
     return true;

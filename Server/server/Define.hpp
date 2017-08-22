@@ -7,6 +7,8 @@
 #define MAP_PATH "map/"
 #define CONF_FILE "conf/server.conf"
 
+#define SEND_TIME_CLOCK_WEBHOOK 2 ///< In Min
+
 #define GRID_SIZE 12
 #define TILE_SIZE 16
 
@@ -484,6 +486,22 @@ struct CreatureTemplate
     m_Entry(p_Entry), m_SkinID(p_SkinID), m_Name(p_Name), m_Level(p_Level), m_Force(p_Force), m_Stamina(p_Stamina), m_Dexterity(p_Dexterity), m_Speed(p_Speed), m_Xp(p_Xp), m_State(p_State), m_MaxRay(p_MaxRay), m_MaxVision(p_MaxVision), m_MovingTimeMin(p_MovingTimeMin), m_MovingTimeMax(p_MovingTimeMax), m_StopTimeMin(p_StopTimeMin), m_StopTimeMax(p_StopTimeMax), m_RespawnTime(p_RespawnTime), m_Rank(p_Rank), m_AiType(p_AiType), m_FactionType(p_FactionType){}
 };
 
+struct SWTime
+{
+    SWTime()
+    {
+        m_Days = 0;
+        m_Hours = 0;
+        m_Minutes = 0;
+        m_Seconds = 0;
+    }
+
+    uint16 m_Days;
+    uint8 m_Hours;
+    uint8 m_Minutes;
+    uint8 m_Seconds;
+};
+
 struct PointsSet
 {
     std::map<eStats, uint16> m_Points;
@@ -517,7 +535,7 @@ static float InYard(float p_YardInPixel) { return p_YardInPixel / (float)TILE_SI
 static bool RandChance(uint8 p_Rand) { return (rand() % 100) <= p_Rand ; }
 static void Log(const std::string & p_Str)
 {
-    time_t l_Time = time(NULL);;
+    time_t l_Time = time(NULL);
     //printf("local: %s", asctime(localtime(&l_Time)));
 
     struct tm * l_TimeInfo;
@@ -528,6 +546,36 @@ static void Log(const std::string & p_Str)
 
     strftime(l_Format, 32, "%Y-%m-%d %H-%M", l_TimeInfo);
     printf("[%s] %s\n", l_Format, p_Str.c_str());
+}
+static time_t GetActualTime()
+{
+    time_t l_Time = time(NULL);
+
+    return l_Time;
+}
+static SWTime ConvertTimeToSWTime(time_t p_Time)
+{
+    SWTime l_TimeInfo;
+    int l_Time = (int)p_Time;
+
+    l_TimeInfo.m_Seconds = l_Time % 60;
+    l_TimeInfo.m_Minutes = l_Time / 60;
+    l_TimeInfo.m_Hours= l_TimeInfo.m_Minutes / 60;
+    l_TimeInfo.m_Minutes = l_TimeInfo.m_Hours % 60;
+    uint8 l_Days = l_TimeInfo.m_Hours / 24;
+    l_TimeInfo.m_Hours = l_TimeInfo.m_Days % 24;
+
+    return l_TimeInfo;
+}
+static struct tm* ConvertTimeToTM(time_t p_Time)
+{
+    struct tm* l_TimeInfo;
+    char l_Format[32];
+
+    time(&p_Time);
+    l_TimeInfo = localtime(&p_Time);
+
+    return l_TimeInfo;
 }
 static bool replaceStr(std::string& str, const std::string& from, const std::string& to) 
 {

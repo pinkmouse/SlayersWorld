@@ -1,5 +1,7 @@
 #include <cstdio>
 #include "MapManager.hpp"
+#include "../Global.hpp"
+#include "../System/WebHook.hpp"
 #include "../World/WorldSocket.hpp"
 #include "../World/PacketDefine.hpp"
 #include "../System/Instance/BattleGround/BGCapturePoint.hpp"
@@ -8,8 +10,9 @@
 
 MapManager::MapManager()
 {
+    m_TimeStart = GetActualTime();
+    m_Clock = 0;
 }
-
 
 MapManager::~MapManager()
 {
@@ -208,6 +211,14 @@ void MapManager::Update(sf::Time p_Diff)
                 l_Itr++;
         }
     }
+
+    m_Clock += p_Diff.asMicroseconds();
+    if (m_Clock >= SEND_TIME_CLOCK_WEBHOOK * 60 * IN_MICROSECOND)
+    {
+        SWTime l_Time = ConvertTimeToSWTime(difftime(GetActualTime(), g_MapManager->GetTimeStart()));
+        WebHook::sendMsg(g_Config->GetValue("WebhookUrl"), "Serveur " + g_Config->GetValue("ServerName") + " allumé depuis " + std::to_string(l_Time.m_Days) + "j " + std::to_string(l_Time.m_Hours) + "h " + std::to_string(l_Time.m_Minutes) + "m " + std::to_string(l_Time.m_Seconds) + "s  Clock:" + std::to_string(p_Diff.asMicroseconds()));
+        m_Clock = 0;
+    }
 }
 
 Player* MapManager::GetPlayer(uint16 p_IdPlayer)
@@ -270,6 +281,25 @@ uint16 MapManager::GetTotalPlayers()
     return l_TotalNb;
 }
 
+void MapManager::SaveAllPlayers()
+{
+    std::vector<Player*> l_ListPlayer;
+    for (std::pair<uint16, std::map <uint16, Map*> > l_MapInstance : m_MapList)
+    {
+        for (std::pair<uint16, Map*> l_MapPair : l_MapInstance.second)
+        {
+            Map* l_Map = l_MapPair.second;
+
+            if (l_Map == nullptr)
+                continue;
+
+            std::map<uint16, Unit*>* l_ListPlayerMap = l_Map->GetListUnitType(TypeUnit::PLAYER);
+            for (auto l_Player : *l_ListPlayerMap)
+                (l_Player.second)->ToPlayer()->Save();
+        }
+    }
+}
+
 
 void MapManager::AddBGTemplate(BGTemplate* p_BGTemplate)
 {
@@ -326,4 +356,9 @@ uint16 MapManager::GetValidInstanceIDForMap(uint16 p_MapID)
         l_InstanceID++;
     }
     return l_InstanceID;
+}
+
+time_t MapManager::GetTimeStart() const
+{
+    return m_TimeStart;
 }

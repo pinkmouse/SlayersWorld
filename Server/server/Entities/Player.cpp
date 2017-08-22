@@ -29,7 +29,7 @@ Player::Player(uint32 p_AccountID, int32 p_ID, std::string p_Name, uint8 p_Level
     SetResourceNb(eResourceType::Alignment, p_Alignment);
     m_Xp = p_Xp;
     m_RespawnTime = PLAYER_TIME_RESPAWN * IN_MICROSECOND;
-    WebHook::sendMsg(g_Config->GetValue("WebhookUrl"), "Connection : " + m_Name + ":" + std::to_string(p_ID) + "   Total : " + std::to_string(g_MapManager->GetTotalPlayers() + 1));
+    WebHook::sendMsg(g_Config->GetValue("WebhookUrl"), "Connection sur serveur " + g_Config->GetValue("ServerName") + " : " + m_Name + ":" + std::to_string(p_ID) + "   Total : " + std::to_string(g_MapManager->GetTotalPlayers() + 1));
 }
 
 WorldSocket* Player::GetSession() const
@@ -50,7 +50,7 @@ void Player::SetSession(WorldSocket* p_Session)
 Player::~Player()
 {
     printf("Erase Player %d:%s\n", m_ID, m_Name.c_str());
-    WebHook::sendMsg(g_Config->GetValue("WebhookUrl"), "Deconnection : " + m_Name + ":" + std::to_string(GetID()) + "   Total : " + std::to_string(g_MapManager->GetTotalPlayers() - 1));
+    WebHook::sendMsg(g_Config->GetValue("WebhookUrl"), "Deconnection sur serveur " + g_Config->GetValue("ServerName") + " : " + m_Name + ":" + std::to_string(GetID()) + "   Total : " + std::to_string(g_MapManager->GetTotalPlayers() - 1));
     for (std::map< uint16, Quest* >::iterator l_It = m_Quests.begin(); l_It != m_Quests.end(); ++l_It)
     {
         delete (*l_It).second;

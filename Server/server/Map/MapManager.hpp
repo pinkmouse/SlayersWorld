@@ -22,14 +22,18 @@ public:
     std::vector<Player*> GetAllPlayers();
     uint16 GetTotalPlayers();
     uint16 GetValidInstanceIDForMap(uint16);
+    void SaveAllPlayers();
     /* Battleground */
     void AddBGTemplate(BGTemplate*);
     void AddPlayerToQueue(uint16, Player*);
-
+    time_t GetTimeStart() const;
 
 private:
     std::map<uint16, std::map<uint16, Map*> > m_MapList;
     std::map<uint16, MapTemplate*> m_MapListTemplate;
     std::map<uint16, std::pair<BGTemplate*, std::vector<Player*>>> m_BGListTemplate;
-    //std::map<uint16, std::vector<Player*> > m_BGListQueue;
+
+    /* Time Manage for stats */
+    time_t m_TimeStart;
+    uint64 m_Clock;
 };
