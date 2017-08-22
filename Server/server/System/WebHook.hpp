@@ -16,7 +16,7 @@ public:
 
         std::string l_Str = "{ \"content\" : \"" + p_Msg + "\" }";
         l_Curl = curl_easy_init();
-       /* if (l_Curl != nullptr)
+        if (l_Curl != nullptr)
         {
             list = curl_slist_append(list, "Content-Type: application/json");
             list = curl_slist_append(list, "charsets: utf-8");
@@ -30,7 +30,7 @@ public:
             curl_easy_setopt(l_Curl, CURLOPT_POSTFIELDS, l_Str.c_str());
             l_Result = curl_easy_perform(l_Curl);
             curl_easy_cleanup(l_Curl);
-        }*/
+        }
     }
 };
 
