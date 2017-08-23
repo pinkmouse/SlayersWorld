@@ -27,7 +27,7 @@ void HistoryField::Close()
     m_DiffTimeOpen = 0;
 }
 
-std::vector<std::string> HistoryField::GetHistory() const
+std::vector<SWText> HistoryField::GetHistory() const
 {
     return m_History;
 }
@@ -71,9 +71,9 @@ uint8 HistoryField::GetLineHistory() const
     return m_HistoryMaxLine;
 }
 
-void HistoryField::AddHistoryLine(const std::string & p_String)
+void HistoryField::AddHistoryLine(const SWText & p_Text)
 {
-    m_History.push_back(p_String);
+    m_History.push_back(p_Text);
     if (m_History.size() > MAX_HISTORY_LINE)
         m_History.erase(m_History.begin());
 }

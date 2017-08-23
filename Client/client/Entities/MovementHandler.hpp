@@ -23,7 +23,6 @@ public:
     void StartMovement();
     void StopMovement();
     void StartAttack();
-    void StartAttack(Orientation);
     void StopAttack();
     uint8 GetMovementPosition();
     bool CheckNextMovement(uint32, uint32);

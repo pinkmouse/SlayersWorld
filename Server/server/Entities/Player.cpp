@@ -207,12 +207,12 @@ void Player::SetLevel(const uint8 & p_Level)
 }
 
 
-void Player::SendMsg(const std::string & p_Msg)
+void Player::SendMsg(const std::string & p_Msg, const eTextColor & p_Color, const eTextStyle & p_Style)
 {
     std::string l_Msg = p_Msg;
     ParseStringWithTag(l_Msg);
     PacketSrvPlayerMsg l_Packet;
-    l_Packet.BuildPacket(l_Msg);
+    l_Packet.BuildPacket(l_Msg, p_Color, p_Style);
     WorldSocket* l_Session = GetSession();
     l_Session->SendPacket(l_Packet.m_Packet);
 }

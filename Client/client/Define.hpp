@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdio>
+#include <SFML/Graphics/Text.hpp>
 #include "System/SWType.hpp"
 
 #define CONF_FILE "config.wtf"
@@ -156,6 +157,24 @@ enum eStats
     MaxStat
 };
 
+enum eTextColor
+{
+    TextColorWhite = 0,
+    TextColorGreen = 1,
+    TextColorRed = 2,
+    TextColorBlue = 3,
+    TextColorYellow = 4
+};
+
+enum eTextStyle
+{
+    TextStyleRegular = 0,
+    TextStyleBold = 1,
+    TextStyleItalic = 2,
+    TextStyleUnderLine = 3,
+    TextStyleStrikeThrough = 4,
+};
+
 enum eExtraInterface
 {
     eBattelGroundUI = 0
@@ -235,4 +254,17 @@ enum eWarningMsg
 {
    NotEnoughMana = 0,
    InCooldown
+};
+
+struct SWText
+{
+    std::string m_Str;
+    eTextColor m_TextColor;
+    eTextStyle m_Style;
+
+    SWText(const std::string & p_Str) :
+        m_Str(p_Str), m_TextColor(eTextColor::TextColorWhite), m_Style(eTextStyle::TextStyleRegular) {}
+
+    SWText(const std::string & p_Str, const eTextColor & p_TextColor, const eTextStyle & p_Style) :
+        m_Str(p_Str), m_TextColor(p_TextColor), m_Style(p_Style) {}
 };

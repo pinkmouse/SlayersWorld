@@ -39,27 +39,6 @@ void WorldSocket::SendPlayerCreate(uint32 p_ID, std::string p_Name, uint8 p_Leve
     send(l_Packet);
     printf("Send create\n");
 }
-/*
-void WorldSocket::SendUnitCreate(uint8 p_Type, uint32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_Health,  uint8 p_Mana, uint8 p_Alignment, uint8 p_SkinID, uint8 p_SizeX, uint8 p_SizeY, uint8 p_Speed, uint16 p_MapID, Position p_Position, uint8 p_Orientation, bool p_InMovement, bool p_IsAttacking, bool p_IsBlocking, bool p_IsInGroup)
-{
-     if (p_Type == TypeUnit::PLAYER && p_ID == GetPlayer()->GetID())
-        return;
-
-     if (p_SkinID < 0)
-         return;
-
-    PacketUnitCreate l_Packet;
-
-    if (p_Type < TypeUnit::AREATRIGGER)
-        l_Packet.BuildPacket(p_Type, p_ID, p_Name, p_Level, p_Health, p_Mana, p_Alignment, p_SkinID, p_SizeX, p_SizeY, p_Speed, p_MapID, p_Position, p_Orientation, p_InMovement, p_IsAttacking);
-    else
-        l_Packet.BuildPacket(p_Type, p_ID, p_Name, p_SkinID, p_SizeX, p_SizeY, p_Speed, p_MapID, p_Position, p_Orientation, p_InMovement, p_IsBlocking);
-
-    send(l_Packet.m_Packet);
-
-    if (p_IsInGroup)
-        SendUnitIsInGroup(p_Type, p_ID, true);
-}*/
 
 void WorldSocket::SendUnitCreate(Unit* p_Unit, bool p_IsInGroup)
 {
@@ -73,13 +52,11 @@ void WorldSocket::SendUnitCreate(Unit* p_Unit, bool p_IsInGroup)
 
     if (p_Unit->GetType() < TypeUnit::AREATRIGGER)
         l_Packet.BuildPacket(p_Unit->GetType(), p_Unit->GetID(), p_Unit->GetName() , p_Unit->GetLevel(), p_Unit->GetResourceNb(eResourceType::Health), p_Unit->GetResourceNb(eResourceType::Mana), p_Unit->GetResourceNb(eResourceType::Alignment), p_Unit->GetSkinID(),
-            p_Unit->GetSizeX(), p_Unit->GetSizeY(), p_Unit->GetSpeedUint8(), p_Unit->GetMapID(), p_Unit->GetPosition(), p_Unit->GetOrientation(), p_Unit->IsInMovement(), p_Unit->GetMovementHandler()->IsInAttack());
+            p_Unit->GetSizeX(), p_Unit->GetSizeY(), p_Unit->GetSpeedUint8(), p_Unit->GetMapID(), p_Unit->GetPosition(), p_Unit->GetOrientation(), p_Unit->IsInMovement(), p_Unit->GetMovementHandler()->IsInAttack(), p_IsInGroup);
     else
         l_Packet.BuildPacket(p_Unit->GetType(), p_Unit->GetID(), p_Unit->GetName(), p_Unit->GetSkinID(), p_Unit->GetSizeX(), p_Unit->GetSizeY(), p_Unit->GetSpeedUint8(), p_Unit->GetMapID(), p_Unit->GetPosition(), p_Unit->GetOrientation(), p_Unit->IsInMovement(), p_Unit->IsBlocking());
 
     send(l_Packet.m_Packet);
-    if (p_IsInGroup)
-        SendUnitIsInGroup(p_Unit->GetType(), p_Unit->GetID(), true);
 
 
     std::vector<AuraEffect*> l_ListMount = p_Unit->GetAuraEffectType(eTypeAuraEffect::MOUNT);
@@ -133,7 +110,7 @@ void WorldSocket::SendUnitGoDirectionToSet(uint8 p_Type, uint16 p_UnitID, const 
     WorldPacket l_Packet;
     uint8 l_ID = SMSG::S_UnitGoDirection;
 
-    l_Packet << l_ID << p_Type << p_UnitID << p_Pos.m_X << p_Pos.m_Y << p_Direction;
+    l_Packet << l_ID << p_Type << p_UnitID << (uint16)p_Pos.m_X << (uint16)p_Pos.m_Y << p_Direction;
     SendToSet(l_Packet, true);
 }
 
@@ -151,16 +128,16 @@ void WorldSocket::SendUnitStopMovement(uint8 p_TypeID, uint16 p_ID, const Positi
     WorldPacket l_Packet;
     uint8 l_ID = SMSG::S_UnitStopMovement;
 
-    l_Packet << l_ID << p_TypeID << p_ID << p_Pos.m_X << p_Pos.m_Y << p_Orientation;
+    l_Packet << l_ID << p_TypeID << p_ID << (uint16)p_Pos.m_X << (uint16)p_Pos.m_Y << p_Orientation;
     SendToSet(l_Packet, true);
 }
 
-void WorldSocket::SendUnitStartAttack(uint8 p_TypeID, uint16 p_ID, const Position & p_Pos, uint8 p_Orientation)
+void WorldSocket::SendUnitStartAttack(uint8 p_TypeID, uint16 p_ID)
 {
     WorldPacket l_Packet;
     uint8 l_ID = SMSG::S_UnitStartAttack;
 
-    l_Packet << l_ID << p_TypeID << p_ID << p_Pos.m_X << p_Pos.m_Y << p_Orientation;
+    l_Packet << l_ID << p_TypeID << p_ID ;
     SendToSet(l_Packet, true);
 }
 

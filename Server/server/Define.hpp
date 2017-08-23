@@ -224,6 +224,24 @@ enum eObjectifType
     EnterInZone = 3
 };
 
+enum eTextColor
+{
+    TextColorWhite = 0,
+    TextColorGreen = 1,
+    TextColorRed = 2,
+    TextColorBlue = 3,
+    TextColorYellow = 4
+};
+
+enum eTextStyle
+{
+    TextStyleRegular = 0,
+    TextStyleBold = 1,
+    TextStyleItalic = 2,
+    TextStyleUnderLine = 3,
+    TextStyleStrikeThrough = 4,
+};
+
 enum eRepetitionType
 {
     Never = -1,
@@ -487,9 +505,9 @@ struct SWTime
 
     long int m_TotalSeconds;
     uint16 m_Days;
-    uint8 m_Hours;
-    uint8 m_Minutes;
-    uint8 m_Seconds;
+    uint16 m_Hours;
+    uint16 m_Minutes;
+    uint16 m_Seconds;
 };
 
 struct PointsSet

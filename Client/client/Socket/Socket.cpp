@@ -46,7 +46,7 @@ void Socket::SendGoDirection(const uint8& p_Orientation, const uint32& p_PosX, c
     WorldPacket packet;
     uint8 l_ID = CMSG::C_UnitGoDirection;
 
-    packet << l_ID << p_Orientation << p_PosX << p_PosY;
+    packet << l_ID << p_Orientation << (uint16)p_PosX << (uint16)p_PosY;
 
     send(packet);
 }
@@ -56,17 +56,17 @@ void Socket::SendStopMovement(const uint32& p_Posx, const uint32& p_PosY)
     WorldPacket packet;
     uint8 l_ID = CMSG::C_UnitStopMovement;
 
-    packet << l_ID << p_Posx << p_PosY;
+    packet << l_ID << (uint16)p_Posx << (uint16)p_PosY;
 
     send(packet);
 }
 
-void Socket::SendStartAttack(const uint32& p_Posx, const uint32& p_PosY)
+void Socket::SendStartAttack()
 {
     WorldPacket packet;
     uint8 l_ID = CMSG::C_UnitStartAttack;
 
-    packet << l_ID << p_Posx << p_PosY;
+    packet << l_ID;
 
     send(packet);
 }

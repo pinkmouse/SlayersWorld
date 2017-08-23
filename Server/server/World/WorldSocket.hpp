@@ -16,7 +16,7 @@ public:
     void SendUnitCreate(Unit*, bool);
     void SendUnitGoDirectionToSet(uint8, uint16, const Position &, uint8);
     void SendUnitStopMovement(uint8, uint16, const Position &, uint8);
-    void SendUnitStartAttack(uint8, uint16, const Position &, uint8);
+    void SendUnitStartAttack(uint8, uint16);
     void SendUnitStopAttack(uint8, uint16);
     void SendUpdateXpPct(float);
     void SendUpdateUnitResource(uint8, uint16, uint8, uint8);

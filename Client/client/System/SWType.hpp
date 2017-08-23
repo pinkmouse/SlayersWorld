@@ -26,6 +26,17 @@ union CharOn11111111 {
     uint8 m_Byte_value;
 };
 
+union CharOn41111 {
+    struct {
+        unsigned int first : 4;
+        unsigned int second : 1;
+        unsigned int third : 1;
+        unsigned int fourth : 1;
+        unsigned int fifth : 1;
+    } charOn41111;
+    uint8 m_Byte_value;
+};
+
 union CharOn116 {
     struct {
         unsigned int first : 1;
@@ -33,5 +44,13 @@ union CharOn116 {
         unsigned int third : 6;
     } charOn116;
 
+    uint8 m_Byte_value;
+};
+
+union CharOn44 {
+    struct {
+        unsigned int first : 4;
+        unsigned int second : 4;
+    } charOn44;
     uint8 m_Byte_value;
 };

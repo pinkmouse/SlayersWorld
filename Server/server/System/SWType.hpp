@@ -24,7 +24,25 @@ union CharOn11111111 {
         unsigned int seventh : 1;
         unsigned int eighth : 1;
     } charOn11111111;
+    uint8 m_Byte_value;
+};
 
+union CharOn41111 {
+    struct {
+        unsigned int first : 4;
+        unsigned int second : 1;
+        unsigned int third : 1;
+        unsigned int fourth : 1;
+        unsigned int fifth : 1;
+    } charOn41111;
+    uint8 m_Byte_value;
+};
+
+union CharOn44 {
+    struct {
+        unsigned int first : 4;
+        unsigned int second : 4;
+    } charOn44;
     uint8 m_Byte_value;
 };
 

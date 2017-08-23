@@ -188,7 +188,7 @@ bool Player::HandleCommandAnnounce(std::vector<std::string> p_ListCmd)
     std::vector<Player*> l_AllPlayers = g_MapManager->GetAllPlayers();
     for (uint16 i = 0; i < l_AllPlayers.size(); ++i)
     {
-        l_AllPlayers[i]->SendMsg("**Annonce**:" + l_Msg);
+        l_AllPlayers[i]->SendMsg("**Annonce**:" + l_Msg, eTextColor::TextColorRed);
     }
     return true;
 }

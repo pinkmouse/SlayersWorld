@@ -19,7 +19,7 @@ public:
     eAccessType GetAccessType() const;
     void HasBeenInitialize();
     void Respawn();
-    void SendMsg(const std::string &);
+    void SendMsg(const std::string &, const eTextColor & p_Color = eTextColor::TextColorWhite, const eTextStyle & p_Style = eTextStyle::TextStyleRegular);
     void SendSimpleQuestion(const uint16 &, const std::string &);
     void Save();
     void SetInLoading(bool);

@@ -186,13 +186,18 @@ void PacketHandler::HandleStopMovement(WorldPacket &p_Packet)
     uint8 l_TypeID;
     uint16 l_ID;
     Position l_Pos;
+    uint16 l_PosX;
+    uint16 l_PosY;
     uint8 l_Orientation;
 
     p_Packet >> l_TypeID;
     p_Packet >> l_ID;
-    p_Packet >> l_Pos.x;
-    p_Packet >> l_Pos.y;
+    p_Packet >> l_PosX;
+    p_Packet >> l_PosY;
     p_Packet >> l_Orientation;
+
+    l_Pos.x = l_PosX;
+    l_Pos.y = l_PosY;
 
     if (Map* l_Map = m_MapManager->GetActualMap())
     {
@@ -212,14 +217,10 @@ void PacketHandler::HandleUnitStartAttack(WorldPacket &p_Packet)
 {
     uint8 l_TypeID;
     uint16 l_ID;
-    Position l_Pos;
-    uint8 l_Orientation;
+
 
     p_Packet >> l_TypeID;
     p_Packet >> l_ID;
-    p_Packet >> l_Pos.x;
-    p_Packet >> l_Pos.y;
-    p_Packet >> l_Orientation;
 
     //printf("Attack for Type :%d, ID:%d, posX:%d, posY:%d, orientation:%d\n", l_TypeID, l_ID, l_Pos.x, l_Pos.y, l_Orientation);
     if (Map* l_Map = m_MapManager->GetActualMap())
@@ -235,7 +236,7 @@ void PacketHandler::HandleUnitStartAttack(WorldPacket &p_Packet)
         if ((TypeUnit)l_TypeID == TypeUnit::ANIMATIONUNIT)
             l_Unit->LaunchAnim();
         else
-            l_Unit->GetMovementHandler()->AddMovementToStack(eActionType::Attack, l_Pos, (Orientation)l_Orientation);
+            l_Unit->GetMovementHandler()->AddMovementToStack(eActionType::Attack);
     }
 }
 
@@ -294,8 +295,8 @@ void PacketHandler::HandleUpdatePosition(WorldPacket &p_Packet)
     uint8 l_TypeID;
     uint16 l_UnitID;
     uint16 l_MapId;
-    uint32 l_PosX;
-    uint32 l_PosY;
+    uint16 l_PosX;
+    uint16 l_PosY;
     uint8 l_Orientation;
 
     p_Packet >> l_TypeID;
@@ -314,7 +315,7 @@ void PacketHandler::HandleUpdatePosition(WorldPacket &p_Packet)
             g_Socket->SendUnitUnknow(l_TypeID, l_UnitID); ///< Ask for unknow unit to server
             return;
         }
-        WorldPosition l_WorldPosition(l_PosX, l_PosY, l_MapId, (Orientation)l_Orientation);
+        WorldPosition l_WorldPosition((uint32)l_PosX, (uint32)l_PosY, l_MapId, (Orientation)l_Orientation);
         l_Unit->TeleportTo(l_WorldPosition);
     }
 }
@@ -325,12 +326,17 @@ void PacketHandler::HandleUnitGoDirection(WorldPacket &p_Packet)
     uint16 l_UnitID;
     uint8 l_Direction;
     Position l_Pos;
+    uint16 l_PosX;
+    uint16 l_PosY;
 
     p_Packet >> l_Type;
     p_Packet >> l_UnitID;
-    p_Packet >> l_Pos.x;
-    p_Packet >> l_Pos.y;
+    p_Packet >> l_PosX;
+    p_Packet >> l_PosY;
     p_Packet >> l_Direction;
+
+    l_Pos.x = (uint32)l_PosX;
+    l_Pos.y = (uint32)l_PosY;
 
     if (Map* l_Map = m_MapManager->GetActualMap())
         l_Map->MoveUnitToDirection((TypeUnit)l_Type, l_UnitID, l_Pos, l_Direction);
@@ -417,7 +423,7 @@ void PacketHandler::HandleCreateMainPlayer(WorldPacket &p_Packet)
 void PacketHandler::HandleCreateUnit(WorldPacket &p_Packet)
 {
     uint8 l_TypeID;
-    uint32 l_ID;
+    uint16 l_ID;
     std::string l_Name;
     uint8 l_Level = 1;
     uint8 l_Health = 100;
@@ -433,8 +439,13 @@ void PacketHandler::HandleCreateUnit(WorldPacket &p_Packet)
     bool l_IsInMovement;
     bool l_IsInAttack = false;
     bool l_IsBlocking = false;
+    bool l_IsInGroup = false;
     uint16 l_PosX;
     uint16 l_PosY;
+
+    /* PLAYER/CREATURE : Orientation / IsMovement / IsAttack / IsGroup */
+    /* AREATRIGGER/GOB : Orientation / IsMovement / IsBlocking */
+    CharOn41111 l_StructData;
 
     p_Packet >> l_TypeID;
     p_Packet >> l_ID;
@@ -453,17 +464,23 @@ void PacketHandler::HandleCreateUnit(WorldPacket &p_Packet)
     p_Packet >> l_MapID;
     p_Packet >> l_PosX;
     p_Packet >> l_PosY;
-    p_Packet >> l_Orientation;
-    p_Packet >> l_IsInMovement;
+    p_Packet >> l_StructData.m_Byte_value;
 
-    l_Pos.x = l_PosX;
-    l_Pos.y = l_PosY;
+    l_Pos.x = (uint32)l_PosX;
+    l_Pos.y = (uint32)l_PosY;
+
+    l_Orientation = l_StructData.charOn41111.first;
+    l_IsInMovement = (bool)l_StructData.charOn41111.second;
 
     if (l_TypeID < 2) ///< Only Player and Creature
-        p_Packet >> l_IsInAttack;
+    {
+        l_IsInAttack = (bool)l_StructData.charOn41111.third;
+        l_IsInGroup = (bool)l_StructData.charOn41111.fourth;
+    }
     else
-        p_Packet >> l_IsBlocking;
-
+    {
+        l_IsBlocking = (bool)l_StructData.charOn41111.third;
+    }
    /* if (l_TypeID == (uint8)TypeUnit::PLAYER)
         printf("Create new Player: %d %s %d %d %d %d\n", l_ID, l_Name.c_str(), l_SkinID, l_MapID, l_Pos.x, l_Pos.y);
     else
@@ -503,6 +520,7 @@ void PacketHandler::HandleCreateUnit(WorldPacket &p_Packet)
             l_NewUnit->GetMovementHandler()->AddMovementToStack(eActionType::Go, l_Pos, (Orientation)l_NewUnit->GetOrientation());
         if (l_IsInAttack)
             l_NewUnit->GetMovementHandler()->AddMovementToStack(eActionType::Attack, l_Pos, (Orientation)l_NewUnit->GetOrientation());
+        l_NewUnit->SetIsInGroup(l_IsInGroup);
     }
 }
 
@@ -576,11 +594,15 @@ void PacketHandler::HandleSwitchMap(WorldPacket &p_Packet)
 void PacketHandler::HandleSrvPlayerMsg(WorldPacket &p_Packet)
 {
     std::string l_Msg;
+    CharOn44 l_StructData;
 
+    p_Packet >> l_StructData.m_Byte_value;
     p_Packet >> l_Msg;
     
+    SWText l_Text(l_Msg, (eTextColor)l_StructData.charOn44.first, (eTextStyle)l_StructData.charOn44.second);
+
     m_InterfaceManager->GetHistoryField()->OpenTemporary(5000);
-    m_InterfaceManager->GetHistoryField()->AddHistoryLine(l_Msg);
+    m_InterfaceManager->GetHistoryField()->AddHistoryLine(l_Text);
 }
 
 void PacketHandler::HandleSrvPlayerQuestion(WorldPacket &p_Packet)

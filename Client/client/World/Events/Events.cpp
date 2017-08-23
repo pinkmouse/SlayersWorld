@@ -171,7 +171,7 @@ void Events::NewKeyPressed(eKeyBoardAction p_NewKey)
                 m_KeyPressed.erase(m_KeyPressed.begin());*/
             m_KeyPressed.push_back(p_NewKey);
 
-            g_Socket->SendStartAttack(g_Player->GetPosX(), g_Player->GetPosY());
+            g_Socket->SendStartAttack();
             l_MovementHandler->StartAttack();
             break;
         }

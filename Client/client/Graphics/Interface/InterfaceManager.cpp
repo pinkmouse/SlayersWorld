@@ -27,6 +27,42 @@ InterfaceManager::~InterfaceManager()
 {
 }
 
+sf::Color GetColorFromeTextColor(const eTextColor & p_TextColor)
+{
+    switch (p_TextColor)
+    {
+    case eTextColor::TextColorWhite:
+        return sf::Color::White;
+    case eTextColor::TextColorGreen:
+        return sf::Color::Green;
+    case eTextColor::TextColorRed:
+        return sf::Color::Red;
+    case eTextColor::TextColorBlue:
+        return sf::Color::Blue;
+    case eTextColor::TextColorYellow:
+        return sf::Color::Yellow;
+    }
+    return sf::Color::White;
+}
+
+sf::Text::Style GetStyleFromeTextStyle(const eTextStyle & p_TextColor)
+{
+    switch (p_TextColor)
+    {
+    case eTextStyle::TextStyleRegular:
+        return sf::Text::Style::Regular;
+    case eTextStyle::TextStyleBold:
+        return sf::Text::Style::Bold;
+    case eTextStyle::TextStyleItalic:
+        return sf::Text::Style::Italic;
+    case eTextStyle::TextStyleUnderLine:
+        return sf::Text::Style::Underlined;
+    case eTextStyle::TextStyleStrikeThrough:
+        return sf::Text::Style::StrikeThrough;
+    }
+    return sf::Text::Style::Regular;
+}
+
 void InterfaceManager::InitializeWarningMsgs()
 {
     m_WarningMsgsEnum[eWarningMsg::NotEnoughMana] = "Pas assez de mana";
@@ -627,7 +663,10 @@ void InterfaceManager::Draw(Window & p_Window)
             sf::Text l_Text = m_HistoryField->GetText();
             l_Text.setFont(*g_Font);
             l_Text.setPosition(FLASK_SIZE_X * FLASK_SCALE + 10, Y_WINDOW - SIZE_FILED_TALK_Y - (SIZE_FILED_TALK_Y * (i + 1)));
-            l_Text.setString(m_HistoryField->GetHistory()[l_HistorySize - 1- i]);
+            l_Text.setString(m_HistoryField->GetHistory()[l_HistorySize - 1- i].m_Str);
+            l_Text.setStyle(GetStyleFromeTextStyle(m_HistoryField->GetHistory()[l_HistorySize - 1 - i].m_Style));
+            l_Text.setColor(GetColorFromeTextColor(m_HistoryField->GetHistory()[l_HistorySize - 1 - i].m_TextColor));
+
             p_Window.draw(l_Text);
         }
         //p_Window.draw(m_WritingField->GetText());

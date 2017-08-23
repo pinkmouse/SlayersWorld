@@ -65,7 +65,7 @@ struct PacketGoDirection
 
     void BuildPacket(uint8 p_TypeID, uint16 p_ID, Position p_Pos, uint8 p_Orientation)
     {
-        m_Packet << m_PacketID << p_TypeID << p_ID << p_Pos.m_X << p_Pos.m_Y << p_Orientation;
+        m_Packet << m_PacketID << p_TypeID << p_ID << (uint16)p_Pos.m_X << (uint16)p_Pos.m_Y << p_Orientation;
         m_TypeID = p_TypeID;
         m_ID = p_ID;
         m_Pos = p_Pos;
@@ -87,7 +87,7 @@ struct PacketStopMovement
 
     void BuildPacket(uint8 p_TypeID, uint16 p_ID, Position p_Pos, uint8 p_Orientation)
     {
-        m_Packet << m_PacketID << p_TypeID << p_ID << p_Pos.m_X << p_Pos.m_Y << p_Orientation;
+        m_Packet << m_PacketID << p_TypeID << p_ID << (uint16)p_Pos.m_X << (uint16)p_Pos.m_Y << p_Orientation;
         m_TypeID = p_TypeID;
         m_ID = p_ID;
         m_Pos = p_Pos;
@@ -109,7 +109,7 @@ struct PacketStartAttack
 
     void BuildPacket(uint8 p_TypeID, uint16 p_ID, Position p_Pos, uint8 p_Orientation)
     {
-        m_Packet << m_PacketID << p_TypeID << p_ID << p_Pos.m_X << p_Pos.m_Y << p_Orientation;
+        m_Packet << m_PacketID << p_TypeID << p_ID;
         m_TypeID = p_TypeID;
         m_ID = p_ID;
         m_Pos = p_Pos;
@@ -171,7 +171,7 @@ struct PacketUpdatePosition
 
     void BuildPacket(uint8 p_TypeID, uint16 p_ID, uint16 p_MapID, uint32 p_PosX, uint32 p_PosY, uint8 p_Orientation)
     {
-        m_Packet << m_PacketID << p_TypeID << p_ID << p_MapID << p_PosX << p_PosY << p_Orientation;
+        m_Packet << m_PacketID << p_TypeID << p_ID << p_MapID << (uint16)p_PosX << (uint16)p_PosY << p_Orientation;
         m_Orientation = p_Orientation;
         m_MapID = p_MapID;
         m_PosX = p_PosX;
@@ -189,14 +189,21 @@ struct PacketUnitCreate
     uint16 m_ID;
     Position m_Pos;
     uint8 m_Oriection;
+    CharOn41111 m_StructData;
 
     PacketUnitCreate() :
         m_PacketID(SMSG::S_UnitCreate) {}
 
     /// PLAYER / CREATURE
-    void BuildPacket(uint8 p_TypeID, uint32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_Health, uint8 p_Mana, uint8 p_Alignment, int16 p_SkinID, uint8 p_SizeX, uint8 p_SizeY, uint8 p_Speed, uint16 p_MapID, Position p_Pos, uint8 p_Orientation, bool p_IsInMovement, bool p_IsAttacking)
+    void BuildPacket(uint8 p_TypeID, uint16 p_ID, std::string p_Name, uint8 p_Level, uint8 p_Health, uint8 p_Mana, uint8 p_Alignment, int16 p_SkinID, uint8 p_SizeX, uint8 p_SizeY, uint8 p_Speed, uint16 p_MapID, Position p_Pos, uint8 p_Orientation, bool p_IsInMovement, bool p_IsAttacking, bool p_IsInGroup)
     {
-        m_Packet << m_PacketID << p_TypeID << p_ID << p_Name << p_Level << p_Health << p_Mana << p_Alignment << p_SkinID << p_SizeX << p_SizeY << p_Speed << p_MapID << (uint16)p_Pos.m_X << (uint16)p_Pos.m_Y << p_Orientation << p_IsInMovement << p_IsAttacking;
+        m_StructData.charOn41111.first = p_Orientation;
+        m_StructData.charOn41111.second = p_IsInMovement ? 1 : 0;
+        m_StructData.charOn41111.third = p_IsAttacking ? 1 : 0;
+        m_StructData.charOn41111.fourth = p_IsInGroup ? 1 : 0;
+        m_StructData.charOn41111.fifth = 0;
+
+        m_Packet << m_PacketID << p_TypeID << p_ID << p_Name << p_Level << p_Health << p_Mana << p_Alignment << p_SkinID << p_SizeX << p_SizeY << p_Speed << p_MapID << (uint16)p_Pos.m_X << (uint16)p_Pos.m_Y << m_StructData.m_Byte_value;
         m_TypeID = p_TypeID;
         m_ID = p_ID;
         m_Pos = p_Pos;
@@ -204,9 +211,15 @@ struct PacketUnitCreate
     }
 
     /// DYNAMICOBJECT
-    void BuildPacket(uint8 p_TypeID, uint32 p_ID, std::string p_Name, int16 p_SkinID, uint8 p_SizeX, uint8 p_SizeY, uint8 p_Speed, uint16 p_MapID, Position p_Pos, uint8 p_Orientation, bool p_IsInMovement, bool p_IsBlocking)
+    void BuildPacket(uint8 p_TypeID, uint16 p_ID, std::string p_Name, int16 p_SkinID, uint8 p_SizeX, uint8 p_SizeY, uint8 p_Speed, uint16 p_MapID, Position p_Pos, uint8 p_Orientation, bool p_IsInMovement, bool p_IsBlocking)
     {
-        m_Packet << m_PacketID << p_TypeID << p_ID << p_Name << p_SkinID << p_SizeX << p_SizeY << p_Speed << p_MapID << (uint16)p_Pos.m_X << (uint16)p_Pos.m_Y << p_Orientation << p_IsInMovement << p_IsBlocking;
+        m_StructData.charOn41111.first = p_Orientation;
+        m_StructData.charOn41111.second = p_IsInMovement ? 1 : 0;
+        m_StructData.charOn41111.third = p_IsBlocking ? 1 : 0;
+        m_StructData.charOn41111.fourth =  0;
+        m_StructData.charOn41111.fifth = 0;
+
+        m_Packet << m_PacketID << p_TypeID << p_ID << p_Name << p_SkinID << p_SizeX << p_SizeY << p_Speed << p_MapID << (uint16)p_Pos.m_X << (uint16)p_Pos.m_Y << m_StructData.m_Byte_value;
         m_TypeID = p_TypeID;
         m_ID = p_ID;
         m_Pos = p_Pos;
@@ -277,13 +290,17 @@ struct PacketSrvPlayerMsg
     WorldPacket m_Packet;
     uint8 m_PacketID;
     std::string m_Msg;
+    CharOn44 m_StructData;
 
     PacketSrvPlayerMsg() :
         m_PacketID(SMSG::S_SrvPlayerMsg) {}
 
-    void BuildPacket(const std::string & p_Msg)
+    void BuildPacket(const std::string & p_Msg, const eTextColor & p_Color = eTextColor::TextColorWhite, const eTextStyle & p_Style = eTextStyle::TextStyleRegular)
     {
-        m_Packet << m_PacketID << p_Msg;
+        m_StructData.charOn44.first = p_Color;
+        m_StructData.charOn44.second = p_Style;
+
+        m_Packet << m_PacketID << m_StructData.m_Byte_value << p_Msg;
         m_Msg = p_Msg;
     }
 };

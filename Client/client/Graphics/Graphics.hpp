@@ -33,6 +33,7 @@ public:
     bool IsInRayWindow(WorldObject*, WorldObject*);
     sf::Vector2f CoordFromViewToView(const sf::Vector2f &, const sf::View &, const sf::View &);
     uint8 GetFrameNbForAnimationUnit(Unit*);
+    TileSprite GetBarMini(uint8, uint8 p_Pct = 100);
 
     /// DRAW THREAD
     void DrawLoop();
@@ -51,6 +52,7 @@ private:
     sf::View            m_ViewInterface;
     sf::Font            m_Font;
     sf::Texture         m_CastBarTexture;
+    sf::Texture         m_BarMinis;
     sf::Texture         m_LifeBarTexture;
     sf::Texture         m_UiMiniTexture;
     sf::Thread          m_Thread;

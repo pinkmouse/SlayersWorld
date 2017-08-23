@@ -2,6 +2,12 @@
 #include "../Global.hpp"
 #include "../Entities/AnimationUnit.hpp"
 
+#define MINIBAR_GREEN 0
+#define MINIBAR_YELLOW 1
+#define MINIBAR_RED 2
+#define MINIBAR_PURPLE 3
+#define MINIBAR_BLUE 4
+
 Graphics::Graphics(MapManager* p_MapManager, InterfaceManager* p_InterfaceManager, Events* p_Events) :
     m_MapManager(p_MapManager),
     m_InterfaceManager(p_InterfaceManager),
@@ -33,12 +39,9 @@ bool Graphics::LoadFont()
 
 bool Graphics::LoadTexture()
 {
-    std::string l_FileSystemName = "castbarmini.png";
-    if (!m_CastBarTexture.loadFromFile(IMG_FOLDER + l_FileSystemName))
-        printf("Load SystemImg Cast Bar Mini Failed\n");
-    l_FileSystemName = "lifebarmini.png";
-    if (!m_LifeBarTexture.loadFromFile(IMG_FOLDER + l_FileSystemName))
-        printf("Load SystemImg Life Bar Mini Failed\n");
+    std::string l_FileSystemName = "barminis.png";
+    if (!m_BarMinis.loadFromFile(IMG_FOLDER + l_FileSystemName))
+        printf("Load SystemImg Bar Minis Failed\n");
     l_FileSystemName = "uimini.png";
     if (!m_UiMiniTexture.loadFromFile(IMG_FOLDER + l_FileSystemName))
         printf("Load SystemImg UI Mini Failed\n");
@@ -104,6 +107,14 @@ bool Graphics::WindowIsOpen() const
 	return m_Window.isOpen();
 }
 
+TileSprite Graphics::GetBarMini(uint8 p_ID, uint8 p_Pct)
+{
+    TileSprite l_TileSprite;
+    l_TileSprite.setTexture(m_BarMinis);
+    l_TileSprite.setTextureRect(sf::IntRect(0, p_ID * 4, (m_BarMinis.getSize().x / 100.0f) * p_Pct, 4));
+    return l_TileSprite;
+}
+
 Position Graphics::GetCenterPositionOnUnit(Unit* p_Unit, sf::Sprite* p_Sprite)
 {
     int16 l_DiffSizeX = (p_Sprite->getTextureRect().width - p_Unit->GetSizeX()) / 2;
@@ -124,14 +135,17 @@ void Graphics::DrawUnitDetails(Unit* p_Unit)
         return;
 
     int8 l_OffsetLifeBar = -4;
+    uint8 l_LifeBarColor = MINIBAR_RED;
+
     if (p_Unit->GetIsInGroup())
+    {
         l_OffsetLifeBar = -6;
+        l_LifeBarColor = MINIBAR_GREEN;
+    }
     /// LIFE BAR
     if (p_Unit != g_Player && p_Unit->IsPlayer())
     {
-        TileSprite l_LifeBar;
-        l_LifeBar.setTexture(m_LifeBarTexture);
-        l_LifeBar.setTextureRect(sf::IntRect(0, 0, (m_LifeBarTexture.getSize().x / 100.0f) * p_Unit->GetResourceNb(eResourceType::Health), m_LifeBarTexture.getSize().y));
+        TileSprite l_LifeBar = GetBarMini(l_LifeBarColor, p_Unit->GetResourceNb(eResourceType::Health));
         l_LifeBar.setPosition(p_Unit->GetPosXAtIntant() - (p_Unit->GetSizeX() / 2) + p_Unit->GetPosXOffset(), p_Unit->GetPosYAtIntant() - p_Unit->GetSizeY() - 4 + l_OffsetLifeBar + p_Unit->GetPosYOffset());
         m_Window.draw(l_LifeBar);
     }
@@ -139,9 +153,7 @@ void Graphics::DrawUnitDetails(Unit* p_Unit)
     /// CAST BAR
     if (p_Unit != g_Player && p_Unit->GetCastPct() > 0)
     {
-        TileSprite l_CastBar;
-        l_CastBar.setTexture(m_CastBarTexture);
-        l_CastBar.setTextureRect(sf::IntRect(0, 0, (m_CastBarTexture.getSize().x / 100.0f) * p_Unit->GetCastPct(), m_CastBarTexture.getSize().y));
+        TileSprite l_CastBar = GetBarMini(MINIBAR_YELLOW, p_Unit->GetCastPct());
         l_CastBar.setPosition(p_Unit->GetPosXAtIntant() - (p_Unit->GetSizeX() / 2) + p_Unit->GetPosXOffset(), p_Unit->GetPosYAtIntant() - p_Unit->GetSizeY() - 4 + p_Unit->GetPosYOffset());
         m_Window.draw(l_CastBar);
     }
