@@ -60,7 +60,6 @@ bool MapManager::LaunchWorldsMap()
     return true;
 }
 
-
 void MapManager::AddMapTemplate(MapTemplate *p_MapTemplate)
 {
     m_MapListTemplate[p_MapTemplate->GetID()] = p_MapTemplate;
@@ -214,7 +213,7 @@ void MapManager::Update(sf::Time p_Diff)
     if (m_Clock >= (SEND_TIME_CLOCK_WEBHOOK * 60) * IN_MICROSECOND)
     {
         SWTime l_Time = ConvertTimeToSWTime(difftime(GetActualTime(), g_MapManager->GetTimeStart()));
-        WebHook::sendMsg(g_Config->GetValue("WebhookUrl"), "Serveur " + g_Config->GetValue("ServerName") + " allume depuis " + std::to_string(l_Time.m_Days) + "j " + std::to_string(l_Time.m_Hours) + "h " + std::to_string(l_Time.m_Minutes) + "m " + std::to_string(l_Time.m_Seconds) + "s  Clock " + std::to_string(p_Diff.asMicroseconds()));
+        WebHook::sendMsg(g_Config->GetValue("WebhookUrl"), "Serveur " + g_Config->GetValue("ServerName") + " allume depuis " + std::to_string(l_Time.m_Days) + "j " + std::to_string(l_Time.m_Hours) + "h " + std::to_string(l_Time.m_Minutes) + "m " + std::to_string(l_Time.m_Seconds) + "s  Clock " + std::to_string(p_Diff.asMicroseconds()) + "  Total Seconds " + std::to_string(l_Time.m_TotalSeconds));
         m_Clock = 0;
     }
 }

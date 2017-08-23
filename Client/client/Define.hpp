@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdio>
+#include "System/SWType.hpp"
 
 #define CONF_FILE "config.wtf"
 //#define IP_SERVER "127.0.0.1"
@@ -99,17 +100,6 @@
 /// GENERAL
 #define STEP_SIZE 12 /// In pixel
 #define IN_MILLISECOND 1000
-
-typedef char int8;
-typedef short int16;
-typedef int int32;
-typedef long long int64;
-typedef unsigned long long uint64;
-
-typedef unsigned char uint8;
-typedef unsigned short uint16;
-typedef unsigned int uint32;
-typedef unsigned long long uint64;
 
 enum Orientation
 {

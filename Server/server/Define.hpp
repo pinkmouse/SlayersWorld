@@ -4,6 +4,8 @@
 #include <map>
 #include <vector>
 
+#include "System/SWType.hpp"
+
 #define MAP_PATH "map/"
 #define CONF_FILE "conf/server.conf"
 
@@ -42,19 +44,6 @@
 #define STR_PALADIN "Paladin"
 #define STR_MAGE "Mage"
 #define STR_PRETRE "Prêtre"
-
-typedef char int8;
-typedef short int16;
-typedef int int32;
-typedef long long int64;
-typedef unsigned long long uint64;
-
-typedef unsigned char uint8;
-typedef unsigned short uint16;
-typedef unsigned int uint32;
-typedef unsigned long long uint64;
-
-typedef std::pair<int16, int16> PFNodePosition;
 
 enum Orientation
 {
@@ -496,6 +485,7 @@ struct SWTime
         m_Seconds = 0;
     }
 
+    long int m_TotalSeconds;
     uint16 m_Days;
     uint8 m_Hours;
     uint8 m_Minutes;
@@ -527,7 +517,6 @@ struct PointsSet
     };
 };
 
-
 static uint32 PixelToCase(uint32 p_NbPixel) { return p_NbPixel / TILE_SIZE; }
 static uint32 CaseToPixel(uint32 p_NbCase) { return p_NbCase * TILE_SIZE; }
 static Position PositionToCasePosition(const Position & p_Pos) { return Position(PixelToCase(p_Pos.m_X), PixelToCase(p_Pos.m_Y)); }
@@ -556,8 +545,9 @@ static time_t GetActualTime()
 static SWTime ConvertTimeToSWTime(time_t p_Time)
 {
     SWTime l_TimeInfo;
-    int l_Time = (int)p_Time;
+    long int l_Time = (int)p_Time;
 
+    l_TimeInfo.m_TotalSeconds = l_Time;
     l_TimeInfo.m_Seconds = l_Time % 60;
     l_TimeInfo.m_Minutes = l_Time / 60;
     l_TimeInfo.m_Hours = l_TimeInfo.m_Minutes / 60;

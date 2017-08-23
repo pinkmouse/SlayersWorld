@@ -433,6 +433,8 @@ void PacketHandler::HandleCreateUnit(WorldPacket &p_Packet)
     bool l_IsInMovement;
     bool l_IsInAttack = false;
     bool l_IsBlocking = false;
+    uint16 l_PosX;
+    uint16 l_PosY;
 
     p_Packet >> l_TypeID;
     p_Packet >> l_ID;
@@ -449,10 +451,13 @@ void PacketHandler::HandleCreateUnit(WorldPacket &p_Packet)
     p_Packet >> l_SizeY;
     p_Packet >> l_Speed;
     p_Packet >> l_MapID;
-    p_Packet >> l_Pos.x;
-    p_Packet >> l_Pos.y;
+    p_Packet >> l_PosX;
+    p_Packet >> l_PosY;
     p_Packet >> l_Orientation;
     p_Packet >> l_IsInMovement;
+
+    l_Pos.x = l_PosX;
+    l_Pos.y = l_PosY;
 
     if (l_TypeID < 2) ///< Only Player and Creature
         p_Packet >> l_IsInAttack;
@@ -660,22 +665,27 @@ void PacketHandler::HandleUnitPlayVisual(WorldPacket &p_Packet)
 
 void PacketHandler::HandleUnitPlayVisualAura(WorldPacket &p_Packet)
 {
-    bool l_Apply;
+    bool l_Apply = false;
     uint8 l_TypeID;
     uint16 l_ID;
     uint8 l_TypeIDFrom;
     uint16 l_IDFrom;
     bool l_Under;
     uint8 l_VisualID;
+    CharOn116 l_Struct;
 
-    p_Packet >> l_Apply;
+    //p_Packet >> l_Apply;
     p_Packet >> l_TypeID;
     p_Packet >> l_ID;
     p_Packet >> l_TypeIDFrom;
     p_Packet >> l_IDFrom;
-    p_Packet >> l_Under;
-    p_Packet >> l_VisualID;
-
+    p_Packet >> l_Struct.m_Byte_value;
+    //p_Packet >> l_Under;
+    //p_Packet >> l_VisualID;
+ 
+    l_Apply = l_Struct.charOn116.first ? true : false;
+    l_Under = l_Struct.charOn116.second ? true : false;
+    l_VisualID = l_Struct.charOn116.third;
     if (Map* l_Map = m_MapManager->GetActualMap())
     {
         Unit* l_Unit = l_Map->GetUnit((TypeUnit)l_TypeID, l_ID);

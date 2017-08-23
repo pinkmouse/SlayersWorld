@@ -38,6 +38,7 @@ add_executable(${EXECUTABLE_NAME}
 
               client/System/WorldPosition.cpp
               client/System/WorldPosition.hpp
+	      client/System/SWType.hpp
 
               client/System/Resource/Resource.cpp
               client/System/Resource/Resource.hpp

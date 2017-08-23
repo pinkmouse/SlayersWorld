@@ -9,7 +9,6 @@ WorldSocket::WorldSocket()
     m_Disconnected = false;
 }
 
-
 WorldSocket::~WorldSocket()
 {
     if (m_Player == nullptr)

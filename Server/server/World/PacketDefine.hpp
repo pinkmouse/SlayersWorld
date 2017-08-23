@@ -196,7 +196,7 @@ struct PacketUnitCreate
     /// PLAYER / CREATURE
     void BuildPacket(uint8 p_TypeID, uint32 p_ID, std::string p_Name, uint8 p_Level, uint8 p_Health, uint8 p_Mana, uint8 p_Alignment, int16 p_SkinID, uint8 p_SizeX, uint8 p_SizeY, uint8 p_Speed, uint16 p_MapID, Position p_Pos, uint8 p_Orientation, bool p_IsInMovement, bool p_IsAttacking)
     {
-        m_Packet << m_PacketID << p_TypeID << p_ID << p_Name << p_Level << p_Health << p_Mana << p_Alignment << p_SkinID << p_SizeX << p_SizeY << p_Speed << p_MapID << p_Pos.m_X << p_Pos.m_Y << p_Orientation << p_IsInMovement << p_IsAttacking;
+        m_Packet << m_PacketID << p_TypeID << p_ID << p_Name << p_Level << p_Health << p_Mana << p_Alignment << p_SkinID << p_SizeX << p_SizeY << p_Speed << p_MapID << (uint16)p_Pos.m_X << (uint16)p_Pos.m_Y << p_Orientation << p_IsInMovement << p_IsAttacking;
         m_TypeID = p_TypeID;
         m_ID = p_ID;
         m_Pos = p_Pos;
@@ -206,7 +206,7 @@ struct PacketUnitCreate
     /// DYNAMICOBJECT
     void BuildPacket(uint8 p_TypeID, uint32 p_ID, std::string p_Name, int16 p_SkinID, uint8 p_SizeX, uint8 p_SizeY, uint8 p_Speed, uint16 p_MapID, Position p_Pos, uint8 p_Orientation, bool p_IsInMovement, bool p_IsBlocking)
     {
-        m_Packet << m_PacketID << p_TypeID << p_ID << p_Name << p_SkinID << p_SizeX << p_SizeY << p_Speed << p_MapID << p_Pos.m_X << p_Pos.m_Y << p_Orientation << p_IsInMovement << p_IsBlocking;
+        m_Packet << m_PacketID << p_TypeID << p_ID << p_Name << p_SkinID << p_SizeX << p_SizeY << p_Speed << p_MapID << (uint16)p_Pos.m_X << (uint16)p_Pos.m_Y << p_Orientation << p_IsInMovement << p_IsBlocking;
         m_TypeID = p_TypeID;
         m_ID = p_ID;
         m_Pos = p_Pos;
@@ -560,7 +560,12 @@ struct PacketPlayAuraVisual
 
     void BuildPacket(bool p_Apply, uint8 p_TypeID, uint16 p_ID, uint8 p_TypeIDFrom, uint16 p_IDFrom, bool p_Under, uint8 p_VisualID)
     {
-        m_Packet << m_PacketID << p_Apply << p_TypeID << p_ID << p_TypeIDFrom << p_IDFrom << p_Under << p_VisualID;
+        CharOn116 l_Struct;
+        l_Struct.charOn116.first = p_Apply ? 1 : 0;
+        l_Struct.charOn116.second = p_Under ? 1 : 0;
+        l_Struct.charOn116.third = p_VisualID;
+
+        m_Packet << m_PacketID << p_TypeID << p_ID << p_TypeIDFrom << p_IDFrom << l_Struct.m_Byte_value;
     }
 };
 
