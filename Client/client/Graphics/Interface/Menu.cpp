@@ -106,6 +106,11 @@ void Menu::GenericAction(const uint16 & p_MenuID)
 {
 }
 
+void Menu::GenericAction2(const uint16 & p_MenuID)
+{
+}
+
+
 void Menu::SetTitle(const std::string & p_Title)
 {
     m_Title = p_Title;
@@ -246,4 +251,9 @@ void Menu::SelectNextElementOn(Orientation p_Orientation)
             break;
         }
     }
+}
+
+uint16 Menu::GetElementRowSize() const
+{
+    return m_Elements.size();
 }

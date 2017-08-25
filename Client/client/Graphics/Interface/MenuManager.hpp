@@ -12,6 +12,7 @@ public:
     std::vector<Menu*> GetOpenMenus();
     void GenericAction(const uint16 &);
     void AddElementToMenu(eMenuType, const uint8 &, const uint8 &, const std::string &);
+    Menu* GetMenu(eMenuType);
 
 private:
     std::map<eMenuType, Menu*> m_ListMenu;

@@ -74,6 +74,12 @@ enum eTypeMap
     MapBattleGround = 1
 };
 
+enum eTypeTitle
+{
+    TypeTitleBefore = 0,
+    TypeTitleAfter = 1
+};
+
 enum eGroupType
 {
     SIMPLE = 0,
@@ -509,6 +515,20 @@ struct SWTime
     uint16 m_Minutes;
     uint16 m_Seconds;
 };
+
+struct Title
+{
+    std::string m_Name;
+    uint16 m_ID;
+    eTypeTitle m_Type;
+
+    Title() :
+        m_ID(0), m_Name(""), m_Type(eTypeTitle::TypeTitleBefore) {}
+
+    Title(const uint16 & p_ID, const std::string & p_Name, const eTypeTitle & p_Type) :
+        m_ID(p_ID), m_Name(p_Name), m_Type(p_Type){}
+};
+typedef std::map<uint16, Title> Titles;
 
 struct PointsSet
 {

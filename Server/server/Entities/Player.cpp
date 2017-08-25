@@ -29,6 +29,7 @@ Player::Player(uint32 p_AccountID, int32 p_ID, std::string p_Name, uint8 p_Level
     SetResourceNb(eResourceType::Alignment, p_Alignment);
     m_Xp = p_Xp;
     m_RespawnTime = PLAYER_TIME_RESPAWN * IN_MICROSECOND;
+    m_ActiveTitle = -1;
     WebHook::sendMsg(g_Config->GetValue("WebhookUrl"), "Connection sur serveur " + g_Config->GetValue("ServerName") + " : " + m_Name + ":" + std::to_string(p_ID) + "   Total : " + std::to_string(g_MapManager->GetTotalPlayers() + 1));
 }
 
@@ -105,7 +106,6 @@ void Player::UpdateNewSquares(uint16 p_OldSquareID, uint16 p_NewSquareID, bool p
                 if (l_Unit->IsPlayer() && l_Unit->GetID() == GetID())
                     continue;
 
-                printf("[Send Unit Create] %s\n", l_Unit->GetName().c_str());
                 GetSession()->SendUnitCreate(l_Unit, l_Unit->IsInGroupWith(this));
             }
         }
@@ -233,6 +233,57 @@ std::pair<Unit*, uint16> Player::GetGossipForQuestion(const uint16 & p_ID, const
     l_Res.first = (*l_It).second.first;
     l_Res.second = l_Answers[p_AnswerID];
     return l_Res;
+}
+
+void Player::AddTitle(const uint16 & p_ID, Title* p_Title)
+{
+    m_Titles[p_ID] = p_Title;
+}
+
+int32 Player::GetActiveTitleID() const
+{
+    return m_ActiveTitle;
+}
+
+std::string Player::GetNameWithTitle()
+{
+    if (m_ActiveTitle < 0)
+        return GetName();
+
+    if (m_Titles.find(m_ActiveTitle) == m_Titles.end())
+        return GetName();
+
+    Title* l_Title = m_Titles[m_ActiveTitle];
+    std::string l_NameWithTitle = GetName();
+    if (l_Title->m_Type == eTypeTitle::TypeTitleBefore)
+        l_NameWithTitle = l_Title->m_Name + " " + GetName();
+    else if (l_Title->m_Type == eTypeTitle::TypeTitleAfter)
+        l_NameWithTitle = GetName() + " " + l_Title->m_Name;
+    return l_NameWithTitle;
+}
+
+void Player::ChangeActiveTitle(const uint16 & p_ID, bool p_Send)
+{
+    if (m_Titles.find(p_ID) == m_Titles.end())
+        m_ActiveTitle = -1;
+    else
+        m_ActiveTitle = p_ID;
+
+    if (p_Send)
+    {
+        PacketUpdateName l_Packet;
+        l_Packet.BuildPacket(GetType(), GetID(), GetNameWithTitle());
+        GetMap()->SendToSet(l_Packet.m_Packet, this);
+    }
+}
+
+void Player::RemoveActiveTitle()
+{
+    m_ActiveTitle = -1;
+
+    PacketUpdateName l_Packet;
+    l_Packet.BuildPacket(GetType(), GetID(), GetNameWithTitle());
+    GetMap()->SendToSet(l_Packet.m_Packet, this);
 }
 
 void Player::AddQuestionInProgress(uint16 p_ID, Unit* p_Unit, std::vector<uint16> p_ListAnswers)
@@ -736,4 +787,9 @@ void Player::UnitEnterInGroup(Unit* p_Unit, const std::string & p_GroupName)
         l_Packet.BuildPacket(p_Unit->GetType(), p_Unit->GetID(), true);
         GetSession()->SendPacket(l_Packet.m_Packet);
     }
+}
+
+std::map<uint16, Title*>* Player::GetTitles()
+{
+    return &m_Titles;
 }

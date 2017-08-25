@@ -321,7 +321,7 @@ void MapManager::AddPlayerToQueue(uint16 p_BGID, Player* p_Player)
     }
 
     PacketSrvPlayerMsg l_Packet;
-    std::string l_Msg = "Le joueur " + p_Player->GetName() + " à rejoin la file d'attente : " + std::to_string(m_BGListTemplate[p_BGID].second.size() + 1) + "/" + std::to_string(l_MinPlayer);
+    std::string l_Msg = "Le joueur " + p_Player->GetName() + " à rejoint la file d'attente : " + std::to_string(m_BGListTemplate[p_BGID].second.size() + 1) + "/" + std::to_string(l_MinPlayer);
     l_Packet.BuildPacket(l_Msg);
     for (uint8 i = 0; i < m_BGListTemplate[p_BGID].second.size(); i++)
     {

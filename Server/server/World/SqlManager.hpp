@@ -56,7 +56,6 @@ public:
     void SaveQuestForPlayer(Player const*, Quest const*);
 	void UpdatePointsSet(Player const*);
     void AddConnectionLogin(uint32);
-    std::vector<uint16> GetListTitle(Player const*);
     int32 GetDaysSinceLastQuestDone(Player const*,  uint16);
 
     bool InitializeSpells();
@@ -66,11 +65,13 @@ public:
     bool InitializeRequired(RequiredManager*);
     bool InitializeGossip(UnitManager*, RequiredManager*);
     bool InitializeSpellsForPlayer(Player*);
+    void InitializeListTitlesForPlayer(Player*);
     bool InitializeBattlegrounds();
     bool InitializeQuestsProgessForPlayer(Player*);
     bool InitializeKeyBindsForAccount(uint32, Player*);
     bool InitializeSpellsBinds(Player*);
     bool InitializeQuests();
+    bool InitializeTitles();
     bool InitializeMaps();
     bool InitializeZones();
     bool InitializeAreatrigger(DynamicObjectManager*, UnitManager*);

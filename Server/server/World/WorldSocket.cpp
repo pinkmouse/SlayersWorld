@@ -49,9 +49,8 @@ void WorldSocket::SendUnitCreate(Unit* p_Unit, bool p_IsInGroup)
         return;
 
     PacketUnitCreate l_Packet;
-
     if (p_Unit->GetType() < TypeUnit::AREATRIGGER)
-        l_Packet.BuildPacket(p_Unit->GetType(), p_Unit->GetID(), p_Unit->GetName() , p_Unit->GetLevel(), p_Unit->GetResourceNb(eResourceType::Health), p_Unit->GetResourceNb(eResourceType::Mana), p_Unit->GetResourceNb(eResourceType::Alignment), p_Unit->GetSkinID(),
+        l_Packet.BuildPacket(p_Unit->GetType(), p_Unit->GetID(), p_Unit->GetNameWithTitle() , p_Unit->GetLevel(), p_Unit->GetResourceNb(eResourceType::Health), p_Unit->GetResourceNb(eResourceType::Mana), p_Unit->GetResourceNb(eResourceType::Alignment), p_Unit->GetSkinID(),
             p_Unit->GetSizeX(), p_Unit->GetSizeY(), p_Unit->GetSpeedUint8(), p_Unit->GetMapID(), p_Unit->GetPosition(), p_Unit->GetOrientation(), p_Unit->IsInMovement(), p_Unit->GetMovementHandler()->IsInAttack(), p_IsInGroup);
     else
         l_Packet.BuildPacket(p_Unit->GetType(), p_Unit->GetID(), p_Unit->GetName(), p_Unit->GetSkinID(), p_Unit->GetSizeX(), p_Unit->GetSizeY(), p_Unit->GetSpeedUint8(), p_Unit->GetMapID(), p_Unit->GetPosition(), p_Unit->GetOrientation(), p_Unit->IsInMovement(), p_Unit->IsBlocking());
@@ -171,6 +170,24 @@ void WorldSocket::SendKeyBoardBind(eKeyBoardAction p_Type, uint8 p_Key)
     send(l_Packet.m_Packet);
 }
 
+void WorldSocket::SendTitles(std::map<uint16, Title*>* p_Titles)
+{
+    if (p_Titles == nullptr)
+        return;
+
+    for (std::map<uint16, Title*>::iterator l_It = p_Titles->begin(); l_It != p_Titles->end(); l_It++)
+    {
+        Title* l_Title = (*l_It).second;
+
+        if (l_Title == nullptr)
+            continue;
+
+        PacketPlayerTitle l_Packet;
+
+        l_Packet.BuildPacket(true, l_Title->m_ID, l_Title->m_Name);
+        SendPacket(l_Packet.m_Packet);
+    }
+}
 
 void WorldSocket::SendUpdateUnitResource(uint8 p_TypeID, uint16 p_ID, uint8 p_Resource, uint8 p_NewHealth)
 {

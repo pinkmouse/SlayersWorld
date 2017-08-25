@@ -44,6 +44,8 @@ public:
     void HandleMount(WorldPacket &);
     void HandleSrvPlayerQuestion(WorldPacket &);
     void HandleCastBar(WorldPacket &);
+    void HandlePlayerTitle(WorldPacket &);
+    void HanleUnitUpdateName(WorldPacket &);
 
 private:
 	MapManager* m_MapManager;

@@ -1,5 +1,6 @@
 #include "MenuManager.hpp"
 #include "MenuQuest.hpp"
+#include "MenuTitles.hpp"
 #include "MenuStats.hpp"
 #include "../../Global.hpp"
 
@@ -10,14 +11,17 @@ MenuManager::MenuManager() :
     m_Pos.y = 30;
     AddElement(0, 0, "Stats");
     GetElement(0, 0)->SetFunc(&Menu::GenericAction, 0);
-    AddElement(0, 1, "Save");
+    AddElement(0, 1, "Title");
     GetElement(0, 1)->SetFunc(&Menu::GenericAction, 1);
+    AddElement(0, 2, "Save");
+    GetElement(0, 2)->SetFunc(&Menu::GenericAction, 2);
     AddElement(0, 5, "Escape");
     GetElement(0, 5)->SetFunc(&Menu::GenericAction, 5);
     SetSelectedElement(0, 0);
 
     m_ListMenu[eMenuType::QuestMenu] = new MenuQuest();
     m_ListMenu[eMenuType::StatsMenu] = new MenuStats();
+    m_ListMenu[eMenuType::TitlesMenu] = new MenuTitles();
 }
 
 MenuManager::~MenuManager()
@@ -32,6 +36,9 @@ void MenuManager::GenericAction(const uint16 & p_MenuID)
             m_ListMenu[eMenuType::StatsMenu]->Open();
             break;
         case 1:
+            m_ListMenu[eMenuType::TitlesMenu]->Open();
+            break;
+        case 2:
             g_Socket->SendSave();
             Close();
             break;
@@ -105,3 +112,10 @@ void MenuManager::AddElementToMenu(eMenuType p_MenuType, const uint8 & p_Col, co
     m_ListMenu[p_MenuType]->AddElement(p_Col, p_Row, p_Label);
 }
 
+Menu* MenuManager::GetMenu(eMenuType p_MenuType)
+{
+    if (m_ListMenu.find(p_MenuType) == m_ListMenu.end())
+        return nullptr;
+
+    return m_ListMenu[p_MenuType];
+}

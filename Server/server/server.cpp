@@ -13,13 +13,14 @@
 #include <SFML/Network.hpp>
 #include <SFML/Graphics.hpp>
 
-ConfigHandler* g_Config;
-SqlManager* g_SqlManager;
-LevelManager* g_LevelManager;
-MapManager* g_MapManager;
-SpellManager* g_SpellManager;
-QuestManager* g_QuestManager;
-GroupManager* g_GroupManager;
+Titles           g_Titles;
+ConfigHandler    *g_Config;
+SqlManager       *g_SqlManager;
+LevelManager     *g_LevelManager;
+MapManager       *g_MapManager;
+SpellManager     *g_SpellManager;
+QuestManager     *g_QuestManager;
+GroupManager     *g_GroupManager;
 
 void handler_segfault(int sig) {
 

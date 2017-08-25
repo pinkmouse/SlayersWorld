@@ -40,7 +40,7 @@ AnimationUnit::~AnimationUnit()
 void AnimationUnit::LaunchAnim()
 {
     PacketStartAttack l_Packet;
-    l_Packet.BuildPacket(GetType(), GetID(),GetPosition(), GetOrientation());
+    l_Packet.BuildPacket(GetType(), GetID());
     m_Map->SendToSet(l_Packet.m_Packet, this);
     m_MovementHandler->SetOrientation(Orientation::Down);
 }

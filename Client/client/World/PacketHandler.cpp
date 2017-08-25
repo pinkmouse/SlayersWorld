@@ -3,6 +3,8 @@
 #include "../Entities/Creature.hpp"
 #include "../Entities/AnimationUnit.hpp"
 #include "../Entities/DynamicObject.hpp"
+#include "../Graphics/Interface/MenuTitles.hpp"
+
 #include "../Global.hpp"
 #include "PacketDefine.hpp"
 
@@ -49,8 +51,8 @@ void PacketHandler::LoadPacketHandlerMap()
     m_PacketHandleMap[SMSG::S_ExtraInterfaceData] = &PacketHandler::HandleExtraUIData;
     m_PacketHandleMap[SMSG::S_UnitPlayAuraVisual] = &PacketHandler::HandleUnitPlayVisualAura;
     m_PacketHandleMap[SMSG::S_UnitMount] = &PacketHandler::HandleMount;
-
-
+    m_PacketHandleMap[SMSG::S_PlayerTitle] = &PacketHandler::HandlePlayerTitle;
+    m_PacketHandleMap[SMSG::S_UnitUpdateName] = &PacketHandler::HanleUnitUpdateName;
 }
 
 void PacketHandler::HandleExtraUI(WorldPacket &p_Packet)
@@ -756,16 +758,18 @@ void PacketHandler::HandleUpdateStat(WorldPacket &p_Packet)
             float l_SpeedFloat = (float)l_StatNb / 10.0f;
             l_Unit->SetSpeed(l_SpeedFloat);
         }
-
-        MenuManager* l_MenuManager = m_InterfaceManager->GetMenuManager();
-        if (l_MenuManager == nullptr)
-            return;
-        if (l_TypeStat == eStats::Level)
+        else
         {
-            l_MenuManager->AddElementToMenu(eMenuType::StatsMenu, 1, 1, std::to_string(l_StatNb));
-            return;
+            MenuManager* l_MenuManager = m_InterfaceManager->GetMenuManager();
+            if (l_MenuManager == nullptr)
+                return;
+            if (l_TypeStat == eStats::Level)
+            {
+                l_MenuManager->AddElementToMenu(eMenuType::StatsMenu, 1, 1, std::to_string(l_StatNb));
+                return;
+            }
+            l_MenuManager->AddElementToMenu(eMenuType::StatsMenu, 1, l_TypeStat + 2, std::to_string(l_StatNb));
         }
-        l_MenuManager->AddElementToMenu(eMenuType::StatsMenu, 1, l_TypeStat + 2, std::to_string(l_StatNb));
     }
 }
 
@@ -834,6 +838,47 @@ void PacketHandler::HandleCastBar(WorldPacket &p_Packet)
             return;
         }
         l_Unit->LaunchCastBar((uint16)l_Time * 100);
+    }
+}
+
+void PacketHandler::HandlePlayerTitle(WorldPacket &p_Packet)
+{
+    bool l_Apply;
+    uint16 l_ID;
+    std::string l_Name;
+
+    p_Packet >> l_Apply;
+    p_Packet >> l_ID;
+    p_Packet >> l_Name;
+
+    MenuManager* l_MenuManager = m_InterfaceManager->GetMenuManager();
+    MenuTitles* l_MenuTitles = reinterpret_cast<MenuTitles*>(l_MenuManager->GetMenu(eMenuType::TitlesMenu));
+    if (l_MenuTitles == nullptr)
+        return;
+
+    l_MenuTitles->AddTitle(l_ID, l_Name);
+}
+
+void PacketHandler::HanleUnitUpdateName(WorldPacket &p_Packet)
+{
+    uint8 l_TypeID;
+    uint16 l_ID;
+    std::string l_Name;
+
+    p_Packet >> l_TypeID;
+    p_Packet >> l_ID;
+    p_Packet >> l_Name;
+
+    if (Map* l_Map = m_MapManager->GetActualMap())
+    {
+        Unit* l_Unit = l_Map->GetUnit((TypeUnit)l_TypeID, l_ID);
+
+        if (l_Unit == nullptr)
+        {
+            g_Socket->SendUnitUnknow(l_TypeID, l_ID); ///< Ask for unknow unit to server
+            return;
+        }
+        l_Unit->SetName(l_Name);
     }
 }
 

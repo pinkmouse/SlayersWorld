@@ -14,7 +14,8 @@ enum CMSG : uint8
     C_UnitStartAttack = 24,
     C_UnitStopAttack = 25,
     C_UnitEventAction = 26,
-    C_UnitAnswerQuestion = 27
+    C_UnitAnswerQuestion = 27,
+    C_UpdateTitle = 28
 };
 
 enum SMSG : uint8
@@ -48,6 +49,8 @@ enum SMSG : uint8
     S_SrvPlayerQuestion = 35,
     S_ExtraInterfaceData = 36,
     S_UnitPlayAuraVisual = 37,
+    S_PlayerTitle = 38,
+    S_UnitUpdateName = 39,
     S_BlockBind = 40
 };
 
@@ -72,6 +75,46 @@ struct PacketGoDirection
         m_Oriection = p_Orientation;
     }
 };
+
+struct PacketPlayerTitle
+{
+    WorldPacket m_Packet;
+    uint8 m_PacketID;
+    uint16 m_TitleID;
+    std::string m_Name;
+    bool m_Apply;
+
+    PacketPlayerTitle() :
+        m_PacketID(SMSG::S_PlayerTitle) {}
+
+    void BuildPacket(bool p_Apply, const uint16 & p_TitleID, const std::string & p_Name)
+    {
+        m_Packet << m_PacketID << p_Apply << p_TitleID << p_Name;
+        m_Apply = p_Apply;
+        m_PacketID = p_TitleID;
+        m_TitleID = p_TitleID;
+        m_Name = p_Name;
+    }
+};
+
+struct PacketUpdateName
+{
+    WorldPacket m_Packet;
+    uint8 m_PacketID;
+    uint8 m_TypeID;
+    uint16 m_ID;
+
+    PacketUpdateName() :
+        m_PacketID(SMSG::S_UnitUpdateName) {}
+
+    void BuildPacket(uint8 p_TypeID, uint16 p_ID, const std::string & p_Name)
+    {
+        m_Packet << m_PacketID << p_TypeID << p_ID << p_Name;
+        m_TypeID = p_TypeID;
+        m_ID = p_ID;
+    }
+};
+
 
 struct PacketStopMovement
 {
@@ -107,13 +150,11 @@ struct PacketStartAttack
     PacketStartAttack() :
         m_PacketID(SMSG::S_UnitStartAttack) {}
 
-    void BuildPacket(uint8 p_TypeID, uint16 p_ID, Position p_Pos, uint8 p_Orientation)
+    void BuildPacket(uint8 p_TypeID, uint16 p_ID)
     {
         m_Packet << m_PacketID << p_TypeID << p_ID;
         m_TypeID = p_TypeID;
         m_ID = p_ID;
-        m_Pos = p_Pos;
-        m_Oriection = p_Orientation;
     }
 };
 
@@ -203,6 +244,7 @@ struct PacketUnitCreate
         m_StructData.charOn41111.fourth = p_IsInGroup ? 1 : 0;
         m_StructData.charOn41111.fifth = 0;
 
+        printf("---------> [%s]\n", p_Name.c_str());
         m_Packet << m_PacketID << p_TypeID << p_ID << p_Name << p_Level << p_Health << p_Mana << p_Alignment << p_SkinID << p_SizeX << p_SizeY << p_Speed << p_MapID << (uint16)p_Pos.m_X << (uint16)p_Pos.m_Y << m_StructData.m_Byte_value;
         m_TypeID = p_TypeID;
         m_ID = p_ID;

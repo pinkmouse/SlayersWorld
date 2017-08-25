@@ -48,8 +48,10 @@ public:
     virtual void Open();
     void Close();
     std::string GetTitle() const;
+    uint16 GetElementRowSize() const;
 
     virtual void GenericAction(const uint16 &);
+    virtual void GenericAction2(const uint16 &);
 
 protected:
     Position m_Pos;

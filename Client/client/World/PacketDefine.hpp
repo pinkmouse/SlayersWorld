@@ -13,7 +13,8 @@ enum CMSG : uint8
     C_UnitStartAttack = 24,
     C_UnitStopAttack = 25,
     C_UnitEventAction = 26,
-    C_UnitAnswerQuestion = 27
+    C_UnitAnswerQuestion = 27,
+    C_UpdateTitle = 28
 };
 
 enum SMSG : uint8
@@ -47,5 +48,7 @@ enum SMSG : uint8
     S_SrvPlayerQuestion = 35,
     S_ExtraInterfaceData = 36,
     S_UnitPlayAuraVisual = 37,
+    S_PlayerTitle = 38,
+    S_UnitUpdateName = 39,
     S_BlockBind = 40
 };

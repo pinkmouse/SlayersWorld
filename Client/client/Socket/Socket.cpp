@@ -169,3 +169,15 @@ void Socket::SendAnswerQuestion(const uint16 & p_QuestionID, const uint8 & p_Res
 
     send(packet);
 }
+
+void Socket::SendUpdateTitle(bool p_Apply, const uint16 & p_TitleID)
+{
+    WorldPacket packet;
+    uint8 l_ID = CMSG::C_UpdateTitle;
+
+    packet << l_ID;
+    packet << p_Apply;
+    packet << p_TitleID;
+
+    send(packet);
+}

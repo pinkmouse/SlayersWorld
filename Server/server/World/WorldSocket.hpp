@@ -29,6 +29,7 @@ public:
     void SendKeyBoardBind(eKeyBoardAction, uint8);
     void SendUnitIsInGroup(uint8, uint32, bool);
     void SendUnitMount(const uint8 &, const uint32 &, const int16 &);
+    void SendTitles(std::map<uint16, Title*>*);
 
     Player* GetPlayer();
     void SetPlayer(Player*);

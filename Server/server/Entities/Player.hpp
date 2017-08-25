@@ -38,6 +38,14 @@ public:
     std::pair<Unit*, uint16> GetGossipForQuestion(const uint16 &, const uint8 &);
     ePlayerMod GetPlayerMod() const;
 
+    /* TITLES */
+    void AddTitle(const uint16 &, Title*);
+    std::map < uint16, Title*>* GetTitles();
+    void ChangeActiveTitle(const uint16 &, bool p_Send = true);
+    void RemoveActiveTitle();
+    std::string GetNameWithTitle();
+    int32 GetActiveTitleID() const;
+
     /* RESOURCES */
     uint32 GetXp() const;
     void SetXp(uint32);
@@ -135,11 +143,13 @@ private:
     eAccessType m_AccessType;
     eClass m_Class;
     std::map< uint16, Quest* > m_Quests;
+    int32 m_ActiveTitle;
 
     std::map < uint16, std::pair<Unit*, std::vector<uint16> > > m_QuestionInProgress;
     typedef bool(Player::*m_Func)(std::vector<std::string>);
     std::map < std::string, std::pair < eAccessType,  m_Func > > m_CmdHandleMap;
     std::map < eKeyBoardAction, uint8 > m_KeyBoardBinds;
     std::map < uint16, uint8 > m_SpellsBindToKey;
+    std::map < uint16, Title*> m_Titles;
 };
 

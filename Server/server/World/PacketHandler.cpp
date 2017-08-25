@@ -24,6 +24,7 @@ void PacketHandler::LoadPacketHandlerMap()
     m_PacketHandleMap[CMSG::C_UnitStopAttack] = &PacketHandler::HandleStopAttack;
     m_PacketHandleMap[CMSG::C_LoadingPong] = &PacketHandler::HandleLoadingPong;
     m_PacketHandleMap[CMSG::C_UnitAnswerQuestion] = &PacketHandler::HandleAnswerQuestion;
+    m_PacketHandleMap[CMSG::C_UpdateTitle] = &PacketHandler::HandleUpdateTitle;
 }
 
 void PacketHandler::HandleUnitUnknow(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
@@ -190,6 +191,24 @@ void PacketHandler::HandleEventAction(WorldPacket &p_Packet, WorldSocket* p_Worl
     l_Player->EventAction((eKeyBoardAction)l_ActionID);
 }
 
+void PacketHandler::HandleUpdateTitle(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
+{
+    Player* l_Player = p_WorldSocket->GetPlayer();
+    bool l_Apply;
+    uint16 l_TitleID;
+
+    p_Packet >> l_Apply;
+    p_Packet >> l_TitleID;
+
+    if (l_Player == nullptr)
+        return;
+
+    if (!l_Apply)
+        l_Player->ChangeActiveTitle(-1);
+    else
+        l_Player->ChangeActiveTitle(l_TitleID);
+}
+
 void PacketHandler::HandleStatAction(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
 {
     Player* l_Player = p_WorldSocket->GetPlayer();
@@ -301,8 +320,9 @@ void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldS
     printf("Load Player success\n");
 
     /// Send to Player
-    p_WorldSocket->SendPlayerCreate(l_Player->GetID(), l_Player->GetName(), l_Player->GetLevel(), l_Player->GetResourceNb(eResourceType::Health), l_Player->GetResourceNb(eResourceType::Mana), l_Player->GetResourceNb(eResourceType::Alignment), l_Player->GetSkinID(), l_Player->GetMapID(), g_MapManager->GetMapTemplate(l_Player->GetMapID())->GetFileName(), g_MapManager->GetMapTemplate(l_Player->GetMapID())->GetFileChipset(), g_MapManager->GetMapTemplate(l_Player->GetMapID())->GetName(), l_Player->GetPosX(), l_Player->GetPosY(), l_Player->GetOrientation());
+    p_WorldSocket->SendPlayerCreate(l_Player->GetID(), l_Player->GetNameWithTitle(), l_Player->GetLevel(), l_Player->GetResourceNb(eResourceType::Health), l_Player->GetResourceNb(eResourceType::Mana), l_Player->GetResourceNb(eResourceType::Alignment), l_Player->GetSkinID(), l_Player->GetMapID(), g_MapManager->GetMapTemplate(l_Player->GetMapID())->GetFileName(), g_MapManager->GetMapTemplate(l_Player->GetMapID())->GetFileChipset(), g_MapManager->GetMapTemplate(l_Player->GetMapID())->GetName(), l_Player->GetPosX(), l_Player->GetPosY(), l_Player->GetOrientation());
     p_WorldSocket->SendUpdateXpPct(g_LevelManager->XpPct(l_Player->GetLevel(), l_Player->GetXp()));
+    p_WorldSocket->SendTitles(l_Player->GetTitles());
 
     /// Trick to send stats to player
     l_Player->SetPointsSet(g_SqlManager->GetPointsSetForPlayer(l_Player->GetID()));

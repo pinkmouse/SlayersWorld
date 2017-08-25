@@ -65,6 +65,8 @@ public:
     Orientation OrientationToBeCenteredInCase(const Position &);
     Position GetPositionCentered();
     void Kill();
+    virtual std::string GetNameWithTitle();
+
 
     /* RESOURCE */
     Resource* GetResource(eResourceType);

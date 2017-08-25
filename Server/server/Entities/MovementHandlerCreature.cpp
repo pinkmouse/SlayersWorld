@@ -32,7 +32,7 @@ void MovementHandlerCreature::StartAttack()
 {
     MovementHandler::StartAttack();
     PacketStartAttack l_Packet;
-    l_Packet.BuildPacket(m_Owner->GetType(), m_Owner->GetID(), m_Owner->GetPosition(), m_Owner->GetOrientation());
+    l_Packet.BuildPacket(m_Owner->GetType(), m_Owner->GetID());
     m_Map->SendToSet(l_Packet.m_Packet, m_Owner);
 }
 

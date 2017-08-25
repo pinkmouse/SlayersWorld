@@ -1700,3 +1700,8 @@ Orientation Unit::OrientationToBeCenteredInCase(const Position & p_Position)
     //if (GetPositionCentered().m_X + (l_SizeXWithOffset / 2) > p_Position.m_X)
         return Orientation::Left;
 }
+
+std::string Unit::GetNameWithTitle()
+{
+    return GetName();
+}

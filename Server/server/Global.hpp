@@ -8,6 +8,7 @@
 #include "System/Spell/SpellManager.hpp"
 #include "System/Quest/QuestManager.hpp"
 
+extern Titles           g_Titles;
 extern ConfigHandler    *g_Config;
 extern SqlManager       *g_SqlManager;
 extern LevelManager     *g_LevelManager;

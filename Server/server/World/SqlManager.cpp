@@ -139,7 +139,7 @@ void SqlManager::ReplaceKeyBindsForAccount(uint32 p_AccountID, eKeyBoardAction p
 
 Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
 {
-    std::string l_Query = "SELECT characterID, name, level, class, health, mana, alignment, skinID, mapID, posX, posY, orientation, xp FROM characters WHERE accountID = '" + std::to_string(p_AccountID) + "'";
+    std::string l_Query = "SELECT characterID, name, level, class, health, mana, alignment, activeTitleID, skinID, mapID, posX, posY, orientation, xp FROM characters WHERE accountID = '" + std::to_string(p_AccountID) + "'";
     mysql_query(&m_MysqlCharacters, l_Query.c_str());
 
     uint32 l_ID = 0;
@@ -149,6 +149,7 @@ Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
     uint8 l_Health = 0;
     uint8 l_Mana = 0;
     uint8 l_Alignment = 0;
+    int32 l_ActiveTitleID = -1;
     int16 l_SkinID = 0;
     uint16 l_MapID = 0;
     uint32 l_PosX = 0;
@@ -172,12 +173,13 @@ Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
         l_Health = atoi(l_Row[4]);
         l_Mana = atoi(l_Row[5]);
         l_Alignment = atoi(l_Row[6]);
-        l_SkinID = atoi(l_Row[7]);
-        l_MapID = atoi(l_Row[8]);
-        l_PosX = atoi(l_Row[9]);
-        l_PosY = atoi(l_Row[10]);
-        l_Orientation = atoi(l_Row[11]);
-        l_Xp = atoi(l_Row[12]);
+        l_ActiveTitleID = atoi(l_Row[7]);
+        l_SkinID = atoi(l_Row[8]);
+        l_MapID = atoi(l_Row[9]);
+        l_PosX = atoi(l_Row[10]);
+        l_PosY = atoi(l_Row[11]);
+        l_Orientation = atoi(l_Row[12]);
+        l_Xp = atoi(l_Row[13]);
     }
     mysql_free_result(l_Result);
 
@@ -207,6 +209,8 @@ Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
     InitializeKeyBindsForAccount(p_AccountID, l_Player);
     InitializeSpellsBinds(l_Player);
     InitializeQuestsProgessForPlayer(l_Player);
+    InitializeListTitlesForPlayer(l_Player);
+    l_Player->ChangeActiveTitle(l_ActiveTitleID, false);
 
     return l_Player;
 }
@@ -324,7 +328,14 @@ void SqlManager::SavePlayer(Player* p_Player)
         }
     }
 
-	std::string l_Query = "UPDATE characters SET `posX` = '" + std::to_string(p_Player->GetPosX()) + "', `posY` = '" + std::to_string(p_Player->GetPosY()) + "', `mapID` = '" + std::to_string(p_Player->GetMapID()) + "', `class` = '" + std::to_string(p_Player->GetClass()) + "', `orientation` = '" + std::to_string(p_Player->GetOrientation()) + "', `health` = '" + std::to_string(p_Player->GetResourceNb(eResourceType::Health)) + "', `mana` = '" + std::to_string(p_Player->GetResourceNb(eResourceType::Mana)) + "', `alignment` = '" + std::to_string(p_Player->GetResourceNb(eResourceType::Alignment)) + "', `xp` = '" + std::to_string(p_Player->GetXp()) + "', `level` = '" + std::to_string(p_Player->GetLevel()) + "', skinID = '" + std::to_string(p_Player->GetSkinID()) + "' WHERE characterID = '" + std::to_string(p_Player->GetID()) + "';";
+	std::string l_Query = "UPDATE characters SET `posX` = '" + std::to_string(p_Player->GetPosX()) + "', `posY` = '" + std::to_string(p_Player->GetPosY()) + "', `mapID` = '" + std::to_string(p_Player->GetMapID()) + 
+        "', `class` = '" + std::to_string(p_Player->GetClass()) + "', `orientation` = '" + std::to_string(p_Player->GetOrientation()) + "', `health` = '" + std::to_string(p_Player->GetResourceNb(eResourceType::Health)) +
+        "', `mana` = '" + std::to_string(p_Player->GetResourceNb(eResourceType::Mana)) + "', `alignment` = '" + std::to_string(p_Player->GetResourceNb(eResourceType::Alignment)) +
+        "', `xp` = '" + std::to_string(p_Player->GetXp()) + "', `level` = '" + std::to_string(p_Player->GetLevel()) +
+        "', skinID = '" + std::to_string(p_Player->GetSkinID()) +
+        "', activeTitleID = '" + std::to_string(p_Player->GetActiveTitleID()) +
+        "' WHERE characterID = '" + std::to_string(p_Player->GetID()) + "';";
+
     mysql_query(&m_MysqlCharacters, l_Query.c_str());
 	UpdatePointsSet(p_Player);
 }
@@ -363,12 +374,10 @@ int32 SqlManager::GetDaysSinceLastQuestDone(Player const* p_Player, uint16 p_Que
     return l_Days;
 }
 
-std::vector<uint16> SqlManager::GetListTitle(Player const* p_Player)
+void SqlManager::InitializeListTitlesForPlayer(Player * p_Player)
 {
     std::string l_Query = "SELECT titleID FROM characters_titles WHERE characterID = '" + std::to_string(p_Player->GetID()) + "'";
     mysql_query(&m_MysqlCharacters, l_Query.c_str());
-
-    std::vector<uint16> l_ListTitle;
 
     MYSQL_RES *l_Result = NULL;
     MYSQL_ROW l_Row;
@@ -378,11 +387,13 @@ std::vector<uint16> SqlManager::GetListTitle(Player const* p_Player)
         if (l_Row == NULL)
             break;
         if (l_Row[0])
-            l_ListTitle.push_back((uint16)atoi(l_Row[0]));
+        {
+            uint16 l_ID = atoi(l_Row[0]);
+            if (g_Titles.find(l_ID) != g_Titles.end())
+                p_Player->AddTitle(l_ID, &g_Titles[l_ID]);
+        }
     }
     mysql_free_result(l_Result);
-
-    return l_ListTitle;
 }
 
 void SqlManager::UpdatePointsSet(Player const* p_Player)
@@ -1004,6 +1015,30 @@ bool  SqlManager::InitializeQuests()
     }
     mysql_free_result(l_Result);
 
+    return true;
+}
+
+bool SqlManager::InitializeTitles()
+{
+    std::string l_Query = "SELECT `id`, `type`, `name` FROM title";
+    mysql_query(&m_MysqlWorld, l_Query.c_str());
+
+    uint16 l_Id = 0;
+    uint8 l_RepetitionType = 0;
+    std::string l_Name = "";
+    uint8 l_Type = 0;
+
+    MYSQL_RES *l_Result = NULL;
+    MYSQL_ROW l_Row;
+    l_Result = mysql_use_result(&m_MysqlWorld);
+    while ((l_Row = mysql_fetch_row(l_Result)))
+    {
+        l_Id = atoi(l_Row[0]);
+        l_Type = std::atoi(l_Row[1]);
+        l_Name = std::string(l_Row[2]);
+        g_Titles[l_Id] = Title(l_Id, l_Name, (eTypeTitle)l_Type);
+    }
+    mysql_free_result(l_Result);
     return true;
 }
 

@@ -214,7 +214,8 @@ enum eMenuType
 {
     MainMenu = 0,
     QuestMenu,
-    StatsMenu
+    StatsMenu,
+    TitlesMenu
 };
 
 enum eKeyBoardAction
