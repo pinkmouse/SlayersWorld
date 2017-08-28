@@ -17,6 +17,7 @@ public:
     std::string GetLabel() const;
     void SetFunc(m_Func, const uint16 &);
     void LaunchFunc(const uint16 &, Menu *);
+    bool HasFunc() const;
     uint16 GetIDLabel() const;
 
 private:
@@ -48,7 +49,7 @@ public:
     virtual void Open();
     void Close();
     std::string GetTitle() const;
-    uint16 GetElementRowSize() const;
+    uint8 GetElementRowSizeAtColumn(const uint8 &);
 
     virtual void GenericAction(const uint16 &);
     virtual void GenericAction2(const uint16 &);

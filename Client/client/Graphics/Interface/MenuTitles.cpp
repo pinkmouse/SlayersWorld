@@ -6,19 +6,23 @@ MenuTitles::MenuTitles() :
 {
     m_Pos.x = 120;
     m_Pos.y = 30;
-
-    SetSelectedElement(2, 3);
 }
 
 MenuTitles::~MenuTitles()
 {
 }
 
+void MenuTitles::Open()
+{
+    Menu::Open();
+    SetSelectedElement(1, 0);
+}
+
 void MenuTitles::AddTitle(const uint16 & p_ID, const std::string & p_Name)
 {
     m_Titles[p_ID] = p_Name;
 
-    uint16 l_Row = GetElementRowSize();
+    uint16 l_Row = GetElementRowSizeAtColumn(0);
     AddElement(0, l_Row, p_Name);
     AddElement(1, l_Row, "Appliquer");
     GetElement(1, l_Row)->SetFunc(&Menu::GenericAction, p_ID);

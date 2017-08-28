@@ -37,6 +37,12 @@ MenuStats::~MenuStats()
 {
 }
 
+void MenuStats::Open()
+{
+    Menu::Open();
+    SetSelectedElement(2, 3);
+}
+
 void MenuStats::GenericAction(const uint16 & p_MenuID)
 {
     switch (p_MenuID)

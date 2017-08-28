@@ -38,6 +38,13 @@ void MenuElement::LaunchFunc(const uint16 & p_Id, Menu * p_Menu)
         (p_Menu->*(m_Function))(p_Id);
 }
 
+bool MenuElement::HasFunc() const
+{
+    if (m_Function != nullptr)
+        return true;
+    return false;
+}
+
 Menu::Menu() :
     Menu(1, 1)
 {
@@ -173,12 +180,19 @@ void Menu::SelectNextElementOn(Orientation p_Orientation)
             std::map<uint8, MenuElement>::iterator l_It = m_Elements[m_SelectedElement.first].find(m_SelectedElement.second);
             if (l_It == m_Elements[m_SelectedElement.first].end())
                 break;
-            l_It--;
-            if (l_It == m_Elements[m_SelectedElement.first].end())
+
+            bool l_HasPass = false;
+            while (!(*l_It).second.HasFunc() ||!l_HasPass)
             {
-                l_It = m_Elements[m_SelectedElement.first].end();
                 l_It--;
+                l_HasPass = true;
+                if (l_It == m_Elements[m_SelectedElement.first].end())
+                {
+                    l_It = m_Elements[m_SelectedElement.first].end();
+                    l_It--;
+                }
             }
+
             m_SelectedElement.second = (*l_It).first;
             break;
         }
@@ -189,9 +203,14 @@ void Menu::SelectNextElementOn(Orientation p_Orientation)
             std::map<uint8, MenuElement>::iterator l_It = m_Elements[m_SelectedElement.first].find(m_SelectedElement.second);
             if (l_It == m_Elements[m_SelectedElement.first].end())
                 break;
-            ++l_It;
-            if (l_It == m_Elements[m_SelectedElement.first].end())
-                l_It = m_Elements[m_SelectedElement.first].begin();
+            bool l_HasPass = false;
+            while (!(*l_It).second.HasFunc() || !l_HasPass)
+            {
+                l_HasPass = true;
+                ++l_It;
+                if (l_It == m_Elements[m_SelectedElement.first].end())
+                    l_It = m_Elements[m_SelectedElement.first].begin();
+            }
             m_SelectedElement.second = (*l_It).first;
             break;
         }
@@ -203,20 +222,25 @@ void Menu::SelectNextElementOn(Orientation p_Orientation)
             std::map<uint8, MenuElement>::iterator l_Itr = m_Elements[m_SelectedElement.first].find(m_SelectedElement.second);
             if (l_Itr == m_Elements[m_SelectedElement.first].end())
                 break;
-            ++l_It;
-            if (l_It == m_Elements.end())
-                l_It = m_Elements.begin();
-
-            l_Itr = m_Elements[(*l_It).first].find(m_SelectedElement.second);
-            while (l_Itr == m_Elements[(*l_It).first].end())
+            bool l_HasPass = false;
+            while (!(*l_Itr).second.HasFunc() || !l_HasPass)
             {
-                ++l_It;
+                l_HasPass = true;
 
+                ++l_It;
                 if (l_It == m_Elements.end())
                     l_It = m_Elements.begin();
-                l_Itr = m_Elements[(*l_It).first].find(m_SelectedElement.second);
-            }
 
+                l_Itr = m_Elements[(*l_It).first].find(m_SelectedElement.second);
+                while (l_Itr == m_Elements[(*l_It).first].end())
+                {
+                    ++l_It;
+
+                    if (l_It == m_Elements.end())
+                        l_It = m_Elements.begin();
+                    l_Itr = m_Elements[(*l_It).first].find(m_SelectedElement.second);
+                }
+            }
             m_SelectedElement.first = (*l_It).first;
             break;
         }
@@ -228,23 +252,30 @@ void Menu::SelectNextElementOn(Orientation p_Orientation)
             std::map<uint8, MenuElement>::iterator l_Itr = m_Elements[m_SelectedElement.first].find(m_SelectedElement.second);
             if (l_Itr == m_Elements[m_SelectedElement.first].end())
                 break;
-            --l_It;
-            if (l_It == m_Elements.end())
+            bool l_HasPass = false;
+            while (!(*l_Itr).second.HasFunc() || !l_HasPass)
             {
-                l_It = m_Elements.end();
-                l_It--;
-            }
-            l_Itr = m_Elements[(*l_It).first].find(m_SelectedElement.second);
-            while (l_Itr == m_Elements[(*l_It).first].end())
-            {
-                --l_It;
+                l_HasPass = true;
 
+                --l_It;
                 if (l_It == m_Elements.end())
                 {
                     l_It = m_Elements.end();
                     l_It--;
                 }
                 l_Itr = m_Elements[(*l_It).first].find(m_SelectedElement.second);
+
+                while (l_Itr == m_Elements[(*l_It).first].end())
+                {
+                    --l_It;
+
+                    if (l_It == m_Elements.end())
+                    {
+                        l_It = m_Elements.end();
+                        l_It--;
+                    }
+                    l_Itr = m_Elements[(*l_It).first].find(m_SelectedElement.second);
+                }
             }
 
             m_SelectedElement.first = (*l_It).first;
@@ -253,7 +284,10 @@ void Menu::SelectNextElementOn(Orientation p_Orientation)
     }
 }
 
-uint16 Menu::GetElementRowSize() const
+uint8 Menu::GetElementRowSizeAtColumn(const uint8 & p_Col)
 {
-    return m_Elements.size();
+    if (m_Elements.find(p_Col) == m_Elements.end())
+        return 0;
+
+    return m_Elements[p_Col].size();
 }

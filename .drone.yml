@@ -5,6 +5,14 @@ pipeline:
     webhook_token: FPaCwc48piQUuIQp90AwbdnD9drNC8SXAbOtQ5rDW_i9TFwncC0d0SiwnpPz89IbH_87
     message: "Début de la création du serveur..."
 
+  discordMsg:
+    image: appleboy/drone-discord
+    webhook_id: 347774727512915969
+    webhook_token: FPaCwc48piQUuIQp90AwbdnD9drNC8SXAbOtQ5rDW_i9TFwncC0d0SiwnpPz89IbH_87
+    message: "Erreur au build"
+    when:
+      status: [ success, failure ]
+
   build:
     image: plugins/docker
 
@@ -13,6 +21,14 @@ pipeline:
     webhook_id: 347774727512915969
     webhook_token: FPaCwc48piQUuIQp90AwbdnD9drNC8SXAbOtQ5rDW_i9TFwncC0d0SiwnpPz89IbH_87
     message: "Déploiement du serveur..."
+
+  discordMsg:
+    image: appleboy/drone-discord
+    webhook_id: 347774727512915969
+    webhook_token: FPaCwc48piQUuIQp90AwbdnD9drNC8SXAbOtQ5rDW_i9TFwncC0d0SiwnpPz89IbH_87
+    message: "Erreur au déploiement"
+    when:
+      status: [ success, failure ]
 
   publish:
     image: plugins/docker

@@ -9,6 +9,7 @@ public:
     ~MenuStats();
     void KeyPress(const sf::Keyboard::Key &);
     void GenericAction(const uint16 &);
+    void Open();
 
 private:
 

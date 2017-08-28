@@ -8,7 +8,7 @@
 TileSet::TileSet(const std::string & p_FileName)
 {
     m_FileName = p_FileName;
-	if (!m_Texture.loadFromFile(TILE_FOLDER + p_FileName, sf::IntRect(0, 0, 1536, 2048)))
+	if (!m_Texture.loadFromFile(TILE_FOLDER + p_FileName, sf::IntRect(0, 0, 1536, 5048)))
 		printf("Load TileSet Failed\n");
 	else
 	{

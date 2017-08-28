@@ -90,6 +90,8 @@ bool Case::IsInZoneType(eTypeZone p_Type)
 
 bool Case::HasZone(uint16 p_ZoneId)
 {
+    if (m_ZoneList.empty())
+        return false;
     for (uint8 i = 0; i < m_ZoneList.size(); ++i)
     {
         if (m_ZoneList[i]->m_ID == p_ZoneId)
@@ -101,6 +103,8 @@ bool Case::HasZone(uint16 p_ZoneId)
 std::vector<Zone*> Case::CompareZones(Case* p_Case)
 {
     std::vector<Zone*> l_ZoneList;
+    if (m_ZoneList.empty())
+        return l_ZoneList;
     for (uint8 i = 0; i < m_ZoneList.size(); ++i)
     {
         if (p_Case == nullptr || !p_Case->HasZone(m_ZoneList[i]->m_ID))

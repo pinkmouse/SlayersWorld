@@ -7,6 +7,7 @@ class MenuTitles : public Menu
 public:
     MenuTitles();
     ~MenuTitles();
+    void Open();
     void KeyPress(const sf::Keyboard::Key &);
     void GenericAction(const uint16 &);
     void GenericAction2(const uint16 &);

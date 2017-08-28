@@ -41,7 +41,6 @@ Map* MapManager::LaunchMap(uint16 p_MapID)
 {
     if (m_MapListTemplate[p_MapID] == nullptr)
         return nullptr;
-
     Map* l_Map = new Map(0, m_MapListTemplate[p_MapID]);
     l_Map->Initialize();
     return l_Map;
