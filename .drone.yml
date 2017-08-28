@@ -11,7 +11,7 @@ pipeline:
     webhook_token: FPaCwc48piQUuIQp90AwbdnD9drNC8SXAbOtQ5rDW_i9TFwncC0d0SiwnpPz89IbH_87
     message: "Erreur au build"
     when:
-      status: [ success, failure ]
+      status: [ failure ]
 
   build:
     image: plugins/docker
@@ -28,7 +28,7 @@ pipeline:
     webhook_token: FPaCwc48piQUuIQp90AwbdnD9drNC8SXAbOtQ5rDW_i9TFwncC0d0SiwnpPz89IbH_87
     message: "Erreur au déploiement"
     when:
-      status: [ success, failure ]
+      status: [ failure ]
 
   publish:
     image: plugins/docker
