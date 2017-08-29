@@ -329,8 +329,7 @@ void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldS
     l_Player->SetLevel(l_Player->GetLevel());
 
     /// Send KeyBoard Binds
-    for (std::map< eKeyBoardAction, uint8 >::iterator l_It = l_Player->GetKeyBoardBinds()->begin(); l_It != l_Player->GetKeyBoardBinds()->end(); ++l_It)
-        p_WorldSocket->SendKeyBoardBind((*l_It).first, (*l_It).second);
+    p_WorldSocket->SendKeyBoardBind(l_Player->GetKeyBoardBinds());
 
     p_WorldSocket->SetPlayer(l_Player);
 
@@ -338,7 +337,7 @@ void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldS
     l_Map->AddUnit(l_Player);
     l_Player->HasBeenInitialize();
 
-    l_Player->SendMsg("- Bienvenue sur SlayersWorld V0.1 -");
+    //l_Player->SendMsg("- Bienvenue sur SlayersWorld V0.1 -");
 }
 
 void PacketHandler::OperatePacket(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)

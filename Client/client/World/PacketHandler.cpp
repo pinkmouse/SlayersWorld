@@ -775,13 +775,19 @@ void PacketHandler::HandleUpdateStat(WorldPacket &p_Packet)
 
 void PacketHandler::HandleKeyBoardBind(WorldPacket &p_Packet)
 {
-    uint8 l_TypeAction;
-    uint8 l_Key;
+    uint8 l_Nb;
 
-    p_Packet >> l_TypeAction;
-    p_Packet >> l_Key;
+    p_Packet >> l_Nb;
 
-    m_InterfaceManager->AddKeyBind(l_Key, l_TypeAction);
+    for (uint8 i = 0; i < l_Nb; i++)
+    {
+        uint8 l_TypeAction;
+        uint8 l_Key;
+
+        p_Packet >> l_TypeAction;
+        p_Packet >> l_Key;
+        m_InterfaceManager->AddKeyBind(l_Key, l_TypeAction);
+    }
 }
 
 void PacketHandler::HandleKeyBindBlock(WorldPacket &p_Packet)
@@ -843,20 +849,23 @@ void PacketHandler::HandleCastBar(WorldPacket &p_Packet)
 
 void PacketHandler::HandlePlayerTitle(WorldPacket &p_Packet)
 {
-    bool l_Apply;
-    uint16 l_ID;
-    std::string l_Name;
-
-    p_Packet >> l_Apply;
-    p_Packet >> l_ID;
-    p_Packet >> l_Name;
-
+    uint8 l_Nb;
     MenuManager* l_MenuManager = m_InterfaceManager->GetMenuManager();
     MenuTitles* l_MenuTitles = reinterpret_cast<MenuTitles*>(l_MenuManager->GetMenu(eMenuType::TitlesMenu));
     if (l_MenuTitles == nullptr)
         return;
 
-    l_MenuTitles->AddTitle(l_ID, l_Name);
+    p_Packet >> l_Nb;
+    for (uint8 i = 0; i < l_Nb; i++)
+    {
+        uint16 l_ID;
+        std::string l_Name;
+
+        p_Packet >> l_ID;
+        p_Packet >> l_Name;
+
+        l_MenuTitles->AddTitle(l_ID, l_Name);
+    }
 }
 
 void PacketHandler::HanleUnitUpdateName(WorldPacket &p_Packet)

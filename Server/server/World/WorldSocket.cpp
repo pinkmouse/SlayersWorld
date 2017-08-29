@@ -170,23 +170,22 @@ void WorldSocket::SendKeyBoardBind(eKeyBoardAction p_Type, uint8 p_Key)
     send(l_Packet.m_Packet);
 }
 
+void WorldSocket::SendKeyBoardBind(std::map< eKeyBoardAction, uint8 >* p_ListKey)
+{
+    PacketKeyBoardBind l_Packet;
+    l_Packet.BuildPacket(p_ListKey);
+    send(l_Packet.m_Packet);
+}
+
 void WorldSocket::SendTitles(std::map<uint16, Title*>* p_Titles)
 {
     if (p_Titles == nullptr)
         return;
 
-    for (std::map<uint16, Title*>::iterator l_It = p_Titles->begin(); l_It != p_Titles->end(); l_It++)
-    {
-        Title* l_Title = (*l_It).second;
+    PacketPlayerTitle l_Packet;
 
-        if (l_Title == nullptr)
-            continue;
-
-        PacketPlayerTitle l_Packet;
-
-        l_Packet.BuildPacket(true, l_Title->m_ID, l_Title->m_Name);
-        SendPacket(l_Packet.m_Packet);
-    }
+    l_Packet.BuildPacket(p_Titles);
+    SendPacket(l_Packet.m_Packet);
 }
 
 void WorldSocket::SendUpdateUnitResource(uint8 p_TypeID, uint16 p_ID, uint8 p_Resource, uint8 p_NewHealth)

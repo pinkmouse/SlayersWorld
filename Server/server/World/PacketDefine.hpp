@@ -82,18 +82,16 @@ struct PacketPlayerTitle
     uint8 m_PacketID;
     uint16 m_TitleID;
     std::string m_Name;
-    bool m_Apply;
 
     PacketPlayerTitle() :
         m_PacketID(SMSG::S_PlayerTitle) {}
 
-    void BuildPacket(bool p_Apply, const uint16 & p_TitleID, const std::string & p_Name)
+    void BuildPacket(std::map<uint16, Title*>* p_ListTitle)
     {
-        m_Packet << m_PacketID << p_Apply << p_TitleID << p_Name;
-        m_Apply = p_Apply;
-        m_PacketID = p_TitleID;
-        m_TitleID = p_TitleID;
-        m_Name = p_Name;
+        m_Packet << m_PacketID << (uint8)p_ListTitle->size();
+        
+        for (std::map<uint16, Title*>::iterator l_It = p_ListTitle->begin(); l_It != p_ListTitle->end(); l_It++)
+            m_Packet << (*l_It).first << (*l_It).second->m_Name;
     }
 };
 
@@ -493,11 +491,19 @@ struct PacketKeyBoardBind
     PacketKeyBoardBind() :
         m_PacketID(SMSG::S_KeyBoardBind) {}
 
-    void BuildPacket(uint8 p_TypeAction, uint8 p_Key)
+    void BuildPacket(std::map< eKeyBoardAction, uint8 >* p_KeyBoardBind)
     {
-        m_Packet << m_PacketID << p_TypeAction << p_Key;
-        m_TypeAction = p_TypeAction;
-        m_Key = p_Key;
+        m_Packet << m_PacketID << (uint8)p_KeyBoardBind->size();
+
+        for (std::map< eKeyBoardAction, uint8 >::iterator l_It = p_KeyBoardBind->begin(); l_It != p_KeyBoardBind->end(); ++l_It)
+        {
+            m_Packet << (uint8)(*l_It).first << (*l_It).second;
+        }
+    }
+
+    void BuildPacket(uint8 p_Type, uint8 p_Key)
+    {
+        m_Packet << m_PacketID << (uint8)1 << p_Type;
     }
 };
 

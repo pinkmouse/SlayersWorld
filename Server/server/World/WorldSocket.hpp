@@ -27,6 +27,7 @@ public:
     void SendToSet(WorldPacket, bool p_ExcludePlayer = false, bool p_OnlyGroup = false);
     void SendSwitchMap(uint16, const std::string &, const std::string &, const std::string &);
     void SendKeyBoardBind(eKeyBoardAction, uint8);
+    void SendKeyBoardBind(std::map< eKeyBoardAction, uint8 >*);
     void SendUnitIsInGroup(uint8, uint32, bool);
     void SendUnitMount(const uint8 &, const uint32 &, const int16 &);
     void SendTitles(std::map<uint16, Title*>*);
