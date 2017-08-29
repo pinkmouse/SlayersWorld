@@ -1,6 +1,7 @@
 #include "MenuManager.hpp"
 #include "MenuQuest.hpp"
 #include "MenuTitles.hpp"
+#include "MenuWardrobe.hpp"
 #include "MenuStats.hpp"
 #include "../../Global.hpp"
 
@@ -13,8 +14,10 @@ MenuManager::MenuManager() :
     GetElement(0, 0)->SetFunc(&Menu::GenericAction, 0);
     AddElement(0, 1, "Title");
     GetElement(0, 1)->SetFunc(&Menu::GenericAction, 1);
-    AddElement(0, 2, "Save");
+    AddElement(0, 2, "Wardrobe");
     GetElement(0, 2)->SetFunc(&Menu::GenericAction, 2);
+    AddElement(0, 3, "Save");
+    GetElement(0, 3)->SetFunc(&Menu::GenericAction, 3);
     AddElement(0, 5, "Escape");
     GetElement(0, 5)->SetFunc(&Menu::GenericAction, 5);
     SetSelectedElement(0, 0);
@@ -22,6 +25,8 @@ MenuManager::MenuManager() :
     m_ListMenu[eMenuType::QuestMenu] = new MenuQuest();
     m_ListMenu[eMenuType::StatsMenu] = new MenuStats();
     m_ListMenu[eMenuType::TitlesMenu] = new MenuTitles();
+    MenuWardrobe* l_Wardrobe = new MenuWardrobe();
+    m_ListMenu[eMenuType::WardrobeMenu] = l_Wardrobe;
 }
 
 MenuManager::~MenuManager()
@@ -39,6 +44,9 @@ void MenuManager::GenericAction(const uint16 & p_MenuID)
             m_ListMenu[eMenuType::TitlesMenu]->Open();
             break;
         case 2:
+            m_ListMenu[eMenuType::WardrobeMenu]->Open();
+            break;
+        case 3:
             g_Socket->SendSave();
             Close();
             break;
@@ -103,6 +111,13 @@ std::vector<Menu*> MenuManager::GetOpenMenus()
     }
     return l_Result;
 }
+
+void MenuManager::SetVisualManager(VisualManager* p_Menumanager)
+{
+    Menu::SetVisualManager(p_Menumanager);
+    m_ListMenu[eMenuType::WardrobeMenu]->SetVisualManager(p_Menumanager);
+}
+
 
 void MenuManager::AddElementToMenu(eMenuType p_MenuType, const uint8 & p_Col, const uint8 & p_Row, const std::string & p_Label)
 {

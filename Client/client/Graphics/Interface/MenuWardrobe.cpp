@@ -1,51 +1,59 @@
-#include "MenuTitles.hpp"
+#include "MenuWardrobe.hpp"
 #include "../../Global.hpp"
 
-MenuTitles::MenuTitles() :
-    Menu(5, 20)
+MenuWardrobe::MenuWardrobe() :
+    Menu(5, 4)
 {
     m_Pos.x = 120;
     m_Pos.y = 30;
-    AddElement(0, 0, "TITRES");
-    AddElement(1, 0, "Retirer");
-    GetElement(1, 0)->SetFunc(&Menu::GenericAction2, 0);
+    m_ElementSize.first = 100;
+    m_ElementSize.second = 100;
 }
 
-MenuTitles::~MenuTitles()
+MenuWardrobe::~MenuWardrobe()
 {
 }
 
-void MenuTitles::Open()
+void MenuWardrobe::Open()
 {
     Menu::Open();
     SetSelectedElement(1, 0);
 }
 
-void MenuTitles::AddTitle(const uint16 & p_ID, const std::string & p_Name)
+void MenuWardrobe::AddSkin(const uint16 & p_ID, const std::string & p_Name)
 {
-    m_Titles[p_ID] = p_Name;
+    VisualManager* l_VisualManager = GetVisualManager();
+    if (l_VisualManager == nullptr)
+        return;
+    sf::Sprite* l_SkinSprite = l_VisualManager->GetVisualSprite(eVisualType::VisualSkin, p_ID, 7);
+
+    if (l_SkinSprite == nullptr)
+        return;
+
+    m_Skins[p_ID] = p_Name;
 
     uint16 l_Row = GetElementRowSizeAtColumn(0);
     AddElement(0, l_Row, p_Name);
+    GetElement(0, l_Row)->SetSprite(l_SkinSprite);
     AddElement(1, l_Row, "Appliquer");
     GetElement(1, l_Row)->SetFunc(&Menu::GenericAction, p_ID);
 }
 
-void MenuTitles::RemoveTitle(const uint16 &)
+void MenuWardrobe::RemoveSkin(const uint16 &)
 {
 }
 
-void MenuTitles::GenericAction(const uint16 & p_MenuID)
+void MenuWardrobe::GenericAction(const uint16 & p_MenuID)
 {
     g_Socket->SendUpdateTitle(true, p_MenuID);
 }
 
-void MenuTitles::GenericAction2(const uint16 & p_MenuID)
+void MenuWardrobe::GenericAction2(const uint16 & p_MenuID)
 {
     g_Socket->SendUpdateTitle(false, p_MenuID);
 }
 
-void MenuTitles::KeyPress(const sf::Keyboard::Key & p_Key)
+void MenuWardrobe::KeyPress(const sf::Keyboard::Key & p_Key)
 {
     switch (p_Key)
     {

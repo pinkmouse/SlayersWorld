@@ -1,6 +1,7 @@
 #include "Graphics.hpp"
 #include "../Global.hpp"
 #include "../Entities/AnimationUnit.hpp"
+#include "../Graphics/Interface/MenuWardrobe.hpp"
 
 #define MINIBAR_GREEN 0
 #define MINIBAR_YELLOW 1
@@ -73,6 +74,16 @@ bool Graphics::CreateWindow(uint32 p_X, uint32 p_Y, float p_Zoom)
         return false;
     if (!LoadTexture())
         return false;
+
+    /// Menu need visual manager to show skins
+    m_InterfaceManager->GetMenuManager()->SetVisualManager(m_VisualManager);
+    MenuWardrobe* l_Wardrobe = reinterpret_cast<MenuWardrobe*>(m_InterfaceManager->GetMenuManager()->GetMenu(eMenuType::WardrobeMenu));
+    l_Wardrobe->AddSkin(49, "Test1");
+    l_Wardrobe->AddSkin(50, "Test2");
+    l_Wardrobe->AddSkin(51, "Test3");
+    l_Wardrobe->AddSkin(52, "Test4");
+    l_Wardrobe->AddSkin(53, "Test5");
+    l_Wardrobe->AddSkin(54, "Test6");
     return true;
 }
 

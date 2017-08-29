@@ -8,7 +8,8 @@ MenuElement::MenuElement()
 
 MenuElement::MenuElement(const std::string & p_Label) :
     m_Label(p_Label),
-    m_Function(nullptr)
+    m_Function(nullptr),
+    m_Sprite(nullptr)
 {
 }
 
@@ -19,6 +20,16 @@ MenuElement::~MenuElement()
 std::string MenuElement::GetLabel() const
 {
     return m_Label;
+}
+
+void MenuElement::SetSprite(sf::Sprite* p_Sprite)
+{
+    m_Sprite = p_Sprite;
+}
+
+sf::Sprite* MenuElement::GetSprite() const
+{
+    return m_Sprite;
 }
 
 void MenuElement::SetFunc(m_Func p_Func, const uint16 & p_Id)
@@ -56,7 +67,11 @@ Menu::Menu(const uint8 & p_Column, const uint8 & p_Row) :
     m_Open(false),
     m_Title("")
 {
+    m_ElementSize.first = MENU_COLUMN_SIZE;
+    m_ElementSize.second = MENU_ROW_SIZE;
     SetSelectedElement(0, 0);
+    m_CursorGraphicBottom = 0;
+    m_VisualManager = nullptr;
 }
 
 Menu::~Menu()
@@ -78,6 +93,11 @@ void Menu::SetSelectedElement(uint8 p_X, uint8 p_Y)
     m_SelectedElement.second = p_Y;
 }
 
+void Menu::SetVisualManager(VisualManager* p_VisualManager)
+{
+    m_VisualManager = p_VisualManager;
+}
+
 Position Menu::GetPosition() const
 {
     return m_Pos;
@@ -93,6 +113,12 @@ uint8 Menu::GetRow() const
     return m_Row;
 }
 
+std::pair < uint16, uint16 > Menu::GetElementSize() const
+{
+    return m_ElementSize;
+}
+
+
 bool Menu::IsOpen() const
 {
     return m_Open;
@@ -100,8 +126,14 @@ bool Menu::IsOpen() const
 
 void Menu::Open()
 {
+    m_CursorGraphicBottom = 0;
     m_Open = true;
     SetSelectedElement(0, 0);
+}
+
+VisualManager* Menu::GetVisualManager() const
+{
+    return m_VisualManager;
 }
 
 void Menu::Close()
@@ -290,4 +322,14 @@ uint8 Menu::GetElementRowSizeAtColumn(const uint8 & p_Col)
         return 0;
 
     return m_Elements[p_Col].size();
+}
+
+uint8 Menu::GetCursorGraphicBottom() const
+{
+    return m_CursorGraphicBottom;
+}
+
+void Menu::SetCursorGraphicBottom(const uint8 & p_Cursor)
+{
+    m_CursorGraphicBottom = p_Cursor;
 }

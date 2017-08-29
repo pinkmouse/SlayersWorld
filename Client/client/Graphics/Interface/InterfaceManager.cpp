@@ -154,33 +154,62 @@ void InterfaceManager::DrawMenu(Window & p_Window, Menu * p_Menu)
         l_Title.setColor(sf::Color::White);
         l_Title.setString(p_Menu->GetTitle());
         l_Title.setFont(*g_Font);
-        l_Size = TextSplitToFit((p_Menu->GetColumn() * MENU_COLUMN_SIZE) - 20, l_Title);
+        l_Size = TextSplitToFit((p_Menu->GetColumn() * p_Menu->GetElementSize().first) - 20, l_Title);
         l_Size.y += 15;
         l_Title.setPosition(p_Menu->GetPosition().x + 10, p_Menu->GetPosition().y + 10);
     }
-    DrawField(p_Window, p_Menu->GetPosition().x, p_Menu->GetPosition().y, (p_Menu->GetColumn() * MENU_COLUMN_SIZE), p_Menu->GetRow() * MENU_ROW_SIZE + 20 + l_Size.y);
+    DrawField(p_Window, p_Menu->GetPosition().x, p_Menu->GetPosition().y, (p_Menu->GetColumn() * p_Menu->GetElementSize().first), p_Menu->GetRow() * p_Menu->GetElementSize().second + 20 + l_Size.y + 5);
     std::map<uint8, std::map<uint8, MenuElement> >* m_Elements = p_Menu->GetElements();
 
     if (l_Title.getString() != "")
     {
         p_Window.draw(l_Title);
     }
+    uint8 l_SelectedRow = p_Menu->GetSelectedElement().second;
+    uint8 l_CursorGraphicBottom = p_Menu->GetCursorGraphicBottom();
+    if (l_SelectedRow > l_CursorGraphicBottom)
+        p_Menu->SetCursorGraphicBottom(l_SelectedRow);
+    if (l_CursorGraphicBottom > p_Menu->GetRow() - 1 && l_SelectedRow < l_CursorGraphicBottom - (p_Menu->GetRow() - 1))
+        p_Menu->SetCursorGraphicBottom(l_SelectedRow + p_Menu->GetRow() - 1);
+    l_CursorGraphicBottom = p_Menu->GetCursorGraphicBottom();
+
     for (std::map<uint8, std::map<uint8, MenuElement> >::iterator l_It = m_Elements->begin(); l_It != m_Elements->end(); ++l_It)
     {
         for (std::map<uint8, MenuElement>::iterator l_Itr = (*l_It).second.begin(); l_Itr != (*l_It).second.end(); l_Itr++)
         {
+            if (l_CursorGraphicBottom > p_Menu->GetRow() - 1 && (*l_Itr).first > l_CursorGraphicBottom)
+                continue;
+            if (l_CursorGraphicBottom <= p_Menu->GetRow() - 1 && (*l_Itr).first > p_Menu->GetRow() - 1)
+                continue;
+            if (l_CursorGraphicBottom > p_Menu->GetRow() - 1 && (*l_Itr).first <= l_CursorGraphicBottom - p_Menu->GetRow())
+                continue;
+
             sf::Text    l_Label;
             l_Label.setCharacterSize(18);
             l_Label.setColor(sf::Color::White);
             l_Label.setString((*l_Itr).second.GetLabel());
             l_Label.setFont(*g_Font);
 
-            l_Label.setPosition(p_Menu->GetPosition().x + (*l_It).first * MENU_COLUMN_SIZE + 10, p_Menu->GetPosition().y + l_Size.y + (*l_Itr).first * MENU_ROW_SIZE + 5);
+            uint8 l_YPos = (*l_Itr).first;
+            if (l_CursorGraphicBottom > p_Menu->GetRow() - 1)
+                l_YPos -= (l_CursorGraphicBottom - (p_Menu->GetRow() - 1));
+            l_Label.setPosition(p_Menu->GetPosition().x + (*l_It).first * p_Menu->GetElementSize().first + 10, p_Menu->GetPosition().y + l_Size.y + l_YPos * p_Menu->GetElementSize().second + 5);
             p_Window.draw(l_Label);
+
+            if ((*l_Itr).second.GetSprite() != nullptr)
+            {
+                sf::Sprite l_Sprite = *(*l_Itr).second.GetSprite();
+                l_Sprite.setScale(2.5f, 2.5f);
+                l_Sprite.setPosition(p_Menu->GetPosition().x + (*l_It).first * p_Menu->GetElementSize().first + 10, p_Menu->GetPosition().y + 20 + l_Size.y + l_YPos * p_Menu->GetElementSize().second + 5);
+                p_Window.draw(l_Sprite);
+            }
         }
     }
     std::pair<uint8, uint8> l_SelectedElement = p_Menu->GetSelectedElement();
-    DrawBorderField(p_Window, p_Menu->GetPosition().x + l_SelectedElement.first * MENU_COLUMN_SIZE, p_Menu->GetPosition().y + l_Size.y + l_SelectedElement.second * MENU_ROW_SIZE + 5, MENU_COLUMN_SIZE, MENU_ROW_SIZE + 5);
+    uint8 l_YPos = l_SelectedElement.second;
+    if (l_CursorGraphicBottom > p_Menu->GetRow() - 1)
+        l_YPos -= (l_CursorGraphicBottom - (p_Menu->GetRow() - 1));
+    DrawBorderField(p_Window, p_Menu->GetPosition().x + l_SelectedElement.first * p_Menu->GetElementSize().first, p_Menu->GetPosition().y + l_Size.y + l_YPos * p_Menu->GetElementSize().second + 5, p_Menu->GetElementSize().first, p_Menu->GetElementSize().second + 5);
 }
 
 TileSprite InterfaceManager::GetField(uint16 p_SizeX, uint16 p_SizeY)
