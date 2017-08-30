@@ -3,28 +3,32 @@
 #include "MenuTitles.hpp"
 #include "MenuWardrobe.hpp"
 #include "MenuStats.hpp"
+#include "MenuSpells.hpp"
 #include "../../Global.hpp"
 
 MenuManager::MenuManager() :
-    Menu(1, 6)
+    Menu(1, 10)
 {
     m_Pos.x = 10;
     m_Pos.y = 30;
     AddElement(0, 0, "Stats");
     GetElement(0, 0)->SetFunc(&Menu::GenericAction, 0);
-    AddElement(0, 1, "Title");
+    AddElement(0, 1, "Tites");
     GetElement(0, 1)->SetFunc(&Menu::GenericAction, 1);
-    AddElement(0, 2, "Wardrobe");
+    AddElement(0, 2, "Peaux");
     GetElement(0, 2)->SetFunc(&Menu::GenericAction, 2);
-    AddElement(0, 3, "Save");
+    AddElement(0, 3, "Sorts");
     GetElement(0, 3)->SetFunc(&Menu::GenericAction, 3);
-    AddElement(0, 5, "Escape");
-    GetElement(0, 5)->SetFunc(&Menu::GenericAction, 5);
+    AddElement(0, 4, "Save");
+    GetElement(0, 4)->SetFunc(&Menu::GenericAction, 4);
+    AddElement(0, 9, "Escape");
+    GetElement(0, 9)->SetFunc(&Menu::GenericAction, 9);
     SetSelectedElement(0, 0);
 
     m_ListMenu[eMenuType::QuestMenu] = new MenuQuest();
     m_ListMenu[eMenuType::StatsMenu] = new MenuStats();
     m_ListMenu[eMenuType::TitlesMenu] = new MenuTitles();
+    m_ListMenu[eMenuType::SpellsMenu] = new MenuSpells();
     MenuWardrobe* l_Wardrobe = new MenuWardrobe();
     m_ListMenu[eMenuType::WardrobeMenu] = l_Wardrobe;
 }
@@ -47,10 +51,13 @@ void MenuManager::GenericAction(const uint16 & p_MenuID)
             m_ListMenu[eMenuType::WardrobeMenu]->Open();
             break;
         case 3:
+            m_ListMenu[eMenuType::SpellsMenu]->Open();
+            break;
+        case 4:
             g_Socket->SendSave();
             Close();
             break;
-        case 5:
+        case 9:
             Close();
             break;
     }
@@ -60,9 +67,17 @@ void MenuManager::KeyPress(const sf::Keyboard::Key & p_Key)
 {
     for (std::map<eMenuType, Menu*>::iterator l_It = m_ListMenu.begin(); l_It != m_ListMenu.end(); ++l_It)
     {
-        if ((*l_It).second->IsOpen())
+        Menu* l_Menu = (*l_It).second;
+        if (l_Menu->IsOpen())
         {
-            (*l_It).second->KeyPress(p_Key);
+            while (1)
+            {
+                if (l_Menu->GetSubMenu() != nullptr && l_Menu->GetSubMenu()->IsOpen())
+                    l_Menu = l_Menu->GetSubMenu();
+                else
+                    break;
+            }
+            l_Menu->KeyPress(p_Key);
             return;
         }
     }
@@ -75,7 +90,7 @@ void MenuManager::KeyPress(const sf::Keyboard::Key & p_Key)
                 Close();
             break;
         }
-        case sf::Keyboard::Return:
+        case sf::Keyboard::Space:
         {
             std::pair<uint8, uint8> l_SelectedElem = GetSelectedElement();
             MenuElement* l_Elem = GetElement(l_SelectedElem.first, l_SelectedElem.second);

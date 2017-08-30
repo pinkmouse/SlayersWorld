@@ -4,6 +4,8 @@
 #include "../Entities/AnimationUnit.hpp"
 #include "../Entities/DynamicObject.hpp"
 #include "../Graphics/Interface/MenuTitles.hpp"
+#include "../Graphics/Interface/MenuWardrobe.hpp"
+#include "../Graphics/Interface/MenuSpells.hpp"
 
 #include "../Global.hpp"
 #include "PacketDefine.hpp"
@@ -52,6 +54,8 @@ void PacketHandler::LoadPacketHandlerMap()
     m_PacketHandleMap[SMSG::S_UnitPlayAuraVisual] = &PacketHandler::HandleUnitPlayVisualAura;
     m_PacketHandleMap[SMSG::S_UnitMount] = &PacketHandler::HandleMount;
     m_PacketHandleMap[SMSG::S_PlayerTitle] = &PacketHandler::HandlePlayerTitle;
+    m_PacketHandleMap[SMSG::S_PlayerSkin] = &PacketHandler::HandlePlayerSkin;
+    m_PacketHandleMap[SMSG::S_PlayerSpell] = &PacketHandler::HandlePlayerSpell;
     m_PacketHandleMap[SMSG::S_UnitUpdateName] = &PacketHandler::HanleUnitUpdateName;
 }
 
@@ -865,6 +869,48 @@ void PacketHandler::HandlePlayerTitle(WorldPacket &p_Packet)
         p_Packet >> l_Name;
 
         l_MenuTitles->AddTitle(l_ID, l_Name);
+    }
+}
+
+void PacketHandler::HandlePlayerSkin(WorldPacket &p_Packet)
+{
+    uint8 l_Nb;
+    MenuManager* l_MenuManager = m_InterfaceManager->GetMenuManager();
+    MenuWardrobe* l_MenuWardRobe = reinterpret_cast<MenuWardrobe*>(l_MenuManager->GetMenu(eMenuType::WardrobeMenu));
+    if (l_MenuWardRobe == nullptr)
+        return;
+
+    p_Packet >> l_Nb;
+    for (uint8 i = 0; i < l_Nb; i++)
+    {
+        uint16 l_ID;
+        std::string l_Name;
+
+        p_Packet >> l_ID;
+        p_Packet >> l_Name;
+
+        l_MenuWardRobe->AddSkin(l_ID, l_Name);
+    }
+}
+
+void PacketHandler::HandlePlayerSpell(WorldPacket &p_Packet)
+{
+    uint8 l_Nb;
+    MenuManager* l_MenuManager = m_InterfaceManager->GetMenuManager();
+    MenuSpells* l_MenuSpells = reinterpret_cast<MenuSpells*>(l_MenuManager->GetMenu(eMenuType::SpellsMenu));
+    if (l_MenuSpells == nullptr)
+        return;
+
+    p_Packet >> l_Nb;
+    for (uint8 i = 0; i < l_Nb; i++)
+    {
+        uint16 l_ID;
+        std::string l_Name;
+
+        p_Packet >> l_ID;
+        p_Packet >> l_Name;
+
+        l_MenuSpells->AddSpell(l_ID, l_Name);
     }
 }
 

@@ -13,6 +13,7 @@
 #include <SFML/Network.hpp>
 #include <SFML/Graphics.hpp>
 
+Skins            g_Skins;
 Titles           g_Titles;
 ConfigHandler    *g_Config;
 SqlManager       *g_SqlManager;

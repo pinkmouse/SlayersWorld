@@ -87,6 +87,10 @@ bool World::Initialize()
     if (!g_SqlManager->InitializeTitles())
         printf("Error Initialize Titles...\n");
 
+    printf("Initialize Skins\n");
+    if (!g_SqlManager->InitializeSkins())
+        printf("Error Initialize Skins...\n");
+
     printf("Initialize Zones\n");
     if (!g_SqlManager->InitializeZones())
         printf("Error Initialize Zones...\n");
@@ -187,7 +191,7 @@ bool World::NetworkInitialize()
     while (!l_PortLisening)
     {
         l_ErrorListen = m_Listener.listen(l_Port);
-        printf("Port: %d -> ", l_Port);
+        printf("Port: %d | ", l_Port);
         switch (l_ErrorListen)
         {
         case sf::Socket::Done:

@@ -530,6 +530,19 @@ struct Title
 };
 typedef std::map<uint16, Title> Titles;
 
+struct Skin
+{
+    std::string m_Name;
+    uint16 m_ID;
+
+    Skin() :
+        m_ID(0), m_Name("") {}
+
+    Skin(const uint16 & p_ID, const std::string & p_Name) :
+        m_ID(p_ID), m_Name(p_Name) {}
+};
+typedef std::map<uint16, Skin> Skins;
+
 struct PointsSet
 {
     std::map<eStats, uint16> m_Points;

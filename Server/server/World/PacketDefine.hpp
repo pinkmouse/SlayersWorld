@@ -1,5 +1,6 @@
 #pragma once
 #include "WorldPacket.hpp"
+#include "../System/Spell/SpellTemplate.hpp"
 
 enum CMSG : uint8
 {
@@ -15,7 +16,8 @@ enum CMSG : uint8
     C_UnitStopAttack = 25,
     C_UnitEventAction = 26,
     C_UnitAnswerQuestion = 27,
-    C_UpdateTitle = 28
+    C_UpdateTitle = 28,
+    C_UpdateSkin = 29
 };
 
 enum SMSG : uint8
@@ -51,7 +53,9 @@ enum SMSG : uint8
     S_UnitPlayAuraVisual = 37,
     S_PlayerTitle = 38,
     S_UnitUpdateName = 39,
-    S_BlockBind = 40
+    S_BlockBind = 40,
+    S_PlayerSkin = 41,
+    S_PlayerSpell = 42,
 };
 
 struct PacketGoDirection
@@ -92,6 +96,44 @@ struct PacketPlayerTitle
         
         for (std::map<uint16, Title*>::iterator l_It = p_ListTitle->begin(); l_It != p_ListTitle->end(); l_It++)
             m_Packet << (*l_It).first << (*l_It).second->m_Name;
+    }
+};
+
+struct PacketPlayerSkin
+{
+    WorldPacket m_Packet;
+    uint8 m_PacketID;
+    uint16 m_TitleID;
+    std::string m_Name;
+
+    PacketPlayerSkin() :
+        m_PacketID(SMSG::S_PlayerSkin) {}
+
+    void BuildPacket(std::map<uint16, Skin*>* p_ListSkin)
+    {
+        m_Packet << m_PacketID << (uint8)p_ListSkin->size();
+
+        for (std::map<uint16, Skin*>::iterator l_It = p_ListSkin->begin(); l_It != p_ListSkin->end(); l_It++)
+            m_Packet << (*l_It).first << (*l_It).second->m_Name;
+    }
+};
+
+struct PacketPlayerSpell
+{
+    WorldPacket m_Packet;
+    uint8 m_PacketID;
+    uint16 m_TitleID;
+    std::string m_Name;
+
+    PacketPlayerSpell() :
+        m_PacketID(SMSG::S_PlayerSpell) {}
+
+    void BuildPacket(std::vector<SpellTemplate*>* p_ListSpells)
+    {
+        m_Packet << m_PacketID << (uint8)p_ListSpells->size();
+
+        for (std::vector<SpellTemplate*>::iterator l_It = p_ListSpells->begin(); l_It != p_ListSpells->end(); l_It++)
+            m_Packet << (*l_It)->GetID() << (*l_It)->GetName();
     }
 };
 

@@ -1,4 +1,5 @@
 #include "WorldSocket.hpp"
+#include "../Global.hpp"
 #include "../Map/Map.hpp"
 #include "../System/Spell/Aura.hpp"
 #include "PacketDefine.hpp"
@@ -175,6 +176,32 @@ void WorldSocket::SendKeyBoardBind(std::map< eKeyBoardAction, uint8 >* p_ListKey
     PacketKeyBoardBind l_Packet;
     l_Packet.BuildPacket(p_ListKey);
     send(l_Packet.m_Packet);
+}
+
+void WorldSocket::SendSkins(std::map<uint16, Skin*>* p_Skins)
+{
+    if (p_Skins == nullptr)
+        return;
+
+    PacketPlayerSkin l_Packet;
+
+    l_Packet.BuildPacket(p_Skins);
+    SendPacket(l_Packet.m_Packet);
+}
+
+void WorldSocket::SendSpells(std::map<uint16, uint64>* p_Spells)
+{
+    if (p_Spells == nullptr)
+        return;
+
+    std::vector<SpellTemplate*> l_SpellList;
+    for (std::map<uint16, uint64>::iterator l_It = p_Spells->begin(); l_It != p_Spells->end(); l_It++)
+        l_SpellList.push_back(g_SpellManager->GetSpell((*l_It).first));
+
+    PacketPlayerSpell l_Packet;
+
+    l_Packet.BuildPacket(&l_SpellList);
+    SendPacket(l_Packet.m_Packet);
 }
 
 void WorldSocket::SendTitles(std::map<uint16, Title*>* p_Titles)

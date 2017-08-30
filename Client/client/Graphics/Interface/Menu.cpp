@@ -17,6 +17,7 @@ MenuElement::~MenuElement()
 {
 }
 
+
 std::string MenuElement::GetLabel() const
 {
     return m_Label;
@@ -72,6 +73,7 @@ Menu::Menu(const uint8 & p_Column, const uint8 & p_Row) :
     SetSelectedElement(0, 0);
     m_CursorGraphicBottom = 0;
     m_VisualManager = nullptr;
+    m_SubMenu = nullptr;
 }
 
 Menu::~Menu()
@@ -332,4 +334,14 @@ uint8 Menu::GetCursorGraphicBottom() const
 void Menu::SetCursorGraphicBottom(const uint8 & p_Cursor)
 {
     m_CursorGraphicBottom = p_Cursor;
+}
+
+Menu* Menu::GetSubMenu()
+{
+    return m_SubMenu;
+}
+
+void Menu::SetSubMenu(Menu* p_Menu)
+{
+    m_SubMenu = p_Menu;
 }

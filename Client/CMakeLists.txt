@@ -69,6 +69,8 @@ add_executable(${EXECUTABLE_NAME}
               client/Graphics/Interface/MenuStats.hpp
               client/Graphics/Interface/MenuTitles.cpp
               client/Graphics/Interface/MenuTitles.hpp
+              client/Graphics/Interface/MenuSpells.cpp
+              client/Graphics/Interface/MenuSpells.hpp
               client/Graphics/Interface/MenuWardrobe.cpp
               client/Graphics/Interface/MenuWardrobe.hpp
               client/Graphics/Interface/QuestionBox.cpp

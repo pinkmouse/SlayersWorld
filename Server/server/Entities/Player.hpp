@@ -46,6 +46,11 @@ public:
     std::string GetNameWithTitle();
     int32 GetActiveTitleID() const;
 
+    /* SKINS */
+    void AddSkinToCollection(const uint16 &, Skin*);
+    std::map < uint16, Skin*>* GetSkinsCollection();
+    bool HasSkin(const uint16 &);
+
     /* RESOURCES */
     uint32 GetXp() const;
     void SetXp(uint32);
@@ -145,11 +150,12 @@ private:
     std::map< uint16, Quest* > m_Quests;
     int32 m_ActiveTitle;
 
-    std::map < uint16, std::pair<Unit*, std::vector<uint16> > > m_QuestionInProgress;
+    std::map < uint16, std::pair<Unit*, std::vector<uint16> > >     m_QuestionInProgress;
     typedef bool(Player::*m_Func)(std::vector<std::string>);
-    std::map < std::string, std::pair < eAccessType,  m_Func > > m_CmdHandleMap;
+    std::map < std::string, std::pair < eAccessType,  m_Func > >    m_CmdHandleMap;
     std::map < eKeyBoardAction, uint8 > m_KeyBoardBinds;
-    std::map < uint16, uint8 > m_SpellsBindToKey;
-    std::map < uint16, Title*> m_Titles;
+    std::map < uint16, uint8 >                                      m_SpellsBindToKey;
+    std::map < uint16, Title*>                                      m_Titles;
+    std::map < uint16, Skin*>                                       m_Skins;
 };
 

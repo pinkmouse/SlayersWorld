@@ -66,12 +66,14 @@ public:
     bool InitializeGossip(UnitManager*, RequiredManager*);
     bool InitializeSpellsForPlayer(Player*);
     void InitializeListTitlesForPlayer(Player*);
+    void InitializeListSkinsForPlayer(Player*);
     bool InitializeBattlegrounds();
     bool InitializeQuestsProgessForPlayer(Player*);
     bool InitializeKeyBindsForAccount(uint32, Player*);
     bool InitializeSpellsBinds(Player*);
     bool InitializeQuests();
     bool InitializeTitles();
+    bool InitializeSkins();
     bool InitializeMaps();
     bool InitializeZones();
     bool InitializeAreatrigger(DynamicObjectManager*, UnitManager*);

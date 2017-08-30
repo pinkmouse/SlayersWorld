@@ -29,6 +29,7 @@ public:
     void HandleEventAction(WorldPacket &, WorldSocket*);
     void HandleAnswerQuestion(WorldPacket &, WorldSocket*);
     void HandleUpdateTitle(WorldPacket &, WorldSocket*);
+    void HandleUpdateSkin(WorldPacket &, WorldSocket*);
     void HandleDisconnected(WorldSocket*);
 
 private:

@@ -30,7 +30,6 @@ AnimationUnitTemplate* UnitManager::GetAnimationUnitTemplate(uint32 p_Entry)
     return &m_AnimationUnitTemplateMap[p_Entry];
 }
 
-
 void UnitManager::AddGossip(const Gossip & p_Gossip)
 {
     m_MapGossip[p_Gossip.m_TypeUnit][p_Gossip.m_UnitEntry].push_back(p_Gossip);

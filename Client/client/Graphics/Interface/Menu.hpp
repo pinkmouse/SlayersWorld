@@ -61,6 +61,8 @@ public:
     virtual void SetVisualManager(VisualManager*);
     virtual void GenericAction(const uint16 &);
     virtual void GenericAction2(const uint16 &);
+    virtual Menu* GetSubMenu();
+    virtual void SetSubMenu(Menu*);
 
 protected:
     Position m_Pos;
@@ -75,4 +77,5 @@ private:
     uint8 m_CursorGraphicBottom;
     std::map<uint8, std::map<uint8, MenuElement> > m_Elements;
     VisualManager* m_VisualManager;
+    Menu* m_SubMenu;
 };

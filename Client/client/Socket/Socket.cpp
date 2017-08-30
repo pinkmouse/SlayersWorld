@@ -181,3 +181,14 @@ void Socket::SendUpdateTitle(bool p_Apply, const uint16 & p_TitleID)
 
     send(packet);
 }
+
+void Socket::SendUpdateSkin(const uint16 & p_SkinID)
+{
+    WorldPacket packet;
+    uint8 l_ID = CMSG::C_UpdateSkin;
+
+    packet << l_ID;
+    packet << p_SkinID;
+
+    send(packet);
+}

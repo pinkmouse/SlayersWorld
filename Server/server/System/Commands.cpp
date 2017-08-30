@@ -212,6 +212,11 @@ bool Player::HandleCommandSkin(std::vector<std::string> p_ListCmd)
         return false;
 
     int16 l_SkinID = atoi(p_ListCmd[0].c_str());
+    if (!HasSkin(l_SkinID)/* && GetAccessType() == 0*/)
+    {
+        SendMsg("Vous ne possédez pas ce skin");
+        return true;
+    }
     if (/*l_SkinID >= 65 && */GetAccessType() == 0/*MAX_SKIN_IMG*/)
     {
         l_SkinID = l_SkinID % 16;

@@ -235,6 +235,23 @@ std::pair<Unit*, uint16> Player::GetGossipForQuestion(const uint16 & p_ID, const
     return l_Res;
 }
 
+void Player::AddSkinToCollection(const uint16 & p_ID, Skin* p_Skin)
+{
+    m_Skins[p_ID] = p_Skin;
+}
+
+std::map < uint16, Skin*>* Player::GetSkinsCollection()
+{
+    return &m_Skins;
+}
+
+bool Player::HasSkin(const uint16 & p_Skin)
+{
+    if (m_Skins.find(p_Skin) == m_Skins.end())
+        return false;
+    return true;
+}
+
 void Player::AddTitle(const uint16 & p_ID, Title* p_Title)
 {
     m_Titles[p_ID] = p_Title;

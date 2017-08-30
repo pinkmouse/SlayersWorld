@@ -146,8 +146,14 @@ void  InterfaceManager::ManageEvent(sf::Event p_Event)
 
 void InterfaceManager::DrawMenu(Window & p_Window, Menu * p_Menu)
 {
+    if (!p_Menu->IsOpen())
+        return;
+
     sf::Vector2i l_Size(0, 0);
     sf::Text    l_Title;
+    uint8 l_Opactiy = 255;
+    if (p_Menu->GetSubMenu() != nullptr && p_Menu->GetSubMenu()->IsOpen())
+        l_Opactiy = 150;
     if (p_Menu->GetTitle() != "")
     {
         l_Title.setCharacterSize(18);
@@ -187,6 +193,7 @@ void InterfaceManager::DrawMenu(Window & p_Window, Menu * p_Menu)
             sf::Text    l_Label;
             l_Label.setCharacterSize(18);
             l_Label.setColor(sf::Color::White);
+            l_Label.setColor(sf::Color(255, 255, 255, l_Opactiy));
             l_Label.setString((*l_Itr).second.GetLabel());
             l_Label.setFont(*g_Font);
 
@@ -210,6 +217,10 @@ void InterfaceManager::DrawMenu(Window & p_Window, Menu * p_Menu)
     if (l_CursorGraphicBottom > p_Menu->GetRow() - 1)
         l_YPos -= (l_CursorGraphicBottom - (p_Menu->GetRow() - 1));
     DrawBorderField(p_Window, p_Menu->GetPosition().x + l_SelectedElement.first * p_Menu->GetElementSize().first, p_Menu->GetPosition().y + l_Size.y + l_YPos * p_Menu->GetElementSize().second + 5, p_Menu->GetElementSize().first, p_Menu->GetElementSize().second + 5);
+
+    ///< Draw SubMenu
+    if (p_Menu->GetSubMenu() != nullptr && p_Menu->GetSubMenu()->IsOpen())
+        DrawMenu(p_Window, p_Menu->GetSubMenu());
 }
 
 TileSprite InterfaceManager::GetField(uint16 p_SizeX, uint16 p_SizeY)

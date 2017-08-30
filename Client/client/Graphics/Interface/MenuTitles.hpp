@@ -10,7 +10,6 @@ public:
     void Open();
     void KeyPress(const sf::Keyboard::Key &);
     void GenericAction(const uint16 &);
-    void GenericAction2(const uint16 &);
     void AddTitle(const uint16 &, const std::string &);
     void RemoveTitle(const uint16 &);
 

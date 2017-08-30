@@ -216,7 +216,8 @@ enum eMenuType
     QuestMenu,
     StatsMenu,
     TitlesMenu,
-    WardrobeMenu
+    WardrobeMenu,
+    SpellsMenu
 };
 
 enum eKeyBoardAction

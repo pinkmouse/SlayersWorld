@@ -25,6 +25,7 @@ void PacketHandler::LoadPacketHandlerMap()
     m_PacketHandleMap[CMSG::C_LoadingPong] = &PacketHandler::HandleLoadingPong;
     m_PacketHandleMap[CMSG::C_UnitAnswerQuestion] = &PacketHandler::HandleAnswerQuestion;
     m_PacketHandleMap[CMSG::C_UpdateTitle] = &PacketHandler::HandleUpdateTitle;
+    m_PacketHandleMap[CMSG::C_UpdateSkin] = &PacketHandler::HandleUpdateSkin;
 }
 
 void PacketHandler::HandleUnitUnknow(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
@@ -209,6 +210,19 @@ void PacketHandler::HandleUpdateTitle(WorldPacket &p_Packet, WorldSocket* p_Worl
         l_Player->ChangeActiveTitle(l_TitleID);
 }
 
+void PacketHandler::HandleUpdateSkin(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
+{
+    Player* l_Player = p_WorldSocket->GetPlayer();
+    uint16 l_SkinID;
+
+    p_Packet >> l_SkinID;
+
+    if (l_Player == nullptr)
+        return;
+
+    l_Player->SetSkinID(l_SkinID);
+}
+
 void PacketHandler::HandleStatAction(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
 {
     Player* l_Player = p_WorldSocket->GetPlayer();
@@ -323,6 +337,8 @@ void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldS
     p_WorldSocket->SendPlayerCreate(l_Player->GetID(), l_Player->GetNameWithTitle(), l_Player->GetLevel(), l_Player->GetResourceNb(eResourceType::Health), l_Player->GetResourceNb(eResourceType::Mana), l_Player->GetResourceNb(eResourceType::Alignment), l_Player->GetSkinID(), l_Player->GetMapID(), g_MapManager->GetMapTemplate(l_Player->GetMapID())->GetFileName(), g_MapManager->GetMapTemplate(l_Player->GetMapID())->GetFileChipset(), g_MapManager->GetMapTemplate(l_Player->GetMapID())->GetName(), l_Player->GetPosX(), l_Player->GetPosY(), l_Player->GetOrientation());
     p_WorldSocket->SendUpdateXpPct(g_LevelManager->XpPct(l_Player->GetLevel(), l_Player->GetXp()));
     p_WorldSocket->SendTitles(l_Player->GetTitles());
+    p_WorldSocket->SendSkins(l_Player->GetSkinsCollection());
+    p_WorldSocket->SendSpells(l_Player->GetSpellList());
 
     /// Trick to send stats to player
     l_Player->SetPointsSet(g_SqlManager->GetPointsSetForPlayer(l_Player->GetID()));

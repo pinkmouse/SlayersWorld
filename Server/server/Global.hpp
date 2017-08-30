@@ -8,6 +8,7 @@
 #include "System/Spell/SpellManager.hpp"
 #include "System/Quest/QuestManager.hpp"
 
+extern Skins            g_Skins;
 extern Titles           g_Titles;
 extern ConfigHandler    *g_Config;
 extern SqlManager       *g_SqlManager;

@@ -210,6 +210,7 @@ Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
     InitializeSpellsBinds(l_Player);
     InitializeQuestsProgessForPlayer(l_Player);
     InitializeListTitlesForPlayer(l_Player);
+    InitializeListSkinsForPlayer(l_Player);
     l_Player->ChangeActiveTitle(l_ActiveTitleID, false);
 
     return l_Player;
@@ -374,7 +375,29 @@ int32 SqlManager::GetDaysSinceLastQuestDone(Player const* p_Player, uint16 p_Que
     return l_Days;
 }
 
-void SqlManager::InitializeListTitlesForPlayer(Player * p_Player)
+void SqlManager::InitializeListSkinsForPlayer(Player* p_Player)
+{
+    std::string l_Query = "SELECT skinID FROM characters_skins WHERE characterID = '" + std::to_string(p_Player->GetID()) + "'";
+    mysql_query(&m_MysqlCharacters, l_Query.c_str());
+
+    MYSQL_RES *l_Result = NULL;
+    MYSQL_ROW l_Row;
+    l_Result = mysql_use_result(&m_MysqlCharacters);
+    while ((l_Row = mysql_fetch_row(l_Result)))
+    {
+        if (l_Row == NULL)
+            break;
+        if (l_Row[0])
+        {
+            uint16 l_ID = atoi(l_Row[0]);
+            if (g_Skins.find(l_ID) != g_Skins.end())
+                p_Player->AddSkinToCollection(l_ID, &g_Skins[l_ID]);
+        }
+    }
+    mysql_free_result(l_Result);
+}
+
+void SqlManager::InitializeListTitlesForPlayer(Player* p_Player)
 {
     std::string l_Query = "SELECT titleID FROM characters_titles WHERE characterID = '" + std::to_string(p_Player->GetID()) + "'";
     mysql_query(&m_MysqlCharacters, l_Query.c_str());
@@ -1018,13 +1041,35 @@ bool  SqlManager::InitializeQuests()
     return true;
 }
 
+bool SqlManager::InitializeSkins()
+{
+    std::string l_Query = "SELECT `id`, `name` FROM skin";
+    mysql_query(&m_MysqlWorld, l_Query.c_str());
+
+    uint16 l_Id = 0;
+    uint8 l_RepetitionType = 0;
+    std::string l_Name = "";
+    uint8 l_Type = 0;
+
+    MYSQL_RES *l_Result = NULL;
+    MYSQL_ROW l_Row;
+    l_Result = mysql_use_result(&m_MysqlWorld);
+    while ((l_Row = mysql_fetch_row(l_Result)))
+    {
+        l_Id = atoi(l_Row[0]);
+        l_Name = std::string(l_Row[1]);
+        g_Skins[l_Id] = Skin(l_Id, l_Name);
+    }
+    mysql_free_result(l_Result);
+    return true;
+}
+
 bool SqlManager::InitializeTitles()
 {
     std::string l_Query = "SELECT `id`, `type`, `name` FROM title";
     mysql_query(&m_MysqlWorld, l_Query.c_str());
 
     uint16 l_Id = 0;
-    uint8 l_RepetitionType = 0;
     std::string l_Name = "";
     uint8 l_Type = 0;
 

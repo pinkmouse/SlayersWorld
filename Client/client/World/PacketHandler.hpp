@@ -45,6 +45,8 @@ public:
     void HandleSrvPlayerQuestion(WorldPacket &);
     void HandleCastBar(WorldPacket &);
     void HandlePlayerTitle(WorldPacket &);
+    void HandlePlayerSkin(WorldPacket &);
+    void HandlePlayerSpell(WorldPacket &);
     void HanleUnitUpdateName(WorldPacket &);
 
 private:

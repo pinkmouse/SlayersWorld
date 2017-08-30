@@ -1254,6 +1254,7 @@ void Unit::UpdateVictims()
 
 void Unit::AddSpellID(uint16 p_SpellID, uint64 p_Cooldown)
 {
+    printf("Spell = %d\n", p_SpellID);
     m_ListSpellID[p_SpellID] = 0;
     AddSpellCooldown(p_SpellID, p_Cooldown);
 }

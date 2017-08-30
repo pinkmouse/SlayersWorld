@@ -24,6 +24,7 @@ public:
     void SendStatAction(eStats, bool, uint8);
     void SendAnswerQuestion(const uint16 &, const uint8 &_Resp);
     void SendUpdateTitle(bool, const uint16 &);
+    void SendUpdateSkin(const uint16 &);
     bool IsConnected() const;
 
 private:

@@ -78,7 +78,7 @@ void MenuStats::KeyPress(const sf::Keyboard::Key & p_Key)
                 Close();
             break;
         }
-        case sf::Keyboard::Return:
+        case sf::Keyboard::Space:
         {
             std::pair<uint8, uint8> l_SelectedElem = GetSelectedElement();
             MenuElement* l_Elem = GetElement(l_SelectedElem.first, l_SelectedElem.second);

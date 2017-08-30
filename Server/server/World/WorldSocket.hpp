@@ -31,6 +31,8 @@ public:
     void SendUnitIsInGroup(uint8, uint32, bool);
     void SendUnitMount(const uint8 &, const uint32 &, const int16 &);
     void SendTitles(std::map<uint16, Title*>*);
+    void SendSkins(std::map<uint16, Skin*>*);
+    void SendSpells(std::map<uint16, uint64>*);
 
     Player* GetPlayer();
     void SetPlayer(Player*);

@@ -45,12 +45,7 @@ void MenuWardrobe::RemoveSkin(const uint16 &)
 
 void MenuWardrobe::GenericAction(const uint16 & p_MenuID)
 {
-    g_Socket->SendUpdateTitle(true, p_MenuID);
-}
-
-void MenuWardrobe::GenericAction2(const uint16 & p_MenuID)
-{
-    g_Socket->SendUpdateTitle(false, p_MenuID);
+    g_Socket->SendUpdateSkin(p_MenuID);
 }
 
 void MenuWardrobe::KeyPress(const sf::Keyboard::Key & p_Key)
@@ -63,7 +58,7 @@ void MenuWardrobe::KeyPress(const sf::Keyboard::Key & p_Key)
                 Close();
             break;
         }
-        case sf::Keyboard::Return:
+        case sf::Keyboard::Space:
         {
             std::pair<uint8, uint8> l_SelectedElem = GetSelectedElement();
             MenuElement* l_Elem = GetElement(l_SelectedElem.first, l_SelectedElem.second);
