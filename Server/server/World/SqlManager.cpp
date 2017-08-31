@@ -187,8 +187,10 @@ Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
     eAccessType l_AccessRequired = (eAccessType)atoi(g_Config->GetValue("AccessLevel").c_str());
 
     if (l_AccessRequired > l_PlayerAccessType)
+    {
+        WebHook::sendMsg(g_Config->GetValue("WebhookUrl"), l_Name + " essai de se connecter mais n'a pas les droits");
         return nullptr;
-
+    }
     if (!l_Exist)
     {
         printf("Create new Player %d", p_AccountID);
