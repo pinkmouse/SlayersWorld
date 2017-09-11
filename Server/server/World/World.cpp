@@ -10,13 +10,14 @@ World::World()
     m_RequiredManager(new RequiredManager()),
     m_DynamicObjectManager(new DynamicObjectManager())
 {
-    g_MapManager = new MapManager();
-	g_Config = new ConfigHandler();
-    g_SqlManager = new SqlManager();
-    g_LevelManager = new LevelManager();
-    g_SpellManager = new SpellManager();
-    g_QuestManager = new QuestManager();
-    g_GroupManager = new GroupManager();
+    g_MapManager    = new MapManager();
+	g_Config        = new ConfigHandler();
+    g_SqlManager    = new SqlManager();
+    g_LevelManager  = new LevelManager();
+    g_SpellManager  = new SpellManager();
+    g_QuestManager  = new QuestManager();
+    g_ItemManager   = new ItemManager();
+    g_GroupManager  = new GroupManager();
 }
 
 
@@ -74,6 +75,10 @@ bool World::Initialize()
     printf("Initialize GameObject\n");
     if (!g_SqlManager->InitializeGameObject(m_DynamicObjectManager, m_RequiredManager, m_CreatureManager))
         printf("Error Initialize GameObject...\n");
+
+    printf("Initialize Items\n");
+    if (!g_SqlManager->InitializeItems(m_RequiredManager))
+        printf("Error Initialize Items...\n");
 
     printf("Initialize SpellEffects\n");
     if (!g_SqlManager->InitializeSpellEffects())

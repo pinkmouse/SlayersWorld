@@ -54,4 +54,6 @@ enum SMSG : uint8
     S_BlockBind = 40,
     S_PlayerSkin = 41,
     S_PlayerSpell = 42,
+    S_PlayerItem = 43,
+    S_PlayerEquipment = 44
 };

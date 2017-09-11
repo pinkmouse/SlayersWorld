@@ -33,6 +33,8 @@ public:
     void SendTitles(std::map<uint16, Title*>*);
     void SendSkins(std::map<uint16, Skin*>*);
     void SendSpells(std::map<uint16, uint64>*);
+    void SendItems(std::map<uint8, Item*>*);
+    void SendEquipments(std::map<eTypeEquipment, Item*>*);
 
     Player* GetPlayer();
     void SetPlayer(Player*);

@@ -339,6 +339,8 @@ void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldS
     p_WorldSocket->SendTitles(l_Player->GetTitles());
     p_WorldSocket->SendSkins(l_Player->GetSkinsCollection());
     p_WorldSocket->SendSpells(l_Player->GetSpellList());
+    p_WorldSocket->SendItems(l_Player->GetItems());
+    p_WorldSocket->SendEquipments(l_Player->GetEquipments());
 
     /// Trick to send stats to player
     l_Player->SetPointsSet(g_SqlManager->GetPointsSetForPlayer(l_Player->GetID()));

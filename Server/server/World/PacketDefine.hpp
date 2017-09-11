@@ -1,6 +1,7 @@
 #pragma once
 #include "WorldPacket.hpp"
 #include "../System/Spell/SpellTemplate.hpp"
+#include "../System/Item/Item.hpp"
 
 enum CMSG : uint8
 {
@@ -56,6 +57,8 @@ enum SMSG : uint8
     S_BlockBind = 40,
     S_PlayerSkin = 41,
     S_PlayerSpell = 42,
+    S_PlayerItem = 43,
+    S_PlayerEquipment = 44
 };
 
 struct PacketGoDirection
@@ -122,8 +125,6 @@ struct PacketPlayerSpell
 {
     WorldPacket m_Packet;
     uint8 m_PacketID;
-    uint16 m_TitleID;
-    std::string m_Name;
 
     PacketPlayerSpell() :
         m_PacketID(SMSG::S_PlayerSpell) {}
@@ -134,6 +135,53 @@ struct PacketPlayerSpell
 
         for (std::vector<SpellTemplate*>::iterator l_It = p_ListSpells->begin(); l_It != p_ListSpells->end(); l_It++)
             m_Packet << (*l_It)->GetID() << (*l_It)->GetName();
+    }
+};
+
+struct PacketPlayerItem
+{
+    WorldPacket m_Packet;
+    uint8 m_PacketID;
+
+    PacketPlayerItem() :
+        m_PacketID(SMSG::S_PlayerItem) {}
+
+    void BuildPacket(std::map<uint8, Item*>* p_Items)
+    {
+        m_Packet << m_PacketID << (uint8)p_Items->size();
+
+        for (std::map<uint8, Item*>::iterator l_It = p_Items->begin(); l_It != p_Items->end(); l_It++)
+            m_Packet << (*l_It).first << (*l_It).second->GetTemplate()->m_Name << (*l_It).second->GetStackNb() <<
+            (uint8)(*l_It).second->GetTemplate()->m_Type <<
+            (*l_It).second->GetTemplate()->m_Level <<
+            (uint8)(*l_It).second->GetTemplate()->m_RareLevel <<
+            (*l_It).second->GetTemplate()->GetData(0) <<
+            (*l_It).second->GetTemplate()->GetData(1) <<
+            (*l_It).second->GetTemplate()->GetData(2) <<
+            (*l_It).second->GetTemplate()->GetData(3);
+    }
+};
+
+struct PacketPlayerEquipment
+{
+    WorldPacket m_Packet;
+    uint8 m_PacketID;
+
+    PacketPlayerEquipment() :
+        m_PacketID(SMSG::S_PlayerEquipment) {}
+
+    void BuildPacket(std::map<eTypeEquipment, Item*>* p_Equipments)
+    {
+        m_Packet << m_PacketID << (uint8)p_Equipments->size();
+
+        for (std::map<eTypeEquipment, Item*>::iterator l_It = p_Equipments->begin(); l_It != p_Equipments->end(); l_It++)
+            m_Packet << (uint8)(*l_It).first << (*l_It).second->GetTemplate()->m_Name <<
+            (*l_It).second->GetTemplate()->m_Level <<
+            (uint8)(*l_It).second->GetTemplate()->m_RareLevel <<
+            (*l_It).second->GetTemplate()->GetData(0) <<
+            (*l_It).second->GetTemplate()->GetData(1) <<
+            (*l_It).second->GetTemplate()->GetData(2) <<
+            (*l_It).second->GetTemplate()->GetData(3);
     }
 };
 
@@ -284,7 +332,6 @@ struct PacketUnitCreate
         m_StructData.charOn41111.fourth = p_IsInGroup ? 1 : 0;
         m_StructData.charOn41111.fifth = 0;
 
-        printf("---------> [%s]\n", p_Name.c_str());
         m_Packet << m_PacketID << p_TypeID << p_ID << p_Name << p_Level << p_Health << p_Mana << p_Alignment << p_SkinID << p_SizeX << p_SizeY << p_Speed << p_MapID << (uint16)p_Pos.m_X << (uint16)p_Pos.m_Y << m_StructData.m_Byte_value;
         m_TypeID = p_TypeID;
         m_ID = p_ID;

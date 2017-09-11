@@ -30,6 +30,7 @@ Player::Player(uint32 p_AccountID, int32 p_ID, std::string p_Name, uint8 p_Level
     m_Xp = p_Xp;
     m_RespawnTime = PLAYER_TIME_RESPAWN * IN_MICROSECOND;
     m_ActiveTitle = -1;
+    m_BagSlots = 0;
     WebHook::sendMsg(g_Config->GetValue("WebhookUrl"), "Connection sur serveur " + g_Config->GetValue("ServerName") + " : " + m_Name + ":" + std::to_string(p_ID) + "   Total : " + std::to_string(g_MapManager->GetTotalPlayers() + 1));
 }
 
@@ -53,9 +54,11 @@ Player::~Player()
     printf("Erase Player %d:%s\n", m_ID, m_Name.c_str());
     WebHook::sendMsg(g_Config->GetValue("WebhookUrl"), "Deconnection sur serveur " + g_Config->GetValue("ServerName") + " : " + m_Name + ":" + std::to_string(GetID()) + "   Total : " + std::to_string(g_MapManager->GetTotalPlayers() - 1));
     for (std::map< uint16, Quest* >::iterator l_It = m_Quests.begin(); l_It != m_Quests.end(); ++l_It)
-    {
         delete (*l_It).second;
-    }
+    for (std::map < uint8, Item* >::iterator l_It = m_Items.begin(); l_It != m_Items.end(); ++l_It)
+        delete (*l_It).second;
+    for (std::map < eTypeEquipment, Item* >::iterator l_It = m_Equipment.begin(); l_It != m_Equipment.end(); ++l_It)
+        delete (*l_It).second;
 }
 
 uint32 Player::GetAccountID() const
@@ -809,4 +812,148 @@ void Player::UnitEnterInGroup(Unit* p_Unit, const std::string & p_GroupName)
 std::map<uint16, Title*>* Player::GetTitles()
 {
     return &m_Titles;
+}
+
+void Player::AddEquipment(const eTypeEquipment & p_Type, Item* p_Item, bool p_New)
+{
+    if (GetEquipment(p_Type) != nullptr)
+        RemoveEquipment(p_Type);
+
+    m_Equipment[p_Type] = p_Item;
+
+    if (!p_New)
+        return;
+
+    g_SqlManager->AddNewEquipmentForPlayer(GetID(), p_Type, p_Item->GetTemplate()->m_Id);
+    std::map<eTypeEquipment, Item*> p_Equipments;
+    p_Equipments[p_Type] = p_Item;
+    GetSession()->SendEquipments(&p_Equipments);
+}
+
+std::map< eTypeEquipment, Item*>* Player::GetEquipments()
+{
+    return &m_Equipment;
+}
+
+Item* Player::GetEquipment(const eTypeEquipment & p_Type)
+{
+    if (m_Equipment.find(p_Type) == m_Equipment.end())
+        return nullptr;
+    return m_Equipment[p_Type];
+}
+
+void Player::RemoveEquipment(const eTypeEquipment & p_Type)
+{
+    std::map<eTypeEquipment, Item*>::iterator l_It = m_Equipment.find(p_Type);
+
+    if (l_It == m_Equipment.end())
+        return;
+
+    Item* l_Item = (*l_It).second;
+
+    m_Equipment.erase(l_It);
+    delete l_Item;
+}
+
+void Player::AddItem(const uint8 & p_Slot, Item* p_Item, bool p_New)
+{
+    m_Items[p_Slot] = p_Item;
+
+    if (!p_New)
+        return;
+
+    g_SqlManager->AddNewItemForPlayer(GetID(), p_Slot, p_Item->GetTemplate()->m_Id, p_Item->GetStackNb());
+    std::map<uint8, Item*> p_Items;
+    p_Items[p_Item->GetTemplate()->m_Id] = p_Item;
+    GetSession()->SendItems(&p_Items);
+}
+
+std::map< uint8, Item*>* Player::GetItems()
+{
+    return &m_Items;
+}
+
+Item* Player::GetItem(const uint8 & p_Slot)
+{
+    if (m_Items.find(p_Slot) == m_Items.end())
+        return nullptr;
+
+    return m_Items[p_Slot];
+}
+
+void Player::RemoveItem(const uint8 & p_Slot)
+{
+    std::map<uint8, Item*>::iterator l_It = m_Items.find(p_Slot);
+
+    if (l_It == m_Items.end())
+        return;
+
+    Item* l_Item = (*l_It).second;
+
+    m_Items.erase(l_It);
+    delete l_Item;
+}
+
+void Player::UnstackItem(const uint8 & p_Slot)
+{
+    Item* l_Item = GetItem(p_Slot);
+    if (l_Item == nullptr)
+        return;
+
+    l_Item->SubStack();
+    if (l_Item->GetStackNb() <= 0)
+        RemoveItem(p_Slot);
+}
+
+void Player::SetMaxBagSlot(const uint16 & p_MaxSlot)
+{
+    m_BagSlots = p_MaxSlot;
+}
+
+void Player::UpdateCurrency(const eTypeCurrency & p_Type, const uint16 & p_Value, const bool & p_Send)
+{
+    m_Currencies[p_Type] = p_Value;
+
+    if (!p_Send)
+        return;
+}
+
+uint16 Player::GetCurrency(const eTypeCurrency & p_Type)
+{
+    if (m_Currencies.find(p_Type) == m_Currencies.end())
+        return 0;
+
+    return m_Currencies[p_Type];
+}
+
+void Player::LearnSkin(const uint16 & p_SkinID, const bool & p_New)
+{
+    if (g_Skins.find(p_SkinID) != g_Skins.end())
+        AddSkinToCollection(p_SkinID, &g_Skins[p_SkinID]);
+    else
+        return;
+
+    if (!p_New)
+        return;
+
+    g_SqlManager->AddNewSkinForPlayer(GetID(), p_SkinID);
+    std::map<uint16, Skin*> l_SkinMap;
+    l_SkinMap[p_SkinID] = &g_Skins[p_SkinID];
+    GetSession()->SendSkins(&l_SkinMap);
+}
+
+void Player::LearnTitle(const uint16 & p_TitleID, const bool & p_New)
+{
+    if (g_Titles.find(p_TitleID) != g_Titles.end())
+        AddTitle(p_TitleID, &g_Titles[p_TitleID]);
+    else
+        return;
+
+    if (!p_New)
+        return;
+
+    g_SqlManager->AddNewTitleForPlayer(GetID(), p_TitleID);
+    std::map<uint16, Title*> l_TitleMap;
+    l_TitleMap[p_TitleID] = &g_Titles[p_TitleID];
+    GetSession()->SendTitles(&l_TitleMap);
 }

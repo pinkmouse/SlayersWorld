@@ -204,6 +204,28 @@ void WorldSocket::SendSpells(std::map<uint16, uint64>* p_Spells)
     SendPacket(l_Packet.m_Packet);
 }
 
+void WorldSocket::SendItems(std::map<uint8, Item*>* p_Items)
+{
+    if (p_Items == nullptr)
+        return;
+
+    PacketPlayerItem l_Packet;
+
+    l_Packet.BuildPacket(p_Items);
+    SendPacket(l_Packet.m_Packet);
+}
+
+void WorldSocket::SendEquipments(std::map<eTypeEquipment, Item*>* p_Equipment)
+{
+    if (p_Equipment == nullptr)
+        return;
+
+    PacketPlayerEquipment l_Packet;
+
+    l_Packet.BuildPacket(p_Equipment);
+    SendPacket(l_Packet.m_Packet);
+}
+
 void WorldSocket::SendTitles(std::map<uint16, Title*>* p_Titles)
 {
     if (p_Titles == nullptr)

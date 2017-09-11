@@ -43,6 +43,11 @@ add_executable(${EXECUTABLE_NAME}
   	      server/System/Quest/QuestManager.cpp
               server/System/Quest/QuestManager.hpp
 
+	      server/System/Item/Item.cpp
+              server/System/Item/Item.hpp
+  	      server/System/Item/ItemManager.cpp
+              server/System/Item/ItemManager.hpp
+
 	      server/System/Required/Required.cpp
               server/System/Required/Required.hpp
 	      server/System/Required/RequiredManager.cpp

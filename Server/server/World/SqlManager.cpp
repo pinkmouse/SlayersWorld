@@ -139,7 +139,7 @@ void SqlManager::ReplaceKeyBindsForAccount(uint32 p_AccountID, eKeyBoardAction p
 
 Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
 {
-    std::string l_Query = "SELECT characterID, name, level, class, health, mana, alignment, activeTitleID, skinID, mapID, posX, posY, orientation, xp FROM characters WHERE accountID = '" + std::to_string(p_AccountID) + "'";
+    std::string l_Query = "SELECT characterID, name, level, class, health, mana, alignment, activeTitleID, slotBagNb, skinID, mapID, posX, posY, orientation, xp FROM characters WHERE accountID = '" + std::to_string(p_AccountID) + "'";
     mysql_query(&m_MysqlCharacters, l_Query.c_str());
 
     uint32 l_ID = 0;
@@ -150,6 +150,7 @@ Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
     uint8 l_Mana = 0;
     uint8 l_Alignment = 0;
     int32 l_ActiveTitleID = -1;
+    int16 l_SlotBagNb = 0;
     int16 l_SkinID = 0;
     uint16 l_MapID = 0;
     uint32 l_PosX = 0;
@@ -174,12 +175,13 @@ Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
         l_Mana = atoi(l_Row[5]);
         l_Alignment = atoi(l_Row[6]);
         l_ActiveTitleID = atoi(l_Row[7]);
-        l_SkinID = atoi(l_Row[8]);
-        l_MapID = atoi(l_Row[9]);
-        l_PosX = atoi(l_Row[10]);
-        l_PosY = atoi(l_Row[11]);
-        l_Orientation = atoi(l_Row[12]);
-        l_Xp = atoi(l_Row[13]);
+        l_SlotBagNb = atoi(l_Row[8]);
+        l_SkinID = atoi(l_Row[9]);
+        l_MapID = atoi(l_Row[10]);
+        l_PosX = atoi(l_Row[11]);
+        l_PosY = atoi(l_Row[12]);
+        l_Orientation = atoi(l_Row[13]);
+        l_Xp = atoi(l_Row[14]);
     }
     mysql_free_result(l_Result);
 
@@ -207,12 +209,15 @@ Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
 
     l_Player = new Player(p_AccountID, l_ID, l_Name, l_Lvl, (eClass)l_Class, l_Health, l_Mana, l_Alignment, l_SkinID, l_MapID, l_PosX, l_PosY, (Orientation)l_Orientation, l_Xp, l_PlayerAccessType);
     l_Player->SetRespawnPosition(GetRespawnPositionForPlayer(l_ID));
+    l_Player->SetMaxBagSlot(l_SlotBagNb);
+
     InitializeSpellsForPlayer(l_Player);
     InitializeKeyBindsForAccount(p_AccountID, l_Player);
     InitializeSpellsBinds(l_Player);
     InitializeQuestsProgessForPlayer(l_Player);
     InitializeListTitlesForPlayer(l_Player);
     InitializeListSkinsForPlayer(l_Player);
+    InitializeListItemForPlayer(l_Player);
     l_Player->ChangeActiveTitle(l_ActiveTitleID, false);
 
     return l_Player;
@@ -221,6 +226,85 @@ Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
 void SqlManager::AddNewRespawnPositionForPlayer(uint32 p_PlayerID)
 {
     std::string l_Query = "insert into `characters_respawn` (`characterID`, `posX`, `posY`, `mapID`, `orientation`) values('" + std::to_string(p_PlayerID) + "', '" + std::to_string(CREATION_POINT_X) + "', '" + std::to_string(CREATION_POINT_Y) + "', '" + std::to_string(CREATION_POINT_MAP) + "', '2');";
+    mysql_query(&m_MysqlCharacters, l_Query.c_str());
+}
+
+void SqlManager::AddNewSkinForPlayer(const uint32 & p_PlayerID, const uint16 & p_SkinID)
+{
+    std::string l_Query = "replace into `characters_skins` (`characterID`, `skinID`) values('" + std::to_string(p_PlayerID) + "', '" + std::to_string(p_SkinID) + "');";
+    mysql_query(&m_MysqlCharacters, l_Query.c_str());
+}
+
+void SqlManager::AddNewTitleForPlayer(const uint32 & p_PlayerID, const uint16 & p_TitleID)
+{
+    std::string l_Query = "replace into `characters_titles` (`characterID`, `skinID`) values('" + std::to_string(p_PlayerID) + "', '" + std::to_string(p_TitleID) + "');";
+    mysql_query(&m_MysqlCharacters, l_Query.c_str());
+}
+
+void SqlManager::AddNewItemForPlayer(const uint32 & p_PlayerID, const uint8 & p_Slot, const uint16 & p_ItemID, const uint8 & p_Stack)
+{
+    std::string l_Query = "replace into `characters_items` (`characterID`, `slotNb`, `itemID`, `stackNb`) values('" + std::to_string(p_PlayerID) + "', '" + std::to_string(p_Slot) + "', '" + std::to_string(p_ItemID) + "', '" + std::to_string(p_Stack) + "');";
+    mysql_query(&m_MysqlCharacters, l_Query.c_str());
+}
+
+void SqlManager::AddNewEquipmentForPlayer(const uint32 & p_PlayerID, const eTypeEquipment & p_Type, const uint16 & p_ItemID)
+{
+    std::string l_Query = "replace into `characters_equipments` (`characterID`, `typeID`, `itemID`) values('" + std::to_string(p_PlayerID) + "', '" + std::to_string(p_Type) + "', '" + std::to_string(p_ItemID) + "');";
+    mysql_query(&m_MysqlCharacters, l_Query.c_str());
+}
+
+void SqlManager::RemoveEquipmentForPlayer(const uint32 & p_PlayerID, const eTypeEquipment & p_Type)
+{
+    std::string l_Query = "DELETE FROM `characters_equipments` WHERE `characterID` = '" + std::to_string(p_PlayerID) + "' AND `typeID` =  '" + std::to_string(p_Type) + "';";
+    mysql_query(&m_MysqlCharacters, l_Query.c_str());
+}
+
+
+void SqlManager::UpdateItemStackForPlayer(const uint32 & p_PlayerID, const uint8 & p_Slot, const uint16 & p_ItemID, const uint8 & p_Stack)
+{
+    std::string l_Query = "UPDATE `characters_items` SET `stackNb` = '" + std::to_string(p_Stack) + "' WHERE `characterID` = '" + std::to_string(p_PlayerID) + "' AND `slotNb` =  '" + std::to_string(p_Slot) + "' AND `itemID` =  '" + std::to_string(p_ItemID) + "';";
+    mysql_query(&m_MysqlCharacters, l_Query.c_str());
+}
+
+void SqlManager::RemoveItemForPlayer(const uint32 & p_PlayerID, const uint8 & p_Slot)
+{
+    std::string l_Query = "DELETE FROM `characters_items` WHERE `characterID` = '" + std::to_string(p_PlayerID) + "' AND `SlotNb` =  '" + std::to_string(p_Slot) + "';";
+    mysql_query(&m_MysqlCharacters, l_Query.c_str());
+}
+
+void SqlManager::UpdateCurrencyForPlayer(const uint32 & p_PlayerID, const eTypeCurrency & p_Type, const uint16 & p_Value)
+{
+    std::string l_Query = "SELECT `value` FROM characters_currencies WHERE characterID = '" + std::to_string(p_PlayerID) + "' AND typeID = '" + std::to_string(p_Type) + "'";
+    mysql_query(&m_MysqlCharacters, l_Query.c_str());
+
+    MYSQL_RES *l_Result = NULL;
+    MYSQL_ROW l_Row;
+    bool l_Exist = false;
+
+    l_Result = mysql_use_result(&m_MysqlCharacters);
+    while ((l_Row = mysql_fetch_row(l_Result)))
+    {
+        l_Exist = true;
+    }
+    mysql_free_result(l_Result);
+
+    if (!l_Exist)
+    {
+        std::string l_Query = "INSERT INTO `characters_currencies` (`characterID`, `typeID`, `value`) values('" + std::to_string(p_PlayerID) + "', '" + std::to_string(p_Type) + "', '" + std::to_string(p_Value) + "');";
+        mysql_query(&m_MysqlCharacters, l_Query.c_str());
+    }
+    else
+    {
+        std::string l_Query = "UPDATE `characters_currencies` SET `value` = '" + std::to_string(p_Value) + "' WHERE `characterID` = '" + std::to_string(p_PlayerID) + "' AND `typeID` =  '" + std::to_string((uint8)p_Type) + "';";
+        mysql_query(&m_MysqlCharacters, l_Query.c_str());
+    }
+}
+
+void SqlManager::UpdateItemSlotForPlayer(const uint32 & p_PlayerID, const uint8 & p_SlotOld, const uint8 & p_SlotNew)
+{
+    std::string l_Query = "UPDATE `characters_items` SET `slotNb` = -1 WHERE `characterID` = '" + std::to_string(p_PlayerID) + "' AND `slotNb` =  '" + std::to_string(p_SlotNew) + "';";
+    l_Query += "UPDATE `characters_items` SET `slotNb` = '" + std::to_string(p_SlotNew) + "' WHERE `characterID` = '" + std::to_string(p_PlayerID) + "' AND `slotNb` =  '" + std::to_string(p_SlotOld) + "';";
+    l_Query += "UPDATE `characters_items` SET `slotNb` = '" + std::to_string(p_SlotOld) + "' WHERE `characterID` = '" + std::to_string(p_PlayerID) + "' AND `slotNb` = -1;";
     mysql_query(&m_MysqlCharacters, l_Query.c_str());
 }
 
@@ -384,6 +468,7 @@ void SqlManager::InitializeListSkinsForPlayer(Player* p_Player)
 
     MYSQL_RES *l_Result = NULL;
     MYSQL_ROW l_Row;
+
     l_Result = mysql_use_result(&m_MysqlCharacters);
     while ((l_Row = mysql_fetch_row(l_Result)))
     {
@@ -392,9 +477,60 @@ void SqlManager::InitializeListSkinsForPlayer(Player* p_Player)
         if (l_Row[0])
         {
             uint16 l_ID = atoi(l_Row[0]);
-            if (g_Skins.find(l_ID) != g_Skins.end())
-                p_Player->AddSkinToCollection(l_ID, &g_Skins[l_ID]);
+            p_Player->LearnSkin(l_ID);
         }
+    }
+    mysql_free_result(l_Result);
+}
+void SqlManager::InitializeListEquipmentsForPlayer(Player* p_Player)
+{
+    std::string l_Query = "SELECT typeID, itemID FROM characters_equipments WHERE characterID = '" + std::to_string(p_Player->GetID()) + "'";
+    mysql_query(&m_MysqlCharacters, l_Query.c_str());
+
+    eTypeEquipment l_Type = eTypeEquipment::EQUIP_HEAD;
+    uint16 l_ItemID = 0;
+
+    MYSQL_RES *l_Result = NULL;
+    MYSQL_ROW l_Row;
+    l_Result = mysql_use_result(&m_MysqlCharacters);
+    while ((l_Row = mysql_fetch_row(l_Result)))
+    {
+        l_Type = (eTypeEquipment)atoi(l_Row[0]);
+        l_ItemID = atoi(l_Row[1]);
+
+        ItemTemplate* l_ItemTemplate = g_ItemManager->GetItemTemplate(l_ItemID);
+        if (l_ItemTemplate == nullptr)
+            continue;
+        Item* l_Item = new Item(p_Player, l_ItemTemplate);
+        p_Player->AddEquipment(l_Type, l_Item);
+    }
+    mysql_free_result(l_Result);
+}
+
+void SqlManager::InitializeListItemForPlayer(Player* p_Player)
+{
+    std::string l_Query = "SELECT slotNb, itemID, stackNb FROM characters_items WHERE characterID = '" + std::to_string(p_Player->GetID()) + "'";
+    mysql_query(&m_MysqlCharacters, l_Query.c_str());
+
+    uint8 l_SlotNb = 0;
+    uint16 l_ItemID = 0;
+    uint8 l_StackNb = 0;
+
+    MYSQL_RES *l_Result = NULL;
+    MYSQL_ROW l_Row;
+    l_Result = mysql_use_result(&m_MysqlCharacters);
+    while ((l_Row = mysql_fetch_row(l_Result)))
+    {
+        l_SlotNb = atoi(l_Row[0]);
+        l_ItemID = atoi(l_Row[1]);
+        l_StackNb = atoi(l_Row[2]);
+
+        ItemTemplate* l_ItemTemplate = g_ItemManager->GetItemTemplate(l_ItemID);
+        if (l_ItemTemplate == nullptr)
+            continue;
+        Item* l_Item = new Item(p_Player, l_ItemTemplate);
+        l_Item->SetStackNb(l_StackNb);
+        p_Player->AddItem(l_SlotNb, l_Item);
     }
     mysql_free_result(l_Result);
 }
@@ -414,9 +550,28 @@ void SqlManager::InitializeListTitlesForPlayer(Player* p_Player)
         if (l_Row[0])
         {
             uint16 l_ID = atoi(l_Row[0]);
-            if (g_Titles.find(l_ID) != g_Titles.end())
-                p_Player->AddTitle(l_ID, &g_Titles[l_ID]);
+            p_Player->LearnTitle(l_ID);
         }
+    }
+    mysql_free_result(l_Result);
+}
+
+void SqlManager::InitializeListCurrenciesForPlayer(Player* p_Player)
+{
+    std::string l_Query = "SELECT typeID, value FROM characters_currencies WHERE characterID = '" + std::to_string(p_Player->GetID()) + "'";
+    mysql_query(&m_MysqlCharacters, l_Query.c_str());
+
+    MYSQL_RES *l_Result = NULL;
+    MYSQL_ROW l_Row;
+
+    uint8 l_TypeID = 0;
+    uint16 l_Value = 0;
+    l_Result = mysql_use_result(&m_MysqlCharacters);
+    while ((l_Row = mysql_fetch_row(l_Result)))
+    {
+        l_TypeID = atoi(l_Row[0]);
+        l_Value = atoi(l_Row[1]);
+        p_Player->UpdateCurrency((eTypeCurrency)l_TypeID, l_Value);
     }
     mysql_free_result(l_Result);
 }
@@ -980,6 +1135,52 @@ bool SqlManager::InitializeRequired(RequiredManager* p_RequiredManager)
         l_Data1 = atoi(l_Row[4]);
 
         p_RequiredManager->AddSubRequiered(l_RequiredID, (eRequiredType)l_TypeID, l_Data0, l_Data1);
+    }
+    mysql_free_result(l_Result);
+    return true;
+}
+
+bool  SqlManager::InitializeItems(RequiredManager* p_RequiredManager)
+{
+    /// QUEST TEMPLATE
+    std::string l_Query = "SELECT `id`, `type`, `name`, `level`, `stackMax`, `rareLevel`, `requiredID`, `data0`, `data1`, `data2`, `data3` FROM item";
+    
+    mysql_query(&m_MysqlWorld, l_Query.c_str());
+
+    uint16 l_Id = 0;
+    eItemType l_Type = eItemType::ITEM_USELESS;
+    std::string l_Name = "";
+    uint8 l_Level = 0;
+    uint8 l_StackNB = 0;
+    eItemRareLevel l_RareLevel = eItemRareLevel::ITEM_RARE1;
+    int32 l_RequiredID = -1;
+    std::vector<int32> l_Data;
+    Required* l_Required = nullptr;
+
+    MYSQL_RES *l_Result = NULL;
+    MYSQL_ROW l_Row;
+    l_Result = mysql_use_result(&m_MysqlWorld);
+    while ((l_Row = mysql_fetch_row(l_Result)))
+    {
+        l_Id = atoi(l_Row[0]);
+        l_Type = (eItemType)atoi(l_Row[1]);
+        l_Name = std::string(l_Row[2]);
+        l_Level = atoi(l_Row[3]);
+        l_StackNB = atoi(l_Row[4]);
+        l_RareLevel = (eItemRareLevel)atoi(l_Row[5]);
+        l_RequiredID = atoi(l_Row[6]);
+
+        if (l_RequiredID >= 0) /// -1 if no required
+            l_Required = p_RequiredManager->GetRequiered(l_RequiredID);
+        ItemTemplate* l_ItemTemplate = new ItemTemplate(l_Id, l_Type, l_Name, l_Level, l_StackNB, l_RareLevel, l_Required);
+
+        for (uint8 i = 0; i < 4; i++)
+        {
+            if (atoi(l_Row[6 + 1 + i]) < 0)
+                break;
+            l_ItemTemplate->AddData(atoi(l_Row[5 + 1 + i]));
+        }
+        g_ItemManager->AddItemTemplate(l_ItemTemplate);
     }
     mysql_free_result(l_Result);
     return true;

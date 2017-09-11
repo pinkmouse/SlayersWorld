@@ -94,6 +94,43 @@ enum eBGState
     STEP2
 };
 
+enum eTypeCurrency
+{
+    CURRENCY_BASISC = 0,
+    CURRENCY_HONNOR = 1
+};
+
+enum eItemType
+{
+    ITEM_USELESS = 0,
+    ITEM_LAUNCHSPELL = 1,
+    ITEM_ARMOR = 2,
+    ITEM_WEAPON = 3,
+    ITEM_QUEST = 4,
+    ITEM_CONSUMABLE = 5,
+    ITEM_MAX = 6
+};
+
+enum eItemRareLevel
+{
+    ITEM_RARE1 = 0,
+    ITEM_RARE2 = 1,
+    ITEM_RARE3 = 2,
+    ITEM_RARE4 = 3,
+    ITEM_RARE5 = 4,
+    ITEM_MAX_RARE = 5
+};
+
+enum eTypeEquipment
+{
+    EQUIP_HEAD = 0,
+    EQUIP_SHOLDER = 1,
+    EQUIP_BODY = 2,
+    EQUIP_HAND = 3,
+    EQUIP_FOOT = 4,
+    EQUIP_MAX = 5
+};
+
 enum eAiType
 {
     PASSIVE = 0,

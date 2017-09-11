@@ -4,6 +4,8 @@
 #include "MenuWardrobe.hpp"
 #include "MenuStats.hpp"
 #include "MenuSpells.hpp"
+#include "MenuEquipment.hpp"
+#include "MenuBag.hpp"
 #include "../../Global.hpp"
 
 MenuManager::MenuManager() :
@@ -13,24 +15,29 @@ MenuManager::MenuManager() :
     m_Pos.y = 30;
     AddElement(0, 0, "Stats");
     GetElement(0, 0)->SetFunc(&Menu::GenericAction, 0);
-    AddElement(0, 1, "Tites");
+    AddElement(0, 1, "Titres");
     GetElement(0, 1)->SetFunc(&Menu::GenericAction, 1);
     AddElement(0, 2, "Peaux");
     GetElement(0, 2)->SetFunc(&Menu::GenericAction, 2);
     AddElement(0, 3, "Sorts");
     GetElement(0, 3)->SetFunc(&Menu::GenericAction, 3);
-    AddElement(0, 4, "Save");
+    AddElement(0, 4, "Sac");
     GetElement(0, 4)->SetFunc(&Menu::GenericAction, 4);
+    AddElement(0, 5, "Stuff");
+    GetElement(0, 5)->SetFunc(&Menu::GenericAction, 5);
+    AddElement(0, 6, "Save");
+    GetElement(0, 6)->SetFunc(&Menu::GenericAction, 6);
     AddElement(0, 9, "Escape");
     GetElement(0, 9)->SetFunc(&Menu::GenericAction, 9);
     SetSelectedElement(0, 0);
 
-    m_ListMenu[eMenuType::QuestMenu] = new MenuQuest();
-    m_ListMenu[eMenuType::StatsMenu] = new MenuStats();
-    m_ListMenu[eMenuType::TitlesMenu] = new MenuTitles();
-    m_ListMenu[eMenuType::SpellsMenu] = new MenuSpells();
-    MenuWardrobe* l_Wardrobe = new MenuWardrobe();
-    m_ListMenu[eMenuType::WardrobeMenu] = l_Wardrobe;
+    m_ListMenu[eMenuType::QuestMenu]        = new MenuQuest();
+    m_ListMenu[eMenuType::StatsMenu]        = new MenuStats();
+    m_ListMenu[eMenuType::TitlesMenu]       = new MenuTitles();
+    m_ListMenu[eMenuType::SpellsMenu]       = new MenuSpells();
+    m_ListMenu[eMenuType::BagMenu]          = new MenuBag();
+    m_ListMenu[eMenuType::WardrobeMenu]     = new MenuWardrobe();
+    m_ListMenu[eMenuType::EquipmentMenu]    = new MenuEquipment();
 }
 
 MenuManager::~MenuManager()
@@ -54,6 +61,12 @@ void MenuManager::GenericAction(const uint16 & p_MenuID)
             m_ListMenu[eMenuType::SpellsMenu]->Open();
             break;
         case 4:
+            m_ListMenu[eMenuType::BagMenu]->Open();
+            break;
+        case 5:
+            m_ListMenu[eMenuType::EquipmentMenu]->Open();
+            break;
+        case 6:
             g_Socket->SendSave();
             Close();
             break;

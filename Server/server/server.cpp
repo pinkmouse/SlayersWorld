@@ -22,6 +22,7 @@ MapManager       *g_MapManager;
 SpellManager     *g_SpellManager;
 QuestManager     *g_QuestManager;
 GroupManager     *g_GroupManager;
+ItemManager      *g_ItemManager;
 
 void handler_segfault(int sig) {
 

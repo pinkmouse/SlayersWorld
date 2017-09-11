@@ -545,7 +545,7 @@ bool Map::InitializeMap(const std::string & p_FileName)
 	FILE * l_File;
 	std::string l_MapPath = MAP_PATH + p_FileName;
 
-	l_File = fopen(l_MapPath.c_str(), "r");
+	l_File = fopen(l_MapPath.c_str(), "rb");
 	if (l_File == nullptr)
 	{
 		printf("Map File %s did not open\n", l_MapPath.c_str());

@@ -47,6 +47,8 @@ public:
     void HandlePlayerTitle(WorldPacket &);
     void HandlePlayerSkin(WorldPacket &);
     void HandlePlayerSpell(WorldPacket &);
+    void HandlePlayerItem(WorldPacket &);
+    void HandlePlayerEquipment(WorldPacket &);
     void HanleUnitUpdateName(WorldPacket &);
 
 private:

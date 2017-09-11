@@ -7,6 +7,7 @@
 #include "Map/MapManager.hpp"
 #include "System/Spell/SpellManager.hpp"
 #include "System/Quest/QuestManager.hpp"
+#include "System/Item/ItemManager.hpp"
 
 extern Skins            g_Skins;
 extern Titles           g_Titles;
@@ -17,3 +18,4 @@ extern MapManager       *g_MapManager;
 extern SpellManager     *g_SpellManager;
 extern QuestManager     *g_QuestManager;
 extern GroupManager     *g_GroupManager;
+extern ItemManager      *g_ItemManager;

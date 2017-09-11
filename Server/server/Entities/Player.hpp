@@ -2,6 +2,7 @@
 #include  <SFML/Window/Keyboard.hpp>
 #include "../System/Quest/Quest.hpp"
 #include "Unit.hpp"
+#include "../System/Item/Item.hpp"
 #include <map>
 
 class WorldSocket;
@@ -45,11 +46,31 @@ public:
     void RemoveActiveTitle();
     std::string GetNameWithTitle();
     int32 GetActiveTitleID() const;
+    void LearnTitle(const uint16 &, const bool & p_New = false);
 
     /* SKINS */
     void AddSkinToCollection(const uint16 &, Skin*);
     std::map < uint16, Skin*>* GetSkinsCollection();
     bool HasSkin(const uint16 &);
+    void LearnSkin(const uint16 &, const bool & p_New = false);
+
+    /* CURRENCY */
+    void UpdateCurrency(const eTypeCurrency &, const uint16 &, const bool & p_Send = false);
+    uint16 GetCurrency(const eTypeCurrency &);
+
+    /* ITEMS */
+    void AddItem(const uint8 &, Item*, bool p_New = false);
+    std::map< uint8, Item*>* GetItems();
+    Item* GetItem(const uint8 &);
+    void RemoveItem(const uint8 &);
+    void UnstackItem(const uint8 &);
+    void SetMaxBagSlot(const uint16 &);
+
+    /* EQUIPMENT */
+    void AddEquipment(const eTypeEquipment &, Item*, bool p_New = false);
+    std::map< eTypeEquipment, Item*>* GetEquipments();
+    Item* GetEquipment(const eTypeEquipment &);
+    void RemoveEquipment(const eTypeEquipment &);
 
     /* RESOURCES */
     uint32 GetXp() const;
@@ -149,13 +170,17 @@ private:
     eClass m_Class;
     std::map< uint16, Quest* > m_Quests;
     int32 m_ActiveTitle;
+    uint8 m_BagSlots;
 
     std::map < uint16, std::pair<Unit*, std::vector<uint16> > >     m_QuestionInProgress;
     typedef bool(Player::*m_Func)(std::vector<std::string>);
     std::map < std::string, std::pair < eAccessType,  m_Func > >    m_CmdHandleMap;
-    std::map < eKeyBoardAction, uint8 > m_KeyBoardBinds;
+    std::map < eKeyBoardAction, uint8 >                             m_KeyBoardBinds;
     std::map < uint16, uint8 >                                      m_SpellsBindToKey;
-    std::map < uint16, Title*>                                      m_Titles;
-    std::map < uint16, Skin*>                                       m_Skins;
+    std::map < uint16, Title* >                                     m_Titles;
+    std::map < uint16, Skin* >                                      m_Skins;
+    std::map < uint8, Item* >                                       m_Items;
+    std::map < eTypeEquipment, Item* >                              m_Equipment;
+    std::map < eTypeCurrency, int16 >                               m_Currencies;
 };
 

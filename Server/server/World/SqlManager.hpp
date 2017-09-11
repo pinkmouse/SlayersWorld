@@ -47,6 +47,15 @@ public:
     WorldPosition GetRespawnPositionForPlayer(uint32);
     eAccessType GetAccessType(uint32);
 
+    void AddNewSkinForPlayer(const uint32 &, const uint16 &);
+    void AddNewTitleForPlayer(const uint32 &, const uint16 &);
+    void AddNewItemForPlayer(const uint32 &, const uint8 &, const uint16 &, const uint8 &);
+    void UpdateItemStackForPlayer(const uint32 &, const uint8 &, const uint16 &, const uint8 &);
+    void UpdateItemSlotForPlayer(const uint32 &, const uint8 &, const uint8 &);
+    void UpdateCurrencyForPlayer(const uint32 &, const eTypeCurrency &, const uint16 &);
+    void AddNewEquipmentForPlayer(const uint32 &, const eTypeEquipment &, const uint16 &);
+    void RemoveEquipmentForPlayer(const uint32 &, const eTypeEquipment &);
+    void RemoveItemForPlayer(const uint32 &, const uint8 &);
     void AddNewRespawnPositionForPlayer(uint32);
 	PointsSet GetPointsSetForPlayer(uint32);
 	void AddNewPointsSetForPlayer(uint32);
@@ -67,12 +76,16 @@ public:
     bool InitializeSpellsForPlayer(Player*);
     void InitializeListTitlesForPlayer(Player*);
     void InitializeListSkinsForPlayer(Player*);
+    void InitializeListItemForPlayer(Player*);
+    void InitializeListEquipmentsForPlayer(Player*);
+    void InitializeListCurrenciesForPlayer(Player*);
     bool InitializeBattlegrounds();
     bool InitializeQuestsProgessForPlayer(Player*);
     bool InitializeKeyBindsForAccount(uint32, Player*);
     bool InitializeSpellsBinds(Player*);
     bool InitializeQuests();
     bool InitializeTitles();
+    bool InitializeItems(RequiredManager*);
     bool InitializeSkins();
     bool InitializeMaps();
     bool InitializeZones();
