@@ -211,13 +211,21 @@ Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
     l_Player->SetRespawnPosition(GetRespawnPositionForPlayer(l_ID));
     l_Player->SetMaxBagSlot(l_SlotBagNb);
 
+    printf("[Init Spell]\n");
     InitializeSpellsForPlayer(l_Player);
+    printf("[Init KeyBind]\n");
     InitializeKeyBindsForAccount(p_AccountID, l_Player);
+    printf("[Init SpellBind]\n");
     InitializeSpellsBinds(l_Player);
+    printf("[Init QuestProgress]\n");
     InitializeQuestsProgessForPlayer(l_Player);
+    printf("[Init Titles]\n");
     InitializeListTitlesForPlayer(l_Player);
+    printf("[Init Skins]\n");
     InitializeListSkinsForPlayer(l_Player);
+    printf("[Init Items]\n");
     InitializeListItemForPlayer(l_Player);
+    printf("[End Init]\n");
     l_Player->ChangeActiveTitle(l_ActiveTitleID, false);
 
     return l_Player;
