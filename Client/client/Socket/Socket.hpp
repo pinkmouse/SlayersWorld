@@ -25,6 +25,9 @@ public:
     void SendAnswerQuestion(const uint16 &, const uint8 &_Resp);
     void SendUpdateTitle(bool, const uint16 &);
     void SendUpdateSkin(const uint16 &);
+    void SendRemoveItem(const uint8 &);
+    void SendItemAction(const uint8 &);
+    void SendUnequip(const uint8 &);
     bool IsConnected() const;
 
 private:

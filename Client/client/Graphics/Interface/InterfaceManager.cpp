@@ -190,10 +190,14 @@ void InterfaceManager::DrawMenu(Window & p_Window, Menu * p_Menu)
             if (l_CursorGraphicBottom > p_Menu->GetRow() - 1 && (*l_Itr).first <= l_CursorGraphicBottom - p_Menu->GetRow())
                 continue;
 
+            uint8 l_FinalOpacity = l_Opactiy;
+            if (!(*l_Itr).second.IsEnable())
+                l_FinalOpacity = 150;
+
             sf::Text    l_Label;
             l_Label.setCharacterSize(18);
             l_Label.setColor(sf::Color::White);
-            l_Label.setColor(sf::Color(255, 255, 255, l_Opactiy));
+            l_Label.setColor(sf::Color(255, 255, 255, l_FinalOpacity));
             l_Label.setString((*l_Itr).second.GetLabel());
             l_Label.setFont(*g_Font);
 

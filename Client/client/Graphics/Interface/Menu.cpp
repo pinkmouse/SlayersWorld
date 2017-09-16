@@ -9,7 +9,8 @@ MenuElement::MenuElement()
 MenuElement::MenuElement(const std::string & p_Label) :
     m_Label(p_Label),
     m_Function(nullptr),
-    m_Sprite(nullptr)
+    m_Sprite(nullptr),
+    m_Enable(true)
 {
 }
 
@@ -17,10 +18,29 @@ MenuElement::~MenuElement()
 {
 }
 
+void MenuElement::SetLabel(const std::string & p_Label)
+{
+    m_Label = p_Label;
+}
 
 std::string MenuElement::GetLabel() const
 {
     return m_Label;
+}
+
+void MenuElement::Disable()
+{
+    m_Enable = false;
+}
+
+void MenuElement::Enable()
+{
+    m_Enable = true;
+}
+
+bool MenuElement::IsEnable() const
+{
+    return m_Enable;
 }
 
 void MenuElement::SetSprite(sf::Sprite* p_Sprite)
@@ -74,6 +94,7 @@ Menu::Menu(const uint8 & p_Column, const uint8 & p_Row) :
     m_CursorGraphicBottom = 0;
     m_VisualManager = nullptr;
     m_SubMenu = nullptr;
+    m_UselessFieldSelectable = false;
 }
 
 Menu::~Menu()
@@ -216,7 +237,7 @@ void Menu::SelectNextElementOn(Orientation p_Orientation)
                 break;
 
             bool l_HasPass = false;
-            while (!(*l_It).second.HasFunc() ||!l_HasPass)
+            while (((!(*l_It).second.HasFunc() || !(*l_It).second.IsEnable()) && !m_UselessFieldSelectable) || !l_HasPass)
             {
                 l_It--;
                 l_HasPass = true;
@@ -238,7 +259,7 @@ void Menu::SelectNextElementOn(Orientation p_Orientation)
             if (l_It == m_Elements[m_SelectedElement.first].end())
                 break;
             bool l_HasPass = false;
-            while (!(*l_It).second.HasFunc() || !l_HasPass)
+            while (((!(*l_It).second.HasFunc() || !(*l_It).second.IsEnable()) && !m_UselessFieldSelectable) || !l_HasPass)
             {
                 l_HasPass = true;
                 ++l_It;
@@ -257,7 +278,7 @@ void Menu::SelectNextElementOn(Orientation p_Orientation)
             if (l_Itr == m_Elements[m_SelectedElement.first].end())
                 break;
             bool l_HasPass = false;
-            while (!(*l_Itr).second.HasFunc() || !l_HasPass)
+            while (((!(*l_Itr).second.HasFunc() || !(*l_Itr).second.IsEnable()) && !m_UselessFieldSelectable) || !l_HasPass)
             {
                 l_HasPass = true;
 
@@ -287,7 +308,7 @@ void Menu::SelectNextElementOn(Orientation p_Orientation)
             if (l_Itr == m_Elements[m_SelectedElement.first].end())
                 break;
             bool l_HasPass = false;
-            while (!(*l_Itr).second.HasFunc() || !l_HasPass)
+            while (((!(*l_Itr).second.HasFunc() || !(*l_Itr).second.IsEnable()) && !m_UselessFieldSelectable) || !l_HasPass)
             {
                 l_HasPass = true;
 
@@ -344,4 +365,9 @@ Menu* Menu::GetSubMenu()
 void Menu::SetSubMenu(Menu* p_Menu)
 {
     m_SubMenu = p_Menu;
+}
+
+void Menu::CanSelectUselessFields()
+{
+    m_UselessFieldSelectable = true;
 }

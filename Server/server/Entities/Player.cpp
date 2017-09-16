@@ -855,6 +855,84 @@ void Player::RemoveEquipment(const eTypeEquipment & p_Type)
     delete l_Item;
 }
 
+void Player::UnEquip(const eTypeEquipment & p_Type)
+{
+    std::map<eTypeEquipment, Item*>::iterator l_It = m_Equipment.find(p_Type);
+
+    if (l_It == m_Equipment.end())
+        return;
+
+    Item* l_Item = (*l_It).second;
+    if (!AddItemOnAvailableSlot(l_Item))
+        return;
+
+    m_Equipment.erase(l_It);
+
+    g_SqlManager->RemoveEquipmentForPlayer(GetID(), p_Type);
+
+    PacketPlayerRemoveEquipment l_Packet;
+    l_Packet.BuildPacket(p_Type);
+    GetSession()->send(l_Packet.m_Packet);
+}
+
+int16 Player::CanCanBeStackOnBagSlot(Item* p_Item)
+{
+    uint8 i = 0;
+
+    if (p_Item->GetTemplate()->m_StackNb <= 1) ///< If it doesn't stack, don't need to check
+        return -1;
+
+    for (i = 0; i < GetBagSize(); i++)
+    {
+        std::map<uint8, Item*>::iterator l_It = m_Items.find(i);
+        if (l_It == m_Items.end())
+            continue;
+
+        Item* l_Item = (*l_It).second;
+
+        if (l_Item == nullptr)
+            continue;
+
+        if (l_Item->GetTemplate() == nullptr)
+            continue;
+
+        if (l_Item->GetTemplate()->m_Id == p_Item->GetTemplate()->m_Id && l_Item->GetStackNb() < p_Item->GetTemplate()->m_StackNb)
+            return (int16)i;
+    }
+
+    return -1;
+}
+
+
+bool Player::AddItemOnAvailableSlot(Item* p_Item)
+{
+    int16 i = CanCanBeStackOnBagSlot(p_Item);
+    while (i >= 0) ///< If we can fit it with existing
+    {
+        uint8 l_RemainingStack = StackItem((uint8)i, p_Item->GetStackNb());
+        if (l_RemainingStack == 0)
+        {
+            delete p_Item;
+            return true;
+        }
+        p_Item->SetStackNb(l_RemainingStack);
+        i = CanCanBeStackOnBagSlot(p_Item);
+    }
+
+    /// Search a new place
+    for (i = 0; (uint8)i < GetBagSize(); i++)
+    {
+        std::map<uint8, Item*>::iterator l_It = m_Items.find((uint8)i);
+        if (l_It == m_Items.end())
+            break;
+    }
+    if ((uint8)i == GetBagSize()) ///< No available slot
+        return false;
+    AddItem((uint8)i, p_Item, true);
+
+    return true;
+}
+
 void Player::AddItem(const uint8 & p_Slot, Item* p_Item, bool p_New)
 {
     m_Items[p_Slot] = p_Item;
@@ -864,7 +942,7 @@ void Player::AddItem(const uint8 & p_Slot, Item* p_Item, bool p_New)
 
     g_SqlManager->AddNewItemForPlayer(GetID(), p_Slot, p_Item->GetTemplate()->m_Id, p_Item->GetStackNb());
     std::map<uint8, Item*> p_Items;
-    p_Items[p_Item->GetTemplate()->m_Id] = p_Item;
+    p_Items[p_Slot] = p_Item;
     GetSession()->SendItems(&p_Items);
 }
 
@@ -881,7 +959,20 @@ Item* Player::GetItem(const uint8 & p_Slot)
     return m_Items[p_Slot];
 }
 
-void Player::RemoveItem(const uint8 & p_Slot)
+bool Player::ConsumeItemFromBag(const uint8 & p_Slot)
+{
+    std::map<uint8, Item*>::iterator l_It = m_Items.find(p_Slot);
+
+    if (l_It == m_Items.end())
+        return false;
+
+    Item* l_Item = (*l_It).second;
+
+    UnstackItem(p_Slot);
+    return true;
+}
+
+void Player::RemoveItemFromBag(const uint8 & p_Slot, const bool & p_Delete)
 {
     std::map<uint8, Item*>::iterator l_It = m_Items.find(p_Slot);
 
@@ -891,7 +982,58 @@ void Player::RemoveItem(const uint8 & p_Slot)
     Item* l_Item = (*l_It).second;
 
     m_Items.erase(l_It);
-    delete l_Item;
+    if (p_Delete)
+        delete l_Item;
+
+    g_SqlManager->RemoveItemForPlayer(GetID(), p_Slot);
+
+    PacketPlayerRemoveItem l_Packet;
+    l_Packet.BuildPacket(p_Slot);
+    GetSession()->send(l_Packet.m_Packet);
+}
+
+void Player::ActionItem(const uint8 & p_Slot)
+{
+    std::map<uint8, Item*>::iterator l_It = m_Items.find(p_Slot);
+
+    if (l_It == m_Items.end())
+        return;
+
+    Item* l_Item = (*l_It).second;
+
+    switch (l_Item->GetTemplate()->m_Type)
+    {
+    case eItemType::ITEM_EQUIPMENT :
+        AddEquipment((eTypeEquipment)l_Item->GetTemplate()->m_SubType, l_Item, true);
+        RemoveItemFromBag(p_Slot, false);
+        break;
+    case eItemType::ITEM_CONSUMABLE :
+        ConsumeItemFromBag(p_Slot);
+        break;
+    default :
+        break;
+    }
+}
+
+uint8 Player::StackItem(const uint8 & p_Slot, const uint8 & p_StackNb)
+{
+    Item* l_Item = GetItem(p_Slot);
+    if (l_Item == nullptr)
+        return p_StackNb;
+    
+    uint8 i = 0;
+    for (i = 0; i < p_StackNb; i++)
+    {
+        if (!l_Item->AddStack())
+            break;
+    }
+    g_SqlManager->UpdateItemStackForPlayer(GetID(), p_Slot, l_Item->GetTemplate()->m_Id, l_Item->GetStackNb());
+
+    PacketPlayerStackItem l_Packet;
+    l_Packet.BuildPacket(p_Slot, l_Item->GetStackNb());
+    GetSession()->send(l_Packet.m_Packet);
+
+    return p_StackNb - i;
 }
 
 void Player::UnstackItem(const uint8 & p_Slot)
@@ -900,14 +1042,29 @@ void Player::UnstackItem(const uint8 & p_Slot)
     if (l_Item == nullptr)
         return;
 
-    l_Item->SubStack();
+    if (!l_Item->SubStack())
+        return;
     if (l_Item->GetStackNb() <= 0)
-        RemoveItem(p_Slot);
+    {
+        RemoveItemFromBag(p_Slot);
+        return;
+    }
+
+    g_SqlManager->UpdateItemStackForPlayer(GetID(), p_Slot, l_Item->GetTemplate()->m_Id, l_Item->GetStackNb());
+
+    PacketPlayerStackItem l_Packet;
+    l_Packet.BuildPacket(p_Slot, l_Item->GetStackNb());
+    GetSession()->send(l_Packet.m_Packet);
 }
 
 void Player::SetMaxBagSlot(const uint16 & p_MaxSlot)
 {
     m_BagSlots = p_MaxSlot;
+}
+
+uint8 Player::GetBagSize() const
+{
+    return m_BagSlots;
 }
 
 void Player::UpdateCurrency(const eTypeCurrency & p_Type, const uint16 & p_Value, const bool & p_Send)

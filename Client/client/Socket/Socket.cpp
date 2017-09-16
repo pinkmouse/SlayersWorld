@@ -192,3 +192,36 @@ void Socket::SendUpdateSkin(const uint16 & p_SkinID)
 
     send(packet);
 }
+
+void Socket::SendRemoveItem(const uint8 & p_Item)
+{
+    WorldPacket packet;
+    uint8 l_ID = CMSG::C_RemoveItem;
+
+    packet << l_ID;
+    packet << p_Item;
+
+    send(packet);
+}
+
+void Socket::SendItemAction(const uint8 & p_Item)
+{
+    WorldPacket packet;
+    uint8 l_ID = CMSG::C_ActionItem;
+
+    packet << l_ID;
+    packet << p_Item;
+
+    send(packet);
+}
+
+void Socket::SendUnequip(const uint8 & p_Slot)
+{
+    WorldPacket packet;
+    uint8 l_ID = CMSG::C_Unequip;
+
+    packet << l_ID;
+    packet << p_Slot;
+
+    send(packet);
+}

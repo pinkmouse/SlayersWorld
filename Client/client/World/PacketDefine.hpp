@@ -15,7 +15,10 @@ enum CMSG : uint8
     C_UnitEventAction = 26,
     C_UnitAnswerQuestion = 27,
     C_UpdateTitle = 28,
-    C_UpdateSkin = 29
+    C_UpdateSkin = 29,
+    C_RemoveItem = 30,
+    C_ActionItem = 31,
+    C_Unequip = 32
 };
 
 enum SMSG : uint8
@@ -55,5 +58,9 @@ enum SMSG : uint8
     S_PlayerSkin = 41,
     S_PlayerSpell = 42,
     S_PlayerItem = 43,
-    S_PlayerEquipment = 44
+    S_PlayerEquipment = 44,
+    S_PlayerBagSize = 45,
+    S_PlayerRemoveItem = 46,
+    S_PlayerRemoveEquipment = 47,
+    S_PlayerStackItem = 48
 };

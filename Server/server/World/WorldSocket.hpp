@@ -34,6 +34,7 @@ public:
     void SendSkins(std::map<uint16, Skin*>*);
     void SendSpells(std::map<uint16, uint64>*);
     void SendItems(std::map<uint8, Item*>*);
+    void SendBagSize(const uint8 &);
     void SendEquipments(std::map<eTypeEquipment, Item*>*);
 
     Player* GetPlayer();

@@ -30,6 +30,9 @@ public:
     void HandleAnswerQuestion(WorldPacket &, WorldSocket*);
     void HandleUpdateTitle(WorldPacket &, WorldSocket*);
     void HandleUpdateSkin(WorldPacket &, WorldSocket*);
+    void HandleRemoveItem(WorldPacket &, WorldSocket*);
+    void HandleActionItem(WorldPacket &, WorldSocket*);
+    void HandleUnequip(WorldPacket &, WorldSocket*);
     void HandleDisconnected(WorldSocket*);
 
 private:

@@ -46,6 +46,7 @@ void MenuWardrobe::RemoveSkin(const uint16 &)
 void MenuWardrobe::GenericAction(const uint16 & p_MenuID)
 {
     g_Socket->SendUpdateSkin(p_MenuID);
+    Close();
 }
 
 void MenuWardrobe::KeyPress(const sf::Keyboard::Key & p_Key)

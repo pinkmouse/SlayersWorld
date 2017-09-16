@@ -16,18 +16,23 @@ public:
     MenuElement(const std::string &);
     ~MenuElement();
     std::string GetLabel() const;
+    void Disable();
+    void Enable();
+    bool IsEnable() const;
     void SetFunc(m_Func, const uint16 &);
     void LaunchFunc(const uint16 &, Menu *);
     bool HasFunc() const;
     uint16 GetIDLabel() const;
     void SetSprite(sf::Sprite*);
     sf::Sprite* GetSprite() const;
+    void SetLabel(const std::string &);
 
 private:
     std::string     m_Label;
     uint16          m_IdLabel;
     m_Func          m_Function;
     sf::Sprite*     m_Sprite;
+    bool            m_Enable;
 };
 
 class Menu
@@ -57,6 +62,7 @@ public:
     uint8 GetElementRowSizeAtColumn(const uint8 &);
     std::pair < uint16, uint16 > GetElementSize() const;
     uint8 GetCursorGraphicBottom() const;
+    void CanSelectUselessFields();
     void SetCursorGraphicBottom(const uint8 &);
     virtual void SetVisualManager(VisualManager*);
     virtual void GenericAction(const uint16 &);
@@ -70,6 +76,7 @@ protected:
 
 private:
     bool m_Open;
+    bool m_UselessFieldSelectable;
     uint8 m_Column;
     uint8 m_Row;
     std::string m_Title;

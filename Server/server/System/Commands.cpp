@@ -81,7 +81,13 @@ bool Player::HandleTest(std::vector<std::string> p_ListCmd)
     if (!p_ListCmd.empty())
         return false;
 
-    AddQuest(new Quest(g_QuestManager->GetQuestTemplate(1)));
+    ItemTemplate* l_ItemTemplate = g_ItemManager->GetItemTemplate(2);
+    if (l_ItemTemplate == nullptr)
+        return false;
+    Item* l_Item = new Item(this, l_ItemTemplate);
+    l_Item->SetStackNb(2);
+    AddItemOnAvailableSlot(l_Item);
+    //AddQuest(new Quest(g_QuestManager->GetQuestTemplate(1)));
     return true;
 }
 

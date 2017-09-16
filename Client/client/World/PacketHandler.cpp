@@ -7,6 +7,7 @@
 #include "../Graphics/Interface/MenuWardrobe.hpp"
 #include "../Graphics/Interface/MenuSpells.hpp"
 #include "../Graphics/Interface/MenuBag.hpp"
+#include "../Graphics/Interface/MenuEquipment.hpp"
 
 #include "../Global.hpp"
 #include "PacketDefine.hpp"
@@ -59,6 +60,10 @@ void PacketHandler::LoadPacketHandlerMap()
     m_PacketHandleMap[SMSG::S_PlayerSpell] = &PacketHandler::HandlePlayerSpell;
     m_PacketHandleMap[SMSG::S_PlayerItem] = &PacketHandler::HandlePlayerItem;
     m_PacketHandleMap[SMSG::S_PlayerEquipment] = &PacketHandler::HandlePlayerEquipment;
+    m_PacketHandleMap[SMSG::S_PlayerBagSize] = &PacketHandler::HandlePlayerBagSize;
+    m_PacketHandleMap[SMSG::S_PlayerRemoveItem] = &PacketHandler::HandlePlayerRemoveItem;
+    m_PacketHandleMap[SMSG::S_PlayerRemoveEquipment] = &PacketHandler::HandlePlayerRemoveEquipment;
+    m_PacketHandleMap[SMSG::S_PlayerStackItem] = &PacketHandler::HandlePlayerStackItem;
     m_PacketHandleMap[SMSG::S_UnitUpdateName] = &PacketHandler::HanleUnitUpdateName;
 }
 
@@ -896,6 +901,57 @@ void PacketHandler::HandlePlayerSkin(WorldPacket &p_Packet)
     }
 }
 
+void PacketHandler::HandlePlayerRemoveItem(WorldPacket &p_Packet)
+{
+    uint8 l_SlotID;
+    MenuManager* l_MenuManager = m_InterfaceManager->GetMenuManager();
+    MenuBag* l_MenuBag = reinterpret_cast<MenuBag*>(l_MenuManager->GetMenu(eMenuType::BagMenu));
+    if (l_MenuBag == nullptr)
+        return;
+
+    p_Packet >> l_SlotID;
+    l_MenuBag->RemoveItem(l_SlotID);
+}
+
+void PacketHandler::HandlePlayerStackItem(WorldPacket &p_Packet)
+{
+    uint8 l_SlotID;
+    uint8 l_Stack;
+    MenuManager* l_MenuManager = m_InterfaceManager->GetMenuManager();
+    MenuBag* l_MenuBag = reinterpret_cast<MenuBag*>(l_MenuManager->GetMenu(eMenuType::BagMenu));
+    if (l_MenuBag == nullptr)
+        return;
+
+    p_Packet >> l_SlotID;
+    p_Packet >> l_Stack;
+    l_MenuBag->SetStackItem(l_SlotID, l_Stack);
+}
+
+void PacketHandler::HandlePlayerRemoveEquipment(WorldPacket &p_Packet)
+{
+    uint8 l_SlotID;
+    MenuManager* l_MenuManager = m_InterfaceManager->GetMenuManager();
+    MenuEquipment* l_MenuEquipment = reinterpret_cast<MenuEquipment*>(l_MenuManager->GetMenu(eMenuType::EquipmentMenu));
+    if (l_MenuEquipment == nullptr)
+        return;
+
+    p_Packet >> l_SlotID;
+    l_MenuEquipment->RemoveEquipment((eTypeEquipment)l_SlotID);
+}
+
+void PacketHandler::HandlePlayerBagSize(WorldPacket &p_Packet)
+{
+    uint8 l_Size;
+    MenuManager* l_MenuManager = m_InterfaceManager->GetMenuManager();
+    MenuBag* l_MenuBag = reinterpret_cast<MenuBag*>(l_MenuManager->GetMenu(eMenuType::BagMenu));
+    if (l_MenuBag == nullptr)
+        return;
+
+    p_Packet >> l_Size;
+    l_MenuManager->GetElement(0, 4)->SetLabel(l_MenuManager->GetElement(0, 4)->GetLabel() + " x" + std::to_string(l_Size));
+    l_MenuBag->SetSize(l_Size);
+}
+
 void PacketHandler::HandlePlayerItem(WorldPacket &p_Packet)
 {
     uint8 l_Nb;
@@ -910,6 +966,7 @@ void PacketHandler::HandlePlayerItem(WorldPacket &p_Packet)
     std::string l_Name;
     uint8 l_StackNb;
     uint8 l_TypeID;
+    uint8 l_SubType;
     uint8 l_Level;
     uint8 l_RareLevel;
     int32 l_Data;
@@ -920,15 +977,17 @@ void PacketHandler::HandlePlayerItem(WorldPacket &p_Packet)
         p_Packet >> l_Name;
         p_Packet >> l_StackNb;
         p_Packet >> l_TypeID;
+        p_Packet >> l_SubType;
         p_Packet >> l_Level;
         p_Packet >> l_RareLevel;
 
-        Item l_Item((eItemType)l_TypeID, l_Name, (eItemRareLevel)l_RareLevel, l_Level, l_StackNb);
+        Item l_Item((eItemType)l_TypeID, l_SubType, l_Name, (eItemRareLevel)l_RareLevel, l_Level, l_StackNb);
         for (uint8 j = 0; j < 4; j++)
         {
             p_Packet >> l_Data;
             l_Item.AddData(l_Data);
         }
+
         l_MenuBag->AddItem(l_SlotID, l_Item);
         printf("Get Item on slot %d : %s\n", l_SlotID, l_Name.c_str());
     }
@@ -938,9 +997,9 @@ void PacketHandler::HandlePlayerEquipment(WorldPacket &p_Packet)
 {
     uint8 l_Nb;
     MenuManager* l_MenuManager = m_InterfaceManager->GetMenuManager();
-    //MenuBag* l_MenuBag = reinterpret_cast<MenuBag*>(l_MenuManager->GetMenu(eMenuType::BagMenu));
-    //if (l_MenuBag == nullptr)
-     //   return;
+    MenuEquipment* l_MenuEquipment = reinterpret_cast<MenuEquipment*>(l_MenuManager->GetMenu(eMenuType::EquipmentMenu));
+    if (l_MenuEquipment == nullptr)
+        return;
 
     p_Packet >> l_Nb;
 
@@ -957,13 +1016,13 @@ void PacketHandler::HandlePlayerEquipment(WorldPacket &p_Packet)
         p_Packet >> l_Level;
         p_Packet >> l_RareLevel;
 
-        Item l_Item((eItemType)l_TypeID, l_Name, (eItemRareLevel)l_RareLevel, l_Level, 1);
+        Item l_Item(eItemType::ITEM_EQUIPMENT, l_TypeID, l_Name, (eItemRareLevel)l_RareLevel, l_Level, 1);
         for (uint8 j = 0; j < 4; j++)
         {
             p_Packet >> l_Data;
             l_Item.AddData(l_Data);
         }
-        // TODO l_MenuBag->AddItem(l_SlotID, l_Item);
+        l_MenuEquipment->AddEquipment((eTypeEquipment)l_TypeID, l_Item);
         printf("Get Equipement on placement %d : %s\n", l_TypeID, l_Name.c_str());
     }
 }

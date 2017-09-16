@@ -49,6 +49,10 @@ public:
     void HandlePlayerSpell(WorldPacket &);
     void HandlePlayerItem(WorldPacket &);
     void HandlePlayerEquipment(WorldPacket &);
+    void HandlePlayerBagSize(WorldPacket &);
+    void HandlePlayerRemoveItem(WorldPacket &);
+    void HandlePlayerStackItem(WorldPacket &);
+    void HandlePlayerRemoveEquipment(WorldPacket &);
     void HanleUnitUpdateName(WorldPacket &);
 
 private:

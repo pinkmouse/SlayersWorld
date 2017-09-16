@@ -7,8 +7,8 @@ MenuTitles::MenuTitles() :
     m_Pos.x = 120;
     m_Pos.y = 30;
     AddElement(0, 0, "TITRES");
-    AddElement(1, 0, "Retirer");
-    GetElement(1, 0)->SetFunc(&Menu::GenericAction2, 0);
+    AddElement(3, 0, "Retirer");
+    GetElement(3, 0)->SetFunc(&Menu::GenericAction2, 0);
 }
 
 MenuTitles::~MenuTitles()
@@ -18,7 +18,7 @@ MenuTitles::~MenuTitles()
 void MenuTitles::Open()
 {
     Menu::Open();
-    SetSelectedElement(1, 0);
+    SetSelectedElement(3, 0);
 }
 
 void MenuTitles::AddTitle(const uint16 & p_ID, const std::string & p_Name)
@@ -27,8 +27,8 @@ void MenuTitles::AddTitle(const uint16 & p_ID, const std::string & p_Name)
 
     uint16 l_Row = GetElementRowSizeAtColumn(0);
     AddElement(0, l_Row, p_Name);
-    AddElement(1, l_Row, "Appliquer");
-    GetElement(1, l_Row)->SetFunc(&Menu::GenericAction, p_ID);
+    AddElement(3, l_Row, "Appliquer");
+    GetElement(3, l_Row)->SetFunc(&Menu::GenericAction, p_ID);
 }
 
 void MenuTitles::RemoveTitle(const uint16 &)

@@ -104,11 +104,10 @@ enum eItemType
 {
     ITEM_USELESS = 0,
     ITEM_LAUNCHSPELL = 1,
-    ITEM_ARMOR = 2,
-    ITEM_WEAPON = 3,
-    ITEM_QUEST = 4,
-    ITEM_CONSUMABLE = 5,
-    ITEM_MAX = 6
+    ITEM_EQUIPMENT = 2,
+    ITEM_QUEST = 3,
+    ITEM_CONSUMABLE = 4,
+    ITEM_MAX = 5
 };
 
 enum eItemRareLevel
@@ -128,7 +127,9 @@ enum eTypeEquipment
     EQUIP_BODY = 2,
     EQUIP_HAND = 3,
     EQUIP_FOOT = 4,
-    EQUIP_MAX = 5
+    EQUIP_MAIN_HAND = 5,
+    EQUIP_SECOND_HAND = 6,
+    EQUIP_MAX = 7
 };
 
 enum eAiType

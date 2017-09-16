@@ -17,7 +17,7 @@ MenuManager::MenuManager() :
     GetElement(0, 0)->SetFunc(&Menu::GenericAction, 0);
     AddElement(0, 1, "Titres");
     GetElement(0, 1)->SetFunc(&Menu::GenericAction, 1);
-    AddElement(0, 2, "Peaux");
+    AddElement(0, 2, "Apparence");
     GetElement(0, 2)->SetFunc(&Menu::GenericAction, 2);
     AddElement(0, 3, "Sorts");
     GetElement(0, 3)->SetFunc(&Menu::GenericAction, 3);

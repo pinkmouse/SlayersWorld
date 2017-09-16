@@ -195,7 +195,6 @@ Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
     }
     if (!l_Exist)
     {
-        printf("Create new Player %d", p_AccountID);
         AddNewPlayer(p_AccountID);
         AddKeyDefaultBindsForAccount(p_AccountID);
         Player* l_Player = GetNewPlayer(p_AccountID);
@@ -211,21 +210,14 @@ Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
     l_Player->SetRespawnPosition(GetRespawnPositionForPlayer(l_ID));
     l_Player->SetMaxBagSlot(l_SlotBagNb);
 
-    printf("[Init Spell]\n");
     InitializeSpellsForPlayer(l_Player);
-    printf("[Init KeyBind]\n");
     InitializeKeyBindsForAccount(p_AccountID, l_Player);
-    printf("[Init SpellBind]\n");
     InitializeSpellsBinds(l_Player);
-    printf("[Init QuestProgress]\n");
     InitializeQuestsProgessForPlayer(l_Player);
-    printf("[Init Titles]\n");
     InitializeListTitlesForPlayer(l_Player);
-    printf("[Init Skins]\n");
     InitializeListSkinsForPlayer(l_Player);
-    printf("[Init Items]\n");
     InitializeListItemForPlayer(l_Player);
-    printf("[End Init]\n");
+    InitializeListEquipmentsForPlayer(l_Player);
     l_Player->ChangeActiveTitle(l_ActiveTitleID, false);
 
     return l_Player;
@@ -1151,15 +1143,17 @@ bool SqlManager::InitializeRequired(RequiredManager* p_RequiredManager)
 bool  SqlManager::InitializeItems(RequiredManager* p_RequiredManager)
 {
     /// QUEST TEMPLATE
-    std::string l_Query = "SELECT `id`, `type`, `name`, `level`, `stackMax`, `rareLevel`, `requiredID`, `data0`, `data1`, `data2`, `data3` FROM item";
+    std::string l_Query = "SELECT `id`, `type`, `subType`, `name`, `level`, `stackMax`, `rareLevel`, `requiredID`, `price`, `data0`, `data1`, `data2`, `data3` FROM item";
     
     mysql_query(&m_MysqlWorld, l_Query.c_str());
 
     uint16 l_Id = 0;
     eItemType l_Type = eItemType::ITEM_USELESS;
     std::string l_Name = "";
+    uint8 l_SubType;
     uint8 l_Level = 0;
     uint8 l_StackNB = 0;
+    uint16 l_Price = 0;
     eItemRareLevel l_RareLevel = eItemRareLevel::ITEM_RARE1;
     int32 l_RequiredID = -1;
     std::vector<int32> l_Data;
@@ -1172,21 +1166,23 @@ bool  SqlManager::InitializeItems(RequiredManager* p_RequiredManager)
     {
         l_Id = atoi(l_Row[0]);
         l_Type = (eItemType)atoi(l_Row[1]);
-        l_Name = std::string(l_Row[2]);
-        l_Level = atoi(l_Row[3]);
-        l_StackNB = atoi(l_Row[4]);
-        l_RareLevel = (eItemRareLevel)atoi(l_Row[5]);
-        l_RequiredID = atoi(l_Row[6]);
+        l_SubType = atoi(l_Row[2]);
+        l_Name = std::string(l_Row[3]);
+        l_Level = atoi(l_Row[4]);
+        l_StackNB = atoi(l_Row[5]);
+        l_RareLevel = (eItemRareLevel)atoi(l_Row[6]);
+        l_RequiredID = atoi(l_Row[7]);
+        l_Price = atoi(l_Row[8]);
 
         if (l_RequiredID >= 0) /// -1 if no required
             l_Required = p_RequiredManager->GetRequiered(l_RequiredID);
-        ItemTemplate* l_ItemTemplate = new ItemTemplate(l_Id, l_Type, l_Name, l_Level, l_StackNB, l_RareLevel, l_Required);
+        ItemTemplate* l_ItemTemplate = new ItemTemplate(l_Id, l_Type, l_SubType, l_Name, l_Level, l_StackNB, l_RareLevel, l_Required, l_Price);
 
         for (uint8 i = 0; i < 4; i++)
         {
-            if (atoi(l_Row[6 + 1 + i]) < 0)
+            if (atoi(l_Row[8 + 1 + i]) < 0)
                 break;
-            l_ItemTemplate->AddData(atoi(l_Row[5 + 1 + i]));
+            l_ItemTemplate->AddData(atoi(l_Row[8 + 1 + i]));
         }
         g_ItemManager->AddItemTemplate(l_ItemTemplate);
     }

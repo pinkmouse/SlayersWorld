@@ -18,7 +18,10 @@ enum CMSG : uint8
     C_UnitEventAction = 26,
     C_UnitAnswerQuestion = 27,
     C_UpdateTitle = 28,
-    C_UpdateSkin = 29
+    C_UpdateSkin = 29,
+    C_RemoveItem = 30,
+    C_ActionItem = 31,
+    C_Unequip = 32
 };
 
 enum SMSG : uint8
@@ -58,7 +61,11 @@ enum SMSG : uint8
     S_PlayerSkin = 41,
     S_PlayerSpell = 42,
     S_PlayerItem = 43,
-    S_PlayerEquipment = 44
+    S_PlayerEquipment = 44,
+    S_PlayerBagSize = 45,
+    S_PlayerRemoveItem = 46,
+    S_PlayerRemoveEquipment = 47,
+    S_PlayerStackItem = 48
 };
 
 struct PacketGoDirection
@@ -121,6 +128,62 @@ struct PacketPlayerSkin
     }
 };
 
+struct PacketPlayerBagSize
+{
+    WorldPacket m_Packet;
+    uint8 m_PacketID;
+
+    PacketPlayerBagSize() :
+        m_PacketID(SMSG::S_PlayerBagSize) {}
+
+    void BuildPacket(const uint8 & p_Size)
+    {
+        m_Packet << m_PacketID << p_Size;
+    }
+};
+
+struct PacketPlayerRemoveItem
+{
+    WorldPacket m_Packet;
+    uint8 m_PacketID;
+
+    PacketPlayerRemoveItem() :
+        m_PacketID(SMSG::S_PlayerRemoveItem) {}
+
+    void BuildPacket(const uint8 & p_Slot)
+    {
+        m_Packet << m_PacketID << p_Slot;
+    }
+};
+
+struct PacketPlayerStackItem
+{
+    WorldPacket m_Packet;
+    uint8 m_PacketID;
+
+    PacketPlayerStackItem() :
+        m_PacketID(SMSG::S_PlayerStackItem) {}
+
+    void BuildPacket(const uint8 & p_SlotID, const uint8 & p_Stack)
+    {
+        m_Packet << m_PacketID << p_SlotID << p_Stack;
+    }
+};
+
+struct PacketPlayerRemoveEquipment
+{
+    WorldPacket m_Packet;
+    uint8 m_PacketID;
+
+    PacketPlayerRemoveEquipment() :
+        m_PacketID(SMSG::S_PlayerRemoveEquipment) {}
+
+    void BuildPacket(const uint8 & p_Slot)
+    {
+        m_Packet << m_PacketID << p_Slot;
+    }
+};
+
 struct PacketPlayerSpell
 {
     WorldPacket m_Packet;
@@ -153,6 +216,7 @@ struct PacketPlayerItem
         for (std::map<uint8, Item*>::iterator l_It = p_Items->begin(); l_It != p_Items->end(); l_It++)
             m_Packet << (*l_It).first << (*l_It).second->GetTemplate()->m_Name << (*l_It).second->GetStackNb() <<
             (uint8)(*l_It).second->GetTemplate()->m_Type <<
+            (*l_It).second->GetTemplate()->m_SubType <<
             (*l_It).second->GetTemplate()->m_Level <<
             (uint8)(*l_It).second->GetTemplate()->m_RareLevel <<
             (*l_It).second->GetTemplate()->GetData(0) <<

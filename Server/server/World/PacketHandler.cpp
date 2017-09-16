@@ -26,6 +26,9 @@ void PacketHandler::LoadPacketHandlerMap()
     m_PacketHandleMap[CMSG::C_UnitAnswerQuestion] = &PacketHandler::HandleAnswerQuestion;
     m_PacketHandleMap[CMSG::C_UpdateTitle] = &PacketHandler::HandleUpdateTitle;
     m_PacketHandleMap[CMSG::C_UpdateSkin] = &PacketHandler::HandleUpdateSkin;
+    m_PacketHandleMap[CMSG::C_RemoveItem] = &PacketHandler::HandleRemoveItem;
+    m_PacketHandleMap[CMSG::C_ActionItem] = &PacketHandler::HandleActionItem;
+    m_PacketHandleMap[CMSG::C_Unequip] = &PacketHandler::HandleUnequip;
 }
 
 void PacketHandler::HandleUnitUnknow(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
@@ -223,6 +226,45 @@ void PacketHandler::HandleUpdateSkin(WorldPacket &p_Packet, WorldSocket* p_World
     l_Player->SetSkinID(l_SkinID);
 }
 
+void PacketHandler::HandleRemoveItem(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
+{
+    Player* l_Player = p_WorldSocket->GetPlayer();
+    uint8 l_SlotID;
+
+    p_Packet >> l_SlotID;
+
+    if (l_Player == nullptr)
+        return;
+
+    l_Player->RemoveItemFromBag(l_SlotID);
+}
+
+void PacketHandler::HandleActionItem(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
+{
+    Player* l_Player = p_WorldSocket->GetPlayer();
+    uint8 l_SlotID;
+
+    p_Packet >> l_SlotID;
+
+    if (l_Player == nullptr)
+        return;
+
+    l_Player->ActionItem(l_SlotID);
+}
+
+void PacketHandler::HandleUnequip(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
+{
+    Player* l_Player = p_WorldSocket->GetPlayer();
+    uint8 l_SlotID;
+
+    p_Packet >> l_SlotID;
+
+    if (l_Player == nullptr)
+        return;
+
+    l_Player->UnEquip((eTypeEquipment)l_SlotID);
+}
+
 void PacketHandler::HandleStatAction(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
 {
     Player* l_Player = p_WorldSocket->GetPlayer();
@@ -339,6 +381,7 @@ void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldS
     p_WorldSocket->SendTitles(l_Player->GetTitles());
     p_WorldSocket->SendSkins(l_Player->GetSkinsCollection());
     p_WorldSocket->SendSpells(l_Player->GetSpellList());
+    p_WorldSocket->SendBagSize(l_Player->GetBagSize());
     p_WorldSocket->SendItems(l_Player->GetItems());
     p_WorldSocket->SendEquipments(l_Player->GetEquipments());
 

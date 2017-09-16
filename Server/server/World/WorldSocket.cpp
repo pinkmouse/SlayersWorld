@@ -215,6 +215,14 @@ void WorldSocket::SendItems(std::map<uint8, Item*>* p_Items)
     SendPacket(l_Packet.m_Packet);
 }
 
+void WorldSocket::SendBagSize(const uint8 & p_Size)
+{
+    PacketPlayerBagSize l_Packet;
+
+    l_Packet.BuildPacket(p_Size);
+    SendPacket(l_Packet.m_Packet);
+}
+
 void WorldSocket::SendEquipments(std::map<eTypeEquipment, Item*>* p_Equipment)
 {
     if (p_Equipment == nullptr)

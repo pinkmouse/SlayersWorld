@@ -60,17 +60,24 @@ public:
 
     /* ITEMS */
     void AddItem(const uint8 &, Item*, bool p_New = false);
+    bool AddItemOnAvailableSlot(Item*);
+    bool ConsumeItemFromBag(const uint8 &);
     std::map< uint8, Item*>* GetItems();
     Item* GetItem(const uint8 &);
-    void RemoveItem(const uint8 &);
+    void RemoveItemFromBag(const uint8 &, const bool & p_Delete = true);
+    void ActionItem(const uint8 &);
     void UnstackItem(const uint8 &);
+    uint8 StackItem(const uint8 &, const uint8 &);
     void SetMaxBagSlot(const uint16 &);
+    uint8 GetBagSize() const;
+    int16 CanCanBeStackOnBagSlot(Item*);
 
     /* EQUIPMENT */
     void AddEquipment(const eTypeEquipment &, Item*, bool p_New = false);
     std::map< eTypeEquipment, Item*>* GetEquipments();
     Item* GetEquipment(const eTypeEquipment &);
     void RemoveEquipment(const eTypeEquipment &);
+    void UnEquip(const eTypeEquipment &);
 
     /* RESOURCES */
     uint32 GetXp() const;

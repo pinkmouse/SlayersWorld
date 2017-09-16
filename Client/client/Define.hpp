@@ -179,11 +179,10 @@ enum eItemType
 {
     ITEM_USELESS = 0,
     ITEM_LAUNCHSPELL = 1,
-    ITEM_ARMOR = 2,
-    ITEM_WEAPON = 3,
-    ITEM_QUEST = 4,
-    ITEM_CONSUMABLE = 5,
-    ITEM_MAX = 6
+    ITEM_EQUIPMENT = 2,
+    ITEM_QUEST = 3,
+    ITEM_CONSUMABLE = 4,
+    ITEM_MAX = 5
 };
 
 enum eItemRareLevel
@@ -196,6 +195,12 @@ enum eItemRareLevel
     ITEM_MAX_RARE = 5
 };
 
+enum eTypeWeapon
+{
+    WEAPON_ONE_HAND = 0,
+    WEAPON_TWO_HAND = 1
+};
+
 enum eTypeEquipment
 {
     EQUIP_HEAD = 0,
@@ -203,7 +208,9 @@ enum eTypeEquipment
     EQUIP_BODY = 2,
     EQUIP_HAND = 3,
     EQUIP_FOOT = 4,
-    EQUIP_MAX = 5
+    EQUIP_MAIN_HAND = 5,
+    EQUIP_SECOND_HAND = 6,
+    EQUIP_MAX = 7
 };
 
 enum eExtraInterface
@@ -303,4 +310,44 @@ struct SWText
 
     SWText(const std::string & p_Str, const eTextColor & p_TextColor, const eTextStyle & p_Style) :
         m_Str(p_Str), m_TextColor(p_TextColor), m_Style(p_Style) {}
+};
+
+
+struct Item
+{
+    eItemType m_Type;
+    uint8 m_SubType;
+    std::string m_Name;
+    eItemRareLevel m_RareLevel;
+    uint8 m_Level;
+    uint8 m_StackNb;
+    std::vector<int32> m_Datas;
+
+    Item() :
+        m_Type(eItemType::ITEM_USELESS), m_SubType(0), m_Name(""), m_RareLevel(eItemRareLevel::ITEM_RARE1), m_Level(0), m_StackNb(1) {}
+
+    /*Item(Item & p_Item) :
+        m_Type(p_Item.m_Type), m_SubType(p_Item.m_SubType), m_Name(p_Item.m_Name), m_RareLevel(p_Item.m_RareLevel), m_Level(p_Item.m_Level), m_StackNb(p_Item.m_StackNb) 
+    {
+        for (uint8 i = 0; i < 4; i++)
+        {
+            AddData(p_Item.GetData(i));
+        }
+    }*/
+
+    Item(const eItemType & p_Type, const uint8 & p_SubType, const std::string & p_Name, const eItemRareLevel & p_RareLevel, const uint8 p_Level, const uint8 p_StackNb) :
+        m_Type(p_Type), m_SubType(p_SubType), m_Name(p_Name), m_RareLevel(p_RareLevel), m_Level(p_Level), m_StackNb(p_StackNb) {}
+
+
+    void AddData(const int32 & p_Data)
+    {
+        m_Datas.push_back(p_Data);
+    }
+
+    int32 GetData(const uint8 & p_DataNB)
+    {
+        if (p_DataNB >= m_Datas.size())
+            return -1;
+        return m_Datas[p_DataNB];
+    }
 };
