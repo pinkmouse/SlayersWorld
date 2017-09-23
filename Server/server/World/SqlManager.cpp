@@ -217,6 +217,7 @@ Player* SqlManager::GetNewPlayer(uint32 p_AccountID)
     InitializeListTitlesForPlayer(l_Player);
     InitializeListSkinsForPlayer(l_Player);
     InitializeListItemForPlayer(l_Player);
+    InitializeListCurrenciesForPlayer(l_Player);
     InitializeListEquipmentsForPlayer(l_Player);
     l_Player->ChangeActiveTitle(l_ActiveTitleID, false);
 
@@ -584,7 +585,7 @@ void SqlManager::UpdatePointsSet(Player const* p_Player)
 
 CreatureTemplate SqlManager::GetCreatureTemplate(uint16 p_Entry)
 {
-    std::string l_Query = "SELECT `skinID`, `name`, `level`, `force`, `stamina`, `dexterity`, `speed`, `xp`, `state`, `maxRay`, `maxVision`,`movingTimeMin`, `movingTimeMax`, `stopTimeMin`, `stopTimeMax`, `respawnTime`, `rank`, `aiType`, `faction` FROM creature_template WHERE `entry` = '" + std::to_string(p_Entry) + "'";
+    std::string l_Query = "SELECT `skinID`, `name`, `level`, `force`, `stamina`, `dexterity`, `speed`, `xp`, `state`, `maxRay`, `maxVision`,`movingTimeMin`, `movingTimeMax`, `stopTimeMin`, `stopTimeMax`, `respawnTime`, `rank`, `aiType`, `faction`, `rewardID` FROM creature_template WHERE `entry` = '" + std::to_string(p_Entry) + "'";
     mysql_query(&m_MysqlWorld, l_Query.c_str());
 
     int16 l_SkinID = 0;
@@ -606,6 +607,7 @@ CreatureTemplate SqlManager::GetCreatureTemplate(uint16 p_Entry)
     uint8 l_Rank = 0;
     uint8 l_AiType = 0;
     uint8 l_Faction = 0;
+    int32 l_RewardID = -1;
 
     MYSQL_RES *l_Result = NULL;
     MYSQL_ROW l_Row;
@@ -632,7 +634,8 @@ CreatureTemplate SqlManager::GetCreatureTemplate(uint16 p_Entry)
         l_Rank = atoi(l_Row[17]);
         l_AiType = atoi(l_Row[18]);
         l_Faction = atoi(l_Row[19]);
-        return CreatureTemplate(p_Entry, l_SkinID, l_Name, l_Lvl, l_Force, l_Stamina, l_Dexterity, l_Speed, l_Xp, l_State, l_MaxRay, l_MaxVision, l_MovingTimeMin, l_MovingTimeMax, l_StopTimeMin, l_StopTimeMax, l_RespawnTime, l_Rank, l_AiType, (eFactionType)l_Faction);
+        l_RewardID = atoi(l_Row[20]);
+        return CreatureTemplate(p_Entry, l_SkinID, l_Name, l_Lvl, l_Force, l_Stamina, l_Dexterity, l_Speed, l_Xp, l_State, l_MaxRay, l_MaxVision, l_MovingTimeMin, l_MovingTimeMax, l_StopTimeMin, l_StopTimeMax, l_RespawnTime, l_Rank, l_AiType, (eFactionType)l_Faction, l_RewardID);
     }
     mysql_free_result(l_Result);
 
@@ -695,7 +698,7 @@ bool SqlManager::InitializeAnimationUnitTemplate(UnitManager* p_CreatureManager)
 
 bool SqlManager::InitializeCreatureTemplate(UnitManager* p_CreatureManager)
 {
-    std::string l_Query = "SELECT `entry`, `skinID`, `name`, `level`, `force`, `stamina`, `dexterity`, `speed`, `xp`, `state`, `maxRay`, `maxVision`, `movingTimeMin`, `movingTimeMax`, `stopTimeMin`, `stopTimeMax`, `respawnTime`, `rank`, `aiType`, `faction` FROM creature_template";
+    std::string l_Query = "SELECT `entry`, `skinID`, `name`, `level`, `force`, `stamina`, `dexterity`, `speed`, `xp`, `state`, `maxRay`, `maxVision`, `movingTimeMin`, `movingTimeMax`, `stopTimeMin`, `stopTimeMax`, `respawnTime`, `rank`, `aiType`, `faction`, `rewardID` FROM creature_template";
     mysql_query(&m_MysqlWorld, l_Query.c_str());
 
     uint32 l_Entry = 0;
@@ -718,6 +721,7 @@ bool SqlManager::InitializeCreatureTemplate(UnitManager* p_CreatureManager)
     uint8 l_Rank = 0;
     uint8 l_AiType = 0;
     uint8 l_Faction = 0;
+    int32 l_RewardID = -1;
 
     MYSQL_RES *l_Result = NULL;
     MYSQL_ROW l_Row;
@@ -744,7 +748,8 @@ bool SqlManager::InitializeCreatureTemplate(UnitManager* p_CreatureManager)
         l_Rank = atoi(l_Row[17]);
         l_AiType = atoi(l_Row[18]);
         l_Faction = atoi(l_Row[19]);
-        p_CreatureManager->AddCreatureTemplate(CreatureTemplate(l_Entry, l_SkinID, l_Name, l_Lvl, l_Force, l_Stamina, l_Dexterity, l_Speed, l_Xp, l_State, l_MaxRay, l_MaxVision, l_MovingTimeMin, l_MovingTimeMax, l_StopTimeMin, l_StopTimeMax, l_RespawnTime, l_Rank, l_AiType, (eFactionType)l_Faction));
+        l_RewardID = atoi(l_Row[20]);
+        p_CreatureManager->AddCreatureTemplate(CreatureTemplate(l_Entry, l_SkinID, l_Name, l_Lvl, l_Force, l_Stamina, l_Dexterity, l_Speed, l_Xp, l_State, l_MaxRay, l_MaxVision, l_MovingTimeMin, l_MovingTimeMax, l_StopTimeMin, l_StopTimeMax, l_RespawnTime, l_Rank, l_AiType, (eFactionType)l_Faction, l_RewardID));
     }
     mysql_free_result(l_Result);
 
@@ -1140,11 +1145,55 @@ bool SqlManager::InitializeRequired(RequiredManager* p_RequiredManager)
     return true;
 }
 
+bool    SqlManager::InitializeRewards(RequiredManager* p_RequiredManager)
+{
+    std::string l_Query = "SELECT `rewardID`, `requiredID`, `rewardType`, `chancePct`, `data0`, `data1` FROM reward";
+    mysql_query(&m_MysqlWorld, l_Query.c_str());
+
+    uint16 l_Id = 0;
+    int32 l_RequiredID = -1;
+    eRewardType l_RewardType = eRewardType::REWARD_CURRENCY;
+    float l_ChancePct = 0.0f;
+    std::vector<int32> l_Data;
+    MYSQL_RES *l_Result = NULL;
+    MYSQL_ROW l_Row;
+    l_Result = mysql_use_result(&m_MysqlWorld);
+
+    while ((l_Row = mysql_fetch_row(l_Result)))
+    {
+        l_Id = atoi(l_Row[0]);
+        l_RequiredID = atoi(l_Row[1]);
+        l_RewardType = (eRewardType)atoi(l_Row[2]);
+        l_ChancePct = (float)atof(l_Row[3]);
+        Required* l_Required = nullptr;
+
+        if (l_RequiredID >= 0) /// -1 if no required
+            l_Required = p_RequiredManager->GetRequiered(l_RequiredID);
+
+        SubReward l_SubReward(l_RewardType, l_Required, l_ChancePct);
+        for (uint8 i = 0; i < 2; i++)
+        {
+            if (atoi(l_Row[3 + 1 + i]) < 0)
+                break;
+
+            l_SubReward.AddData(atoi(l_Row[3 + 1 + i]));
+        }
+        Reward* l_Reward = g_RewardManager->GetReward(l_Id);
+        if (l_Reward == nullptr)
+        {
+            l_Reward = new Reward(l_Id);
+            g_RewardManager->AddReward(l_Reward);
+        }
+        l_Reward->AddSubReward(l_SubReward);
+    }
+    mysql_free_result(l_Result);
+    return true;
+}
+
 bool  SqlManager::InitializeItems(RequiredManager* p_RequiredManager)
 {
     /// QUEST TEMPLATE
     std::string l_Query = "SELECT `id`, `type`, `subType`, `name`, `level`, `stackMax`, `rareLevel`, `requiredID`, `price`, `data0`, `data1`, `data2`, `data3` FROM item";
-    
     mysql_query(&m_MysqlWorld, l_Query.c_str());
 
     uint16 l_Id = 0;

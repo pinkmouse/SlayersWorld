@@ -29,6 +29,7 @@ public:
     void Draw(Window &);
     void DrawStartingPage(Window &);
     void DrawWarnings(Window &);
+    void DrawTopRightMessage(Window &);
     void DrawClock(Window &);
     void DrawAlign(Window &);
     void DrawExtraUI(Window &);
@@ -72,6 +73,7 @@ private:
     sf::Text                            m_Align;
     std::vector<std::string >           m_TopMessages;
     std::map< eTypeWarningMsg, std::vector< std::pair<std::string, uint32> > >     m_WarningMsgs;
+    std::map< eTypeWarningMsg, std::vector< std::pair<std::string, uint32> > >     m_TopRightMsgs;
     std::map< eWarningMsg, std::string > m_WarningMsgsEnum;
     std::map< uint8, uint8 >             m_KeyBoardBind;
     std::map< uint8, uint64 >            m_BlockingBinds;

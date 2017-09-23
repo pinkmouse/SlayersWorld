@@ -389,13 +389,13 @@ void Player::EventAction(eKeyBoardAction p_PlayerAction)
 
 void Player::CastSpell(uint16 p_SpellID)
 {
-    if (!HasSpell(p_SpellID) && GetAccessType() < eAccessType::Moderator)
+    /*if (!HasSpell(p_SpellID) && GetAccessType() < eAccessType::Moderator)
     {
         PacketWarningMsg l_Packet;
         l_Packet.BuildPacket(eTypeWarningMsg::Red, "Vous ne possedez pas le sort " + std::to_string(p_SpellID));
         GetSession()->send(l_Packet.m_Packet);
         return;
-    }
+    }*/
     Unit::CastSpell(p_SpellID);
 }
 
@@ -1008,6 +1008,7 @@ void Player::ActionItem(const uint8 & p_Slot)
         RemoveItemFromBag(p_Slot, false);
         break;
     case eItemType::ITEM_CONSUMABLE :
+        CastSpell(l_Item->GetTemplate()->GetData(0));
         ConsumeItemFromBag(p_Slot);
         break;
     default :
@@ -1081,6 +1082,63 @@ uint16 Player::GetCurrency(const eTypeCurrency & p_Type)
         return 0;
 
     return m_Currencies[p_Type];
+}
+
+std::map< eTypeCurrency, uint16>* Player::GetCurrencies()
+{
+    return &m_Currencies;
+}
+
+void Player::AddRewardList(std::vector<SubReward*> p_RewardList)
+{
+    for (uint8 i = 0; i < p_RewardList.size(); i++)
+    {
+        SubReward* l_SubReward = p_RewardList[i];
+        if (l_SubReward->m_Required != nullptr && !l_SubReward->m_Required->IsValid(this))
+            continue;
+
+        switch (l_SubReward->m_Type)
+        {
+            case eRewardType::REWARD_ITEM :
+            {
+                RewardItem(l_SubReward->GetData(0), l_SubReward->GetData(1));
+                break;
+            }
+            case eRewardType::REWARD_CURRENCY:
+            {
+                RewardCurrency((eTypeCurrency)l_SubReward->GetData(0), l_SubReward->GetData(1));
+                break;
+            }
+        }
+    }
+}
+
+void Player::RewardItem(const uint16 & p_ItemID, const uint8 & p_Stack)
+{
+    ItemTemplate* l_ItemTemplate = g_ItemManager->GetItemTemplate(p_ItemID);
+    if (l_ItemTemplate == nullptr)
+        return;
+    Item* l_Item = new Item(this, l_ItemTemplate);
+    l_Item->SetStackNb(p_Stack);
+
+    if (AddItemOnAvailableSlot(l_Item))
+    {
+        PacketWarningMsg l_Packet;
+        l_Packet.BuildPacket(eTypeWarningMsg::WarningReward, l_ItemTemplate->m_Name + "x" + std::to_string(p_Stack));
+        GetSession()->send(l_Packet.m_Packet);
+    }
+    else
+        delete l_Item;
+}
+
+void Player::RewardCurrency(const eTypeCurrency & p_Type, const uint16 & p_Nb)
+{
+    uint16 l_NewValue = GetCurrency(p_Type) + p_Nb;
+    UpdateCurrency(p_Type, l_NewValue, true);
+
+    PacketWarningMsg l_Packet;
+    l_Packet.BuildPacket(eTypeWarningMsg::WarningReward, std::to_string(p_Nb));
+    GetSession()->send(l_Packet.m_Packet);
 }
 
 void Player::LearnSkin(const uint16 & p_SkinID, const bool & p_New)

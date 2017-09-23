@@ -215,6 +215,17 @@ void WorldSocket::SendItems(std::map<uint8, Item*>* p_Items)
     SendPacket(l_Packet.m_Packet);
 }
 
+void WorldSocket::SendCurrencies(std::map<eTypeCurrency, uint16>* p_Currencies)
+{
+    if (p_Currencies == nullptr)
+        return;
+
+    PacketPlayerUpdateCurrency l_Packet;
+
+    l_Packet.BuildPacket(p_Currencies);
+    SendPacket(l_Packet.m_Packet);
+}
+
 void WorldSocket::SendBagSize(const uint8 & p_Size)
 {
     PacketPlayerBagSize l_Packet;

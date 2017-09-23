@@ -52,6 +52,7 @@ public:
     void HandlePlayerBagSize(WorldPacket &);
     void HandlePlayerRemoveItem(WorldPacket &);
     void HandlePlayerStackItem(WorldPacket &);
+    void HandlePlayerUpdateCurrency(WorldPacket &);
     void HandlePlayerRemoveEquipment(WorldPacket &);
     void HanleUnitUpdateName(WorldPacket &);
 

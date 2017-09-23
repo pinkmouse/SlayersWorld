@@ -395,6 +395,7 @@ void Unit::DealDamage(Unit* p_Victim, DamageInfo p_DamageInfo)
             Creature* l_Victim = p_Victim->ToCreature();
             l_Player->SetXp(l_Player->GetXp() + l_Victim->GetXpEarn());
             l_Player->CheckQuestObjective(eObjectifType::KillMob, l_Victim->GetEntry());
+            l_Player->AddRewardList(g_RewardManager->GetRewardsForID(l_Victim->GetRewardID()));
         }
         if (IsPlayer() && p_Victim->IsPlayer() && !m_Map->IsBattleground())
         {

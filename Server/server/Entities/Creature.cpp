@@ -83,6 +83,13 @@ void Creature::StopAttack()
     m_MovementHandler->StopAttack();
 }
 
+int32 Creature::GetRewardID() const
+{
+    if (m_CreatureTemplate == nullptr)
+        return -1;
+    return m_CreatureTemplate->m_RewardID;
+}
+
 void Creature::UpdateOrientation(Orientation p_Orientation)
 {
     if (p_Orientation == m_MovementHandler->GetOrientation())

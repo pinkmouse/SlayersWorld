@@ -8,9 +8,11 @@
 #include "System/Spell/SpellManager.hpp"
 #include "System/Quest/QuestManager.hpp"
 #include "System/Item/ItemManager.hpp"
+#include "System/Reward/RewardManager.hpp"
 
 extern Skins            g_Skins;
 extern Titles           g_Titles;
+extern RewardManager    *g_RewardManager;
 extern ConfigHandler    *g_Config;
 extern SqlManager       *g_SqlManager;
 extern LevelManager     *g_LevelManager;

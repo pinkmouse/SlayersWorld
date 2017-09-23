@@ -12,6 +12,7 @@ World::World()
 {
     g_MapManager    = new MapManager();
 	g_Config        = new ConfigHandler();
+    g_RewardManager = new RewardManager();
     g_SqlManager    = new SqlManager();
     g_LevelManager  = new LevelManager();
     g_SpellManager  = new SpellManager();
@@ -123,6 +124,10 @@ bool World::Initialize()
     printf("Initialize Battledrounds\n");
     if (!g_SqlManager->InitializeBattlegrounds())
         printf("Error Initialize Battledrounds...\n");
+
+    printf("Initialize Rewards\n");
+    if (!g_SqlManager->InitializeRewards(m_RequiredManager))
+        printf("Error Initialize Rewards...\n");
 
     printf("Launch World Maps\n");
     if (!g_MapManager->LaunchWorldsMap())

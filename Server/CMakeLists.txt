@@ -48,6 +48,11 @@ add_executable(${EXECUTABLE_NAME}
   	      server/System/Item/ItemManager.cpp
               server/System/Item/ItemManager.hpp
 
+	      server/System/Reward/Reward.cpp
+              server/System/Reward/Reward.hpp
+  	      server/System/Reward/RewardManager.cpp
+              server/System/Reward/RewardManager.hpp
+
 	      server/System/Required/Required.cpp
               server/System/Required/Required.hpp
 	      server/System/Required/RequiredManager.cpp

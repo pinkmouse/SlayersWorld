@@ -383,6 +383,7 @@ void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldS
     p_WorldSocket->SendSpells(l_Player->GetSpellList());
     p_WorldSocket->SendBagSize(l_Player->GetBagSize());
     p_WorldSocket->SendItems(l_Player->GetItems());
+    p_WorldSocket->SendCurrencies(l_Player->GetCurrencies());
     p_WorldSocket->SendEquipments(l_Player->GetEquipments());
 
     /// Trick to send stats to player

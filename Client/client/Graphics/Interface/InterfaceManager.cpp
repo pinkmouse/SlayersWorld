@@ -383,6 +383,19 @@ void InterfaceManager::Update(sf::Time p_Diff)
             }
         }
     }
+    for (std::map< eTypeWarningMsg, std::vector< std::pair<std::string, uint32> > >::iterator l_It = m_TopRightMsgs.begin(); l_It != m_TopRightMsgs.end(); ++l_It)
+    {
+        for (std::vector<std::pair<std::string, uint32>>::iterator l_Itr = (*l_It).second.begin(); l_Itr != (*l_It).second.end();)
+        {
+            if ((*l_Itr).second <= (p_Diff.asMicroseconds()))
+                l_Itr = (*l_It).second.erase(l_Itr);
+            else
+            {
+                (*l_Itr).second -= (p_Diff.asMicroseconds());
+                ++l_Itr;
+            }
+        }
+    }
 
     /// UPDATE BIG Msg (Seconds in BG)
     if (m_BigMessage.first != "")
@@ -554,6 +567,26 @@ void InterfaceManager::DrawAlign(Window & p_Window)
     p_Window.draw(m_Align);
 }
 
+void InterfaceManager::DrawTopRightMessage(Window & p_Window)
+{
+    for (std::map< eTypeWarningMsg, std::vector< std::pair<std::string, uint32> > >::iterator l_It = m_TopRightMsgs.begin(); l_It != m_TopRightMsgs.end(); ++l_It)
+    {
+        for (uint8 i = 0; i < (*l_It).second.size(); ++i)
+        {
+            sf::Text l_Text((*l_It).second[i].first, *g_Font, SIZE_TALK_FONT);
+            //sf::Vector2i l_FieldSize = TextSplitToFit(120, l_Text);
+
+          //  l_WarningMsg.setPosition((X_WINDOW / 2) - ((l_WarningMsg.getGlobalBounds().width) / 2), (Y_WINDOW / 2) - 50 - ((g_Font->getLineSpacing(l_WarningMsg.getCharacterSize())) / 2) + (g_Font->getLineSpacing(l_WarningMsg.getCharacterSize()) * i));
+
+            DrawField(p_Window, (X_WINDOW) - ((l_Text.getGlobalBounds().width) / 2), 35 * i, (l_Text.getGlobalBounds().width), 35);
+
+            l_Text.setColor(sf::Color::White);
+            l_Text.setPosition((X_WINDOW - 120) - ((l_Text.getGlobalBounds().width) / 2), 35 * i);
+            p_Window.draw(l_Text);
+        }
+    }
+}
+
 void InterfaceManager::DrawWarnings(Window & p_Window)
 {
     for (std::map< eTypeWarningMsg, std::vector< std::pair<std::string, uint32> > >::iterator l_It = m_WarningMsgs.begin(); l_It != m_WarningMsgs.end(); ++l_It)
@@ -716,7 +749,7 @@ void InterfaceManager::Draw(Window & p_Window)
         //p_Window.draw(m_WritingField->GetText());
     }
     DrawWarnings(p_Window);
-
+    DrawTopRightMessage(p_Window);
     //DrawClock(p_Window);
 
     std::vector<Menu*> l_ListOpenMenu = m_MenuManager.GetOpenMenus();
@@ -736,7 +769,22 @@ void InterfaceManager::Draw(Window & p_Window)
 
 void InterfaceManager::AddWarningMsg(eTypeWarningMsg p_Type, const std::string & p_Msg)
 {
-    m_WarningMsgs[p_Type].push_back(std::pair<std::string, uint32>(p_Msg, MAX_WARNING_LOG_TIME));
+    switch (p_Type)
+    {
+    case eTypeWarningMsg::BigMsg:
+        SetBigMsg(p_Msg);
+        break;
+    case eTypeWarningMsg::Top:
+        AddTopMsg(p_Msg);
+        break;
+    case eTypeWarningMsg::Red :
+    case eTypeWarningMsg::Yellow:
+        m_WarningMsgs[p_Type].push_back(std::pair<std::string, uint32>(p_Msg, MAX_WARNING_LOG_TIME));
+        break;
+    case eTypeWarningMsg::WarningReward:
+        m_TopRightMsgs[p_Type].push_back(std::pair<std::string, uint32>(p_Msg, MAX_WARNING_LOG_TIME));
+        break;
+    }
 }
 
 void InterfaceManager::AddTopMsg(const std::string & p_Msg)

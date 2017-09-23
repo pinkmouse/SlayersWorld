@@ -16,6 +16,7 @@
 Skins            g_Skins;
 Titles           g_Titles;
 ConfigHandler    *g_Config;
+RewardManager    *g_RewardManager;
 SqlManager       *g_SqlManager;
 LevelManager     *g_LevelManager;
 MapManager       *g_MapManager;

@@ -32,9 +32,11 @@ public:
     void SetStackItem(const uint8 &, const uint8 & );
     void RemoveItem(const uint8 &);
     void SetSize(const uint8 &);
+    void SetCurrency(const eTypeCurrency &, const uint16 &);
 
 private:
-    std::map<uint8, Item>       m_Items;
-    uint8                       m_Size;
-    SubMenuBag                  m_SubMenu;
+    std::map<uint8, Item>           m_Items;
+    std::map<eTypeCurrency, uint16> m_Currencies;
+    uint8                           m_Size;
+    SubMenuBag                      m_SubMenu;
 };

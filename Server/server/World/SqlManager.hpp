@@ -77,8 +77,8 @@ public:
     void InitializeListTitlesForPlayer(Player*);
     void InitializeListSkinsForPlayer(Player*);
     void InitializeListItemForPlayer(Player*);
-    void InitializeListEquipmentsForPlayer(Player*);
     void InitializeListCurrenciesForPlayer(Player*);
+    void InitializeListEquipmentsForPlayer(Player*);
     bool InitializeBattlegrounds();
     bool InitializeQuestsProgessForPlayer(Player*);
     bool InitializeKeyBindsForAccount(uint32, Player*);
@@ -89,6 +89,7 @@ public:
     bool InitializeSkins();
     bool InitializeMaps();
     bool InitializeZones();
+    bool InitializeRewards(RequiredManager*);
     bool InitializeAreatrigger(DynamicObjectManager*, UnitManager*);
     bool InitializeGameObject(DynamicObjectManager*, RequiredManager*, UnitManager*);
     CreatureTemplate GetCreatureTemplate(uint16);

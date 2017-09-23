@@ -110,6 +110,13 @@ enum eItemType
     ITEM_MAX = 5
 };
 
+enum eRewardType
+{
+    REWARD_ITEM = 0,
+    REWARD_CURRENCY = 1
+};
+
+
 enum eItemRareLevel
 {
     ITEM_RARE1 = 0,
@@ -298,7 +305,8 @@ enum eTypeWarningMsg
     Red = 0,
     Yellow,
     Top,
-    BigMsg
+    BigMsg,
+    WarningReward
 };
 
 enum eTypeAuraEffect
@@ -529,12 +537,13 @@ struct CreatureTemplate
     uint8 m_Rank;
     uint8 m_AiType;
     eFactionType m_FactionType;
+    int32 m_RewardID;
 
     CreatureTemplate() :
-        m_Entry(0), m_SkinID(0), m_Name(""), m_Level(0), m_Force(0), m_Stamina(0), m_Dexterity(0), m_Speed(0), m_Xp(0), m_State(0), m_MaxRay(0), m_MaxVision(0), m_MovingTimeMin(0.0f), m_MovingTimeMax(0.0f), m_StopTimeMin(0.0f), m_StopTimeMax(0.0f), m_RespawnTime(0), m_Rank(0), m_AiType(0), m_FactionType(eFactionType::Ally) {}
+        m_Entry(0), m_SkinID(0), m_Name(""), m_Level(0), m_Force(0), m_Stamina(0), m_Dexterity(0), m_Speed(0), m_Xp(0), m_State(0), m_MaxRay(0), m_MaxVision(0), m_MovingTimeMin(0.0f), m_MovingTimeMax(0.0f), m_StopTimeMin(0.0f), m_StopTimeMax(0.0f), m_RespawnTime(0), m_Rank(0), m_AiType(0), m_FactionType(eFactionType::Ally), m_RewardID(-1) {}
 
-    CreatureTemplate(uint32 p_Entry, int16 p_SkinID, std::string p_Name, uint8 p_Level, uint8 p_Force, uint8 p_Stamina, uint8 p_Dexterity, uint8 p_Speed, uint8 p_Xp, uint8 p_State, uint16 p_MaxRay , uint16 p_MaxVision, float p_MovingTimeMin, float p_MovingTimeMax, float p_StopTimeMin, float p_StopTimeMax, int32 p_RespawnTime, uint8 p_Rank, uint8 p_AiType, eFactionType p_FactionType) :
-    m_Entry(p_Entry), m_SkinID(p_SkinID), m_Name(p_Name), m_Level(p_Level), m_Force(p_Force), m_Stamina(p_Stamina), m_Dexterity(p_Dexterity), m_Speed(p_Speed), m_Xp(p_Xp), m_State(p_State), m_MaxRay(p_MaxRay), m_MaxVision(p_MaxVision), m_MovingTimeMin(p_MovingTimeMin), m_MovingTimeMax(p_MovingTimeMax), m_StopTimeMin(p_StopTimeMin), m_StopTimeMax(p_StopTimeMax), m_RespawnTime(p_RespawnTime), m_Rank(p_Rank), m_AiType(p_AiType), m_FactionType(p_FactionType){}
+    CreatureTemplate(uint32 p_Entry, int16 p_SkinID, std::string p_Name, uint8 p_Level, uint8 p_Force, uint8 p_Stamina, uint8 p_Dexterity, uint8 p_Speed, uint8 p_Xp, uint8 p_State, uint16 p_MaxRay , uint16 p_MaxVision, float p_MovingTimeMin, float p_MovingTimeMax, float p_StopTimeMin, float p_StopTimeMax, int32 p_RespawnTime, uint8 p_Rank, uint8 p_AiType, eFactionType p_FactionType, const int32 & p_RewardID) :
+    m_Entry(p_Entry), m_SkinID(p_SkinID), m_Name(p_Name), m_Level(p_Level), m_Force(p_Force), m_Stamina(p_Stamina), m_Dexterity(p_Dexterity), m_Speed(p_Speed), m_Xp(p_Xp), m_State(p_State), m_MaxRay(p_MaxRay), m_MaxVision(p_MaxVision), m_MovingTimeMin(p_MovingTimeMin), m_MovingTimeMax(p_MovingTimeMax), m_StopTimeMin(p_StopTimeMin), m_StopTimeMax(p_StopTimeMax), m_RespawnTime(p_RespawnTime), m_Rank(p_Rank), m_AiType(p_AiType), m_FactionType(p_FactionType), m_RewardID(p_RewardID){}
 };
 
 struct SWTime
@@ -611,6 +620,7 @@ static uint32 CaseToPixel(uint32 p_NbCase) { return p_NbCase * TILE_SIZE; }
 static Position PositionToCasePosition(const Position & p_Pos) { return Position(PixelToCase(p_Pos.m_X), PixelToCase(p_Pos.m_Y)); }
 static float InYard(float p_YardInPixel) { return p_YardInPixel / (float)TILE_SIZE; }
 static bool RandChance(uint8 p_Rand) { return (rand() % 100) <= p_Rand ; }
+static bool RandChance(float p_Rand) { return (((float)rand() / (float)(RAND_MAX)) * 100.0f) <= p_Rand; }
 static void Log(const std::string & p_Str)
 {
     time_t l_Time = time(NULL);

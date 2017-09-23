@@ -242,6 +242,26 @@ void MenuBag::SetStackItem(const uint8 & p_SlotID, const uint8 & p_Stack)
     GetElement(l_RealSlot % GetColumn(), l_RealSlot / GetColumn())->SetLabel(m_Items[p_SlotID].m_Name + "\nx" + std::to_string(m_Items[p_SlotID].m_StackNb));
 }
 
+void MenuBag::SetCurrency(const eTypeCurrency & p_Type, const uint16 & p_Value)
+{
+    m_Currencies[p_Type] = p_Value;
+    switch(p_Type)
+    {
+        case eTypeCurrency::CURRENCY_BASISC:
+        {
+            uint16 l_Pc = p_Value % 100;
+            uint16 l_Pa = p_Value / 100;
+            uint16 l_Po = l_Pa / 100;
+            l_Pa = l_Pa - (l_Po * 100);
+
+            AddElement(0, 0, std::to_string(l_Po) + "po " + std::to_string(l_Pa) + "pa " + std::to_string(l_Pc) + "pc");
+            break;
+        }
+        default:
+            break;
+    }
+}
+
 void MenuBag::AddItem(const uint8 & p_SlotID, const Item & p_Item)
 {
     m_Items[p_SlotID] = p_Item;

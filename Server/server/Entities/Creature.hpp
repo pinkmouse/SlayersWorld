@@ -27,6 +27,7 @@ public:
     void GoToCase(const Position &);
     void OutOfCombat();
     uint16 GetEntry() const;
+    int32 GetRewardID() const;
 
     /// CREATURE AI
     void UpdateAI(sf::Time);

@@ -64,6 +64,7 @@ void PacketHandler::LoadPacketHandlerMap()
     m_PacketHandleMap[SMSG::S_PlayerRemoveItem] = &PacketHandler::HandlePlayerRemoveItem;
     m_PacketHandleMap[SMSG::S_PlayerRemoveEquipment] = &PacketHandler::HandlePlayerRemoveEquipment;
     m_PacketHandleMap[SMSG::S_PlayerStackItem] = &PacketHandler::HandlePlayerStackItem;
+    m_PacketHandleMap[SMSG::S_PlayerUpdateCurrency] = &PacketHandler::HandlePlayerUpdateCurrency;
     m_PacketHandleMap[SMSG::S_UnitUpdateName] = &PacketHandler::HanleUnitUpdateName;
 }
 
@@ -664,12 +665,7 @@ void PacketHandler::HandleWarningMsg(WorldPacket &p_Packet)
     p_Packet >> l_Type;
     p_Packet >> l_WarningMsg;
 
-    if (l_Type == eTypeWarningMsg::Top)
-        m_InterfaceManager->AddTopMsg(l_WarningMsg);
-    else if (l_Type == eTypeWarningMsg::BigMsg)
-        m_InterfaceManager->SetBigMsg(l_WarningMsg);
-    else
-        m_InterfaceManager->AddWarningMsg((eTypeWarningMsg)l_Type, l_WarningMsg);
+    m_InterfaceManager->AddWarningMsg((eTypeWarningMsg)l_Type, l_WarningMsg);
 }
 
 void PacketHandler::HandleUnitPlayVisual(WorldPacket &p_Packet)
@@ -911,6 +907,27 @@ void PacketHandler::HandlePlayerRemoveItem(WorldPacket &p_Packet)
 
     p_Packet >> l_SlotID;
     l_MenuBag->RemoveItem(l_SlotID);
+}
+
+void PacketHandler::HandlePlayerUpdateCurrency(WorldPacket &p_Packet)
+{
+    uint8 l_Nb;
+    MenuManager* l_MenuManager = m_InterfaceManager->GetMenuManager();
+    MenuBag* l_MenuBag = reinterpret_cast<MenuBag*>(l_MenuManager->GetMenu(eMenuType::BagMenu));
+    if (l_MenuBag == nullptr)
+        return;
+
+    p_Packet >> l_Nb;
+    for (uint8 i = 0; i < l_Nb; i++)
+    {
+        uint8 l_Type;
+        uint16 l_Value;
+
+        p_Packet >> l_Type;
+        p_Packet >> l_Value;
+
+        l_MenuBag->SetCurrency((eTypeCurrency)l_Type, l_Value);
+    }
 }
 
 void PacketHandler::HandlePlayerStackItem(WorldPacket &p_Packet)

@@ -1,6 +1,7 @@
 #pragma once
 #include  <SFML/Window/Keyboard.hpp>
 #include "../System/Quest/Quest.hpp"
+#include "../System/Reward/Reward.hpp"
 #include "Unit.hpp"
 #include "../System/Item/Item.hpp"
 #include <map>
@@ -39,6 +40,11 @@ public:
     std::pair<Unit*, uint16> GetGossipForQuestion(const uint16 &, const uint8 &);
     ePlayerMod GetPlayerMod() const;
 
+    /* REWARD */
+    void AddRewardList(std::vector<SubReward*>);
+    void RewardItem(const uint16 &, const uint8 &);
+    void RewardCurrency(const eTypeCurrency &, const uint16 &);
+
     /* TITLES */
     void AddTitle(const uint16 &, Title*);
     std::map < uint16, Title*>* GetTitles();
@@ -57,6 +63,7 @@ public:
     /* CURRENCY */
     void UpdateCurrency(const eTypeCurrency &, const uint16 &, const bool & p_Send = false);
     uint16 GetCurrency(const eTypeCurrency &);
+    std::map< eTypeCurrency, uint16>* GetCurrencies();
 
     /* ITEMS */
     void AddItem(const uint8 &, Item*, bool p_New = false);
@@ -188,6 +195,6 @@ private:
     std::map < uint16, Skin* >                                      m_Skins;
     std::map < uint8, Item* >                                       m_Items;
     std::map < eTypeEquipment, Item* >                              m_Equipment;
-    std::map < eTypeCurrency, int16 >                               m_Currencies;
+    std::map < eTypeCurrency, uint16 >                              m_Currencies;
 };
 

@@ -62,5 +62,6 @@ enum SMSG : uint8
     S_PlayerBagSize = 45,
     S_PlayerRemoveItem = 46,
     S_PlayerRemoveEquipment = 47,
-    S_PlayerStackItem = 48
+    S_PlayerStackItem = 48,
+    S_PlayerUpdateCurrency = 49
 };

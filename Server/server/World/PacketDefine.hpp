@@ -65,7 +65,8 @@ enum SMSG : uint8
     S_PlayerBagSize = 45,
     S_PlayerRemoveItem = 46,
     S_PlayerRemoveEquipment = 47,
-    S_PlayerStackItem = 48
+    S_PlayerStackItem = 48,
+    S_PlayerUpdateCurrency = 49
 };
 
 struct PacketGoDirection
@@ -125,6 +126,23 @@ struct PacketPlayerSkin
 
         for (std::map<uint16, Skin*>::iterator l_It = p_ListSkin->begin(); l_It != p_ListSkin->end(); l_It++)
             m_Packet << (*l_It).first << (*l_It).second->m_Name;
+    }
+};
+
+struct PacketPlayerUpdateCurrency
+{
+    WorldPacket m_Packet;
+    uint8 m_PacketID;
+
+    PacketPlayerUpdateCurrency() :
+        m_PacketID(SMSG::S_PlayerUpdateCurrency) {}
+
+    void BuildPacket(std::map<eTypeCurrency, uint16>* p_ListCurrency)
+    {
+        m_Packet << m_PacketID << (uint8)p_ListCurrency->size();
+
+        for (std::map<eTypeCurrency, uint16>::iterator l_It = p_ListCurrency->begin(); l_It != p_ListCurrency->end(); l_It++)
+            m_Packet << (uint8)(*l_It).first << (*l_It).second;
     }
 };
 

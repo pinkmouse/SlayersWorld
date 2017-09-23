@@ -131,7 +131,8 @@ enum eTypeWarningMsg
     Red = 0,
     Yellow,
     Top,
-    BigMsg
+    BigMsg,
+    WarningReward
 };
 
 struct Position
@@ -246,6 +247,12 @@ enum eTimeSpellAttribute
 {
     CooldownAttribute = 0,
     CastimeAttribute = 1
+};
+
+enum eTypeCurrency
+{
+    CURRENCY_BASISC = 0,
+    CURRENCY_HONNOR = 1
 };
 
 enum eMenuType
