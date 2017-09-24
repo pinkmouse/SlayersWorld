@@ -33,6 +33,7 @@ public:
     void HandleRemoveItem(WorldPacket &, WorldSocket*);
     void HandleActionItem(WorldPacket &, WorldSocket*);
     void HandleUnequip(WorldPacket &, WorldSocket*);
+    void HandleSellItem(WorldPacket &, WorldSocket*);
     void HandleDisconnected(WorldSocket*);
 
 private:

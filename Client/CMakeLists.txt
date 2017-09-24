@@ -39,6 +39,7 @@ add_executable(${EXECUTABLE_NAME}
               client/System/WorldPosition.cpp
               client/System/WorldPosition.hpp
 	      client/System/SWType.hpp
+	      client/System/CurrencyUtils.hpp
 
               client/System/Resource/Resource.cpp
               client/System/Resource/Resource.hpp
@@ -77,6 +78,8 @@ add_executable(${EXECUTABLE_NAME}
               client/Graphics/Interface/MenuSpells.hpp
               client/Graphics/Interface/MenuWardrobe.cpp
               client/Graphics/Interface/MenuWardrobe.hpp
+              client/Graphics/Interface/MenuSell.cpp
+              client/Graphics/Interface/MenuSell.hpp
               client/Graphics/Interface/QuestionBox.cpp
               client/Graphics/Interface/QuestionBox.hpp
 

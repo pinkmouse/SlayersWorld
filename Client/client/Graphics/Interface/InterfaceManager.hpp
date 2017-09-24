@@ -34,7 +34,10 @@ public:
     void DrawAlign(Window &);
     void DrawExtraUI(Window &);
     void DrawBGUI(Window &);
+
     HistoryField* GetHistoryField() const;
+    Menu* GetMenuInterface(const eMenuType &);
+    std::vector<Menu*> GetOpenInterfaceMenu();
     void AddWarningMsg(eTypeWarningMsg, const std::string &);
     void AddTopMsg(const std::string &);
     void SetBigMsg(const std::string &);
@@ -81,6 +84,8 @@ private:
     std::map < eExtraInterface, std::map< uint8,  std::pair<uint8, uint64>>> m_ExtraUIData;
     std::map<uint16, QuestionBox>        m_ListSimpleQuestion;
     std::pair<std::string , uint64>      m_BigMessage;
+    std::map<eMenuType, Menu*>           m_InterfaceMenuList;
+
     MenuManager                          m_MenuManager;
     bool                                 m_IsLoading;
 };

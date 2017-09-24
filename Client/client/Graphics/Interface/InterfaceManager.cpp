@@ -1,4 +1,5 @@
 #include "InterfaceManager.hpp"
+#include "../Interface/MenuSell.hpp"
 #include "../../Global.hpp"
 
 InterfaceManager::InterfaceManager(Events* p_Events) :
@@ -21,6 +22,8 @@ InterfaceManager::InterfaceManager(Events* p_Events) :
     InitializeWarningMsgs();
     m_BigMessage.first = "";
     m_IsLoading = false;
+
+    m_InterfaceMenuList[eMenuType::SellMenu] = new MenuSell();
 }
 
 InterfaceManager::~InterfaceManager()
@@ -118,7 +121,23 @@ void  InterfaceManager::ManageEvent(sf::Event p_Event)
                 (*--m_ListSimpleQuestion.end()).second.KeyPress(p_Event.key.code);
                 break;
             }
-            else if (p_Event.key.code == sf::Keyboard::Escape && !m_MenuManager.IsOpen()) ///< Bypass for Menu
+            for (std::map<eMenuType, Menu*>::iterator l_It = m_InterfaceMenuList.begin(); l_It != m_InterfaceMenuList.end(); l_It++)
+            {
+                if ((*l_It).second->IsOpen())
+                {
+                    Menu* l_Menu = (*l_It).second;
+                    while (1)
+                    {
+                        if (l_Menu->GetSubMenu() != nullptr && l_Menu->GetSubMenu()->IsOpen())
+                            l_Menu = l_Menu->GetSubMenu();
+                        else
+                            break;
+                    }
+                    l_Menu->KeyPress(p_Event.key.code);
+                    return;
+                }
+            }
+            if (p_Event.key.code == sf::Keyboard::Escape && !m_MenuManager.IsOpen()) ///< Bypass for Menu
                     m_MenuManager.Open();
             else if (m_MenuManager.IsOpen())
             {
@@ -142,6 +161,25 @@ void  InterfaceManager::ManageEvent(sf::Event p_Event)
         default:
             break;
     }
+}
+
+Menu* InterfaceManager::GetMenuInterface(const eMenuType & p_MenuType)
+{
+    if (m_InterfaceMenuList.find(p_MenuType) == m_InterfaceMenuList.end())
+        return nullptr;
+
+    return m_InterfaceMenuList[p_MenuType];
+}
+
+std::vector<Menu*> InterfaceManager::GetOpenInterfaceMenu()
+{
+    std::vector<Menu*> l_MenuOpen;
+    for (std::map<eMenuType, Menu*>::iterator l_It = m_InterfaceMenuList.begin(); l_It != m_InterfaceMenuList.end(); l_It++)
+    {
+        if ((*l_It).second->IsOpen())
+            l_MenuOpen.push_back((*l_It).second);
+    }
+    return l_MenuOpen;
 }
 
 void InterfaceManager::DrawMenu(Window & p_Window, Menu * p_Menu)
@@ -578,10 +616,10 @@ void InterfaceManager::DrawTopRightMessage(Window & p_Window)
 
           //  l_WarningMsg.setPosition((X_WINDOW / 2) - ((l_WarningMsg.getGlobalBounds().width) / 2), (Y_WINDOW / 2) - 50 - ((g_Font->getLineSpacing(l_WarningMsg.getCharacterSize())) / 2) + (g_Font->getLineSpacing(l_WarningMsg.getCharacterSize()) * i));
 
-            DrawField(p_Window, (X_WINDOW) - ((l_Text.getGlobalBounds().width) / 2), 35 * i, (l_Text.getGlobalBounds().width), 35);
+            DrawField(p_Window, (X_WINDOW) - (l_Text.getGlobalBounds().width) - 30, 35 * i, (l_Text.getGlobalBounds().width) + 30, 35);
 
             l_Text.setColor(sf::Color::White);
-            l_Text.setPosition((X_WINDOW - 120) - ((l_Text.getGlobalBounds().width) / 2), 35 * i);
+            l_Text.setPosition((X_WINDOW) - (l_Text.getGlobalBounds().width) - 20, (35 * i) + 4);
             p_Window.draw(l_Text);
         }
     }
@@ -753,6 +791,9 @@ void InterfaceManager::Draw(Window & p_Window)
     //DrawClock(p_Window);
 
     std::vector<Menu*> l_ListOpenMenu = m_MenuManager.GetOpenMenus();
+    for (std::vector<Menu*>::iterator l_It = l_ListOpenMenu.begin(); l_It != l_ListOpenMenu.end(); ++l_It)
+        DrawMenu(p_Window, (*l_It));
+    l_ListOpenMenu = GetOpenInterfaceMenu();
     for (std::vector<Menu*>::iterator l_It = l_ListOpenMenu.begin(); l_It != l_ListOpenMenu.end(); ++l_It)
         DrawMenu(p_Window, (*l_It));
     for (std::map<uint16, QuestionBox>::iterator l_It = m_ListSimpleQuestion.begin(); l_It != m_ListSimpleQuestion.end();)

@@ -992,6 +992,38 @@ void Player::RemoveItemFromBag(const uint8 & p_Slot, const bool & p_Delete)
     GetSession()->send(l_Packet.m_Packet);
 }
 
+void Player::OpenSeller()
+{
+    PacketSellItemInterface l_Packet;
+
+    std::map<uint8, uint16> p_Price;
+
+    for (std::map < uint8, Item* >::iterator l_It = m_Items.begin(); l_It != m_Items.end(); l_It++)
+    {
+        p_Price[(*l_It).first] = (*l_It).second->GetTemplate()->m_Price * (*l_It).second->GetStackNb();
+    }
+
+    l_Packet.BuildPacket(&p_Price);
+    GetSession()->SendPacket(l_Packet.m_Packet);
+}
+
+void Player::SellItem(const uint8 & p_Slot)
+{
+    std::map<uint8, Item*>::iterator l_It = m_Items.find(p_Slot);
+
+    if (l_It == m_Items.end())
+        return;
+
+    Item* l_Item = (*l_It).second;
+
+    uint16 l_Price = l_Item->GetTemplate()->m_Price;
+    l_Price *= l_Item->GetStackNb();
+
+    uint16 l_Currency = GetCurrency(eTypeCurrency::CURRENCY_BASISC);
+    UpdateCurrency(eTypeCurrency::CURRENCY_BASISC, l_Price + l_Currency, true);
+    RemoveItemFromBag(p_Slot, false);
+}
+
 void Player::ActionItem(const uint8 & p_Slot)
 {
     std::map<uint8, Item*>::iterator l_It = m_Items.find(p_Slot);
@@ -1074,6 +1106,12 @@ void Player::UpdateCurrency(const eTypeCurrency & p_Type, const uint16 & p_Value
 
     if (!p_Send)
         return;
+
+    g_SqlManager->UpdateCurrencyForPlayer(GetID(), p_Type, p_Value);
+
+    std::map<eTypeCurrency, uint16> p_Currencies;
+    p_Currencies[p_Type] = p_Value;
+    GetSession()->SendCurrencies(&p_Currencies);
 }
 
 uint16 Player::GetCurrency(const eTypeCurrency & p_Type)

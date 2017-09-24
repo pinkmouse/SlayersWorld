@@ -80,7 +80,18 @@ bool Player::HandleTest(std::vector<std::string> p_ListCmd)
 {
     if (!p_ListCmd.empty())
         return false;
-    RewardItem(1, 2);
+    //RewardItem(1, 2);
+    
+    OpenSeller();
+    /*
+    PacketSellItemInterface l_Packet;
+
+    std::map<uint8, uint16> p_Price;
+
+    p_Price[0] = 2200;
+    l_Packet.BuildPacket(&p_Price);
+    GetSession()->SendPacket(l_Packet.m_Packet);*/
+
    /* ItemTemplate* l_ItemTemplate = g_ItemManager->GetItemTemplate(2);
     if (l_ItemTemplate == nullptr)
         return false;

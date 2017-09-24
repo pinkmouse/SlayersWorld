@@ -29,6 +29,7 @@ void PacketHandler::LoadPacketHandlerMap()
     m_PacketHandleMap[CMSG::C_RemoveItem] = &PacketHandler::HandleRemoveItem;
     m_PacketHandleMap[CMSG::C_ActionItem] = &PacketHandler::HandleActionItem;
     m_PacketHandleMap[CMSG::C_Unequip] = &PacketHandler::HandleUnequip;
+    m_PacketHandleMap[CMSG::C_SellItem] = &PacketHandler::HandleSellItem;
 }
 
 void PacketHandler::HandleUnitUnknow(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
@@ -251,6 +252,20 @@ void PacketHandler::HandleActionItem(WorldPacket &p_Packet, WorldSocket* p_World
 
     l_Player->ActionItem(l_SlotID);
 }
+
+void PacketHandler::HandleSellItem(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
+{
+    Player* l_Player = p_WorldSocket->GetPlayer();
+    uint8 l_SlotID;
+
+    p_Packet >> l_SlotID;
+
+    if (l_Player == nullptr)
+        return;
+
+    l_Player->SellItem(l_SlotID);
+}
+
 
 void PacketHandler::HandleUnequip(WorldPacket &p_Packet, WorldSocket* p_WorldSocket)
 {

@@ -18,7 +18,8 @@ enum CMSG : uint8
     C_UpdateSkin = 29,
     C_RemoveItem = 30,
     C_ActionItem = 31,
-    C_Unequip = 32
+    C_Unequip = 32,
+    C_SellItem = 33
 };
 
 enum SMSG : uint8
@@ -63,5 +64,6 @@ enum SMSG : uint8
     S_PlayerRemoveItem = 46,
     S_PlayerRemoveEquipment = 47,
     S_PlayerStackItem = 48,
-    S_PlayerUpdateCurrency = 49
+    S_PlayerUpdateCurrency = 49,
+    S_SellItemInterface = 50
 };

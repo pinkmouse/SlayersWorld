@@ -264,7 +264,8 @@ enum eMenuType
     WardrobeMenu,
     SpellsMenu,
     BagMenu,
-    EquipmentMenu
+    EquipmentMenu,
+    SellMenu
 };
 
 enum eKeyBoardAction

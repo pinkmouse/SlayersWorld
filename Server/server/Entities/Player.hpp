@@ -78,6 +78,8 @@ public:
     void SetMaxBagSlot(const uint16 &);
     uint8 GetBagSize() const;
     int16 CanCanBeStackOnBagSlot(Item*);
+    void SellItem(const uint8 &);
+    void OpenSeller();
 
     /* EQUIPMENT */
     void AddEquipment(const eTypeEquipment &, Item*, bool p_New = false);

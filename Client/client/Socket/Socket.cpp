@@ -215,6 +215,17 @@ void Socket::SendItemAction(const uint8 & p_Item)
     send(packet);
 }
 
+void Socket::SendItemSell(const uint8 & p_Slot)
+{
+    WorldPacket packet;
+    uint8 l_ID = CMSG::C_SellItem;
+
+    packet << l_ID;
+    packet << p_Slot;
+
+    send(packet);
+}
+
 void Socket::SendUnequip(const uint8 & p_Slot)
 {
     WorldPacket packet;

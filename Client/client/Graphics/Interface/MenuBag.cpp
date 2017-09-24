@@ -1,5 +1,6 @@
 #include "MenuBag.hpp"
 #include "../../Global.hpp"
+#include "../../System/CurrencyUtils.hpp"
 
 SubMenuBag::SubMenuBag() :
     Menu(3, 8)
@@ -249,12 +250,9 @@ void MenuBag::SetCurrency(const eTypeCurrency & p_Type, const uint16 & p_Value)
     {
         case eTypeCurrency::CURRENCY_BASISC:
         {
-            uint16 l_Pc = p_Value % 100;
-            uint16 l_Pa = p_Value / 100;
-            uint16 l_Po = l_Pa / 100;
-            l_Pa = l_Pa - (l_Po * 100);
+            CurrencyBasicConvert l_Currency = ConvertPcToBasicCurrency(p_Value);
 
-            AddElement(0, 0, std::to_string(l_Po) + "po " + std::to_string(l_Pa) + "pa " + std::to_string(l_Pc) + "pc");
+            AddElement(0, 0, CurrencyToString(l_Currency));
             break;
         }
         default:

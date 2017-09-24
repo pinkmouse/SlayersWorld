@@ -8,6 +8,7 @@
 #include "../Graphics/Interface/MenuSpells.hpp"
 #include "../Graphics/Interface/MenuBag.hpp"
 #include "../Graphics/Interface/MenuEquipment.hpp"
+#include "../Graphics/Interface/MenuSell.hpp"
 
 #include "../Global.hpp"
 #include "PacketDefine.hpp"
@@ -66,6 +67,7 @@ void PacketHandler::LoadPacketHandlerMap()
     m_PacketHandleMap[SMSG::S_PlayerStackItem] = &PacketHandler::HandlePlayerStackItem;
     m_PacketHandleMap[SMSG::S_PlayerUpdateCurrency] = &PacketHandler::HandlePlayerUpdateCurrency;
     m_PacketHandleMap[SMSG::S_UnitUpdateName] = &PacketHandler::HanleUnitUpdateName;
+    m_PacketHandleMap[SMSG::S_SellItemInterface] = &PacketHandler::HandleSellItemInterface;
 }
 
 void PacketHandler::HandleExtraUI(WorldPacket &p_Packet)
@@ -905,8 +907,14 @@ void PacketHandler::HandlePlayerRemoveItem(WorldPacket &p_Packet)
     if (l_MenuBag == nullptr)
         return;
 
+    MenuSell* l_MenuSell = reinterpret_cast<MenuSell*>(m_InterfaceManager->GetMenuInterface(eMenuType::SellMenu));
+
+    if (l_MenuSell == nullptr)
+        return;
+
     p_Packet >> l_SlotID;
     l_MenuBag->RemoveItem(l_SlotID);
+    l_MenuSell->RemoveItem(l_SlotID);
 }
 
 void PacketHandler::HandlePlayerUpdateCurrency(WorldPacket &p_Packet)
@@ -916,6 +924,13 @@ void PacketHandler::HandlePlayerUpdateCurrency(WorldPacket &p_Packet)
     MenuBag* l_MenuBag = reinterpret_cast<MenuBag*>(l_MenuManager->GetMenu(eMenuType::BagMenu));
     if (l_MenuBag == nullptr)
         return;
+
+    MenuSell* l_MenuSell = reinterpret_cast<MenuSell*>(m_InterfaceManager->GetMenuInterface(eMenuType::SellMenu));
+
+    if (l_MenuSell == nullptr)
+        return;
+
+    printf("Set Currency\n");
 
     p_Packet >> l_Nb;
     for (uint8 i = 0; i < l_Nb; i++)
@@ -927,6 +942,7 @@ void PacketHandler::HandlePlayerUpdateCurrency(WorldPacket &p_Packet)
         p_Packet >> l_Value;
 
         l_MenuBag->SetCurrency((eTypeCurrency)l_Type, l_Value);
+        l_MenuSell->SetCurrency((eTypeCurrency)l_Type, l_Value);
     }
 }
 
@@ -939,9 +955,15 @@ void PacketHandler::HandlePlayerStackItem(WorldPacket &p_Packet)
     if (l_MenuBag == nullptr)
         return;
 
+    MenuSell* l_MenuSell = reinterpret_cast<MenuSell*>(m_InterfaceManager->GetMenuInterface(eMenuType::SellMenu));
+
+    if (l_MenuSell == nullptr)
+        return;
+
     p_Packet >> l_SlotID;
     p_Packet >> l_Stack;
     l_MenuBag->SetStackItem(l_SlotID, l_Stack);
+    l_MenuSell->SetStackItem(l_SlotID, l_Stack);
 }
 
 void PacketHandler::HandlePlayerRemoveEquipment(WorldPacket &p_Packet)
@@ -964,9 +986,37 @@ void PacketHandler::HandlePlayerBagSize(WorldPacket &p_Packet)
     if (l_MenuBag == nullptr)
         return;
 
+    MenuSell* l_MenuSell = reinterpret_cast<MenuSell*>(m_InterfaceManager->GetMenuInterface(eMenuType::SellMenu));
+
+    if (l_MenuSell == nullptr)
+        return;
+
     p_Packet >> l_Size;
     l_MenuManager->GetElement(0, 4)->SetLabel(l_MenuManager->GetElement(0, 4)->GetLabel() + " x" + std::to_string(l_Size));
     l_MenuBag->SetSize(l_Size);
+    l_MenuSell->SetSize(l_Size);
+}
+
+void PacketHandler::HandleSellItemInterface(WorldPacket &p_Packet)
+{
+    uint8 l_Nb;
+    MenuManager* l_MenuManager = m_InterfaceManager->GetMenuManager();
+    MenuSell* l_MenuSell = reinterpret_cast<MenuSell*>(m_InterfaceManager->GetMenuInterface(eMenuType::SellMenu));
+    if (l_MenuSell == nullptr)
+        return;
+
+    p_Packet >> l_Nb;
+
+    uint8 l_SlotID = 0;
+    uint16 l_Price = 0;
+    for (uint8 i = 0; i < l_Nb; i++)
+    {
+        p_Packet >> l_SlotID;
+        p_Packet >> l_Price;
+
+        l_MenuSell->AddItemPrice(l_SlotID, l_Price);
+    }
+    l_MenuSell->Open();
 }
 
 void PacketHandler::HandlePlayerItem(WorldPacket &p_Packet)
@@ -974,7 +1024,13 @@ void PacketHandler::HandlePlayerItem(WorldPacket &p_Packet)
     uint8 l_Nb;
     MenuManager* l_MenuManager = m_InterfaceManager->GetMenuManager();
     MenuBag* l_MenuBag = reinterpret_cast<MenuBag*>(l_MenuManager->GetMenu(eMenuType::BagMenu));
+
     if (l_MenuBag == nullptr)
+        return;
+
+    MenuSell* l_MenuSell = reinterpret_cast<MenuSell*>(m_InterfaceManager->GetMenuInterface(eMenuType::SellMenu));
+
+    if (l_MenuSell == nullptr)
         return;
 
     p_Packet >> l_Nb;
@@ -1006,6 +1062,7 @@ void PacketHandler::HandlePlayerItem(WorldPacket &p_Packet)
         }
 
         l_MenuBag->AddItem(l_SlotID, l_Item);
+        l_MenuSell->AddItem(l_SlotID, l_Item);
         printf("Get Item on slot %d : %s\n", l_SlotID, l_Name.c_str());
     }
 }

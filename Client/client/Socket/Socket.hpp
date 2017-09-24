@@ -28,6 +28,7 @@ public:
     void SendRemoveItem(const uint8 &);
     void SendItemAction(const uint8 &);
     void SendUnequip(const uint8 &);
+    void SendItemSell(const uint8 &);
     bool IsConnected() const;
 
 private:
