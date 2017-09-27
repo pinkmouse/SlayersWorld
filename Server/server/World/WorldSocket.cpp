@@ -204,6 +204,27 @@ void WorldSocket::SendSpells(std::map<uint16, uint64>* p_Spells)
     SendPacket(l_Packet.m_Packet);
 }
 
+void WorldSocket::SendBindingSpell()
+{
+    if (m_Player == nullptr)
+        return;
+
+    std::map<eKeyBoardAction, int32> l_KeySpellBind;
+    l_KeySpellBind[eKeyBoardAction::KeyBoardSpell0] = m_Player->GetSpellOnBind(eKeyBoardAction::KeyBoardSpell0);
+    l_KeySpellBind[eKeyBoardAction::KeyBoardSpell1] = m_Player->GetSpellOnBind(eKeyBoardAction::KeyBoardSpell1);
+
+    std::map<uint8, uint16> p_List;
+    for (std::map<eKeyBoardAction, int32>::iterator l_It = l_KeySpellBind.begin(); l_It != l_KeySpellBind.end(); l_It++)
+    {
+        if ((*l_It).second >= 0)
+            p_List[(*l_It).first] = (*l_It).second;
+    }
+    PacketBindingSpell l_Packet;
+
+    l_Packet.BuildPacket(&p_List);
+    SendPacket(l_Packet.m_Packet);
+}
+
 void WorldSocket::SendItems(std::map<uint8, Item*>* p_Items)
 {
     if (p_Items == nullptr)

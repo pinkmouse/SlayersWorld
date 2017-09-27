@@ -13,6 +13,7 @@
 #define X_WINDOW 640
 #define Y_WINDOW 480
 #define ZOOM_FACTOR 0.5f
+#define MAX_VISUAL_CHECK 400
 
 /// TILES
 #define MAX_TILE_LEVEL 6
@@ -48,6 +49,12 @@
 #define SPELLS_FOLDER "img/spells/"
 #define MAX_VISUAL_IMG_X 9
 #define MAX_VISUAL_IMG_Y 4
+
+/// LABEL
+#define LABEL_FOLDER "img/labels/"
+#define MAX_LABELL_IMG 1
+#define LABEL_IMG_X 32
+#define LABEL_IMG_Y 32
 
 #define MAX_GOB_IMG_X 3
 #define MAX_GOB_IMG_Y 4
@@ -240,7 +247,8 @@ enum eVisualType
     VisualSpell = 1,
     VisualGob = 2,
     VisualSkinMount = 3,
-    VisualAnimationUnit = 4
+    VisualAnimationUnit = 4,
+    VisualLabel = 5
 };
 
 enum eTimeSpellAttribute

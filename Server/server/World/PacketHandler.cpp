@@ -405,10 +405,11 @@ void PacketHandler::HandleConnexion(WorldPacket &p_Packet, WorldSocket* p_WorldS
     l_Player->SetPointsSet(g_SqlManager->GetPointsSetForPlayer(l_Player->GetID()));
     l_Player->SetLevel(l_Player->GetLevel());
 
+    p_WorldSocket->SetPlayer(l_Player);
+
     /// Send KeyBoard Binds
     p_WorldSocket->SendKeyBoardBind(l_Player->GetKeyBoardBinds());
-
-    p_WorldSocket->SetPlayer(l_Player);
+    p_WorldSocket->SendBindingSpell();
 
     //printf("Player pos=%d-%d, %d, %d\n", l_Player->GetPosX(), l_Player->GetPosY(), l_Player->GetSizeX(), (l_Player->GetPosY() / TILE_SIZE) * (uint32)l_Player->GetSizeX()) + (l_Player->GetPosX() / TILE_SIZE);
     l_Map->AddUnit(l_Player);

@@ -34,6 +34,7 @@ public:
     void DrawAlign(Window &);
     void DrawExtraUI(Window &);
     void DrawBGUI(Window &);
+    void DrawSpellBind(Window &);
 
     HistoryField* GetHistoryField() const;
     Menu* GetMenuInterface(const eMenuType &);
@@ -54,10 +55,11 @@ public:
     MenuManager* GetMenuManager();
     bool IsLoading() const;
     void SetIsLoading(bool);
-
+    void SetVisualManager(VisualManager*);
     void AddExtraInterface(eExtraInterface);
     void RemoveExtraInterface(eExtraInterface);
     void AddExtraUiData(eExtraInterface, const uint8 &, const uint8 &, const int16 &);
+    void AddSpellBind(const uint8 &, const uint16 &);
 
 private:
     sf::Texture                         m_SystemTexture;
@@ -85,7 +87,9 @@ private:
     std::map<uint16, QuestionBox>        m_ListSimpleQuestion;
     std::pair<std::string , uint64>      m_BigMessage;
     std::map<eMenuType, Menu*>           m_InterfaceMenuList;
+    std::map <uint8, uint16>             m_SpellBinding;
 
+    VisualManager*                       m_VisualManager;
     MenuManager                          m_MenuManager;
     bool                                 m_IsLoading;
 };

@@ -65,5 +65,6 @@ enum SMSG : uint8
     S_PlayerRemoveEquipment = 47,
     S_PlayerStackItem = 48,
     S_PlayerUpdateCurrency = 49,
-    S_SellItemInterface = 50
+    S_SellItemInterface = 50,
+    S_BindingSpell = 51
 };

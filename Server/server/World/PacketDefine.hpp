@@ -68,7 +68,8 @@ enum SMSG : uint8
     S_PlayerRemoveEquipment = 47,
     S_PlayerStackItem = 48,
     S_PlayerUpdateCurrency = 49,
-    S_SellItemInterface = 50
+    S_SellItemInterface = 50,
+    S_BindingSpell = 51
 };
 
 struct PacketGoDirection
@@ -141,6 +142,9 @@ struct PacketPlayerUpdateCurrency
 
     void BuildPacket(std::map<eTypeCurrency, uint16>* p_ListCurrency)
     {
+        if (p_ListCurrency->empty())
+            return;
+
         m_Packet << m_PacketID << (uint8)p_ListCurrency->size();
 
         for (std::map<eTypeCurrency, uint16>::iterator l_It = p_ListCurrency->begin(); l_It != p_ListCurrency->end(); l_It++)
@@ -158,9 +162,32 @@ struct PacketSellItemInterface
 
     void BuildPacket(std::map<uint8, uint16>* p_ItemsPrice)
     {
+        if (p_ItemsPrice->empty())
+            return;
+
         m_Packet << m_PacketID << (uint8)p_ItemsPrice->size();
 
         for (std::map<uint8, uint16>::iterator l_It = p_ItemsPrice->begin(); l_It != p_ItemsPrice->end(); l_It++)
+            m_Packet << (uint8)(*l_It).first << (*l_It).second;
+    }
+};
+
+struct PacketBindingSpell
+{
+    WorldPacket m_Packet;
+    uint8 m_PacketID;
+
+    PacketBindingSpell() :
+        m_PacketID(SMSG::S_BindingSpell) {}
+
+    void BuildPacket(std::map<uint8, uint16>* p_ListBindingSpell)
+    {
+        if (p_ListBindingSpell->empty())
+            return;
+
+        m_Packet << m_PacketID << (uint8)p_ListBindingSpell->size();
+
+        for (std::map<uint8, uint16>::iterator l_It = p_ListBindingSpell->begin(); l_It != p_ListBindingSpell->end(); l_It++)
             m_Packet << (uint8)(*l_It).first << (*l_It).second;
     }
 };

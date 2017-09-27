@@ -5,7 +5,8 @@
 InterfaceManager::InterfaceManager(Events* p_Events) :
     m_Events(p_Events),
     m_WritingField(new WritingField()),
-    m_HistoryField(new HistoryField())
+    m_HistoryField(new HistoryField()),
+    m_VisualManager(nullptr)
 {
     m_Events->SetWritingField(m_WritingField);
     m_Events->SetHistoryField(m_HistoryField);
@@ -28,6 +29,11 @@ InterfaceManager::InterfaceManager(Events* p_Events) :
 
 InterfaceManager::~InterfaceManager()
 {
+}
+
+void InterfaceManager::SetVisualManager(VisualManager* p_VisualManager)
+{
+    m_VisualManager = p_VisualManager;
 }
 
 sf::Color GetColorFromeTextColor(const eTextColor & p_TextColor)
@@ -657,6 +663,33 @@ void InterfaceManager::DrawWarnings(Window & p_Window)
     }
 }
 
+void InterfaceManager::DrawSpellBind(Window & p_Window)
+{
+    if (m_VisualManager == nullptr)
+        return;
+    for (std::map <uint8, uint16>::iterator l_It = m_SpellBinding.begin(); l_It != m_SpellBinding.end(); l_It++)
+    {
+        SkinSprite* l_Sprite = nullptr;
+        l_Sprite = m_VisualManager->GetVisualSprite(eVisualType::VisualLabel, 0, 0);
+        if (l_Sprite == nullptr)
+            continue;
+
+        switch ((*l_It).first)
+        {
+        case eKeyBoardAction::KeyBoardSpell0:
+            l_Sprite->setPosition(200, 420);
+            break;
+        case eKeyBoardAction::KeyBoardSpell1:
+            l_Sprite->setPosition(250, 420);
+            break;
+        default:
+            break;
+        }
+        l_Sprite->setScale(1.2f, 1.2f);
+        p_Window.draw(*l_Sprite);
+    }
+}
+
 void InterfaceManager::Draw(Window & p_Window)
 {
     if (m_Events == nullptr)
@@ -713,6 +746,7 @@ void InterfaceManager::Draw(Window & p_Window)
     l_BottomBar.setPosition((X_WINDOW / 2) - (l_BottomBar.getGlobalBounds().width / 2), Y_WINDOW - (l_BottomBar.getGlobalBounds().height));
     p_Window.draw(l_BottomBar);
 
+    DrawSpellBind(p_Window);
     /// Draw XP bar
     TileSprite l_XpBar = GetXpBar();
     l_XpBar.setTextureRect(sf::IntRect(0, l_XpBar.getTextureRect().top, (l_XpBar.getTextureRect().width / 100.0f) * g_Player->GetXpPct(), l_XpBar.getTextureRect().height));
@@ -971,4 +1005,9 @@ void InterfaceManager::SetBigMsg(const std::string & p_Msg)
 {
     m_BigMessage.first = p_Msg;
     m_BigMessage.second = 1 * IN_MILLISECOND * IN_MILLISECOND;
+}
+
+void InterfaceManager::AddSpellBind(const uint8 & p_Bind, const uint16 & p_SpellID)
+{
+    m_SpellBinding[p_Bind] = p_SpellID;
 }

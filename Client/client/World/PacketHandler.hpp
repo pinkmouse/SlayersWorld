@@ -56,6 +56,7 @@ public:
     void HandlePlayerRemoveEquipment(WorldPacket &);
     void HanleUnitUpdateName(WorldPacket &);
     void HandleSellItemInterface(WorldPacket &);
+    void HandleBindingSpell(WorldPacket &);
 
 private:
 	MapManager* m_MapManager;

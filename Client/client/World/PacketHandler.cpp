@@ -68,6 +68,7 @@ void PacketHandler::LoadPacketHandlerMap()
     m_PacketHandleMap[SMSG::S_PlayerUpdateCurrency] = &PacketHandler::HandlePlayerUpdateCurrency;
     m_PacketHandleMap[SMSG::S_UnitUpdateName] = &PacketHandler::HanleUnitUpdateName;
     m_PacketHandleMap[SMSG::S_SellItemInterface] = &PacketHandler::HandleSellItemInterface;
+    m_PacketHandleMap[SMSG::S_BindingSpell] = &PacketHandler::HandleBindingSpell;
 }
 
 void PacketHandler::HandleExtraUI(WorldPacket &p_Packet)
@@ -995,6 +996,23 @@ void PacketHandler::HandlePlayerBagSize(WorldPacket &p_Packet)
     l_MenuManager->GetElement(0, 4)->SetLabel(l_MenuManager->GetElement(0, 4)->GetLabel() + " x" + std::to_string(l_Size));
     l_MenuBag->SetSize(l_Size);
     l_MenuSell->SetSize(l_Size);
+}
+
+void PacketHandler::HandleBindingSpell(WorldPacket &p_Packet)
+{
+    uint8 l_Nb;
+
+    p_Packet >> l_Nb;
+
+    uint8 l_Bind = 0;
+    uint16 l_SpellID = 0;
+    for (uint8 i = 0; i < l_Nb; i++)
+    {
+        p_Packet >> l_Bind;
+        p_Packet >> l_SpellID;
+
+        m_InterfaceManager->AddSpellBind(l_Bind, l_SpellID);
+    }
 }
 
 void PacketHandler::HandleSellItemInterface(WorldPacket &p_Packet)

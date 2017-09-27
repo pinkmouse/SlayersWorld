@@ -76,6 +76,7 @@ bool Graphics::CreateWindow(uint32 p_X, uint32 p_Y, float p_Zoom)
         return false;
 
     /// Menu need visual manager to show skins
+    m_InterfaceManager->SetVisualManager(m_VisualManager);
     m_InterfaceManager->GetMenuManager()->SetVisualManager(m_VisualManager);
     /*MenuWardrobe* l_Wardrobe = reinterpret_cast<MenuWardrobe*>(m_InterfaceManager->GetMenuManager()->GetMenu(eMenuType::WardrobeMenu));
     l_Wardrobe->AddSkin(49, "Test1");

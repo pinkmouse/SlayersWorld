@@ -11,7 +11,9 @@ VisualManager::~VisualManager()
 SkinSprite* VisualManager::GetVisualSprite(eVisualType p_Type, int16 p_VisualID, uint8 p_Position)
 {
     if (m_VisualsMap.find(p_Type) == m_VisualsMap.end())
+    {
         return nullptr;
+    }
 
     if (m_VisualsMap[p_Type].find(p_VisualID) == m_VisualsMap[p_Type].end())
         return nullptr;
@@ -35,14 +37,15 @@ bool VisualManager::LoadSkins()
     sf::Texture *l_Texture = nullptr;
 
     /// SKINS
-    for (uint8 i = 0; i < MAX_SKIN_IMG; ++i)
+    for (uint8 i = 0; i < MAX_VISUAL_CHECK/*MAX_SKIN_IMG*/; ++i)
     {
         l_Texture = new sf::Texture();
         std::string l_FileName = std::to_string(i) + ".png";
         if (!l_Texture->loadFromFile(SKINS_FOLDER + l_FileName))
         {
-            printf("Load Skin %s Failed\n", l_FileName.c_str());
-            return false;
+            break;
+            //printf("Load Skin %s Failed\n", l_FileName.c_str());
+            //return false;
         }
         m_TextureSkinsMap[i] = l_Texture;
 
@@ -65,14 +68,15 @@ bool VisualManager::LoadSkins()
     }
 
     /// SKINS MOUNT
-    for (uint8 i = 0; i < MAX_SKIN_MOUNT_IMG; ++i)
+    for (uint8 i = 0; i < MAX_VISUAL_CHECK/*MAX_SKIN_MOUNT_IMG*/; ++i)
     {
         l_Texture = new sf::Texture();
         std::string l_FileName = std::to_string(i) + ".png";
         if (!l_Texture->loadFromFile(SKINS_MOUNT_FOLDER + l_FileName))
         {
-            printf("Load Skin %s Failed\n", l_FileName.c_str());
-            return false;
+            break;
+            //printf("Load Skin %s Failed\n", l_FileName.c_str());
+            //return false;
         }
         m_TextureSkinsMap[i] = l_Texture;
 
@@ -94,14 +98,15 @@ bool VisualManager::LoadSkins()
     }
 
     /// SKINS ANIMATIONUNIT
-    for (uint8 i = 0; i < MAX_SKIN_ANMATIONUNIT_IMG; ++i)
+    for (uint8 i = 0; i < MAX_VISUAL_CHECK/*MAX_SKIN_ANMATIONUNIT_IMG*/; ++i)
     {
         l_Texture = new sf::Texture();
         std::string l_FileName = std::to_string(i) + ".png";
         if (!l_Texture->loadFromFile(SKINS_ANIMATIONUNIT_FOLDER + l_FileName))
         {
-            printf("Load Skin %s Failed\n", l_FileName.c_str());
-            return false;
+            break;
+            //printf("Load Skin %s Failed\n", l_FileName.c_str());
+            //return false;
         }
         m_TextureSkinsMap[i] = l_Texture;
 
@@ -129,14 +134,17 @@ bool VisualManager::LoadSkins()
 bool VisualManager::LoadVisuals()
 {
     sf::Texture *l_Texture = nullptr;
-    for (uint8 i = 0; i < MAX_SPELL_IMG; ++i)
+
+    /// SPELL IMG
+    for (uint8 i = 0; i < MAX_VISUAL_CHECK/*MAX_SPELL_IMG*/; ++i)
     {
         l_Texture = new sf::Texture();
         std::string l_FileName = std::to_string(i) + ".png";
         if (!l_Texture->loadFromFile(SPELLS_FOLDER + l_FileName))
         {
-            printf("Load Spell %s Failed\n", l_FileName.c_str());
-            return false;
+            break;
+            //printf("Load Spell %s Failed\n", l_FileName.c_str());
+            //return false;
         }
         m_TextureSkinsMap[i] = l_Texture;
 
@@ -158,14 +166,15 @@ bool VisualManager::LoadVisuals()
         m_VisualsMap[l_Visual.GetType()][i] = l_Visual;
     }
 
-    for (uint8 i = 0; i < MAX_GOB_IMG; ++i)
+    for (uint8 i = 0; i < MAX_VISUAL_CHECK/*MAX_GOB_IMG*/; ++i)
     {
         l_Texture = new sf::Texture();
         std::string l_FileName = std::to_string(i) + ".png";
         if (!l_Texture->loadFromFile(GOBS_SKIN_FOLDER + l_FileName))
         {
-            printf("Load Gob %s Failed\n", l_FileName.c_str());
-            return false;
+            break;
+            //printf("Load Gob %s Failed\n", l_FileName.c_str());
+            //return false;
         }
         m_TextureSkinsMap[i] = l_Texture;
 
@@ -173,11 +182,36 @@ bool VisualManager::LoadVisuals()
         uint32 l_NbVisuSizeY = l_Texture->getSize().y;
         Visual l_Visual(eVisualType::VisualGob, MAX_GOB_IMG_X, 0);
 
-        for (uint8 i = 0; i < MAX_GOB_IMG_X; ++i)
+        for (uint8 j = 0; j < MAX_GOB_IMG_X; ++j)
         {
             SkinSprite l_SkinSprite(l_NbVisuSizeX, l_NbVisuSizeY);
             l_SkinSprite.setTexture(*l_Texture);
-            l_SkinSprite.setTextureRect(sf::IntRect(i * l_NbVisuSizeX, 0, l_NbVisuSizeX, l_NbVisuSizeY));
+            l_SkinSprite.setTextureRect(sf::IntRect(j * l_NbVisuSizeX, 0, l_NbVisuSizeX, l_NbVisuSizeY));
+            l_Visual.AddSprite(l_SkinSprite);
+        }
+
+        m_VisualsMap[l_Visual.GetType()][i] = l_Visual;
+    }
+
+
+    for (uint8 i = 0; i < MAX_VISUAL_CHECK/*MAX_LABELL_IMG;*/; ++i)
+    {
+        l_Texture = new sf::Texture();
+        std::string l_FileName = std::to_string(i) + ".png";
+        if (!l_Texture->loadFromFile(LABEL_FOLDER + l_FileName))
+        {
+            break;
+            //printf("Load Label %s Failed\n", l_FileName.c_str());
+            //return false;
+        }
+
+        Visual l_Visual(eVisualType::VisualLabel, MAX_GOB_IMG_X, 0);
+
+        for (uint8 j = 0; j < l_Texture->getSize().y / LABEL_IMG_Y; ++j)
+        {
+            SkinSprite l_SkinSprite(LABEL_IMG_X, LABEL_IMG_Y);
+            l_SkinSprite.setTexture(*l_Texture);
+            l_SkinSprite.setTextureRect(sf::IntRect(j, j * LABEL_IMG_Y, LABEL_IMG_X, LABEL_IMG_Y));
             l_Visual.AddSprite(l_SkinSprite);
         }
 
