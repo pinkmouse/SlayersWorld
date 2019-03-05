@@ -4,7 +4,7 @@
 ### Introduction
 
 Slayers World is a project developed to provide a new engine for players looking to find the thrills of an old school MMORPG game.
-After a year of development the project has taken a different path and Slayers World is no longer maintained, that's why today the project is available in open source.
+After a year of development the project has taken a different path and Slayers World is no longer maintained, that's why today the project is available in open source with MIT License.
 
 Slayers World has the basic features of a MMORPG, with management of items, quests, classes, spells, monsters, groups, ... and even a battleground.
 
