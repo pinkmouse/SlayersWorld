@@ -1,6 +1,17 @@
 # SlayersWorld
 > Inspired by [slayersonline](http://http://www.slayersonline.net/)
 
+### Introduction
+
+Slayers World is a project developed to provide a new engine for players looking to find the thrills of an old school MMORPG game.
+After a year of development the project has taken a different path and Slayers World is no longer maintained, that's why today the project is available in open source.
+
+The goal is to provide people who want to learn about the subject a base on which they can learn and practice.
+
+For the technical part, the whole game was developed in C++ (it is easily possible to adapt the code in another object-oriented language), the graphical and network engine is based on the [SFML library](https://www.sfml-dev.org/index-fr.php).
+
+The project is split into two parts :
+
 ### Server
 
   - Make a characters DB and execute the sql file
