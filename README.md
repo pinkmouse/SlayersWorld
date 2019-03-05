@@ -8,6 +8,12 @@ After a year of development the project has taken a different path and Slayers W
 
 Slayers World has the basic features of a MMORPG, with management of items, quests, classes, spells, monsters, groups, ... and even a battleground.
 
+Showcase :
+
+https://github.com/pinkmouse/SlayersWorld/blob/master/_medias/BGvideo.mp4
+![alt text](https://github.com/pinkmouse/SlayersWorld/blob/master/_medias/Capture3.png "Features")
+![alt text](https://github.com/pinkmouse/SlayersWorld/blob/master/_medias/tease.gif "Features")
+
 The goal is to provide people who want to learn about the subject a base on which they can learn and practice.
 
 For the technical part, the whole game was developed in C++ (it is easily possible to adapt the code in another object-oriented language), the graphical and network engine is based on the [SFML library](https://www.sfml-dev.org/index-fr.php).
