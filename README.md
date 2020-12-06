@@ -1,5 +1,5 @@
 # SlayersWorld
-> Inspired by [slayersonline](http://http://www.slayersonline.net/)
+> Inspired by [slayersonline](http://www.slayersonline.net/)
 
 ### Introduction
 
